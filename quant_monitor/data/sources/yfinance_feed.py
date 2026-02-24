@@ -77,11 +77,12 @@ class YFinanceFeed:
                 if ticker_data.empty:
                     continue
 
-                # Handle column names - may be tuples or strings
+                # Handle column names - may be tuples like ('AAPL', 'Close') or strings
                 new_cols = []
                 for c in ticker_data.columns:
                     if isinstance(c, tuple):
-                        new_cols.append(c[0].lower())
+                        # Extract actual column name (e.g., 'Close' from ('AAPL', 'Close'))
+                        new_cols.append(c[1].lower() if len(c) > 1 else c[0].lower())
                     else:
                         new_cols.append(str(c).lower())
                 ticker_data.columns = new_cols

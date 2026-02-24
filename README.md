@@ -103,8 +103,8 @@ See [docs/architecture.md](docs/architecture.md) for detailed system design.
 | Phase | Description | Status |
 |-------|-------------|--------|
 | 0 | Project scaffold & infrastructure | ✅ Complete |
-| 1 | Data pipeline (Alpaca, FRED, Appwrite) | 🔄 In Progress |
-| 2 | Feature engineering (MA matrix, Hurst, vol regimes) | ⬜ Planned |
+| 1 | Data pipeline (Massive, yfinance, FRED, SEC, News) | ✅ Complete |
+| 2 | Feature engineering (MA matrix, Hurst, vol regimes) | 🔄 In Progress |
 | 3 | Technical & Macro models | ⬜ Planned |
 | 4 | Sentiment model (FinBERT pipeline) | ⬜ Planned |
 | 5 | Fundamental model | ⬜ Planned |
