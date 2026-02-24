@@ -29,6 +29,7 @@ class RateLimitConfig:
 # Default rate limits for each service
 RATE_LIMITS = {
     "yfinance": RateLimitConfig(requests_per_minute=30, burst_size=5),
+    "massive": RateLimitConfig(requests_per_minute=5, burst_size=2),  # Polygon/Massive free tier
     "fred": RateLimitConfig(requests_per_minute=120, burst_size=20),
     "sec_edgar": RateLimitConfig(requests_per_minute=10, burst_size=2),
     "google_rss": RateLimitConfig(requests_per_minute=20, burst_size=5),

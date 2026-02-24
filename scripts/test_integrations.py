@@ -176,7 +176,96 @@ def test_pipeline():
     macro = pipeline.fetch_macro()
     print(f"Macro keys: {list(macro.keys())}")
     
+    # Test moving averages
+    print("\nFetching moving averages...")
+    ma_matrix = pipeline.fetch_moving_averages(["AAPL"])
+    if "AAPL" in ma_matrix:
+        print(f"AAPL SMAs: {ma_matrix['AAPL'].get('sma', {})}")
+        print(f"AAPL EMAs: {ma_matrix['AAPL'].get('ema', {})}")
+    
     print("\n✓ Pipeline working!")
+    return True
+
+
+def test_massive():
+    """Test Massive (Polygon) feed."""
+    print("\n" + "=" * 60)
+    print("Testing Massive (Polygon) feed...")
+    print("=" * 60)
+    
+    from quant_monitor.data.sources.massive_feed import get_massive_feed
+    
+    feed = get_massive_feed()
+    
+    if not feed.is_available:
+        print("⚠ Massive not configured (MASSIVE_API_KEY not set)")
+        print("  Pipeline will use yfinance fallback for moving averages")
+        return True
+    
+    print("\nFetching bars from Massive...")
+    bars = feed.get_bars("AAPL", timespan="day")
+    if not bars.empty:
+        print(f"Got {len(bars)} bars")
+        print(bars.tail(3))
+    
+    print("\nCalculating SMAs...")
+    smas = feed.calculate_sma("AAPL", [5, 10, 20])
+    print(f"SMAs: {smas}")
+    
+    print("\n✓ Massive feed working!")
+    return True
+
+
+def test_sec():
+    """Test SEC EDGAR feed."""
+    print("\n" + "=" * 60)
+    print("Testing SEC EDGAR feed...")
+    print("=" * 60)
+    
+    from quant_monitor.data.sources.sec_feed import create_sec_feed
+    
+    feed = create_sec_feed()
+    
+    if not feed.is_available:
+        print("⚠ SEC feed not configured (SEC_EDGAR_USER_AGENT not set)")
+        return True
+    
+    print("\nGetting CIK for AAPL...")
+    cik = feed.get_cik("AAPL")
+    print(f"AAPL CIK: {cik}")
+    
+    print("\nFetching recent 8-K filings for AAPL...")
+    filings = feed.get_8k_filings("AAPL", limit=5, since_days=90)
+    print(f"Found {len(filings)} 8-K filings")
+    for f in filings[:3]:
+        print(f"  {f['date']}: {f['description'][:50]}...")
+    
+    print("\n✓ SEC feed working!")
+    return True
+
+
+def test_news():
+    """Test News RSS feed."""
+    print("\n" + "=" * 60)
+    print("Testing News RSS feed...")
+    print("=" * 60)
+    
+    from quant_monitor.data.sources.news_feed import create_news_feed
+    
+    feed = create_news_feed()
+    
+    print("\nSearching Google News for AAPL...")
+    articles = feed.get_ticker_news("AAPL", company_name="Apple Inc", limit=5)
+    print(f"Found {len(articles)} articles")
+    for article in articles[:3]:
+        title = article.get("title", "")[:60]
+        print(f"  - {title}...")
+    
+    print("\nFetching market news...")
+    market_news = feed.get_market_news(limit=5)
+    print(f"Found {len(market_news)} market articles")
+    
+    print("\n✓ News feed working!")
     return True
 
 
@@ -222,7 +311,10 @@ def main():
         ("Rate Limiter", test_rate_limiter),
         ("Cache", test_cache),
         ("yfinance", test_yfinance),
+        ("Massive", test_massive),
         ("FRED", test_fred),
+        ("SEC EDGAR", test_sec),
+        ("News RSS", test_news),
         ("Appwrite", test_appwrite),
         ("Pipeline", test_pipeline),
     ]
