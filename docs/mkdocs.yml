@@ -1,0 +1,53 @@
+site_name: Quant Portfolio Monitor
+site_description: Team 5 Investment Simulation — Hult International Business School
+site_url: ""
+repo_url: ""
+repo_name: quant-portfolio-monitor
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Performance: performance.md
+  - Backtest Results: backtest-results.md
+  - Signal History: signals-history.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+
+plugins:
+  - search

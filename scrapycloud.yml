@@ -1,0 +1,14 @@
+# Zyte Scrapy Cloud project configuration
+# Deploy: pip install shub && shub login && shub deploy
+
+project: ""  # Fill in Scrapy Cloud project ID after creating project
+
+[settings]
+SETTINGS_MODULE = quant_monitor.spiders.scrapy_settings
+
+[requirements]
+# Spider-specific deps (installed on Scrapy Cloud)
+scrapy>=2.11.0
+appwrite>=6.0.0
+yfinance>=0.2.36
+feedparser>=6.0.0

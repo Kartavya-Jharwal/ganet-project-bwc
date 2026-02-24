@@ -1,0 +1,42 @@
+{
+  "name": "Quant Portfolio Monitor",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {},
+  "postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH=\"$HOME/.local/bin:$PATH\" && uv sync",
+  "forwardPorts": [8501, 8000],
+  "portsAttributes": {
+    "8501": {
+      "label": "Streamlit Dashboard",
+      "onAutoForward": "notify"
+    },
+    "8000": {
+      "label": "MkDocs Dev Server",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-toolsai.jupyter"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": ".venv/bin/python",
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+          }
+        }
+      }
+    }
+  },
+  "secrets": {
+    "DOPPLER_TOKEN": {
+      "description": "Doppler service token for injecting secrets. Set in GitHub repo Settings → Secrets → Codespaces."
+    }
+  }
+}
