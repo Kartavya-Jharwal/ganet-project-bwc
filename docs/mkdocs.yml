@@ -1,8 +1,10 @@
 site_name: Quant Portfolio Monitor
 site_description: Team 5 Investment Simulation — Hult International Business School
-site_url: ""
-repo_url: ""
+site_url: https://kartavya-jharwal.github.io/quant-portfolio-monitor/
+repo_url: https://github.com/Kartavya-Jharwal/quant-portfolio-monitor
 repo_name: quant-portfolio-monitor
+docs_dir: .
+site_dir: ../site
 
 theme:
   name: material
@@ -28,10 +30,17 @@ theme:
 
 nav:
   - Home: index.md
-  - Architecture: architecture.md
-  - Performance: performance.md
-  - Backtest Results: backtest-results.md
-  - Signal History: signals-history.md
+  - Getting Started:
+    - Development Guide: development.md
+    - Architecture: architecture.md
+    - Design Decisions: design.md
+  - Implementation:
+    - Phase 0 - Scaffold: phase-0-scaffold.md
+    - Development Roadmap: roadmap.md
+  - Results:
+    - Performance: performance.md
+    - Backtest Results: backtest-results.md
+    - Signal History: signals-history.md
 
 markdown_extensions:
   - pymdownx.highlight:
