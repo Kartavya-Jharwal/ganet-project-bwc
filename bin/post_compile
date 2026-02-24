@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Heroku post-compile hook — install uv for runtime use
+# This runs after Heroku builds the Python app
+
+set -euo pipefail
+
+echo "-----> Installing uv package manager"
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+
+echo "-----> Running uv sync"
+uv sync --frozen --no-dev
+
+echo "-----> uv installed successfully"
+uv --version

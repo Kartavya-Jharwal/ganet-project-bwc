@@ -1,0 +1,277 @@
+# =============================================================================
+# Quant Portfolio Monitor — Static Configuration
+# =============================================================================
+# All secrets (API keys, tokens) are injected via Doppler — NEVER put them here.
+# This file contains only non-sensitive, version-controlled configuration.
+
+[project]
+name = "Quant Portfolio Monitor"
+description = "Team 5 Investment Simulation — Hult International Business School"
+initial_capital = 1_000_000
+cash_balance = 53_955.71
+benchmark = "SPY"
+valuation_date = "2026-04-10"
+sunset_date = "2026-05-01"
+rebalance_interval_minutes = 15
+
+# =============================================================================
+# Portfolio Holdings (as of Feb 24, 2026)
+# =============================================================================
+
+[holdings.SPY]
+name = "SPDR S&P 500 ETF"
+type = "ETF"
+qty = 295
+price_paid = 684.89
+sector = "Broad Market"
+
+[holdings.TSM]
+name = "Taiwan Semiconductor ADR"
+type = "Stock"
+qty = 230
+price_paid = 363.94
+sector = "AI Infrastructure"
+
+[holdings.MU]
+name = "Micron Technology"
+type = "Stock"
+qty = 110
+price_paid = 408.82
+sector = "AI Memory"
+
+[holdings.PLTR]
+name = "Palantir Technologies"
+type = "Stock"
+qty = 388
+price_paid = 131.48
+sector = "AI Software"
+
+[holdings.AMZN]
+name = "Amazon.com"
+type = "Stock"
+qty = 250
+price_paid = 200.87
+sector = "E-commerce/Cloud"
+
+[holdings.GOOGL]
+name = "Alphabet Class A"
+type = "Stock"
+qty = 130
+price_paid = 302.22
+sector = "Big Tech/AI"
+
+[holdings.GE]
+name = "GE Aerospace"
+type = "Stock"
+qty = 140
+price_paid = 329.44
+sector = "Industrial/Aerospace"
+
+[holdings.JPM]
+name = "JPMorgan Chase"
+type = "Stock"
+qty = 150
+price_paid = 306.82
+sector = "Financials"
+
+[holdings.LMT]
+name = "Lockheed Martin"
+type = "Stock"
+qty = 100
+price_paid = 643.25
+sector = "Defense/Space"
+
+[holdings.WMT]
+name = "Walmart Inc"
+type = "Stock"
+qty = 570
+price_paid = 132.95
+sector = "Defensive Retail"
+
+[holdings.XLP]
+name = "Consumer Staples SPDR"
+type = "ETF"
+qty = 875
+price_paid = 89.52
+sector = "Staples"
+
+[holdings.PG]
+name = "Procter & Gamble"
+type = "Stock"
+qty = 235
+price_paid = 162.45
+sector = "FMCG Defensive"
+
+[holdings.JNJ]
+name = "Johnson & Johnson"
+type = "Stock"
+qty = 260
+price_paid = 244.64
+sector = "Healthcare"
+
+[holdings.XLU]
+name = "Utilities Select SPDR"
+type = "ETF"
+qty = 800
+price_paid = 45.45
+sector = "Utilities"
+
+[holdings.IONQ]
+name = "IonQ Inc"
+type = "Stock"
+qty = 800
+price_paid = 33.60
+sector = "Quantum/Speculative"
+
+# =============================================================================
+# Cache TTL (seconds)
+# =============================================================================
+
+[cache_ttl]
+price_realtime = 60        # 1 minute
+price_historical = 900     # 15 minutes
+news = 1800                # 30 minutes
+macro = 3600               # 1 hour
+fundamentals = 86400       # 24 hours
+earnings_cal = 86400       # 24 hours
+
+# =============================================================================
+# Regime-Weighted Model Fusion Weights
+# Each regime determines how much each model contributes to fused signal.
+# Macro is an additive adjustment on top of the weighted average.
+# =============================================================================
+
+[regime_weights.HIGH_VOL_TREND]
+technical = 0.45
+fundamental = 0.15
+sentiment = 0.30
+macro = 0.10
+
+[regime_weights.LOW_VOL_TREND]
+technical = 0.30
+fundamental = 0.40
+sentiment = 0.15
+macro = 0.15
+
+[regime_weights.LOW_VOL_RANGE]
+technical = 0.25
+fundamental = 0.35
+sentiment = 0.25
+macro = 0.15
+
+[regime_weights.HIGH_VOL_RANGE]
+technical = 0.30
+fundamental = 0.20
+sentiment = 0.30
+macro = 0.20
+
+[regime_weights.CRISIS]
+technical = 0.10
+fundamental = 0.10
+sentiment = 0.20
+macro = 0.60
+
+# =============================================================================
+# Dynamic Risk Parameters (per macro regime)
+# =============================================================================
+
+[risk_params.RISK_ON]
+max_position = 0.10
+max_sector = 0.25
+target_beta = 0.50
+
+[risk_params.TRANSITION]
+max_position = 0.08
+max_sector = 0.20
+target_beta = 0.35
+
+[risk_params.CRISIS]
+max_position = 0.05
+max_sector = 0.15
+target_beta = 0.20
+
+# =============================================================================
+# Signal Thresholds
+# =============================================================================
+
+[signal_thresholds]
+confidence_min = 0.65       # min inter-model agreement to act
+fused_score_min = 0.35      # min |fused signal| to generate action
+drift_threshold = 0.02      # position weight drift before rebalance trigger
+kill_switch_drawdown = 0.15  # single position intraday loss → immediate alert
+
+# =============================================================================
+# Moving Average Configuration
+# =============================================================================
+
+[moving_averages]
+ema_fast = 9
+ema_medium = 21
+sma_medium = 50
+sma_long = 200
+kama_period = 10
+hma_period = 16
+mvwap_period = 20
+
+# =============================================================================
+# Volatility Regime Classifier Thresholds
+# =============================================================================
+
+[volatility]
+realized_vol_window = 20         # rolling window in days
+vol_percentile_lookback = 252    # 1 year of trading days
+hurst_trending_threshold = 0.6   # H > 0.6 → trending
+hurst_reverting_threshold = 0.4  # H < 0.4 → mean-reverting
+vix_crisis_threshold = 30.0      # VIX > 30 → CRISIS regime
+
+# =============================================================================
+# Sentiment Configuration
+# =============================================================================
+
+[sentiment]
+finbert_model = "ProsusAI/finbert"
+sentiment_ma_windows = [3, 24, 72]  # hours
+similarity_dedup_threshold = 0.85   # cosine similarity for news dedup
+
+# =============================================================================
+# Macro Model Thresholds
+# =============================================================================
+
+[macro_thresholds]
+vix_risk_off = 25.0
+yield_curve_inversion = 0.0       # 10Y-2Y spread
+dxy_spike_weekly_pct = 2.0        # DXY weekly % change
+ten_year_yield_spike_bps = 20.0   # 10Y yield weekly change in bps
+
+# =============================================================================
+# Appwrite Configuration (non-secret)
+# =============================================================================
+
+[appwrite]
+database_name = "quant_monitor"
+collections = [
+    "portfolio_snapshots",
+    "position_snapshots",
+    "signals",
+    "alerts",
+    "regime_history",
+    "scraped_data",
+]
+
+# =============================================================================
+# Scrapy Cloud Configuration (non-secret)
+# =============================================================================
+
+[scrapy_cloud]
+spiders = ["sec_edgar", "google_rss", "yfinance_fallback"]
+schedule_market_hours_minutes = 15  # run every N minutes during market hours
+schedule_off_hours_minutes = 60     # run every N minutes outside market hours
+
+# =============================================================================
+# Telegram Alert Configuration (non-secret)
+# =============================================================================
+
+[alerts]
+enabled = true
+cooldown_minutes = 30              # min time between repeated alerts for same ticker
+market_hours_only = false          # send critical alerts anytime
