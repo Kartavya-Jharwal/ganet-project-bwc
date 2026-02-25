@@ -67,3 +67,8 @@ torch = { index = "pytorch-cpu" }
 # Point uv cache to D: drive to avoid cross-drive copies and reuse existing downloads
 [tool.uv]
 cache-dir = "D:\\KJ\\.uv-cache"
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: tests that require network access and Doppler secrets",
+]
