@@ -16,7 +16,7 @@ Quant Portfolio Monitor is a 5-layer quantitative trading system built for the B
 - 📊 **Dynamic regime weighting** — Hurst exponent-based volatility classifier shifts model weights
 - 🔄 **Black-Litterman optimization** — Posterior expected returns with confidence-weighted views
 - 🚨 **Autonomous alerts** — Telegram notifications when action thresholds are crossed
-- 📈 **Live dashboard** — Streamlit UI for monitoring and presentation
+- 📈 **Rich CLI dashboard** — Terminal-based monitoring with Rich tables + OpenBB data
 
 ## Quick Start
 
@@ -49,8 +49,8 @@ uv run pytest tests/ -v
 uv run ruff check .
 uv run ruff format .
 
-# Start Streamlit dashboard
-doppler run -- uv run streamlit run quant_monitor/dashboard/app.py
+# Start CLI dashboard
+doppler run -- uv run quant-dashboard
 ```
 
 ## Architecture
@@ -111,7 +111,7 @@ See [docs/architecture.md](docs/architecture.md) for detailed system design.
 | 6 | Signal fusion engine | ⬜ Planned |
 | 7 | Agent orchestrator & risk manager | ⬜ Planned |
 | 8 | Backtesting framework | ⬜ Planned |
-| 9 | Streamlit dashboard | ⬜ Planned |
+| 9 | Rich CLI + OpenBB dashboard | ⬜ Planned |
 | 10 | Telegram alerts & deployment | ⬜ Planned |
 
 **Valuation Date:** April 10, 2026 | **Hard Sunset:** May 1, 2026

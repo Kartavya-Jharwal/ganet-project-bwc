@@ -132,17 +132,19 @@ This document captures the key architectural and design decisions made for the Q
 
 **Trade-off:** Requires torch (~108MB). Slower than API on first load.
 
-### Dashboard: Streamlit over React/Vue
+### Dashboard: Rich CLI + OpenBB over Streamlit
 
-**Decision:** Use Streamlit for the monitoring dashboard.
+**Decision:** Use Rich (terminal UI) + OpenBB Platform (financial data toolkit) for the monitoring dashboard, delivered as a CLI tool.
 
 **Rationale:**
-- Python-native — no frontend build step
-- Rapid prototyping for data apps
-- Built-in widgets for charts, tables, inputs
-- Sufficient for personal monitoring tool
+- Instant to launch — no browser, no web server, no frontend build
+- SSH-friendly — works on headless servers and remote terminal sessions
+- Rich provides beautiful tables, panels, live-refresh displays
+- OpenBB Platform gives 100+ financial data endpoints (calendar, earnings, profiles)
+- Composable — can be called from scheduler, CI, or manual invocation
+- Lighter dependency footprint than Streamlit
 
-**Trade-off:** Limited customization. Not suitable for production SaaS.
+**Trade-off:** No graphical charts (ASCII histograms instead). For richer viz, consider a future web layer.
 
 ### Linting: ruff over black+isort+flake8
 
@@ -291,11 +293,11 @@ Original plan: $6/mo DO droplet.
 ### Two-Dyno Architecture
 
 ```
-web:    Streamlit dashboard (port $PORT)
 worker: APScheduler signal loop
 ```
 
-Worker disconnected from web process. Dashboard reads from Appwrite, doesn't interfere with signal generation.
+Dashboard is a Rich CLI tool (`quant-dashboard`) run on-demand, not a web dyno.
+Worker runs the signal loop. Dashboard reads from Appwrite when invoked.
 
 ### GitHub Pages for Post-Sunset
 
@@ -335,7 +337,7 @@ MkDocs-Material generates a static site from Markdown. Pre-sunset export script 
 | DuckDB | TimescaleDB or ClickHouse |
 | diskcache | Redis Cluster |
 | Heroku | Kubernetes on AWS/GCP |
-| Streamlit | React + FastAPI |
+| Rich CLI + OpenBB | React + FastAPI |
 | Single process | Celery workers |
 | torch CPU | GPU inference server |
 
