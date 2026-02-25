@@ -40,6 +40,11 @@ class Secrets:
     APPWRITE_API_KEY: str = ""
     ZYTE_API_KEY: str = ""
     SEC_EDGAR_USER_AGENT: str = ""
+    MASSIVE_API_KEY: str = ""
+    MASSIVE_S3_ENDPOINT: str = ""
+    MASSIVE_S3_ACCESS_KEY_ID: str = ""
+    MASSIVE_S3_SECRET_ACCESS_KEY: str = ""
+    MASSIVE_S3_BUCKET: str = ""
 
     @classmethod
     def from_env(cls) -> Secrets:
