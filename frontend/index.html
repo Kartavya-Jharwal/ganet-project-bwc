@@ -7,7 +7,7 @@
     <!-- Ban default fonts. Using Space Grotesk for quantitative elements and DM Sans for highly legible prose -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="./styles/tokens.css">
     <link rel="stylesheet" href="./styles/layout.css">
@@ -68,16 +68,44 @@
                 <h3>Style Factor Loadings</h3>
                 <ul class="factor-list">
                     <li class="factor-item">
-                        <span class="factor-name">MKT (Beta)</span>
+                        <div class="factor-header">
+                            <span class="factor-name">MKT (Beta)</span>
+                            <span class="factor-val">0.85</span>
+                        </div>
                         <div class="factor-bar"><div class="fill" style="width: 85%"></div></div>
                     </li>
                     <li class="factor-item">
-                        <span class="factor-name">SMB (Size)</span>
+                        <div class="factor-header">
+                            <span class="factor-name">SMB (Size)</span>
+                            <span class="factor-val">0.30</span>
+                        </div>
                         <div class="factor-bar"><div class="fill" style="width: 30%"></div></div>
                     </li>
                     <li class="factor-item">
-                        <span class="factor-name">HML (Value)</span>
+                        <div class="factor-header">
+                            <span class="factor-name">HML (Value)</span>
+                            <span class="factor-val">0.65</span>
+                        </div>
                         <div class="factor-bar"><div class="fill" style="width: 65%"></div></div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Added secondary module to balance visual weight -->
+            <div class="sidebar-module">
+                <h3>Stress Replay</h3>
+                <ul class="factor-list">
+                    <li class="factor-item">
+                        <div class="factor-header">
+                            <span class="factor-name">COVID '20</span>
+                            <span class="factor-val text-danger">-12.4%</span>
+                        </div>
+                    </li>
+                    <li class="factor-item">
+                        <div class="factor-header">
+                            <span class="factor-name">GFC '08</span>
+                            <span class="factor-val text-danger">-22.1%</span>
+                        </div>
                     </li>
                 </ul>
             </div>
