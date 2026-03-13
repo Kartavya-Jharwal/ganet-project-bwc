@@ -1,0 +1,193 @@
+/* Phase 29: Aesthetic Direction - Asymmetrical/Editorial Grid */
+
+.l-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-4) var(--spacing-8);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+}
+
+.nav-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    color: var(--color-accent-primary);
+    letter-spacing: 0.05em;
+}
+
+.status-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-accent-primary);
+    box-shadow: 0 0 8px var(--color-accent-primary);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* Main Grid Architecture */
+.l-grid-main {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: var(--spacing-8);
+    padding: var(--spacing-12) var(--spacing-8);
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.l-header {
+    grid-column: 1 / 10;
+}
+
+.l-kpi-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-4);
+}
+
+.kpi-card {
+    background: var(--color-bg-surface);
+    padding: var(--spacing-8);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+    border-radius: var(--border-radius-sm);
+}
+
+.kpi-label {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.05em;
+}
+
+.kpi-value {
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.l-viz-area {
+    grid-column: 1 / 9;
+    background: var(--color-bg-surface);
+    border: 1px solid var(--border-color);
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.viz-container {
+    padding: var(--spacing-8);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-8);
+}
+
+.viz-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+}
+
+.tag {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(235, 94, 40, 0.1);
+    color: var(--color-accent-primary);
+    border: 1px solid var(--color-accent-primary);
+    border-radius: 2px;
+}
+
+.viz-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed var(--border-color);
+}
+
+.l-sidebar {
+    grid-column: 9 / 13;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.sidebar-module {
+    background: var(--color-bg-surface);
+    border: 1px solid var(--border-color);
+    padding: var(--spacing-6);
+}
+
+.sidebar-module h3 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-6);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--color-bg-surface-elevated);
+}
+
+.factor-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.factor-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.factor-name {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+.factor-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--color-bg-surface-elevated);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.factor-bar .fill {
+    height: 100%;
+    background: var(--color-text-primary);
+}
+
+/* Responsive constraints */
+@media (max-width: 1024px) {
+    .l-grid-main {
+        grid-template-columns: 1fr;
+    }
+    
+    .l-header, .l-viz-area, .l-sidebar {
+        grid-column: 1 / -1;
+    }
+}

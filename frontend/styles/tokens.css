@@ -1,0 +1,98 @@
+/* Phase 30: Typography, Color & Textural Atmosphere */
+
+:root {
+    /* Color Palette: Dark Luxury Quantitative */
+    --color-bg-base: #0a0a0a;
+    --color-bg-surface: #141414;
+    --color-bg-surface-elevated: #1e1e1e;
+    
+    --color-text-primary: #ededed;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #71717a;
+    
+    /* Accents */
+    --color-accent-primary: #eb5e28;  /* Bold orange/rust */
+    --color-success: #10b981;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    
+    /* Typography */
+    /* Banning default system sans-serifs completely */
+    --font-display: 'Space Grotesk', monospace, sans-serif;
+    --font-body: 'DM Sans', serif;
+    
+    /* Layout Tokens */
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-4: 1rem;
+    --spacing-8: 2rem;
+    --spacing-12: 3rem;
+    --spacing-16: 4rem;
+    
+    /* Borders */
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-radius-sm: 2px;
+    --border-radius-md: 4px;
+    
+    /* Shadows */
+    --shadow-glow: 0 0 20px rgba(235, 94, 40, 0.15);
+}
+
+/* Base Reset & Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body.theme-dark {
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography Classes */
+.text-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.text-hero {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--spacing-4);
+}
+
+.text-body-large {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+.text-muted { color: var(--color-text-muted); }
+.text-accent { color: var(--color-accent-primary); }
+.text-success { color: var(--color-success); }
+
+/* Texture Overlay (Grain) */
+.noise-bg {
+    position: relative;
+}
+
+.texture-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
