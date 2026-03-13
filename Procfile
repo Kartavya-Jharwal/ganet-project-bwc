@@ -1,2 +1,2 @@
-web: uv run streamlit run quant_monitor/dashboard/app.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
+release: doppler run -- uv run python scripts/setup_appwrite.py && doppler run -- uv run quant-bootstrap
 worker: uv run python -m quant_monitor.main

@@ -11,9 +11,12 @@ import os
 import sys
 
 from appwrite.client import Client
-from appwrite.services.databases import Databases
-from appwrite.id import ID
 from appwrite.exception import AppwriteException
+from appwrite.services.databases import Databases
+from rich.console import Console
+from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
+
+console = Console()
 
 # Database configuration
 DATABASE_ID = "quant_db"
@@ -146,12 +149,12 @@ def create_attribute(
                 key=name,
                 required=required,
             )
-        print(f"    ✓ Created attribute: {name} ({attr_type})")
+        console.print(f"    [green]Created attribute[/green]: {name} ({attr_type})")
     except AppwriteException as e:
         if "already exists" in str(e).lower():
-            print(f"    → Attribute exists: {name}")
+            console.print(f"    [yellow]Attribute exists[/yellow]: {name}")
         else:
-            print(f"    ✗ Error creating {name}: {e}")
+            console.print(f"    [red]Error creating {name}[/red]: {e}")
 
 
 def main() -> int:
@@ -162,12 +165,11 @@ def main() -> int:
     api_key = os.environ.get("APPWRITE_API_KEY")
 
     if not all([endpoint, project_id, api_key]):
-        print("ERROR: Missing Appwrite credentials. Run with: doppler run -- ...")
+        console.print("[red]ERROR[/red]: Missing Appwrite credentials. Run with: doppler run -- ...")
         return 1
 
-    print(f"Connecting to Appwrite at {endpoint}")
-    print(f"Project: {project_id}")
-    print()
+    console.print(f"Connecting to Appwrite at [cyan]{endpoint}[/cyan]")
+    console.print(f"Project: [cyan]{project_id}[/cyan]\n")
 
     # Initialize client
     client = Client()
@@ -178,46 +180,54 @@ def main() -> int:
     databases = Databases(client)
 
     # Create database
-    print(f"Creating database: {DATABASE_NAME}")
+    console.print(f"Creating database: {DATABASE_NAME}")
     try:
         databases.create(database_id=DATABASE_ID, name=DATABASE_NAME)
-        print(f"✓ Database created: {DATABASE_ID}")
+        console.print(f"[green]Database created[/green]: {DATABASE_ID}")
     except AppwriteException as e:
         if "already exists" in str(e).lower():
-            print(f"→ Database exists: {DATABASE_ID}")
+            console.print(f"[yellow]Database exists[/yellow]: {DATABASE_ID}")
         else:
-            print(f"✗ Error: {e}")
+            console.print(f"[red]Error[/red]: {e}")
             return 1
 
-    print()
+    console.print()
 
     # Create collections
-    for collection_id, config in COLLECTIONS.items():
-        print(f"Creating collection: {config['name']}")
-        try:
-            databases.create_collection(
-                database_id=DATABASE_ID,
-                collection_id=collection_id,
-                name=config["name"],
-            )
-            print(f"  ✓ Collection created: {collection_id}")
-        except AppwriteException as e:
-            if "already exists" in str(e).lower():
-                print(f"  → Collection exists: {collection_id}")
-            else:
-                print(f"  ✗ Error: {e}")
-                continue
+    total_attrs = sum(len(config["attributes"]) for config in COLLECTIONS.values())
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task("Creating collections and attributes", total=total_attrs)
 
-        # Create attributes
-        for attr in config["attributes"]:
-            create_attribute(databases, DATABASE_ID, collection_id, attr)
+        for collection_id, config in COLLECTIONS.items():
+            progress.update(task, description=f"Collection: {config['name']}")
+            try:
+                databases.create_collection(
+                    database_id=DATABASE_ID,
+                    collection_id=collection_id,
+                    name=config["name"],
+                )
+                console.print(f"  [green]Collection created[/green]: {collection_id}")
+            except AppwriteException as e:
+                if "already exists" in str(e).lower():
+                    console.print(f"  [yellow]Collection exists[/yellow]: {collection_id}")
+                else:
+                    console.print(f"  [red]Collection error[/red]: {e}")
+                    progress.advance(task, len(config["attributes"]))
+                    continue
 
-        print()
+            for attr in config["attributes"]:
+                create_attribute(databases, DATABASE_ID, collection_id, attr)
+                progress.advance(task)
 
-    print("=" * 50)
-    print("Appwrite setup complete!")
-    print(f"Database: {DATABASE_ID}")
-    print(f"Collections: {len(COLLECTIONS)}")
+    console.print("=" * 50)
+    console.print("[green]Appwrite setup complete![/green]")
+    console.print(f"Database: {DATABASE_ID}")
+    console.print(f"Collections: {len(COLLECTIONS)}")
     return 0
 
 

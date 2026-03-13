@@ -35,6 +35,12 @@ cd quant-portfolio-monitor
 # Install dependencies
 uv sync
 
+# Initialize Appwrite tables/collections (idempotent)
+doppler run -- uv run python scripts/setup_appwrite.py
+
+# Run bootstrap readiness checks before first deploy
+doppler run -- uv run quant-bootstrap
+
 # Run with Doppler secrets injection
 doppler run -- uv run python -m quant_monitor.main
 ```
@@ -51,6 +57,9 @@ uv run ruff format .
 
 # Start CLI dashboard
 doppler run -- uv run quant-dashboard
+
+# Optional OpenBB enrichment views
+doppler run -- uv run quant-dashboard --openbb
 ```
 
 ## Architecture
@@ -104,12 +113,12 @@ See [docs/architecture.md](docs/architecture.md) for detailed system design.
 |-------|-------------|--------|
 | 0 | Project scaffold & infrastructure | ✅ Complete |
 | 1 | Data pipeline (Massive, yfinance, FRED, SEC, News) | ✅ Complete |
-| 2 | Feature engineering (MA matrix, Hurst, vol regimes) | 🔄 In Progress |
-| 3 | Technical & Macro models | ⬜ Planned |
-| 4 | Sentiment model (FinBERT pipeline) | ⬜ Planned |
-| 5 | Fundamental model | ⬜ Planned |
-| 6 | Signal fusion engine | ⬜ Planned |
-| 7 | Agent orchestrator & risk manager | ⬜ Planned |
+| 2 | Feature engineering (MA matrix, Hurst, vol regimes) | ✅ Complete |
+| 3 | Technical & Macro models | ✅ Complete |
+| 4 | Sentiment model (FinBERT pipeline) | ✅ Complete |
+| 5 | Fundamental model | ✅ Complete |
+| 6 | Signal fusion engine | ✅ Complete |
+| 7 | Agent orchestrator & risk manager | 🔄 In Progress |
 | 8 | Backtesting framework | ⬜ Planned |
 | 9 | Rich CLI + OpenBB dashboard | ⬜ Planned |
 | 10 | Telegram alerts & deployment | ⬜ Planned |
@@ -133,6 +142,7 @@ See [docs/architecture.md](docs/architecture.md) for detailed system design.
 - [Design Decisions](docs/design.md)
 - [Development Guide](docs/development.md)
 - [Phase 0: Scaffold](docs/phase-0-scaffold.md)
+- [Phase 11-15 PM Track](docs/phase-11-15-pm-track.md)
 - [Performance Report](docs/performance.md) *(populated at sunset)*
 - [Backtest Results](docs/backtest-results.md) *(populated at sunset)*
 
