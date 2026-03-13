@@ -1,0 +1,10 @@
+        )
+        logger.info("Local spider scheduling enabled — every %d min", getattr(cfg, "scrapy_cloud", {}).get("schedule_off_hours_minutes", 60))
+
+    scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("Scheduler stopped")
+
+
+if __name__ == "__main__":
+    main()

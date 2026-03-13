@@ -7,7 +7,6 @@ Run with: doppler run -- uv run pytest tests/test_integration_models.py -v
 from __future__ import annotations
 
 import pytest
-import pandas as pd
 
 
 @pytest.mark.integration
@@ -58,10 +57,10 @@ class TestFullPipeline:
         """Fetch data → compute vol features → classify regime."""
         from quant_monitor.data.pipeline import DataPipeline
         from quant_monitor.features.volatility import (
+            classify_regime,
+            hurst_exponent,
             realized_volatility,
             volatility_percentile,
-            hurst_exponent,
-            classify_regime,
         )
 
         pipeline = DataPipeline()
@@ -75,7 +74,9 @@ class TestFullPipeline:
         hurst = hurst_exponent(ohlcv["close"])
 
         macro = pipeline.fetch_macro()
-        vix = macro.get("vix", 20.0)
+        vix = macro.get("vix")
+        if vix is None:
+            vix = 20.0
 
         regime = classify_regime(
             realized_vol=vol.iloc[-1],

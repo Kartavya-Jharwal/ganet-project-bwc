@@ -22,6 +22,8 @@ class MacroModel:
     """Macro regime signal generator and classifier."""
 
     def score(self, macro_snapshot: dict) -> float:
+        macro_snapshot = {k: (v if v is not None else 0.0) for k, v in macro_snapshot.items()}
+
         """Generate macro signal (portfolio-level, not per-ticker).
 
         Returns: signal ∈ [-1.0, +1.0] where:
@@ -33,7 +35,9 @@ class MacroModel:
         signals = []
 
         # 1. VIX signal
-        vix = macro_snapshot.get("vix", 20.0)
+        vix = macro_snapshot.get("vix")
+        if vix is None:
+            vix = 20.0
         vix_threshold = thresholds["vix_risk_off"]  # 25.0
         if vix < 15:
             signals.append(1.0)
@@ -48,9 +52,7 @@ class MacroModel:
         spread = macro_snapshot.get("yield_10y_2y_spread", 0.5)
         if spread > 1.0:
             signals.append(1.0)
-        elif spread > 0:
-            signals.append(spread / 1.0)
-        elif spread > -1.0:
+        elif spread > 0 or spread > -1.0:
             signals.append(spread / 1.0)
         else:
             signals.append(-1.0)
@@ -79,6 +81,8 @@ class MacroModel:
         return float(max(-1.0, min(1.0, avg)))
 
     def classify_regime(self, macro_snapshot: dict) -> str:
+        macro_snapshot = {k: (v if v is not None else 0.0) for k, v in macro_snapshot.items()}
+
         """Classify current macro regime: RISK_ON | TRANSITION | CRISIS."""
         from quant_monitor.config import cfg
         thresholds = cfg.macro_thresholds
@@ -111,6 +115,8 @@ class MacroModel:
             return "RISK_ON"
 
     def per_ticker_impact(self, macro_snapshot: dict, ticker: str, sector: str) -> float:
+        macro_snapshot = {k: (v if v is not None else 0.0) for k, v in macro_snapshot.items()}
+
         """Compute macro headwind/tailwind for a specific ticker.
 
         E.g., rising DXY → negative for TSM (ADR FX risk).

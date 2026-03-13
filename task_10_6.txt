@@ -1,0 +1,29 @@
+    def format_macro_shift_alert(self, old_regime: str, new_regime: str, macro_data: dict) -> str:
+        """Format a macro regime change alert."""
+        vix = macro_data.get("vix", "N/A")
+        spread = macro_data.get("yield_10y_2y_spread", "N/A")
+        return (
+            f"🔄 <b>Macro Regime Change</b>\n\n"
+            f"{old_regime} → <b>{new_regime}</b>\n"
+            f"VIX: {vix} | Yield Spread: {spread}\n\n"
+            f"<i>Model weights have been adjusted.</i>"
+        )
+
+    def format_sentiment_spike_alert(self, ticker: str, momentum: float, headline: str | None = None) -> str:
+        """Format a sentiment spike alert."""
+        direction = "negative" if momentum < 0 else "positive"
+        msg = (
+            f"📰 <b>Sentiment Spike: {ticker}</b>\n\n"
+            f"Sentiment momentum: <b>{momentum:+.3f}</b> ({direction})\n"
+        )
+        if headline:
+            msg += f"Top headline: <i>{headline}</i>\n"
+        return msg
+
+    def format_feed_stale_alert(self, feed_name: str, last_update: str) -> str:
+        """Format a stale data feed alert."""
+        return (
+            f"ℹ️ <b>Data Feed Stale</b>\n\n"
+            f"<b>{feed_name}</b> last updated: {last_update}\n"
+            f"<i>Data may be outdated.</i>"
+        )

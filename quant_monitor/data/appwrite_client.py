@@ -14,10 +14,10 @@ from datetime import datetime
 from typing import Any
 
 from appwrite.client import Client
+from appwrite.exception import AppwriteException
 from appwrite.id import ID
 from appwrite.query import Query
-from appwrite.services.databases import Databases
-from appwrite.exception import AppwriteException
+from appwrite.services.tables_db import TablesDB
 
 from quant_monitor.data.rate_limiter import rate_limiter
 
@@ -68,7 +68,7 @@ class AppwriteClient:
         self._client.set_project(self.project_id)
         self._client.set_key(self.api_key)
 
-        self._databases = Databases(self._client)
+        self._databases = TablesDB(self._client)
         logger.info(f"Appwrite client initialized for project: {self.project_id}")
 
     @rate_limiter.rate_limited("appwrite")
@@ -92,10 +92,10 @@ class AppwriteClient:
         doc_id = document_id or ID.unique()
 
         try:
-            result = self._databases.create_document(
+            result = self._databases.create_row(
                 database_id=DATABASE_ID,
-                collection_id=collection_id,
-                document_id=doc_id,
+                table_id=collection_id,
+                row_id=doc_id,
                 data=data,
             )
             logger.debug(f"Created document in {collection}: {result['$id']}")
@@ -126,12 +126,12 @@ class AppwriteClient:
         collection_id = COLLECTIONS.get(collection, collection)
 
         try:
-            result = self._databases.list_documents(
+            result = self._databases.list_rows(
                 database_id=DATABASE_ID,
-                collection_id=collection_id,
+                table_id=collection_id,
                 queries=queries or [],
             )
-            docs = result.get("documents", [])
+            docs = result.get("rows", result.get("documents", []))  # Fallback to documents just in case
             logger.debug(f"Queried {len(docs)} documents from {collection}")
             return docs
         except AppwriteException as e:

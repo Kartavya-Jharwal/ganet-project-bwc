@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -12,14 +13,44 @@ class AppwritePipeline:
 
     def open_spider(self, spider):
         """Initialize Appwrite client when spider starts."""
-        # TODO Phase 1: Initialize Appwrite client
-        pass
+        try:
+            from quant_monitor.data.appwrite_client import create_appwrite_client
+
+            self._client = create_appwrite_client()
+            self._count = 0
+            logger.info("AppwritePipeline: connected for spider %s", spider.name)
+        except Exception as e:
+            logger.warning("AppwritePipeline: Appwrite unavailable — %s", e)
+            self._client = None
+            self._count = 0
 
     def process_item(self, item, spider):
         """Write item to Appwrite scraped_data collection."""
-        # TODO Phase 1: Serialize item and write to Appwrite
+        if not self._client:
+            return item
+
+        data = dict(item)
+        data["source_spider"] = spider.name
+        data["item_type"] = type(item).__name__
+        data["scraped_at"] = datetime.utcnow().isoformat()
+
+        try:
+            # We assume a valid `write_document` on the Appwrite client
+            self._client.write_document("scraped_data", data)
+            self._count += 1
+        except Exception as e:
+            logger.warning(
+                "AppwritePipeline: write failed for %s — %s",
+                data.get("ticker", "?"),
+                e,
+            )
+
         return item
 
     def close_spider(self, spider):
-        """Cleanup when spider finishes."""
-        pass
+        """Log stats when spider finishes."""
+        logger.info(
+            "AppwritePipeline: spider %s finished — %d items written to Appwrite",
+            spider.name,
+            getattr(self, "_count", 0),
+        )

@@ -1,6 +1,6 @@
 """Quick probe of FinBERT on known test sentences."""
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
 model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert")
@@ -26,7 +26,7 @@ inputs = tokenizer(tests, padding=True, truncation=True, max_length=128, return_
 with torch.no_grad():
     probs = torch.softmax(model(**inputs).logits, dim=-1)
 
-for text, p in zip(tests, probs):
+for text, p in zip(tests, probs, strict=False):
     p_list = p.tolist()
     argmax = p.argmax().item()
     label = id2label[argmax]

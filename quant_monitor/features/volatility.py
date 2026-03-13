@@ -9,9 +9,9 @@ from "volatile and choppy" (reduce size).
 from __future__ import annotations
 
 import logging
-import pandas as pd
 from enum import StrEnum
-from typing import TYPE_CHECKING
+
+import pandas as pd
 
 # pandas imported at runtime; TYPE_CHECKING may still be used elsewhere
 

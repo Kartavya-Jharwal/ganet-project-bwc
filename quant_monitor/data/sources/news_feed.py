@@ -7,10 +7,9 @@ Uses feedparser for robust RSS/Atom parsing.
 from __future__ import annotations
 
 import logging
-import os
 import re
 import urllib.parse
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import feedparser
@@ -80,9 +79,9 @@ class NewsFeed:
                 # Parse publication date
                 published = None
                 if hasattr(entry, "published_parsed") and entry.published_parsed:
-                    published = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc)
+                    published = datetime(*entry.published_parsed[:6], tzinfo=UTC)
                 elif hasattr(entry, "updated_parsed") and entry.updated_parsed:
-                    published = datetime(*entry.updated_parsed[:6], tzinfo=timezone.utc)
+                    published = datetime(*entry.updated_parsed[:6], tzinfo=UTC)
                 
                 articles.append({
                     "title": entry.get("title", ""),
@@ -167,7 +166,7 @@ class NewsFeed:
         articles = self.search_google_news(query, when=when)
         
         # Filter by date and limit
-        cutoff = datetime.now(timezone.utc) - timedelta(days=since_days)
+        cutoff = datetime.now(UTC) - timedelta(days=since_days)
         filtered = []
         for article in articles:
             if article["published"] and article["published"] < cutoff:
@@ -263,7 +262,7 @@ class NewsFeed:
                 unique.append(article)
         
         # Sort by date
-        unique.sort(key=lambda x: x["published"] or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+        unique.sort(key=lambda x: x["published"] or datetime.min.replace(tzinfo=UTC), reverse=True)
         
         return unique[:limit]
 
@@ -314,7 +313,7 @@ class NewsFeed:
                 unique.append(article)
         
         # Sort by date
-        unique.sort(key=lambda x: x["published"] or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+        unique.sort(key=lambda x: x["published"] or datetime.min.replace(tzinfo=UTC), reverse=True)
         
         return unique
 

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-import pytest
 
 
 class TestMovingAverages:
@@ -156,7 +155,7 @@ class TestVolatility:
 
     def test_classify_regime_crisis(self):
         """VIX > 30 → CRISIS regardless of other inputs."""
-        from quant_monitor.features.volatility import classify_regime, VolRegime
+        from quant_monitor.features.volatility import VolRegime, classify_regime
 
         result = classify_regime(
             realized_vol=0.2,
@@ -169,7 +168,7 @@ class TestVolatility:
 
     def test_classify_regime_low_vol_trend(self):
         """Low vol + high Hurst → LOW_VOL_TREND."""
-        from quant_monitor.features.volatility import classify_regime, VolRegime
+        from quant_monitor.features.volatility import VolRegime, classify_regime
 
         result = classify_regime(
             realized_vol=0.10,
@@ -181,7 +180,7 @@ class TestVolatility:
 
     def test_classify_regime_high_vol_range(self):
         """High vol + low Hurst → HIGH_VOL_RANGE."""
-        from quant_monitor.features.volatility import classify_regime, VolRegime
+        from quant_monitor.features.volatility import VolRegime, classify_regime
 
         result = classify_regime(
             realized_vol=0.35,
