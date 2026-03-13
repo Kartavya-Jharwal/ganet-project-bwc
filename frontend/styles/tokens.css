@@ -21,13 +21,14 @@
     --font-display: 'Space Grotesk', monospace, sans-serif;
     --font-body: 'DM Sans', serif;
     
-    /* Layout Tokens */
-    --spacing-1: 0.25rem;
-    --spacing-2: 0.5rem;
-    --spacing-4: 1rem;
-    --spacing-8: 2rem;
-    --spacing-12: 3rem;
-    --spacing-16: 4rem;
+    /* Layout Tokens (Fluid spacing map) */
+    --spacing-1: clamp(0.25rem, 0.5vw, 0.5rem);
+    --spacing-2: clamp(0.5rem, 1vw, 0.75rem);
+    --spacing-4: clamp(1rem, 2vw, 1.25rem);
+    --spacing-6: clamp(1.5rem, 3vw, 2rem);
+    --spacing-8: clamp(2rem, 4vw, 2.5rem);
+    --spacing-12: clamp(3rem, 6vw, 4rem);
+    --spacing-16: clamp(4rem, 8vw, 6rem);
     
     /* Borders */
     --border-color: rgba(255, 255, 255, 0.1);
@@ -49,8 +50,8 @@ body.theme-dark {
     background-color: var(--color-bg-base);
     color: var(--color-text-primary);
     font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.5;
+    font-size: clamp(15px, 1.2vw, 17px);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -63,7 +64,8 @@ body.theme-dark {
 
 .text-hero {
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    /* True fluid typography scaling seamlessly from mobile to 4k */
+    font-size: clamp(2rem, 5vw + 1rem, 4.5rem);
     line-height: 1.1;
     font-weight: 700;
     letter-spacing: -0.03em;
@@ -71,7 +73,7 @@ body.theme-dark {
 }
 
 .text-body-large {
-    font-size: 1.25rem;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
     line-height: 1.6;
     max-width: 600px;
 }

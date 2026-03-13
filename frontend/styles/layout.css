@@ -1,11 +1,21 @@
 /* Phase 29: Aesthetic Direction - Asymmetrical/Editorial Grid */
+/* Fully responsive architecture for Mobile, Tablet, Laptop, and 4K */
 
+/* ----------------------------------------------------
+   Base Layout & Navigation (Common)
+   ---------------------------------------------------- */
 .l-navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: var(--spacing-4) var(--spacing-8);
     border-bottom: 1px solid var(--border-color);
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100; /* Ensure it floats above grain overlay */
 }
 
 .nav-brand {
@@ -38,36 +48,26 @@
     100% { opacity: 1; }
 }
 
-/* Main Grid Architecture */
+/* ----------------------------------------------------
+   Grid Layout Modules 
+   ---------------------------------------------------- */
 .l-grid-main {
     display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: auto auto auto;
     gap: var(--spacing-8);
     padding: var(--spacing-12) var(--spacing-8);
-    max-width: 1600px;
+    max-width: 1800px; /* Scales beautifully to large 4K */
     margin: 0 auto;
-}
-
-.l-header {
-    grid-column: 1 / 10;
-}
-
-.l-kpi-grid {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-4);
 }
 
 .kpi-card {
     background: var(--color-bg-surface);
-    padding: var(--spacing-8);
+    padding: var(--spacing-6);
     border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: var(--spacing-2);
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--border-radius-md);
 }
 
 .kpi-label {
@@ -79,21 +79,22 @@
 }
 
 .kpi-value {
-    font-size: 3rem;
+    /* Fluid KPI sizes */
+    font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1;
 }
 
 .l-viz-area {
-    grid-column: 1 / 9;
     background: var(--color-bg-surface);
     border: 1px solid var(--border-color);
     min-height: 500px;
     display: flex;
     flex-direction: column;
+    border-radius: var(--border-radius-md);
 }
 
 .viz-container {
-    padding: var(--spacing-8);
+    padding: var(--spacing-6);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -103,12 +104,14 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-8);
+    margin-bottom: var(--spacing-6);
+    flex-wrap: wrap; /* Safety for long headers */
+    gap: var(--spacing-4);
 }
 
 .viz-header h2 {
     font-family: var(--font-display);
-    font-size: 1.25rem;
+    font-size: clamp(1.1rem, 2vw, 1.25rem);
 }
 
 .tag {
@@ -118,7 +121,8 @@
     background: rgba(235, 94, 40, 0.1);
     color: var(--color-accent-primary);
     border: 1px solid var(--color-accent-primary);
-    border-radius: 2px;
+    border-radius: var(--border-radius-sm);
+    white-space: nowrap;
 }
 
 .viz-placeholder {
@@ -127,10 +131,10 @@
     align-items: center;
     justify-content: center;
     border: 1px dashed var(--border-color);
+    min-height: 300px;
 }
 
 .l-sidebar {
-    grid-column: 9 / 13;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-4);
@@ -140,11 +144,12 @@
     background: var(--color-bg-surface);
     border: 1px solid var(--border-color);
     padding: var(--spacing-6);
+    border-radius: var(--border-radius-md);
 }
 
 .sidebar-module h3 {
     font-family: var(--font-display);
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
     margin-bottom: var(--spacing-6);
     padding-bottom: var(--spacing-4);
     border-bottom: 1px solid var(--color-bg-surface-elevated);
@@ -181,13 +186,127 @@
     background: var(--color-text-primary);
 }
 
-/* Responsive constraints */
-@media (max-width: 1024px) {
-    .l-grid-main {
-        grid-template-columns: 1fr;
+
+/* ----------------------------------------------------
+   Responsive Breakpoints
+   ---------------------------------------------------- */
+
+/* 1. Mobile Phone Breakpoint (< 768px) */
+@media (max-width: 767px) {
+    .l-navbar {
+        padding: var(--spacing-4);
     }
     
-    .l-header, .l-viz-area, .l-sidebar {
+    .l-grid-main {
+        display: flex;
+        flex-direction: column;
+        padding: var(--spacing-6) var(--spacing-4);
+        gap: var(--spacing-6);
+    }
+
+    /* 
+     Mobile UX: Horizontal Snap Scrolling for KPI Cards. 
+     This creates a very application-like, premium swipe feel 
+     without stacking and bloating the vertical height. 
+    */
+    .l-kpi-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;
+        /* Full bleed breakout */
+        margin-left: calc(var(--spacing-4) * -1);
+        margin-right: calc(var(--spacing-4) * -1);
+        padding: 0 var(--spacing-4);
+        gap: var(--spacing-4);
+    }
+    
+    .l-kpi-grid::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+
+    .kpi-card {
+        flex: 0 0 85vw; /* Each card takes up 85% of viewport to hint at the next card */
+        scroll-snap-align: center;
+    }
+}
+
+/* 2. Tablet Breakpoint (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .l-grid-main {
+        grid-template-columns: 1fr;
+        padding: var(--spacing-8) var(--spacing-6);
+    }
+
+    .l-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-4);
+    }
+    
+    /* Ensure the Viz area is responsive but doesn't overflow */
+    .l-viz-area {
+        min-height: 400px;
+    }
+
+    /* Sidebar factors go stacked side-by-side on tablet so they don't look massive */
+    .sidebar-module .factor-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-6);
+    }
+}
+
+/* 3. Laptop & Setup Default Grid (1025px - 1440px) */
+@media (min-width: 1025px) {
+    .l-grid-main {
+        grid-template-columns: repeat(12, 1fr);
+    }
+    
+    .l-header {
+        grid-column: 1 / 10;
+    }
+    
+    .l-kpi-grid {
         grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-6);
+    }
+    
+    /* True Asymmetry - Viz Area takes 8 columns, Sidebar takes 4 */
+    .l-viz-area {
+        grid-column: 1 / 9;
+    }
+    
+    .l-sidebar {
+        grid-column: 9 / 13;
+    }
+}
+
+/* 4. Large Monitor / 4K Breakpoint (> 1441px) */
+@media (min-width: 1441px) {
+    .l-grid-main {
+        grid-template-columns: repeat(12, 1fr);
+    }
+    
+    /* Push the asymmetry further */
+    .l-header {
+        grid-column: 1 / 8;
+    }
+    
+    .l-kpi-grid {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .l-viz-area {
+        grid-column: 1 / 10;
+        min-height: 600px; /* Give mathematical charts more vertical breathing room */
+    }
+    
+    .l-sidebar {
+        grid-column: 10 / 13;
     }
 }
