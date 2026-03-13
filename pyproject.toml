@@ -1,5 +1,5 @@
 [project]
-name = "quant-monitor"
+name = "project-bwc"
 version = "0.1.0"
 description = "Ganet - Project BWC (Brownies with White Chocolate) — autonomous signal generation, risk monitoring, and rebalancing recommendations"
 requires-python = ">=3.11,<3.14"
@@ -56,9 +56,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-quant = "quant_monitor.cli:app"
-quant-dashboard = "quant_monitor.dashboard.app:main"
-quant-bootstrap = "quant_monitor.bootstrap:main"
+project = "quant_monitor.cli:app"
+project-dashboard = "quant_monitor.dashboard.app:main"
+project-bootstrap = "quant_monitor.bootstrap:main"
 
 [dependency-groups]
 dev = [
@@ -87,3 +87,6 @@ cache-dir = "D:\\KJ\\.uv-cache"
 markers = [
     "integration: tests that require network access and Doppler secrets",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["quant_monitor"]
