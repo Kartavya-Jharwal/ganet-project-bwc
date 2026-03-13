@@ -1,6 +1,6 @@
 # Design Decisions
 
-This document captures the key architectural and design decisions made for the Quant Portfolio Monitor system, along with the rationale behind each choice.
+This document captures the key architectural and design decisions made for the Ganet - Project BWC system, along with the rationale behind each choice.
 
 ## Table of Contents
 
@@ -35,9 +35,13 @@ This document captures the key architectural and design decisions made for the Q
    - High signal + low confidence = HOLD (models disagree).
    - Only act when inter-model agreement exceeds threshold.
 
-5. **Hard sunset planning**
+5. **Epistemic Honesty via Advanced Analytics**
+   - Standard P&L reporting is insufficient. We decompose returns into Allocation, Selection, and Interaction effects using Brinson-Fachler.
+   - Forward-looking analysis runs on 10,000-path stochastic Monte Carlo (calibrated to our empirical covariance) to turn hopes into quantified probabilistic forecasts.
+
+6. **Hard sunset planning**
    - Project ends May 1, 2026. All infrastructure choices optimize for this timeline.
-   - Post-sunset documentation via GitHub Pages as permanent archive.
+   - Post-sunset documentation via GitHub Pages as a permanent, interactive portfolio case study, tightly marrying live tracking with institutional-grade factor regressions.
 
 ---
 
@@ -243,6 +247,23 @@ else:
 ```
 
 High signal + low confidence = conflicting views. Better to wait.
+
+---
+
+## Analytics & Epistemic Honesty
+
+### Why Institutional-Grade Analytics?
+
+A standard student simulation reports P&L and basic Sharpe ratios. This repository actively pays homage to true institutional fund architectures (e.g., AQR, BlackRock) by rigorously enforcing **Epistemic Honesty** through a dedicated analytics lifecycle (Phases 22+). 
+
+| Standard Student Approach | Institutional Approach (Project BWC) |
+|---------------------------|--------------------------------------|
+| **"We made 3%"** | Brinson-Fachler Attribution (Allocation vs. Selection vs. Interaction) |
+| **"Our Beta is 1.2"** | Fama-French 3-Factor & Carhart 4-Factor Regression mapping implicit tilts (SMB, HML, MOM) |
+| **"Sharpe is 1.5"** | Deflated Sharpe Ratio (DSR), Probability of Backtest Overfitting (PBO), Cornish-Fisher VaR |
+| **"We hope to hit +5% by May 1"** | 10,000-path Monte Carlo forward simulation generating probability density curves |
+
+**Rationale:** The simulation data (dates, fills, prices) is real. By layering these models atop our 29-day checkpoint, the repository transitions from a basic project into a documented, mathematically robust portfolio management case study.
 
 ---
 
