@@ -1,4 +1,4 @@
-# Quant Portfolio Monitor
+# Ganet - Project BWC
 
 > Team 5 Investment Simulation — Hult International Business School London
 
@@ -11,6 +11,8 @@ for a $1,000,000 simulated portfolio on StockTrak.
 - **4-model signal fusion** (technical, fundamental, sentiment, macro)
 - **Dynamic regime-weighted arbitration** using Hurst exponent volatility classifier
 - **Black-Litterman** portfolio optimization with confidence-weighted views
+
+Demo-day status (March 13, 2026): **Executable prototype (YES)** with required secrets configured.
 
 ## Documentation
 
@@ -28,7 +30,9 @@ for a $1,000,000 simulated portfolio on StockTrak.
 |----------|-------------|
 | [Phase 0: Scaffold](phase-0-scaffold.md) | Project infrastructure setup |
 | [Development Roadmap](roadmap.md) | Complete phase-by-phase plan |
-| [Phase 11-15 PM Track](phase-11-15-pm-track.md) | Evidence-first plan for quant PM positioning |
+| [Demo Day Progress Report](progress-report.md) | Final readiness and capability status |
+| [Phase 11-21 Implementation Track](phase-11-21-implementation-track.md) | Evidence-first plan for quant PM positioning |
+| [Phase 22+ Advanced Analytics](phase-22-onwards-advanced-analytics.md) | Institutional metrics, Brinson attribution, and Monte Carlo |
 
 ### Results *(populated at sunset)*
 
@@ -38,16 +42,16 @@ for a $1,000,000 simulated portfolio on StockTrak.
 | [Backtest Results](backtest-results.md) | Walk-forward validation metrics |
 | [Signal History](signals-history.md) | Complete signal log export |
 
-## Quick Stats
+## Quick Stats (March 13 Checkpoint)
 
 | Metric | Value |
 |--------|-------|
-| Initial Capital | $1,000,000 |
-| Positions | 15 |
-| Portfolio Beta | 0.33 |
+| Current Capital | ~$982,206 |
+| Positions | 18 |
+| Cash Reserve | ~19.1% |
 | Benchmark | SPY |
 | Signal Models | 4 (Tech, Fund, Sent, Macro) |
-| Volatility Regimes | 5 |
+| Post-Hoc Analytics | Fama-French, Brinson-Fachler, Monte Carlo |
 
 ## Timeline
 

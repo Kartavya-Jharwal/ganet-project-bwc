@@ -1,15 +1,22 @@
 # System Architecture
 
-This document describes the complete architecture of the Quant Portfolio Monitor system.
+This document describes the complete architecture of the Ganet - Project BWC system.
 
 ---
 
 ## Overview
 
-The system follows a 5-layer architecture where data flows upward through processing layers, and signals flow back down to trigger actions.
+The system follows a 6-layer architecture where data flows upward through processing layers, signals trigger actions, and a final tier computes rigorous post-hoc analytics and predictive forecasting.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
+│  LAYER 6: POST-HOC ANALYTICS & FORECASTING (Phase 22+)              │
+│  ┌────────────────────┬──────────────────┬───────────────────────┐  │
+│  │ Factor Regressions │ Brinson-Fachler  │ Monte Carlo Simulator │  │
+│  │ (Fama-French, etc) │ (Attribution)    │ (10,000 paths)        │  │
+│  └────────────────────┴──────────────────┴───────────────────────┘  │
+│                               ↑ historical state ↑                  │
+├─────────────────────────────────────────────────────────────────────┤
 │  LAYER 5: AGENT ORCHESTRATOR                                        │
 │  ┌────────────────────┬──────────────────┬───────────────────────┐  │
 │  │  Decision Engine   │  Risk Manager    │  Alert Dispatcher     │  │
@@ -91,8 +98,7 @@ graph LR
     end
     
     subgraph "Heroku"
-        HK[Heroku App] --> Web[Web Dyno<br/>Streamlit]
-        HK --> Worker[Worker Dyno<br/>APScheduler]
+        HK[Heroku App] --> Worker[Worker Dyno<br/>APScheduler]
     end
     
     subgraph "External APIs"
@@ -105,10 +111,11 @@ graph LR
     Worker --> Alpaca
     Worker --> FRED
     Worker --> AW
-    Web --> AW
     Worker --> TG
     Actions --> HK
 ```
+
+Note: UI monitoring is delivered via a Rich CLI dashboard (`quant-dashboard`) and can be run locally or in remote shell sessions. Optional OpenBB views are non-blocking.
 
 ---
 
@@ -356,6 +363,25 @@ Uses **Black-Litterman** with **pyportfolioopt**:
 
 ---
 
+## Layer 6: Post-Hoc Analytics & Forecasting (Phase 22+)
+
+Introduced to ensure Epistemic Honesty, this layer analyzes the exact portfolio state (historical & current checkpoint) and projects statistical probabilities rather than relying on deterministic hopes.
+
+### Brinson-Fachler Attribution (`quant_monitor/backtest/attribution.py`)
+Separates daily/monthly P&L returns from the benchmark (S&P 500) into mathematical components to answer exactly *why* the portfolio outperformed/underperformed.
+- **Allocation Effect:** P&L due to over/underweighting a sector (e.g., Tech).
+- **Selection Effect:** P&L from individual stock picks within the sector.
+- **Interaction Effect:** Compound effect of both.
+
+### Factor Regression Defaults (`quant_monitor/models/factor.py`)
+Uses OLS (Ordinary Least Squares) models mapping the checkpoint data against Fama-French/Carhart factors (via mapped ETF proxies like 'SPY', 'IWM', 'IWD' etc. for simplicity and cost). Resolves exactly how much of the yield comes from implicit factor tilts (Value/Growth, Size, Momentum).
+
+### Forward Monte Carlo Engine (`quant_monitor/backtest/simulation.py`)
+Samples actual 29-day trailing portfolio structure (empiric correlation/cholesky decomposition of 18 current positions + cash buffer) projecting 10,000 independent stochastically generated future pathways. 
+- **Output:** PDF/CDF plotting probabilities of surpassing checkpoint yield hurdles.
+
+---
+
 ## Infrastructure Details
 
 ### Heroku Deployment
@@ -411,6 +437,7 @@ worker: python -m quant_monitor.main
 #### Deploy Pipeline (`deploy.yml`)
 - Triggers: push to main
 - Steps: Generate requirements.txt → Deploy to Heroku → Build MkDocs → Deploy to GitHub Pages
+- **Note:** GitHub Pages serves as the permanent interactive case study. As of Phase 22+, rendering scripts pull Appwrite data, calculate attribution/distribution curves, embed the resulting histograms/metrics into MkDocs explicitly during this step, and preserve the final post-sunset state indefinitely.
 
 ---
 

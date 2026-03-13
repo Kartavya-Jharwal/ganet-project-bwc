@@ -1,4 +1,4 @@
-site_name: Quant Portfolio Monitor
+site_name: Ganet - Project BWC
 site_description: Team 5 Investment Simulation — Hult International Business School
 site_url: https://kartavya-jharwal.github.io/quant-portfolio-monitor/
 repo_url: https://github.com/Kartavya-Jharwal/quant-portfolio-monitor
@@ -36,7 +36,11 @@ nav:
     - Design Decisions: design.md
   - Implementation:
     - Phase 0 - Scaffold: phase-0-scaffold.md
+    - Phase 11-21 Implementation Track: phase-11-21-implementation-track.md
+    - Phase 22+ Advanced Analytics & UI: phase-22-onwards-advanced-analytics.md
+    - Phase FINALE - The Endgame: phase-finale-endgame.md
     - Development Roadmap: roadmap.md
+    - Demo Day Progress Report: progress-report.md
   - Results:
     - Performance: performance.md
     - Backtest Results: backtest-results.md
