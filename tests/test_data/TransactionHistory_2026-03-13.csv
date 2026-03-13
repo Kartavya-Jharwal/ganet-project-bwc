@@ -1,0 +1,29 @@
+Symbol,TransactionType,CompanyName,Exchange,Quantity,FXRate,Currency,SecurityType,Price,Amount,CreateDate
+LMT,Market - Buy,Lockheed Martin Corp.,US,120,1.00,USD,Equities,$651.6200,"-$78,194.4000",03/13/2026 - 13:30
+TGT,Market - Buy,Target Corp,US,610,1.00,USD,Equities,$116.9800,"-$71,357.8000",03/13/2026 - 13:30
+WMT,Market - Sell,Walmart Inc,US,-570,1.00,USD,Equities,$124.6100,"$71,027.7000",03/12/2026 - 17:47
+JPM,Market - Sell,JPMorgan Chase & Co.,US,-150,1.00,USD,Equities,$281.0400,"$42,156.0000",03/12/2026 - 17:45
+XLP,Market - Sell,SSgA Active Trust - Consumer Staples Select Sector SPDR,US,-435,1.00,USD,Equities,$84.5800,"$36,792.3000",03/12/2026 - 17:38
+GOOGL,Dividends,Alphabet Inc - Ordinary Shares - Class A,US,130,1.00,USD,Equities,$0.2100,$27.3000,03/09/2026 - 04:00
+LMT,Stop - Sell,Lockheed Martin Corp.,US,-100,1.00,USD,Equities,$654.1800,"$65,418.0000",03/04/2026 - 14:52
+GE,Stop - Sell,GE Aerospace,US,-140,1.00,USD,Equities,$329.8100,"$46,173.4000",03/03/2026 - 15:30
+MU,Stop - Sell,Micron Technology Inc.,US,-95,1.00,USD,Equities,$381.1400,"$36,208.3000",03/03/2026 - 14:31
+XOM,Market - Buy,Exxon Mobil Corp.,US,75,1.00,USD,Equities,$159.7500,"-$11,981.2500",03/02/2026 - 14:36
+XLE,Market - Buy,SSgA Active Trust - The Energy Select Sector SPDR Fund,US,60,1.00,USD,Equities,$57.9500,"-$3,477.0000",03/02/2026 - 14:36
+LMT,Dividends,Lockheed Martin Corp.,US,100,1.00,USD,Equities,$3.4500,$345.0000,03/02/2026 - 05:00
+JNJ,Dividends,Johnson & Johnson,US,260,1.00,USD,Equities,$1.3000,$338.0000,02/24/2026 - 05:00
+IONQ,Market - Buy,IonQ Inc,US,800,1.00,USD,Equities,$33.6000,"-$26,880.0000",02/17/2026 - 18:42
+GE,Market - Buy,GE Aerospace,US,140,1.00,USD,Equities,$329.4400,"-$46,121.6000",02/17/2026 - 18:40
+GOOGL,Market - Buy,Alphabet Inc - Ordinary Shares - Class A,US,130,1.00,USD,Equities,$302.2200,"-$39,288.6000",02/17/2026 - 18:39
+AMZN,Market - Buy,Amazon.com Inc.,US,250,1.00,USD,Equities,$200.8700,"-$50,217.5000",02/17/2026 - 17:03
+JPM,Market - Buy,JPMorgan Chase & Co.,US,150,1.00,USD,Equities,$306.8200,"-$46,023.0000",02/17/2026 - 17:02
+PLTR,Market - Buy,Palantir Technologies Inc - Ordinary Shares - Class A,US,388,1.00,USD,Equities,$131.4800,"-$51,014.2400",02/17/2026 - 17:01
+MU,Market - Buy,Micron Technology Inc.,US,110,1.00,USD,Equities,$408.8200,"-$44,970.2000",02/17/2026 - 17:00
+TSM,Market - Buy,Taiwan Semiconductor Manufacturing - ADR,US,230,1.00,USD,Equities,$363.9400,"-$83,706.2000",02/17/2026 - 16:56
+XLU,Market - Buy,SSgA Active Trust - Utilities Select Sector SPDR ETF,US,800,1.00,USD,Equities,$45.4500,"-$36,360.0000",02/12/2026 - 18:18
+WMT,Market - Buy,Walmart Inc,US,570,1.00,USD,Equities,$132.9500,"-$75,781.5000",02/12/2026 - 18:16
+PG,Market - Buy,Procter & Gamble Co.,US,235,1.00,USD,Equities,$162.4500,"-$38,175.7500",02/12/2026 - 17:59
+JNJ,Market - Buy,Johnson & Johnson,US,260,1.00,USD,Equities,$244.6400,"-$63,606.4000",02/12/2026 - 17:57
+XLP,Market - Buy,SSgA Active Trust - Consumer Staples Select Sector SPDR,US,875,1.00,USD,Equities,$89.5200,"-$78,330.0000",02/12/2026 - 17:51
+LMT,Market - Buy,Lockheed Martin Corp.,US,100,1.00,USD,Equities,$643.2500,"-$64,325.0000",02/12/2026 - 17:47
+SPY,Market - Buy,SSgA Active Trust - SPDR S&P 500 ETF Trust,US,295,1.00,USD,Equities,$684.8900,"-$202,042.5500",02/12/2026 - 17:42

@@ -3,8 +3,9 @@ with open("quant_monitor/main.py", encoding="utf-8") as f:
 
 import re
 
-text = re.sub(r'    try:\n\n    # Optional: run spiders.*    except \(KeyboardInterrupt, SystemExit\):',
-r'''    # Optional: run spiders every hour for supplemental data
+text = re.sub(
+    r"    try:\n\n    # Optional: run spiders.*    except \(KeyboardInterrupt, SystemExit\):",
+    r"""    # Optional: run spiders every hour for supplemental data
     use_local_spiders = getattr(cfg, "scrapy_cloud", {}).get("local_spiders", False)
     if use_local_spiders:
         scheduler.add_job(
@@ -18,7 +19,10 @@ r'''    # Optional: run spiders every hour for supplemental data
 
     try:
         scheduler.start()
-    except (KeyboardInterrupt, SystemExit):''', text, flags=re.DOTALL)
+    except (KeyboardInterrupt, SystemExit):""",
+    text,
+    flags=re.DOTALL,
+)
 
 with open("quant_monitor/main.py", "w", encoding="utf-8") as f:
     f.write(text)

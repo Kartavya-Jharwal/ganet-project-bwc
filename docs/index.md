@@ -73,8 +73,8 @@ Feb 24 ────────────────────────�
 
 ## Source Code
 
-- **Repository:** [github.com/Kartavya-Jharwal/quant-portfolio-monitor](https://github.com/Kartavya-Jharwal/quant-portfolio-monitor)
-- **CI Status:** [![CI](https://github.com/Kartavya-Jharwal/quant-portfolio-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Kartavya-Jharwal/quant-portfolio-monitor/actions/workflows/ci.yml)
+- **Repository:** [github.com/Kartavya-Jharwal/ganet-project-bwc](https://github.com/Kartavya-Jharwal/ganet-project-bwc)
+- **CI Status:** [![CI](https://github.com/Kartavya-Jharwal/ganet-project-bwc/actions/workflows/ci.yml/badge.svg)](https://github.com/Kartavya-Jharwal/ganet-project-bwc/actions/workflows/ci.yml)
 
 ---
 

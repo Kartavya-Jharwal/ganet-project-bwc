@@ -1,4 +1,5 @@
 """Tests for TechnicalModel."""
+
 from __future__ import annotations
 
 import numpy as np
@@ -32,6 +33,7 @@ def _make_ohlcv(n: int = 250, trend: str = "flat") -> pd.DataFrame:
 def _make_ma_matrix(ohlcv: pd.DataFrame) -> pd.DataFrame:
     """Compute a minimal MA matrix from synthetic OHLCV."""
     from quant_monitor.features.moving_averages import compute_ma_matrix
+
     return compute_ma_matrix(ohlcv)
 
 
@@ -63,7 +65,7 @@ class TestTechnicalModel:
         results = self.model.score_all(tickers)
         assert isinstance(results, dict)
         assert set(results.keys()) == {"AAPL", "TSLA"}
-        for ticker, score in results.items():
+        for _ticker, score in results.items():
             assert isinstance(score, float)
             assert -1.0 <= score <= 1.0
 

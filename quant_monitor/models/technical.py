@@ -125,17 +125,11 @@ class TechnicalModel:
 
         # ── Weighted combination ─────────────────────────────────────────────
         raw = (
-            ma_signal * 0.30
-            + rsi_signal * 0.20
-            + macd_signal * 0.20
-            + bb_signal * 0.15
+            ma_signal * 0.30 + rsi_signal * 0.20 + macd_signal * 0.20 + bb_signal * 0.15
         ) * volume_factor + bb_signal * 0.15 * (1 - volume_factor)
         # Simpler: weighted sum, volume scales the non-bb components
         raw = (
-            ma_signal * 0.30
-            + rsi_signal * 0.20
-            + macd_signal * 0.20
-            + bb_signal * 0.15
+            ma_signal * 0.30 + rsi_signal * 0.20 + macd_signal * 0.20 + bb_signal * 0.15
         ) * volume_factor
         return float(max(-1.0, min(1.0, raw)))
 

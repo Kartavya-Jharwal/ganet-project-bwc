@@ -1,159 +1,123 @@
-# Quant Portfolio Monitor
 
-[![CI](https://github.com/Kartavya-Jharwal/quant-portfolio-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Kartavya-Jharwal/quant-portfolio-monitor/actions/workflows/ci.yml)
+# Ganet - Project BWC (Brownies with White Chocolate)
+
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-package%20manager-blueviolet)](https://github.com/astral-sh/uv)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-> **Autonomous signal generation, risk monitoring, and rebalancing recommendations for a $1M simulated portfolio.**
+> **A museum-grade market simulation and structural topology showcase.**
 
-## Overview
+## The Systemic Pivot
+This system underwent a massive architectural pivot (Phases 11-21). It abandoned legacy predictive NLP and heavy cloud deployments (Heroku, rigid CI/CD actions) in favor of a **Zero-Config Local Runbook**. It operates entirely locally using embedded DuckDB, zero-copy Polars, and strict topological mathematics (Sparse Inverse Covariance & Hierarchical Risk Parity). 
 
-Quant Portfolio Monitor is a 5-layer quantitative trading system built for the BBA Investment Simulation at Hult International Business School London. It monitors 15 positions across AI infrastructure, defense, financials, and defensive sectors, generating buy/hold/trim/exit signals through a dynamic regime-weighted multi-model fusion engine.
+Because the project lives and executes locally on your machine, complex GitHub Actions and Doppler secret injection are no longer strictly mandatory to run the core simulation!
 
-**Key differentiators:**
-- 🧠 **4-model signal fusion** — Technical, Fundamental, Sentiment (FinBERT), Macro
-- 📊 **Dynamic regime weighting** — Hurst exponent-based volatility classifier shifts model weights
-- 🔄 **Black-Litterman optimization** — Posterior expected returns with confidence-weighted views
-- 🚨 **Autonomous alerts** — Telegram notifications when action thresholds are crossed
-- 📈 **Rich CLI dashboard** — Terminal-based monitoring with Rich tables + OpenBB data
+## Launching the Demo & Web Showcase
+The showcase features Awwwards-level brutalist HTML, PyVis topological graphs, and Manim-generated mathematical storytelling. It is designed to run locally and deploy directly to GitHub Pages effortlessly.
 
-## Quick Start
-
-### Prerequisites
-- Python 3.11+
-- [uv](https://github.com/astral-sh/uv) package manager
-- [Doppler CLI](https://docs.doppler.com/docs/install-cli) for secrets management
-
-### Installation
-
+### 1. Local Execution & Data Simulation
 ```bash
-# Clone the repository
-git clone https://github.com/Kartavya-Jharwal/quant-portfolio-monitor.git
-cd quant-portfolio-monitor
-
-# Install dependencies
+# 1) Sync dependencies entirely locally via uv
 uv sync
 
-# Initialize Appwrite tables/collections (idempotent)
-doppler run -- uv run python scripts/setup_appwrite.py
+# 2) Sync historical pricing directly into the local DuckDB (No Doppler required!)
+uv run cli ingest
 
-# Run bootstrap readiness checks before first deploy
-doppler run -- uv run quant-bootstrap
+# 3) Run the Out-of-Sample Topological Backtest (Generates the JSON metrics)
+uv run cli backtest
 
-# Run with Doppler secrets injection
-doppler run -- uv run python -m quant_monitor.main
+# 4) Calculate Live Orders to mitigate the forced 15-minute sim delay
+uv run python quant_monitor/main.py
 ```
 
-### Development
+### 2. Rendering the Visual Artifacts
+```powershell
+# Generate the actual Manim simulation mathematical MP4 loops
+.\bin\render_manim.ps1
+```
 
+### 3. Deploying the Final GUI to GitHub Pages
+To "launch" the completed showcase live to the web directly from your local environment:
 ```bash
-# Run tests
-uv run pytest tests/ -v
+# Stage the generated artifacts
+git add docs/
 
-# Lint & format
-uv run ruff check .
-uv run ruff format .
+# Commit the deployment payload
+git commit -m "chore: deploy vanguard showcase and simulation metrics"
 
-# Start CLI dashboard
-doppler run -- uv run quant-dashboard
-
-# Optional OpenBB enrichment views
-doppler run -- uv run quant-dashboard --openbb
+# Push to the remote
+git push origin main
 ```
+*Note: Ensure your GitHub repository settings under `Settings -> Pages` are configured to deploy from the `/docs` folder on the `main` branch. This serves the `index.html` frontend.*
+
+## Overview
+This simulation out-engineers traditional forced latency and diversification illusions by implementing:
+- 🕸️ **Sparse Inverse Covariance:** Calculates the true conditional independence graph using Scikit-Learn `GraphicalLassoCV`.
+- 🌳 **Minimum Spanning Tree (MST):** Prunes noisy edges to isolate risk hubs and alpha leaves via NetworkX algorithms.
+- ⚖️ **Hierarchical Risk Parity (HRP):** Clusters assets dynamically via SciPy and sizes targets inversely to their trailing variance without relying on generic stop-losses.
+- ⏱️ **15-Minute Drift Forecaster:** Fires a sub-second live SPY spot ping to synthetically offset the forced 15-minute data reporting delay inherent to standard simulation platforms.
 
 ## Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────┐
-│  LAYER 5: AGENT ORCHESTRATOR                            │
-│  Decision engine, risk manager, alert dispatcher        │
+│  LAYER 4: VANGUARD SHOWCASE                             │
+│  Manim Animations | PyVis D3 Graphs | Brutalist HTML    │
 ├─────────────────────────────────────────────────────────┤
-│  LAYER 4: SIGNAL FUSION ENGINE                          │
-│  Dynamic regime-weighted multi-model arbitration        │
+│  LAYER 3: THE TOPOLOGICAL MATH ENGINE                   │
+│  GraphicalLassoCV | HRP Bisection | Centrality Pruning  │
 ├─────────────────────────────────────────────────────────┤
-│  LAYER 3: ANALYSIS MODELS                               │
-│  Technical | Fundamental | Sentiment | Macro            │
+│  LAYER 2: BLAZING FAST PIPELINES                        │
+│  DuckDB Native Storage <-> Zero-Copy Polars Pivoting    │
 ├─────────────────────────────────────────────────────────┤
-│  LAYER 2: FEATURE ENGINEERING                           │
-│  MA matrix | Hurst exponent | Vol regimes | NLP         │
-├─────────────────────────────────────────────────────────┤
-│  LAYER 1: MULTI-SOURCE DATA PIPELINE                    │
-│  Pull → Cache → Normalize → Timestamp-align             │
+│  LAYER 1: ZERO-CONFIG INGESTION                         │
+│  yFinance | pandas_market_calendars | OpenBB Sectors    │
 └─────────────────────────────────────────────────────────┘
 ```
 
-See [docs/architecture.md](docs/architecture.md) for detailed system design.
+## Portfolio Set
 
-## Portfolio
-
-| Ticker | Name | Sector | Qty |
-|--------|------|--------|-----|
-| SPY | SPDR S&P 500 ETF | Broad Market | 295 |
-| TSM | Taiwan Semiconductor | AI Infrastructure | 230 |
-| MU | Micron Technology | AI Memory | 110 |
-| PLTR | Palantir Technologies | AI Software | 388 |
-| AMZN | Amazon.com | E-commerce/Cloud | 250 |
-| GOOGL | Alphabet Class A | Big Tech/AI | 130 |
-| GE | GE Aerospace | Industrial/Aerospace | 140 |
-| JPM | JPMorgan Chase | Financials | 150 |
-| LMT | Lockheed Martin | Defense/Space | 100 |
-| WMT | Walmart Inc | Defensive Retail | 570 |
-| XLP | Consumer Staples SPDR | Staples | 875 |
-| PG | Procter & Gamble | FMCG Defensive | 235 |
-| JNJ | Johnson & Johnson | Healthcare | 260 |
-| XLU | Utilities Select SPDR | Utilities | 800 |
-| IONQ | IonQ Inc | Quantum/Speculative | 800 |
-
-**Initial Capital:** $1,000,000 | **Benchmark:** SPY | **Beta:** 0.33
+| Ticker | Name | Dynamic Sector Resolution (via OpenBB/yFinance) |
+|--------|------|-------------------------------------------------|
+| SPY | SPDR S&P 500 ETF | Broad Market |
+| TSM | Taiwan Semiconductor | AI Infrastructure |
+| MU | Micron Technology | AI Memory |
+| PLTR | Palantir Technologies | AI Software |
+| AMZN | Amazon.com | E-commerce/Cloud |
+| GOOGL | Alphabet Class A | Big Tech/AI |
+| GE | GE Aerospace | Industrial/Aerospace |
+| JPM | JPMorgan Chase | Financials |
+| LMT | Lockheed Martin | Defense/Space |
+| WMT | Walmart Inc | Defensive Retail |
+| XLP | Consumer Staples SPDR | Staples |
+| PG | Procter & Gamble | FMCG Defensive |
+| JNJ | Johnson & Johnson | Healthcare |
+| XLU | Utilities Select SPDR | Utilities |
+| IONQ | IonQ Inc | Quantum/Speculative |
 
 ## Project Timeline
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 0 | Project scaffold & infrastructure | ✅ Complete |
-| 1 | Data pipeline (Massive, yfinance, FRED, SEC, News) | ✅ Complete |
-| 2 | Feature engineering (MA matrix, Hurst, vol regimes) | ✅ Complete |
-| 3 | Technical & Macro models | ✅ Complete |
-| 4 | Sentiment model (FinBERT pipeline) | ✅ Complete |
-| 5 | Fundamental model | ✅ Complete |
-| 6 | Signal fusion engine | ✅ Complete |
-| 7 | Agent orchestrator & risk manager | 🔄 In Progress |
-| 8 | Backtesting framework | ⬜ Planned |
-| 9 | Rich CLI + OpenBB dashboard | ⬜ Planned |
-| 10 | Telegram alerts & deployment | ⬜ Planned |
-
-**Valuation Date:** April 10, 2026 | **Hard Sunset:** May 1, 2026
-
-## Infrastructure
-
-| Component | Service | Purpose |
-|-----------|---------|---------|
-| Compute | Heroku | Worker + Web dynos |
-| Backend | Appwrite Cloud | Database, storage, REST API |
-| Scraping | Zyte Scrapy Cloud | SEC EDGAR, Google RSS, price fallback |
-| Secrets | Doppler | Environment-aware secret injection |
-| CI/CD | GitHub Actions | Lint, test, deploy |
-| Docs | GitHub Pages | Post-sunset static archive |
+| 11 | Surgical Pruning & Architecture Pivot | ✅ Complete |
+| 12 | DuckDB Zero-Copy Local Caching | ✅ Complete |
+| 13 | Weighted Correlation Graph (Lasso CV) | ✅ Complete |
+| 14 | Hierarchical Risk Parity (HRP) Engine | ✅ Complete |
+| 15 | Continuous Drift Predictor (Latency mitigation) | ✅ Complete |
+| 16 | MST Topology Pruning via NetworkX | ✅ Complete |
+| 17 | Local Loop Typer CLI Integration | ✅ Complete |
+| 18 | Out-of-Sample Systemic Validation Backtests | ✅ Complete |
+| 19 | Executive Terminal UI (Rich Tables) | ✅ Complete |
+| 20 | Algorithmic Storytelling (Python Manim MP4s) | ✅ Complete |
+| 21 | Vanguard HTML Showcase & PyVis Map Deployment | ✅ Complete |
 
 ## Documentation
 
-- [Architecture & Design](docs/architecture.md)
-- [Design Decisions](docs/design.md)
-- [Development Guide](docs/development.md)
-- [Phase 0: Scaffold](docs/phase-0-scaffold.md)
-- [Phase 11-15 PM Track](docs/phase-11-15-pm-track.md)
-- [Performance Report](docs/performance.md) *(populated at sunset)*
-- [Backtest Results](docs/backtest-results.md) *(populated at sunset)*
+All critical project context currently resides in the generated `docs/index.html` delivery or explicitly within `docs/phase-11-21-implementation-track.md` methodology logs.
 
-## Contributing
-
-This is a personal academic project. The codebase will be archived after May 1, 2026.
+Legacy planning/task artifacts have been organized under `docs/tasks/` and historical snapshots/logs under `docs/archive/`.
 
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
 
----
-
-*Built for Team 5 Investment Simulation — Hult International Business School London*

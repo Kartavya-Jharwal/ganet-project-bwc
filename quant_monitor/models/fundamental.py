@@ -12,24 +12,38 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-# Sector classification for the 15 portfolio holdings
-SECTOR_MAP = {
-    "SPY": "Broad Market",
-    "TSM": "AI Infrastructure",
-    "MU": "AI Memory",
-    "PLTR": "AI Software",
-    "AMZN": "E-commerce/Cloud",
-    "GOOGL": "Big Tech/AI",
-    "GE": "Industrial/Aerospace",
-    "JPM": "Financials",
-    "LMT": "Defense/Space",
-    "WMT": "Defensive Retail",
-    "XLP": "Staples",
-    "PG": "FMCG Defensive",
-    "JNJ": "Healthcare",
-    "XLU": "Utilities",
-    "IONQ": "Quantum/Speculative",
-}
+# We dynamically resolve sectors using OpenBB/YFinance instead of hardcoding.
+# This cache reduces redundant API calls during runtime.
+SECTOR_MAP = {}
+
+def get_dynamic_sector(ticker: str) -> str:
+    """Resolve sector via OpenBB with fallback to YFinance."""
+    if ticker in SECTOR_MAP:
+        return SECTOR_MAP[ticker]
+    
+    # Try OpenBB primarily
+    try:
+        from openbb import obb
+        profile = obb.equity.profile(symbol=ticker)
+        df = profile.to_df()
+        if not df.empty and 'sector' in df.columns:
+            sector = df.iloc[0]['sector']
+            if sector:
+                SECTOR_MAP[ticker] = sector
+                return sector
+    except Exception:
+        pass
+
+    # Fallback to yfinance
+    try:
+        import yfinance as yf
+        info = yf.Ticker(ticker).info
+        sector = info.get('sector', 'Unknown')
+        SECTOR_MAP[ticker] = sector
+        return sector
+    except Exception:
+        SECTOR_MAP[ticker] = 'Unknown'
+        return 'Unknown'
 
 # Sector peer groups for relative valuation
 SECTOR_PEERS = {

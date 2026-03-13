@@ -27,7 +27,12 @@ class _FakeMassive:
     def get_ma_matrix(self, tickers: list[str], sma_periods: list[int], ema_periods: list[int]):
         self.calls.append((tuple(tickers), tuple(sma_periods), tuple(ema_periods)))
         ticker = tickers[0]
-        return {ticker: {"sma": {p: float(p) for p in sma_periods}, "ema": {p: float(p) for p in ema_periods}}}
+        return {
+            ticker: {
+                "sma": {p: float(p) for p in sma_periods},
+                "ema": {p: float(p) for p in ema_periods},
+            }
+        }
 
 
 class _FakeFred:

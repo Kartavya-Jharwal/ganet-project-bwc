@@ -65,7 +65,8 @@ insertion = """
 
 text = text.replace(
     '        if executed > 0:\n            logger.info("Phase 7 Orchestrator: Output %d valid execution targets.", executed)',
-    '        if executed > 0:\n            logger.info("Phase 7 Orchestrator: Output %d valid execution targets.", executed)\n' + insertion
+    '        if executed > 0:\n            logger.info("Phase 7 Orchestrator: Output %d valid execution targets.", executed)\n'
+    + insertion,
 )
 
 with open("quant_monitor/main.py", "w", encoding="utf-8") as f:

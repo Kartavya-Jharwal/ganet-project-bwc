@@ -27,19 +27,19 @@ MASSIVE_BASE_URL = "https://api.massive.com"
 
 class MassiveFeed:
     """Massive (Polygon) data feed with rate limiting.
-    
+
     Primary source for OHLCV data and moving average calculations.
     """
 
     def __init__(self, api_key: str | None = None) -> None:
         """Initialize Massive feed.
-        
+
         Args:
             api_key: Massive/Polygon API key. If None, reads from MASSIVE_API_KEY env var.
         """
         self.api_key = api_key or os.environ.get("MASSIVE_API_KEY")
         self._client: RESTClient | None = None
-        
+
         if self.api_key:
             try:
                 self._client = RESTClient(api_key=self.api_key)
@@ -65,68 +65,72 @@ class MassiveFeed:
         limit: int = 5000,
     ) -> pd.DataFrame:
         """Fetch OHLCV bars for a single ticker.
-        
+
         Args:
             ticker: Stock ticker symbol
             timespan: Bar timespan (minute, hour, day, week, month, quarter, year)
             from_date: Start date (YYYY-MM-DD string or datetime)
             to_date: End date (YYYY-MM-DD string or datetime)
             limit: Max bars to return (up to 50000)
-            
+
         Returns:
             DataFrame with columns: open, high, low, close, volume, vwap, timestamp
         """
         if not self._client:
             logger.warning("Massive client not available")
             return pd.DataFrame()
-        
+
         # Default to last year if no dates provided
         if to_date is None:
             to_date = datetime.now()
         if from_date is None:
             from_date = datetime.now() - timedelta(days=365)
-            
+
         # Convert to strings if datetime
         if isinstance(from_date, datetime):
             from_date = from_date.strftime("%Y-%m-%d")
         if isinstance(to_date, datetime):
             to_date = to_date.strftime("%Y-%m-%d")
-            
+
         try:
-            aggs = list(self._client.list_aggs(
-                ticker=ticker,
-                multiplier=1,
-                timespan=timespan,
-                from_=from_date,
-                to=to_date,
-                limit=limit,
-            ))
-            
+            aggs = list(
+                self._client.list_aggs(
+                    ticker=ticker,
+                    multiplier=1,
+                    timespan=timespan,
+                    from_=from_date,
+                    to=to_date,
+                    limit=limit,
+                )
+            )
+
             if not aggs:
                 logger.warning(f"No bars returned for {ticker}")
                 return pd.DataFrame()
-            
+
             # Convert to DataFrame
             data = []
             for agg in aggs:
-                data.append({
-                    "timestamp": pd.to_datetime(agg.timestamp, unit="ms"),
-                    "open": agg.open,
-                    "high": agg.high,
-                    "low": agg.low,
-                    "close": agg.close,
-                    "volume": agg.volume,
-                    "vwap": agg.vwap,
-                    "transactions": agg.transactions,
-                })
-            
+                data.append(
+                    {
+                        "timestamp": pd.to_datetime(agg.timestamp, unit="ms"),
+                        "open": agg.open,
+                        "high": agg.high,
+                        "low": agg.low,
+                        "close": agg.close,
+                        "volume": agg.volume,
+                        "vwap": agg.vwap,
+                        "transactions": agg.transactions,
+                    }
+                )
+
             df = pd.DataFrame(data)
             df = df.set_index("timestamp")
             df = df.sort_index()
-            
+
             logger.info(f"Fetched {len(df)} bars for {ticker} from Massive")
             return df
-            
+
         except Exception as e:
             logger.error(f"Error fetching bars from Massive for {ticker}: {e}")
             return pd.DataFrame()
@@ -141,16 +145,16 @@ class MassiveFeed:
         limit: int = 5000,
     ) -> dict[str, pd.DataFrame]:
         """Fetch OHLCV bars for multiple tickers.
-        
+
         Note: Makes one API call per ticker due to Massive API design.
-        
+
         Args:
             tickers: List of stock ticker symbols
             timespan: Bar timespan
             from_date: Start date
             to_date: End date
             limit: Max bars per ticker
-            
+
         Returns:
             Dict mapping ticker -> DataFrame
         """
@@ -164,16 +168,16 @@ class MassiveFeed:
     @rate_limiter.rate_limited("massive")
     def get_previous_close(self, ticker: str) -> dict[str, Any] | None:
         """Get previous day's close data.
-        
+
         Args:
             ticker: Stock ticker symbol
-            
+
         Returns:
             Dict with open, high, low, close, volume, vwap, or None
         """
         if not self._client:
             return None
-            
+
         try:
             result = self._client.get_previous_close_agg(ticker)
             if result and len(result) > 0:
@@ -194,16 +198,16 @@ class MassiveFeed:
     @rate_limiter.rate_limited("massive")
     def get_snapshot(self, ticker: str) -> dict[str, Any] | None:
         """Get current snapshot (quote + day bars).
-        
+
         Args:
             ticker: Stock ticker symbol
-            
+
         Returns:
             Dict with current price, day change, volume, etc.
         """
         if not self._client:
             return None
-            
+
         try:
             snap = self._client.get_snapshot_ticker("stocks", ticker)
             if snap:
@@ -216,7 +220,9 @@ class MassiveFeed:
                     "volume": snap.day.volume if snap.day else None,
                     "vwap": snap.day.vwap if snap.day else None,
                     "prev_close": snap.prev_day.close if snap.prev_day else None,
-                    "change": (snap.day.close - snap.prev_day.close) if snap.day and snap.prev_day else None,
+                    "change": (snap.day.close - snap.prev_day.close)
+                    if snap.day and snap.prev_day
+                    else None,
                     "change_percent": snap.todays_change_percent,
                     "updated": snap.updated,
                 }
@@ -227,90 +233,98 @@ class MassiveFeed:
     def calculate_sma(
         self,
         ticker: str,
-        periods: list[int] = [5, 10, 20, 50, 200],
+        periods: list[int] | None = None,
         timespan: str = "day",
     ) -> dict[str, float | None]:
         """Calculate Simple Moving Averages for a ticker.
-        
+
         This is the PRIMARY use case for Massive — cleaner OHLCV data.
-        
+
         Args:
             ticker: Stock ticker symbol
             periods: List of MA periods to calculate
             timespan: Bar timespan
-            
+
         Returns:
             Dict mapping period -> SMA value (e.g., {5: 150.23, 10: 149.87, ...})
         """
+        if periods is None:
+            periods = [5, 10, 20, 50, 200]
         max_period = max(periods)
         # Fetch enough data for longest MA (add buffer for weekends/holidays)
         from_date = datetime.now() - timedelta(days=max_period * 2)
-        
+
         df = self.get_bars(ticker, timespan, from_date, datetime.now())
-        
+
         if df.empty:
             return {p: None for p in periods}
-        
+
         results = {}
         for period in periods:
             if len(df) >= period:
                 results[period] = df["close"].rolling(window=period).mean().iloc[-1]
             else:
                 results[period] = None
-                
+
         return results
 
     def calculate_ema(
         self,
         ticker: str,
-        periods: list[int] = [12, 26, 50, 200],
+        periods: list[int] | None = None,
         timespan: str = "day",
     ) -> dict[str, float | None]:
         """Calculate Exponential Moving Averages for a ticker.
-        
+
         Args:
             ticker: Stock ticker symbol
             periods: List of EMA periods to calculate
             timespan: Bar timespan
-            
+
         Returns:
             Dict mapping period -> EMA value
         """
+        if periods is None:
+            periods = [12, 26, 50, 200]
         max_period = max(periods)
         from_date = datetime.now() - timedelta(days=max_period * 3)
-        
+
         df = self.get_bars(ticker, timespan, from_date, datetime.now())
-        
+
         if df.empty:
             return {p: None for p in periods}
-        
+
         results = {}
         for period in periods:
             if len(df) >= period:
                 results[period] = df["close"].ewm(span=period, adjust=False).mean().iloc[-1]
             else:
                 results[period] = None
-                
+
         return results
 
     def get_ma_matrix(
         self,
         tickers: list[str],
-        sma_periods: list[int] = [5, 10, 20, 50, 200],
-        ema_periods: list[int] = [12, 26],
+        sma_periods: list[int] | None = None,
+        ema_periods: list[int] | None = None,
     ) -> dict[str, dict[str, dict[str, float | None]]]:
         """Get full Moving Average matrix for multiple tickers.
-        
+
         This is the KEY function for technical analysis integration.
-        
+
         Args:
             tickers: List of stock tickers
             sma_periods: SMA periods to calculate
             ema_periods: EMA periods to calculate
-            
+
         Returns:
             Nested dict: {ticker: {"sma": {period: value}, "ema": {period: value}}}
         """
+        if ema_periods is None:
+            ema_periods = [12, 26]
+        if sma_periods is None:
+            sma_periods = [5, 10, 20, 50, 200]
         results = {}
         for ticker in tickers:
             results[ticker] = {
@@ -326,17 +340,17 @@ class MassiveFeed:
         limit: int = 10,
     ) -> list[dict[str, Any]]:
         """Get recent news articles for a ticker.
-        
+
         Args:
             ticker: Stock ticker symbol
             limit: Max number of articles
-            
+
         Returns:
             List of news article dicts
         """
         if not self._client:
             return []
-            
+
         try:
             news = list(self._client.list_ticker_news(ticker, limit=limit))
             return [
@@ -359,10 +373,10 @@ class MassiveFeed:
 
 def create_massive_feed(api_key: str | None = None) -> MassiveFeed:
     """Factory function to create a MassiveFeed instance.
-    
+
     Args:
         api_key: Optional API key. Reads from MASSIVE_API_KEY env var if not provided.
-        
+
     Returns:
         Configured MassiveFeed instance
     """

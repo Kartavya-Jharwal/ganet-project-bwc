@@ -1,8 +1,8 @@
 site_name: Ganet - Project BWC
 site_description: Team 5 Investment Simulation — Hult International Business School
-site_url: https://kartavya-jharwal.github.io/quant-portfolio-monitor/
-repo_url: https://github.com/Kartavya-Jharwal/quant-portfolio-monitor
-repo_name: quant-portfolio-monitor
+site_url: https://kartavya-jharwal.github.io/ganet-project-bwc/
+repo_url: https://github.com/Kartavya-Jharwal/ganet-project-bwc
+repo_name: ganet-project-bwc
 docs_dir: .
 site_dir: ../site
 

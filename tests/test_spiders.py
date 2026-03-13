@@ -53,8 +53,16 @@ class TestAppwritePipeline:
         pipeline._client = None
         pipeline._count = 0
 
-        item = PriceItem(ticker="SPY", date="2026-02-25", open=500, high=505,
-                         low=498, close=503, volume=1000000, source="yfinance")
+        item = PriceItem(
+            ticker="SPY",
+            date="2026-02-25",
+            open=500,
+            high=505,
+            low=498,
+            close=503,
+            volume=1000000,
+            source="yfinance",
+        )
         mock_spider = MagicMock()
         result = pipeline.process_item(item, mock_spider)
         assert result is item  # passes through without error

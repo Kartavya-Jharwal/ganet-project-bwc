@@ -206,9 +206,7 @@ class YFinanceFeed:
                         "title": item.get("title", ""),
                         "link": item.get("link", ""),
                         "publisher": item.get("publisher", ""),
-                        "timestamp": datetime.fromtimestamp(
-                            item.get("providerPublishTime", 0)
-                        ),
+                        "timestamp": datetime.fromtimestamp(item.get("providerPublishTime", 0)),
                         "type": item.get("type", ""),
                         "ticker": ticker,
                     }
@@ -219,9 +217,7 @@ class YFinanceFeed:
             logger.error(f"Error fetching news for {ticker}: {e}")
             return []
 
-    def get_all_news(
-        self, tickers: list[str], max_per_ticker: int = 5
-    ) -> list[dict[str, Any]]:
+    def get_all_news(self, tickers: list[str], max_per_ticker: int = 5) -> list[dict[str, Any]]:
         """Get news for multiple tickers.
 
         Args:
@@ -241,22 +237,26 @@ class YFinanceFeed:
         return all_news
 
     def is_market_open(self) -> bool:
-        """Check if US market is currently open.
-
-        Returns:
-            True if market is open (approximate, doesn't account for holidays)
-        """
-        now = datetime.now()
-        # US market hours: 9:30 AM - 4:00 PM ET
-        # Approximate: assume UTC-5
-        # This is a rough check - for production, use proper market calendar
-        if now.weekday() >= 5:  # Weekend
-            return False
-
-        hour = now.hour
-        # Rough approximation for different timezones
-        # Should use pytz for proper timezone handling in production
-        return 14 <= hour <= 21  # Very rough UTC approximation
+        """Check if US market is currently open using NY calendar."""
+        try:
+            import pandas_market_calendars as mcal
+            import pandas as pd
+            
+            nyse = mcal.get_calendar('NYSE')
+            now = pd.Timestamp.now(tz='America/New_York')
+            schedule = nyse.schedule(start_date=now.date(), end_date=now.date())
+            
+            if schedule.empty:
+                return False
+            
+            return schedule.iloc[0]['market_open'] <= now <= schedule.iloc[0]['market_close']
+        except ImportError:
+            # Fallback if pandas_market_calendars is missing
+            now = datetime.now()
+            if now.weekday() >= 5:
+                return False
+            hour = now.hour
+            return 14 <= hour <= 21
 
 
 # Singleton instance

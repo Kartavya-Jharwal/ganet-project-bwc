@@ -1,4 +1,5 @@
 """Tests for MacroModel."""
+
 from __future__ import annotations
 
 from quant_monitor.models.macro import MacroModel

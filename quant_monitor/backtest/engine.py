@@ -54,7 +54,10 @@ class WalkForwardEngine:
         if n < min_required:
             logger.warning(
                 "Insufficient data: %d rows, need %d (train=%d + test=%d)",
-                n, min_required, self.train_window, self.test_window,
+                n,
+                min_required,
+                self.train_window,
+                self.test_window,
             )
             return {"error": "insufficient_data", "rows": n, "required": min_required}
 
@@ -75,6 +78,7 @@ class WalkForwardEngine:
             if model_name == "technical":
                 # Use MA crossover signal from training period
                 from quant_monitor.features.moving_averages import ema
+
                 fast_ma = ema(train_data["close"], 9)
                 slow_ma = ema(train_data["close"], 21)
                 signal = 1.0 if fast_ma.iloc[-1] > slow_ma.iloc[-1] else -1.0
@@ -97,16 +101,19 @@ class WalkForwardEngine:
             elif model_name == "fused_regime":
                 # Regime-weighted: scale by volatility regime
                 from quant_monitor.features.volatility import realized_volatility
+
                 vol = realized_volatility(train_data["close"].pct_change().dropna())
                 if not vol.empty and vol.iloc[-1] > 0.3:
                     test_returns = test_returns * 0.5  # reduce in high vol
 
             all_test_returns.extend(test_returns.tolist())
-            window_results.append({
-                "window_start": start,
-                "window_end": test_end,
-                "mean_return": float(test_returns.mean()) if len(test_returns) > 0 else 0.0,
-            })
+            window_results.append(
+                {
+                    "window_start": start,
+                    "window_end": test_end,
+                    "mean_return": float(test_returns.mean()) if len(test_returns) > 0 else 0.0,
+                }
+            )
 
             start += self.step_size
 

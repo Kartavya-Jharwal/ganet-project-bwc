@@ -56,7 +56,11 @@ class PortfolioOptimizer:
             )
 
             # Market-cap weights as prior (equal weight fallback)
-            market_caps = current_prices[tickers] if isinstance(current_prices, pd.Series) else pd.Series({t: 1.0 for t in tickers})
+            (
+                current_prices[tickers]
+                if isinstance(current_prices, pd.Series)
+                else pd.Series({t: 1.0 for t in tickers})
+            )
 
             # Black-Litterman model
             bl = BlackLittermanModel(
@@ -71,11 +75,11 @@ class PortfolioOptimizer:
             # Mean-variance optimization
             ef = EfficientFrontier(bl_returns, cov_matrix)
             ef.add_constraint(lambda w: w >= 0)  # long only
-            
+
             # Avoid infeasible constraints when n is small
             max_pos = max(0.15, 1.0 / n + 0.01) if n > 0 else 0.15
             ef.add_constraint(lambda w: w <= max_pos)  # max 15% per position (soft)
-            
+
             ef.max_sharpe(risk_free_rate=0.04)  # ~4% risk-free rate
             cleaned = ef.clean_weights(cutoff=0.01)
 
@@ -110,13 +114,15 @@ class PortfolioOptimizer:
 
             if abs(delta) > drift_threshold:
                 action = "BUY" if delta > 0 else "SELL"
-                trades.append({
-                    "ticker": ticker,
-                    "action": action,
-                    "current_weight": round(current, 6),
-                    "target_weight": round(target, 6),
-                    "delta": round(delta, 6),
-                })
+                trades.append(
+                    {
+                        "ticker": ticker,
+                        "action": action,
+                        "current_weight": round(current, 6),
+                        "target_weight": round(target, 6),
+                        "delta": round(delta, 6),
+                    }
+                )
 
         # Sort by absolute delta descending (largest rebalances first)
         trades.sort(key=lambda t: abs(t["delta"]), reverse=True)

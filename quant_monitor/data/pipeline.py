@@ -15,6 +15,7 @@ Uses internal rate limiting and TTL-based caching.
 from __future__ import annotations
 
 import logging
+import os
 from datetime import datetime
 from typing import Any
 
@@ -43,20 +44,21 @@ class DataPipeline:
     def __init__(self) -> None:
         """Initialize data sources and cache."""
         self._cache = get_cache()
-        
+        self.mode = "consume" if not cfg.secrets.MASSIVE_API_KEY else os.environ.get("MODE", "ingest")
+
         # Price feeds (Massive primary, yfinance fallback)
         self._massive = get_massive_feed()
         self._yfinance = yfinance_feed
-        
+
         # Other feeds
         self._fred = create_fred_feed()
         self._sec = create_sec_feed()
         self._news = create_news_feed()
         self._appwrite = create_appwrite_client()
-        
+
         sources = ["Massive" if self._massive.is_available else "yfinance (fallback)"]
         sources.extend(["FRED", "SEC", "News", "Appwrite"])
-        logger.info(f"DataPipeline initialized with: {', '.join(sources)}")
+        logger.info(f"DataPipeline initialized in {self.mode.upper()} mode with: {', '.join(sources)}")
 
     def fetch_prices(
         self,
@@ -65,8 +67,8 @@ class DataPipeline:
         use_cache: bool = True,
     ) -> pd.DataFrame:
         """Fetch OHLCV data for all tickers.
-        
-        Uses Massive (Polygon) as PRIMARY source, yfinance as fallback.
+
+        Uses yfinance as PRIMARY source, Massive (Polygon) as fallback.
 
         Args:
             tickers: List of tickers (defaults to cfg.tickers)
@@ -79,7 +81,7 @@ class DataPipeline:
         if tickers is None:
             tickers = cfg.tickers
 
-        source_hint = "massive" if self._massive.is_available else "yfinance"
+        source_hint = "yfinance" if self._yfinance else "massive"
         cache_key = f"prices:{source_hint}:{','.join(sorted(tickers))}:{period}"
 
         if use_cache:
@@ -89,12 +91,47 @@ class DataPipeline:
                 return cached
 
         df = pd.DataFrame()
-        
-        # Try Massive first (PRIMARY for better data quality)
-        if self._massive.is_available:
-            logger.debug("Fetching prices from Massive (primary)")
-            massive_data = self._massive.get_bars_multi(tickers)
-            
+
+        # Phase 12: Consumer mode bypassing APIs
+        if getattr(self, "mode", "consume") == "consume":
+            logger.info("Consume Mode: Attempting to fetch prices from local DuckDB cache...")
+            import duckdb
+            try:
+                conn = duckdb.connect("portfolio.duckdb", read_only=True)
+                duck_df = conn.execute("SELECT ticker, timestamp as date, close FROM eod_price_matrix").df()
+                conn.close()
+                if not duck_df.empty:
+                    duck_df['date'] = pd.to_datetime(duck_df['date'])
+                    # For compatibility, we mimic OHLCV with just close if needed, but we do our best
+                    duck_df['open'] = duck_df['close']
+                    duck_df['high'] = duck_df['close']
+                    duck_df['low'] = duck_df['close']
+                    duck_df['volume'] = 0
+                    duck_df = duck_df.set_index(["ticker", "date"]).sort_index()
+                    return duck_df
+            except Exception as e:
+                logger.warning(f"DuckDB read failed or empty: {e}. Falling back to live APIs.")
+
+        # Try yfinance first (PRIMARY)
+        logger.debug("Fetching prices from yfinance (primary)")
+        df = self._yfinance.get_bars(tickers, period=period)
+
+        # Fallback to Massive if yfinance failed completely
+        if df.empty and self._massive.is_available:
+            logger.debug("Falling back to Massive (Polygon)")
+            import time
+            massive_data = {}
+            for ticker in tickers:
+                logger.debug(f"Fetching Massive price fallback for {ticker}")
+                try:
+                    res = self._massive.get_bars_multi([ticker])
+                    if res and ticker in res:
+                        massive_data[ticker] = res[ticker]
+                    time.sleep(12)  # Delay to respect free tier (5 req/min)
+                except Exception as e:
+                    logger.warning(f"Failed Massive fetch for {ticker}: {e}")
+                    time.sleep(12)
+
             if massive_data:
                 frames = []
                 for ticker, ticker_df in massive_data.items():
@@ -104,19 +141,38 @@ class DataPipeline:
                     ticker_df = ticker_df.rename(columns={"timestamp": "date"})
                     ticker_df = ticker_df.set_index(["ticker", "date"])
                     frames.append(ticker_df)
-                
+
                 if frames:
                     df = pd.concat(frames).sort_index()
-                    logger.info(f"Got {len(df)} bars from Massive for {len(massive_data)} tickers")
-        
-        # Fallback to yfinance if Massive failed or unavailable
-        if df.empty:
-            logger.debug("Falling back to yfinance")
-            df = self._yfinance.get_bars(tickers, period=period)
+                    logger.info(f"Got {len(df)} bars from Massive fallback for {len(massive_data)} tickers")
 
         if not df.empty and use_cache:
             ttl = cfg.cache_ttl.get("price_historical", 900)
             self._cache.set(cache_key, df, ttl=ttl)
+
+        if getattr(self, "mode", "consume") == "ingest" and not df.empty:
+            try:
+                records = []
+                for (ticker, date), row in df.iterrows():
+                    dt = pd.to_datetime(date)
+                    dt_str = dt.isoformat()
+                    if dt.tzinfo is None:
+                        dt_str += "Z" # add utc
+                        
+                    records.append({
+                        "timestamp": dt_str,
+                        "ticker": ticker,
+                        "close": float(row.get("close", 0.0))
+                    })
+                if records:
+                    from quant_monitor.data.appwrite_client import COLLECTIONS
+                    # split into batches of 100 for Appwrite limits
+                    for i in range(0, len(records), 100):
+                        batch = records[i:i+100]
+                        self._appwrite.write_batch(COLLECTIONS.get("eod_price_matrix", "eod_price_matrix"), batch)
+                    logger.info(f"Ingested {len(records)} EOD prices to Appwrite.")
+            except Exception as e:
+                logger.warning(f"Failed to ingest EOD prices: {e}")
 
         return df
 
@@ -145,11 +201,32 @@ class DataPipeline:
                 logger.debug("Using cached latest prices")
                 return cached
 
+        if getattr(self, "mode", "consume") == "consume":
+            # Attempt to get from duckdb or appwrite proxy?
+            # Easiest way locally for SPY proxy is duckdb if we run sync, or appwrite.
+            pass
+
         prices = self._yfinance.get_latest_prices(tickers)
 
         if prices and use_cache:
             ttl = cfg.cache_ttl.get("price_realtime", 60)
             self._cache.set(cache_key, prices, ttl=ttl)
+
+        if prices and getattr(self, "mode", "consume") == "ingest" and "SPY" in prices:
+            try:
+                from quant_monitor.data.appwrite_client import COLLECTIONS
+                spy_price = prices["SPY"].get("price")
+                if spy_price:
+                    self._appwrite.write_document(
+                        COLLECTIONS.get("live_spy_proxy", "live_spy_proxy"),
+                        {
+                            "timestamp": datetime.utcnow().isoformat() + "Z",
+                            "price": float(spy_price)
+                        }
+                    )
+                    logger.info(f"Ingested live SPY proxy: {spy_price}")
+            except Exception as e:
+                logger.warning(f"Failed to ingest live SPY proxy: {e}")
 
         return prices
 
@@ -182,21 +259,44 @@ class DataPipeline:
 
         # Build holdings dict for news feed
         holdings = {t: {"name": cfg.holdings.get(t, {}).get("name", t)} for t in tickers}
-        
+
         # Primary: Google RSS via news feed
         news = self._news.get_portfolio_news(holdings, max_per_ticker, since_days=7)
-        
-        # Supplement with Massive news if available
+
+        # Secondary Primary: yfinance
+        for ticker in tickers:
+            try:
+                yf_news = self._yfinance.get_news(ticker, max_items=max_per_ticker)
+                if ticker not in news:
+                    news[ticker] = []
+                # Make sure we don't have dupes based on title
+                existing_titles = {n.get("title", "").lower()[:50] for n in news[ticker]}
+                for article in yf_news:
+                    title_key = article.get("title", "").lower()[:50]
+                    if title_key not in existing_titles:
+                        news[ticker].append(article)
+            except Exception as e:
+                logger.warning(f"Error fetching yfinance news for {ticker}: {e}")
+
+        # Supplement with Massive news if available AND needed (delayed)
         if self._massive.is_available:
+            import time
             for ticker in tickers:
-                massive_news = self._massive.get_ticker_news(ticker, limit=max_per_ticker)
-                if massive_news and ticker in news:
-                    # Add unique articles from Massive
-                    existing_titles = {n.get("title", "").lower()[:50] for n in news[ticker]}
-                    for article in massive_news:
-                        title_key = article.get("title", "").lower()[:50]
-                        if title_key not in existing_titles:
-                            news[ticker].append(article)
+                if len(news.get(ticker, [])) >= max_per_ticker:
+                    continue  # Skip if we already have enough from primary sources
+                    
+                time.sleep(12) # Respect minimum 12 second delay (5/min limit)
+                try:
+                    massive_news = self._massive.get_ticker_news(ticker, limit=max_per_ticker)
+                    if massive_news and ticker in news:
+                        # Add unique articles from Massive
+                        existing_titles = {n.get("title", "").lower()[:50] for n in news[ticker]}
+                        for article in massive_news:
+                            title_key = article.get("title", "").lower()[:50]
+                            if title_key not in existing_titles:
+                                news[ticker].append(article)
+                except Exception as e:
+                    logger.warning(f"Error fetching massive news for {ticker}: {e}")
 
         if news and use_cache:
             ttl = cfg.cache_ttl.get("news", 1800)
@@ -273,7 +373,7 @@ class DataPipeline:
         use_cache: bool = True,
     ) -> dict[str, dict[str, dict[str, float | None]]]:
         """Fetch moving average matrix from Massive (PRIMARY source).
-        
+
         Falls back to calculating from yfinance data if Massive unavailable.
 
         Args:
@@ -312,22 +412,24 @@ class DataPipeline:
             # FALLBACK: Calculate from yfinance data
             logger.info("Calculating MAs from yfinance data (fallback)")
             prices_df = self.fetch_prices(tickers, period="2y", use_cache=True)
-            
+
             for ticker in tickers:
                 ma_matrix[ticker] = {"sma": {}, "ema": {}}
-                
+
                 try:
                     if ticker in prices_df.index.get_level_values(0):
                         ticker_data = prices_df.loc[ticker]
-                        
+
                         # Get close prices - should be 'close' column after yfinance normalization
                         if "close" in ticker_data.columns:
                             ticker_df = ticker_data["close"]
                         else:
                             # Fallback: try to find any close-like column
-                            logger.warning(f"No 'close' column for {ticker}, columns: {ticker_data.columns.tolist()}")
+                            logger.warning(
+                                f"No 'close' column for {ticker}, columns: {ticker_data.columns.tolist()}"
+                            )
                             continue
-                        
+
                         for period in sma_periods:
                             if len(ticker_df) >= period:
                                 ma_matrix[ticker]["sma"][period] = float(
@@ -335,7 +437,7 @@ class DataPipeline:
                                 )
                             else:
                                 ma_matrix[ticker]["sma"][period] = None
-                        
+
                         for period in ema_periods:
                             if len(ticker_df) >= period:
                                 ma_matrix[ticker]["ema"][period] = float(
@@ -386,7 +488,7 @@ class DataPipeline:
                 return cached
 
         filings = {}
-        
+
         if self._sec.is_available:
             for ticker in tickers:
                 ticker_filings = self._sec.get_recent_filings(
@@ -432,7 +534,7 @@ class DataPipeline:
                 return cached
 
         transactions = {}
-        
+
         if self._sec.is_available:
             for ticker in tickers:
                 transactions[ticker] = self._sec.get_insider_transactions(
@@ -496,14 +598,14 @@ class DataPipeline:
             "market_news": self.fetch_market_news(),
             "timestamp": datetime.utcnow().isoformat(),
         }
-        
+
         if include_ma:
             result["moving_averages"] = self.fetch_moving_averages(tickers)
-        
+
         if include_sec:
             result["sec_filings"] = self.fetch_sec_filings(tickers)
             result["insider_transactions"] = self.fetch_insider_transactions(tickers)
-        
+
         return result
 
     def cache_stats(self) -> dict[str, Any]:

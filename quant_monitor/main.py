@@ -31,16 +31,13 @@ def run_signal_cycle() -> None:
     from quant_monitor.agent.fusion import SignalFusion
     from quant_monitor.config import cfg
     from quant_monitor.data.pipeline import DataPipeline
-    from quant_monitor.features.sentiment_features import SentimentFeatureEngine
     from quant_monitor.features.volatility import (
         classify_regime,
         hurst_exponent,
         realized_volatility,
         volatility_percentile,
     )
-    from quant_monitor.models.fundamental import FundamentalModel
     from quant_monitor.models.macro import MacroModel
-    from quant_monitor.models.sentiment import SentimentModel
     from quant_monitor.models.technical import TechnicalModel
 
     pipeline = DataPipeline()
@@ -52,9 +49,8 @@ def run_signal_cycle() -> None:
         # 1. Fetch data
         prices = pipeline.fetch_prices(tickers)
         macro = pipeline.fetch_macro()
-        news = pipeline.fetch_news(tickers)
-        fundamentals = pipeline.fetch_fundamentals(tickers)
-
+        pipeline.fetch_news(tickers)
+        
         # 2. Classify volatility regime
         spy_prices = prices.loc["SPY"] if "SPY" in prices.index.get_level_values(0) else None
         if spy_prices is not None and len(spy_prices) > 200:
@@ -70,8 +66,6 @@ def run_signal_cycle() -> None:
         # 3. Run models
         tech_model = TechnicalModel()
         macro_model = MacroModel()
-        sent_model = SentimentModel()
-        fund_model = FundamentalModel()
 
         tech_scores = tech_model.score_all(
             {t: prices.loc[t] for t in tickers if t in prices.index.get_level_values(0)}
@@ -79,21 +73,7 @@ def run_signal_cycle() -> None:
         macro_score = macro_model.score(macro)
         macro_regime = macro_model.classify_regime(macro)
 
-        # Sentiment: score headlines per ticker
-        sent_engine = SentimentFeatureEngine()
-        sent_scores = {}
-        for ticker in tickers:
-            ticker_news = news.get(ticker, [])
-            if ticker_news:
-                headlines = [n.get("title", "") for n in ticker_news if n.get("title")]
-                if headlines:
-                    scored = sent_engine.score_headlines(headlines)
-                    import pandas as pd
-                    scored_df = pd.DataFrame(scored)
-                    if not scored_df.empty:
-                        sent_scores[ticker] = sent_model.score(scored_df)
-                        continue
-            sent_scores[ticker] = 0.0
+        sent_scores = {ticker: 0.0 for ticker in tickers}
 
         # Fundamental scores (simplified for scheduler)
         fund_scores = {t: 0.0 for t in tickers}  # placeholder until pipeline provides sector data
@@ -107,10 +87,10 @@ def run_signal_cycle() -> None:
 
         from quant_monitor.agent.optimizer import PortfolioOptimizer
         from quant_monitor.agent.risk_manager import RiskManager
-        
+
         optimizer = PortfolioOptimizer()
         risk_manager = RiskManager()
-        
+
         # Build views from fused signal scores
         views = {}
         view_confidences = {}
@@ -124,43 +104,124 @@ def run_signal_cycle() -> None:
             else:
                 views[t] = 0.0
             view_confidences[t] = res["confidence"]
-            
+
         # Get latest prices for optimization
         latest_prices = {}
         for t in tickers:
             if t in prices.index.get_level_values(0):
                 latest_prices[t] = prices.loc[t, "close"].iloc[-1]
-        
+
         current_prices_series = pd.Series(latest_prices)
         current_positions = {}  # Mock empty portfolio for now
         current_weights = {t: 0.0 for t in tickers}
-        
+
         # Kill switch check
         kills = risk_manager.check_kill_switch(current_positions, latest_prices)
         if kills:
             logger.critical("Kill switch triggered for %d positions", len(kills))
             for k in kills:
                 views[k["ticker"]] = -1.0  # Force dump
+
+        # === PHASE 13-17: TOPOLOGICAL MATH ENGINE ===
+        logger.info("Initiating Phase 13-17 Topological Engine")
+        import json
+        import duckdb
+        from quant_monitor.models.math.correlation_graph import CorrelationGraphBuilder
+        from quant_monitor.models.math.hrp_sizer import HRPSizer
+        from quant_monitor.models.math.mst_pruner import MSTPruner
+        from quant_monitor.models.math.drift_predictor import DriftPredictor
         
-        # Compute target weights using Black-Litterman
-        target_weights = optimizer.compute_target_weights(
-            current_prices=current_prices_series,
-            views=views,
-            view_confidences=view_confidences
-        )
+        target_weights = None
+        mst_edges = []
         
+        try:
+            # Phase 1: Graphical Lasso Correl
+            builder = CorrelationGraphBuilder()
+            graph_data = builder.build_graph()
+            
+            if "precision" in graph_data and graph_data["precision"]:
+                import numpy as np
+                partial_corr = np.array(graph_data["precision"]) # this is actually partial corr after transformation in builder
+                d = np.diag(partial_corr)
+                d_inv_sqrt = np.diag(1.0 / np.sqrt(np.clip(d, a_min=1e-12, a_max=None)))
+                partial_corr_matrix = - (d_inv_sqrt @ partial_corr @ d_inv_sqrt)
+                np.fill_diagonal(partial_corr_matrix, 1.0)
+                
+                valid_tickers = graph_data["tickers"]
+                
+                # We need variances for HRP. Approximate using 252-day variance of daily returns.
+                returns_df = builder._extract_returns()
+                variances = returns_df.var().values
+                
+                # Phase 2: HRP allocation
+                sizer = HRPSizer(partial_corr_matrix, valid_tickers, variances)
+                target_weights = sizer.allocate()
+                
+                # Phase 4: MST Pruning
+                pruner = MSTPruner(partial_corr_matrix, valid_tickers)
+                mst_results = pruner.process_mst()
+                mst_edges = mst_results["mst_edges"]
+                
+                # Phase 3: Drift Adjustment
+                predictor = DriftPredictor()
+                spy_t_15 = current_prices_series.get("SPY", 0.0)
+                drift_orders = predictor.generate_orders(current_prices_series.to_dict(), spy_t_15)
+                if drift_orders:
+                    try:
+                        from rich.console import Console
+                        from rich.table import Table
+                        console = Console()
+                        table = Table(title="15-Minute Drift Execution Targets (Phase 19)", show_header=True, header_style="bold magenta")
+                        table.add_column("Details", style="cyan", justify="left")
+                        
+                        for d in drift_orders:
+                            if "Buy" in d:
+                                table.add_row(f"[green]{d}[/green]")
+                            elif "Sell" in d:
+                                table.add_row(f"[red]{d}[/red]")
+                            else:
+                                table.add_row(d)
+                        console.print(table)
+                    except ImportError:
+                        logger.info("--- Drift Predictor Execution Targets ---")
+                        for d in drift_orders:
+                            logger.info(d)
+                
+                # Logging state to DuckDB logic
+                conn = duckdb.connect("portfolio.duckdb", read_only=False)
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS audit_log (
+                        timestamp TIMESTAMP,
+                        target_weights VARCHAR,
+                        mst_edges VARCHAR
+                    );
+                """)
+                conn.execute(
+                    "INSERT INTO audit_log VALUES (CURRENT_TIMESTAMP, ?, ?)",
+                    (json.dumps(target_weights), json.dumps(mst_edges))
+                )
+                conn.close()
+                logger.info("Topological pipeline succeeded.")
+            else:
+                 raise ValueError("GraphicalLassoCV empty graph returned.")
+
+        except Exception as e:
+            logger.error(f"Topological engine failed: {e}. Falling back to equal weight logic.")
+            target_weights = {t: 1.0 / len(tickers) for t in tickers}
+
+        # Ensure all tickers have a weight
+        for t in tickers:
+            if t not in target_weights:
+                target_weights[t] = 0.0
+
         # Generate rebalancing trade instructions
         proposed_trades = optimizer.compute_rebalance_trades(
-            current_weights=current_weights,
-            target_weights=target_weights,
-            drift_threshold=0.01
+            current_weights=current_weights, target_weights=target_weights, drift_threshold=0.01
         )
-        
+
         # Validate proposed trades against risk limits
         validated_trades = risk_manager.validate_trades(
-            proposed_trades=proposed_trades,
-            current_positions=current_positions,
-            regime=regime
+            proposed_trades=proposed_trades, current_positions=current_positions, regime=regime
         )
 
         # 6. Log results
@@ -168,8 +229,11 @@ def run_signal_cycle() -> None:
             if result["action"] != "HOLD":
                 logger.info(
                     "SIGNAL: %s → %s (score=%.3f, confidence=%.3f, dominant=%s)",
-                    ticker, result["action"], result["fused_score"],
-                    result["confidence"], result["dominant_model"],
+                    ticker,
+                    result["action"],
+                    result["fused_score"],
+                    result["confidence"],
+                    result["dominant_model"],
                 )
 
         # Log planned executions
@@ -180,16 +244,19 @@ def run_signal_cycle() -> None:
             else:
                 executed += 1
                 logger.info(
-                    "EXECUTE TRADE: %s → Target: %.1f%% (Delta: %+.1f%%)", 
-                    trade["ticker"], trade["target_weight"] * 100, trade.get("delta", 0) * 100
+                    "EXECUTE TRADE: %s → Target: %.1f%% (Delta: %+.1f%%)",
+                    trade["ticker"],
+                    trade["target_weight"] * 100,
+                    trade.get("delta", 0) * 100,
                 )
-        
+
         if executed > 0:
             logger.info("Phase 7 Orchestrator: Output %d valid execution targets.", executed)
 
         # 6.5 Persist signals to Appwrite
         try:
             from quant_monitor.data.appwrite_client import create_appwrite_client
+
             aw = create_appwrite_client()
             for ticker, result in fused.items():
                 aw.write_signal(
@@ -207,7 +274,12 @@ def run_signal_cycle() -> None:
 
             # Also write regime history
             from quant_monitor.features.volatility import hurst_exponent, realized_volatility
-            spy_returns = prices.loc["SPY"]["close"].pct_change().dropna() if "SPY" in prices.index.get_level_values(0) else None
+
+            spy_returns = (
+                prices.loc["SPY"]["close"].pct_change().dropna()
+                if "SPY" in prices.index.get_level_values(0)
+                else None
+            )
             if spy_returns is not None:
                 aw.write_regime(
                     regime=regime,
@@ -224,6 +296,7 @@ def run_signal_cycle() -> None:
         import asyncio
 
         from quant_monitor.agent.alerts import AlertDispatcher, AlertPriority, AlertType
+
         dispatcher = AlertDispatcher()
 
         for ticker, result in fused.items():
@@ -233,31 +306,33 @@ def run_signal_cycle() -> None:
                     f"Score: {result['fused_score']:.3f} | Confidence: {result['confidence']:.3f}\n"
                     f"Dominant model: {result['dominant_model']}"
                 )
-                asyncio.run(dispatcher.send_alert(
-                    alert_type=AlertType.REBALANCE,
-                    priority=AlertPriority.HIGH,
-                    message=msg,
-                    ticker=ticker,
-                ))
+                asyncio.run(
+                    dispatcher.send_alert(
+                        alert_type=AlertType.REBALANCE,
+                        priority=AlertPriority.HIGH,
+                        message=msg,
+                        ticker=ticker,
+                    )
+                )
 
         if macro_regime == "CRISIS":
             msg = dispatcher.format_macro_shift_alert("TRANSITION", "CRISIS", macro)
-            asyncio.run(dispatcher.send_alert(
-                alert_type=AlertType.MACRO_SHIFT,
-                priority=AlertPriority.CRITICAL,
-                message=msg,
-            ))
-
+            asyncio.run(
+                dispatcher.send_alert(
+                    alert_type=AlertType.MACRO_SHIFT,
+                    priority=AlertPriority.CRITICAL,
+                    message=msg,
+                )
+            )
 
         logger.info(
             "── Signal cycle complete | Regime: %s | Macro regime: %s ──",
-            regime, macro_regime,
+            regime,
+            macro_regime,
         )
 
     except Exception as e:
         logger.error("Signal cycle failed: %s", e, exc_info=True)
-
-
 
 
 def run_spiders() -> None:
@@ -282,6 +357,7 @@ def run_spiders() -> None:
         process.crawl(SecEdgarSpider)
         # YfinanceSpider only if Massive is unavailable
         from quant_monitor.data.sources.massive_feed import get_massive_feed
+
         if not get_massive_feed().is_available:
             process.crawl(YfinanceSpider)
 
@@ -295,7 +371,7 @@ def main() -> None:
     """Start the portfolio monitoring scheduler."""
     from quant_monitor.config import cfg
 
-    logger.info("Quant Portfolio Monitor starting")
+    logger.info("Ganet - Project BWC starting")
     logger.info("Tracking %d positions | Benchmark: %s", len(cfg.tickers), cfg.benchmark)
     logger.info("Valuation date: %s | Sunset: %s", cfg.valuation_date, cfg.sunset_date)
 
@@ -325,12 +401,17 @@ def main() -> None:
     if use_local_spiders:
         scheduler.add_job(
             run_spiders,
-            trigger=IntervalTrigger(minutes=getattr(cfg, "scrapy_cloud", {}).get("schedule_off_hours_minutes", 60)),
+            trigger=IntervalTrigger(
+                minutes=getattr(cfg, "scrapy_cloud", {}).get("schedule_off_hours_minutes", 60)
+            ),
             id="spider_run",
             name="Scrapy Spider Run",
             replace_existing=True,
         )
-        logger.info("Local spider scheduling enabled — every %d min", getattr(cfg, "scrapy_cloud", {}).get("schedule_off_hours_minutes", 60))
+        logger.info(
+            "Local spider scheduling enabled — every %d min",
+            getattr(cfg, "scrapy_cloud", {}).get("schedule_off_hours_minutes", 60),
+        )
 
     try:
         scheduler.start()

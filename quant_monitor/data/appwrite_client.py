@@ -34,6 +34,9 @@ COLLECTIONS = {
     "alerts": "alerts",
     "regime_history": "regime_history",
     "scraped_data": "scraped_data",
+    "eod_price_matrix": "eod_price_matrix",
+    "live_spy_proxy": "live_spy_proxy",
+    "correlations_cache": "correlations_cache",
 }
 
 
@@ -64,9 +67,12 @@ class AppwriteClient:
 
         # Initialize client
         self._client = Client()
-        self._client.set_endpoint(self.endpoint)
-        self._client.set_project(self.project_id)
-        self._client.set_key(self.api_key)
+        if self.endpoint:
+            self._client.set_endpoint(self.endpoint)
+        if self.project_id:
+            self._client.set_project(self.project_id)
+        if self.api_key:
+            self._client.set_key(self.api_key)
 
         self._databases = TablesDB(self._client)
         logger.info(f"Appwrite client initialized for project: {self.project_id}")
@@ -131,7 +137,9 @@ class AppwriteClient:
                 table_id=collection_id,
                 queries=queries or [],
             )
-            docs = result.get("rows", result.get("documents", []))  # Fallback to documents just in case
+            docs = result.get(
+                "rows", result.get("documents", [])
+            )  # Fallback to documents just in case
             logger.debug(f"Queried {len(docs)} documents from {collection}")
             return docs
         except AppwriteException as e:
@@ -142,25 +150,35 @@ class AppwriteClient:
         self,
         collection: str,
         documents: list[dict[str, Any]],
+        max_workers: int = 10,
     ) -> int:
-        """Write multiple documents to a collection.
+        """Write multiple documents to a collection using concurrent network requests.
 
-        Note: Appwrite doesn't have native batch write, so we iterate.
+        Note: Appwrite doesn't have native batch write, so we iterate concurrently.
 
         Args:
             collection: Collection name
             documents: List of documents to write
+            max_workers: Max concurrent requests
 
         Returns:
             Number of successfully written documents
         """
+        import concurrent.futures
+        
         success_count = 0
-        for doc in documents:
+        
+        def _write(doc):
             try:
                 self.write_document(collection, doc)
-                success_count += 1
+                return True
             except AppwriteException:
-                continue
+                return False
+                
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # We can use map to gather results
+            results = executor.map(_write, documents)
+            success_count = sum(1 for r in results if r)
 
         logger.info(f"Batch wrote {success_count}/{len(documents)} to {collection}")
         return success_count

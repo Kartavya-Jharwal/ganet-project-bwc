@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quant Simulation | Topological Constraints</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --text-main: #f2f2f2;
+            --accent: #ff4757;
+            --secondary: #2f3542;
+        }
+        body, html {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: "Inter", sans-serif;
+            scroll-behavior: smooth;
+        }
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5vw;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 8rem);
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            z-index: 10;
+            mix-blend-mode: difference;
+        }
+        .hero video {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%; min-height: 100%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+        .nav-sticky {
+            position: fixed;
+            top: 50%; left: 2vw;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            z-index: 100;
+        }
+        .nav-sticky a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .nav-sticky a:hover { color: var(--accent); }
+        
+        section {
+            padding: 15vh 15vw;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .code-block {
+            font-family: "JetBrains Mono", monospace;
+            background: rgba(255,255,255,0.05);
+            padding: 2rem;
+            border-left: 4px solid var(--accent);
+            backdrop-filter: blur(10px);
+        }
+        
+        h2 { font-size: 3rem; margin-bottom: 2rem; border-bottom: 1px solid var(--secondary); padding-bottom: 1rem;}
+        p { font-size: 1.2rem; line-height: 1.6; max-width: 80ch; color: #a4b0be; }
+    </style>
+</head>
+<body>
+
+    <div class="nav-sticky">
+        <a href="#thesis">01_Thesis</a>
+        <a href="#topology">02_Topology</a>
+        <a href="#hrp">03_HRP</a>
+        <a href="#results">04_Results</a>
+    </div>
+
+    <div class="hero">
+        <!-- Assuming Manim MP4 will be rendered here -->
+        <video autoplay loop muted playsinline>
+            <source src="media/videos/scenes/1080p60/ScatterToNetwork.mp4" type="video/mp4">
+        </video>
+        <h1>The Illusion<br><span style="color: var(--accent)">of</span> Diversification</h1>
+    </div>
+
+    <section id="thesis" class="reveal">
+        <h2>01 / The Simulation Thesis</h2>
+        <p>This project is not a standard algorithmic trading script. It is a critical market simulation engineered to solve granular microstructure issues—specifically the 15-minute forced platform latency—while operating under strict architectural constraints.</p>
+        <div class="code-block">
+            P_target = P_{t-15} * (1 + (beta_i * DeltaSPY_15m))
+        </div>
+    </section>
+
+    <section id="topology" class="reveal">
+        <h2>02 / Topological Pruning</h2>
+        <p>Using Scikit-Learn GraphicalLassoCV, we compute a sparse inverse covariance matrix. This allows us to extract the true conditional independence graph and visualize it via Kruskal minimum spanning trees.</p>
+        <div style="width: 100%; height: 650px; border: 1px solid var(--secondary); border-radius: 8px; overflow: hidden; margin-top: 2rem;">
+            <iframe src="interactive_mst.html" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+    </section>
+
+    <section id="hrp" class="reveal">
+        <h2>03 / Hierarchical Risk Parity</h2>
+        <p>Traditional equal-weight logic ignores variance. By employing SciPy single linkage, we cluster highly correlated assets and size them inversely proportional to their specific Trailing Variance (ATR).</p>
+    </section>
+
+    <section id="results" class="reveal">
+        <h2>04 / Out-of-Sample Return</h2>
+        <p>Step-forward 21-day walk-forward simulations prove systemic edge.</p>
+        <div class="code-block" id="metrics-target">
+            Loading metrics...
+        </div>
+    </section>
+
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("active");
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+        
+        // Load JSON results dynamically
+        fetch("backtest-results.json").then(res => res.json()).then(data => {
+            document.getElementById("metrics-target").innerText = JSON.stringify(data, null, 2);
+        }).catch(e => {
+            document.getElementById("metrics-target").innerText = "Backtest metrics unavailable.";
+        });
+    </script>
+</body>
+</html>
+

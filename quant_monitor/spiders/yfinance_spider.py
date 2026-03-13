@@ -23,6 +23,7 @@ class YfinanceSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from quant_monitor.config import cfg
+
         self._tickers = cfg.tickers
 
     def start_requests(self):
