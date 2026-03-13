@@ -21,19 +21,24 @@ from typing import Any
 import pandas as pd
 
 from quant_monitor.config import cfg
-from quant_monitor.data.cache import get_cache
-from quant_monitor.data.sources.yfinance_feed import yfinance_feed
-from quant_monitor.data.sources.massive_feed import get_massive_feed, MassiveFeed
-from quant_monitor.data.sources.fred_feed import create_fred_feed
-from quant_monitor.data.sources.sec_feed import create_sec_feed, SecEdgarFeed
-from quant_monitor.data.sources.news_feed import create_news_feed, NewsFeed
 from quant_monitor.data.appwrite_client import create_appwrite_client
+from quant_monitor.data.cache import get_cache
+from quant_monitor.data.sources.fred_feed import create_fred_feed
+from quant_monitor.data.sources.massive_feed import get_massive_feed
+from quant_monitor.data.sources.news_feed import create_news_feed
+from quant_monitor.data.sources.sec_feed import create_sec_feed
+from quant_monitor.data.sources.yfinance_feed import yfinance_feed
 
 logger = logging.getLogger(__name__)
 
 
 class DataPipeline:
     """Orchestrates multi-source data pulls with caching and failover."""
+
+    @staticmethod
+    def _has_numeric_value(payload: dict[str, Any]) -> bool:
+        """True when at least one value is numeric and not None."""
+        return any(isinstance(v, (int, float)) for v in payload.values())
 
     def __init__(self) -> None:
         """Initialize data sources and cache."""
@@ -74,7 +79,8 @@ class DataPipeline:
         if tickers is None:
             tickers = cfg.tickers
 
-        cache_key = f"prices:{','.join(sorted(tickers))}:{period}"
+        source_hint = "massive" if self._massive.is_available else "yfinance"
+        cache_key = f"prices:{source_hint}:{','.join(sorted(tickers))}:{period}"
 
         if use_cache:
             cached = self._cache.get(cache_key)
@@ -214,9 +220,11 @@ class DataPipeline:
 
         macro = self._fred.get_macro_snapshot()
 
-        if macro and use_cache:
+        if macro and self._has_numeric_value(macro) and use_cache:
             ttl = cfg.cache_ttl.get("macro", 3600)
             self._cache.set(cache_key, macro, ttl=ttl)
+        elif macro and not self._has_numeric_value(macro):
+            logger.warning("Macro snapshot contained no numeric values; skipping cache write")
 
         return macro
 
@@ -260,8 +268,8 @@ class DataPipeline:
     def fetch_moving_averages(
         self,
         tickers: list[str] | None = None,
-        sma_periods: list[int] = [5, 10, 20, 50, 200],
-        ema_periods: list[int] = [12, 26],
+        sma_periods: list[int] | None = None,
+        ema_periods: list[int] | None = None,
         use_cache: bool = True,
     ) -> dict[str, dict[str, dict[str, float | None]]]:
         """Fetch moving average matrix from Massive (PRIMARY source).
@@ -279,8 +287,14 @@ class DataPipeline:
         """
         if tickers is None:
             tickers = cfg.tickers
+        if sma_periods is None:
+            sma_periods = [5, 10, 20, 50, 200]
+        if ema_periods is None:
+            ema_periods = [12, 26]
 
-        cache_key = f"ma_matrix:{','.join(sorted(tickers))}"
+        sma_key = ",".join(str(p) for p in sorted(sma_periods))
+        ema_key = ",".join(str(p) for p in sorted(ema_periods))
+        cache_key = f"ma_matrix:{','.join(sorted(tickers))}:sma[{sma_key}]:ema[{ema_key}]"
 
         if use_cache:
             cached = self._cache.get(cache_key)
