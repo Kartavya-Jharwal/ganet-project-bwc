@@ -35,9 +35,9 @@ def run_spiders() -> None:
 '''
 
 if "def run_spiders()" not in text:
-    text = text.replace('def main() -> None:', func_to_add + '\n\ndef main() -> None:')
+    text = text.replace("def main() -> None:", func_to_add + "\n\ndef main() -> None:")
 
-sched_add = '''
+sched_add = """
     # Optional: run spiders every hour for supplemental data
     use_local_spiders = getattr(cfg, "scrapy_cloud", {}).get("local_spiders", False)
     if use_local_spiders:
@@ -49,10 +49,10 @@ sched_add = '''
             replace_existing=True,
         )
         logger.info("Local spider scheduling enabled — every %d min", getattr(cfg, "scrapy_cloud", {}).get("schedule_off_hours_minutes", 60))
-'''
+"""
 
 if "use_local_spiders =" not in text:
-    text = text.replace('    scheduler.start()', sched_add + '\n    scheduler.start()')
+    text = text.replace("    scheduler.start()", sched_add + "\n    scheduler.start()")
 
 with open("quant_monitor/main.py", "w", encoding="utf-8") as f:
     f.write(text)

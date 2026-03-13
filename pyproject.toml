@@ -1,9 +1,11 @@
 [project]
 name = "quant-monitor"
 version = "0.1.0"
-description = "Quant Portfolio Monitoring System — autonomous signal generation, risk monitoring, and rebalancing recommendations"
+description = "Ganet - Project BWC (Brownies with White Chocolate) — autonomous signal generation, risk monitoring, and rebalancing recommendations"
 requires-python = ">=3.11,<3.14"
 dependencies = [
+    # Visuals
+    "asciichartpy>=1.5.0",
     # Data sources
     "alpaca-py>=0.30.0",
     "requests>=2.31.0",
@@ -11,9 +13,6 @@ dependencies = [
     "httpx>=0.27.0",
     # Database & caching
     "diskcache>=5.6.0",
-    # NLP / ML (torch is a transitive dep of transformers — not listed directly)
-    "transformers>=4.40.0",
-    "sentence-transformers>=3.0.0",
     # Portfolio optimization
     "pyportfolioopt>=1.5.0",
     # Data processing
@@ -41,6 +40,15 @@ dependencies = [
     "cvxpy>=1.8.1",
     "scikit-learn>=1.8.0",
     "cvxopt>=1.3.3",
+    "networkx>=3.6.1",
+    "manim>=0.20.1",
+    "duckdb>=1.5.0",
+    "typer>=0.24.1",
+    "polars>=1.39.0",
+    "pandas-market-calendars>=5.3.1.2",
+    "pyarrow>=23.0.1",
+    "streamlit>=1.55.0",
+    "streamlit-echarts>=0.6.0",
 ]
 
 [build-system]
@@ -48,7 +56,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-quant-monitor = "quant_monitor.main:main"
+quant = "quant_monitor.cli:app"
 quant-dashboard = "quant_monitor.dashboard.app:main"
 quant-bootstrap = "quant_monitor.bootstrap:main"
 

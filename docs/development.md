@@ -67,7 +67,13 @@ uv run python -c "import quant_monitor; print('OK')"
 # Check config loads
 uv run python -c "from quant_monitor.config import cfg; print(cfg.tickers)"
 
-# Run main (should exit cleanly)
+# Setup Appwrite collections (idempotent)
+doppler run -- uv run python scripts/setup_appwrite.py
+
+# Run readiness bootstrap
+doppler run -- uv run quant-bootstrap
+
+# Run worker
 doppler run -- uv run python -m quant_monitor.main
 ```
 
@@ -86,8 +92,8 @@ uv run python -m quant_monitor.main
 # With Doppler secrets
 doppler run -- uv run python -m quant_monitor.main
 
-# Run Streamlit dashboard
-doppler run -- uv run streamlit run quant_monitor/dashboard/app.py
+# Run Rich CLI dashboard
+doppler run -- uv run quant-dashboard
 ```
 
 ### Adding Dependencies
@@ -187,7 +193,9 @@ quant_monitor/
 │   └── metrics.py        # Sharpe, Calmar, etc.
 │
 ├── dashboard/            # UI
-│   └── app.py            # Streamlit app
+│   ├── app.py            # Rich CLI app
+│   ├── data_loader.py    # dashboard data adapters
+│   └── openbb_views.py   # optional OpenBB enrichment
 │
 └── spiders/              # Scrapy (deploys to Zyte)
     ├── items.py
@@ -207,7 +215,7 @@ All non-secret, version-controlled configuration:
 
 ```toml
 [project]
-name = "Quant Portfolio Monitor"
+name = "Ganet - Project BWC"
 initial_capital = 1_000_000
 benchmark = "SPY"
 
@@ -323,11 +331,11 @@ def test_ema_calculation(sample_ohlcv):
 ### Local Development
 
 ```bash
-# Start dashboard
-doppler run -- uv run streamlit run quant_monitor/dashboard/app.py
-
 # Start worker (signal loop)
 doppler run -- uv run python -m quant_monitor.main
+
+# Start dashboard
+doppler run -- uv run quant-dashboard --view health
 ```
 
 ### Heroku

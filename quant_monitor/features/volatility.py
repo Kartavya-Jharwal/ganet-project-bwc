@@ -31,11 +31,12 @@ class VolRegime(StrEnum):
 def realized_volatility(returns: pd.Series, window: int = 20) -> pd.Series:
     """Annualized rolling realized volatility."""
     # rolling std dev of returns multiplied by sqrt(252) for annualization
-    return returns.rolling(window=window).std() * (252 ** 0.5)
+    return returns.rolling(window=window).std() * (252**0.5)
 
 
 def volatility_percentile(vol_series: pd.Series, lookback: int = 252) -> pd.Series:
     """Percentile rank of current vol vs trailing lookback period."""
+
     def pct_rank(window: pd.Series) -> float:
         # percentile of last value within window (excluding itself)
         if len(window) <= 1:

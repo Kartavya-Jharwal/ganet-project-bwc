@@ -1,5 +1,5 @@
 {
-  "name": "Quant Portfolio Monitor",
+  "name": "Ganet - Project BWC",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
   "features": {},
   "postCreateCommand": "curl -LsSf https://astral.sh/uv/install.sh | sh && export PATH=\"$HOME/.local/bin:$PATH\" && uv sync",

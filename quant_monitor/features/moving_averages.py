@@ -88,9 +88,7 @@ def hma(series: pd.Series, period: int = 16) -> pd.Series:
 
     def weighted_ma(s: pd.Series, w: int) -> pd.Series:
         weights = np.arange(1, w + 1, dtype=float)
-        return s.rolling(window=w).apply(
-            lambda x: np.dot(x, weights) / weights.sum(), raw=True
-        )
+        return s.rolling(window=w).apply(lambda x: np.dot(x, weights) / weights.sum(), raw=True)
 
     half_period = period // 2
     sqrt_period = int(np.sqrt(period))

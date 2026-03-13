@@ -104,11 +104,7 @@ class SignalFusion:
         regime: str,
     ) -> dict[str, dict]:
         """Fuse signals for all tickers. Returns {ticker: fusion_result}."""
-        tickers = (
-            set(technical_scores)
-            | set(fundamental_scores)
-            | set(sentiment_scores)
-        )
+        tickers = set(technical_scores) | set(fundamental_scores) | set(sentiment_scores)
         results: dict[str, dict] = {}
         for ticker in sorted(tickers):
             results[ticker] = self.fuse(

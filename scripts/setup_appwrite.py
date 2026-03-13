@@ -97,6 +97,29 @@ COLLECTIONS = {
             ("url", "string", False, 500),
         ],
     },
+    "eod_price_matrix": {
+        "name": "EOD Price Matrix",
+        "attributes": [
+            ("timestamp", "datetime", True),
+            ("ticker", "string", True, 10),
+            ("close", "float", True),
+        ],
+    },
+    "live_spy_proxy": {
+        "name": "Live SPY Proxy",
+        "attributes": [
+            ("timestamp", "datetime", True),
+            ("price", "float", True),
+        ],
+    },
+    "correlations_cache": {
+        "name": "Correlations Cache",
+        "attributes": [
+            ("timestamp", "datetime", True),
+            ("nodes", "string", True, 10000),       # JSON encoded nodes
+            ("edges", "string", True, 10000),       # JSON encoded edgelist
+        ],
+    },
 }
 
 
@@ -165,7 +188,9 @@ def main() -> int:
     api_key = os.environ.get("APPWRITE_API_KEY")
 
     if not all([endpoint, project_id, api_key]):
-        console.print("[red]ERROR[/red]: Missing Appwrite credentials. Run with: doppler run -- ...")
+        console.print(
+            "[red]ERROR[/red]: Missing Appwrite credentials. Run with: doppler run -- ..."
+        )
         return 1
 
     console.print(f"Connecting to Appwrite at [cyan]{endpoint}[/cyan]")

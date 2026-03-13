@@ -23,6 +23,7 @@ class GoogleRssSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         from quant_monitor.config import cfg
+
         self._tickers = cfg.tickers
         self._holdings = cfg.holdings
 
@@ -32,10 +33,7 @@ class GoogleRssSpider(scrapy.Spider):
             name = self._holdings.get(ticker, {}).get("name", ticker)
             # Use company name for better results when available
             query = f"{name}+stock" if name != ticker else f"{ticker}+stock"
-            url = (
-                f"https://news.google.com/rss/search"
-                f"?q={query}&hl=en-US&gl=US&ceid=US:en"
-            )
+            url = f"https://news.google.com/rss/search?q={query}&hl=en-US&gl=US&ceid=US:en"
             yield scrapy.Request(url, callback=self.parse, meta={"ticker": ticker})
 
     def parse(self, response):

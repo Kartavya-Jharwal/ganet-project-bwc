@@ -45,7 +45,7 @@ class TestMovingAverages:
         kama_trending = kama(trending, period=10)
         # In a perfect trend, KAMA should closely track price
         # Check last 50 values: mean absolute error should be small
-        mae_trending = (trending.iloc[-50:] - kama_trending.iloc[-50:]).abs().mean()
+        (trending.iloc[-50:] - kama_trending.iloc[-50:]).abs().mean()
 
         # Choppy series
         choppy = pd.Series(np.random.randn(200).cumsum())
@@ -60,13 +60,15 @@ class TestMovingAverages:
         """VWAP must work with DataFrame containing open/high/low/close/volume."""
         from quant_monitor.features.moving_averages import vwap
 
-        ohlcv = pd.DataFrame({
-            "open": [100, 101, 102],
-            "high": [105, 106, 107],
-            "low": [99, 100, 101],
-            "close": [103, 104, 105],
-            "volume": [1000, 1500, 1200],
-        })
+        ohlcv = pd.DataFrame(
+            {
+                "open": [100, 101, 102],
+                "high": [105, 106, 107],
+                "low": [99, 100, 101],
+                "close": [103, 104, 105],
+                "volume": [1000, 1500, 1200],
+            }
+        )
         result = vwap(ohlcv)
         assert isinstance(result, pd.Series)
         assert len(result) == 3
@@ -95,15 +97,26 @@ class TestMovingAverages:
 
         np.random.seed(42)
         n = 300  # need enough data for SMA 200
-        ohlcv = pd.DataFrame({
-            "open": np.random.randn(n).cumsum() + 100,
-            "high": np.random.randn(n).cumsum() + 102,
-            "low": np.random.randn(n).cumsum() + 98,
-            "close": np.random.randn(n).cumsum() + 100,
-            "volume": np.random.randint(1000, 10000, n),
-        })
+        ohlcv = pd.DataFrame(
+            {
+                "open": np.random.randn(n).cumsum() + 100,
+                "high": np.random.randn(n).cumsum() + 102,
+                "low": np.random.randn(n).cumsum() + 98,
+                "close": np.random.randn(n).cumsum() + 100,
+                "volume": np.random.randint(1000, 10000, n),
+            }
+        )
         result = compute_ma_matrix(ohlcv)
-        expected_columns = {"ema_9", "ema_21", "sma_50", "sma_200", "kama_10", "vwap", "mvwap_20", "hma_16"}
+        expected_columns = {
+            "ema_9",
+            "ema_21",
+            "sma_50",
+            "sma_200",
+            "kama_10",
+            "vwap",
+            "mvwap_20",
+            "hma_16",
+        }
         assert expected_columns.issubset(set(result.columns)), (
             f"Missing columns: {expected_columns - set(result.columns)}"
         )
@@ -149,7 +162,7 @@ class TestVolatility:
         np.random.seed(42)
         # Mean-reverting: alternating +1/-1 with small noise
         n = 500
-        mean_rev = pd.Series(np.cumsum([(-1)**i + np.random.randn()*0.01 for i in range(n)]))
+        mean_rev = pd.Series(np.cumsum([(-1) ** i + np.random.randn() * 0.01 for i in range(n)]))
         h = hurst_exponent(mean_rev)
         assert h < 0.45, f"Hurst {h} should be < 0.45 for mean-reverting series"
 

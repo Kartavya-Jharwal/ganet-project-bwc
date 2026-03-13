@@ -1,11 +1,11 @@
 # =============================================================================
-# Quant Portfolio Monitor — Static Configuration
+# Ganet - Project BWC — Static Configuration
 # =============================================================================
 # All secrets (API keys, tokens) are injected via Doppler — NEVER put them here.
 # This file contains only non-sensitive, version-controlled configuration.
 
 [project]
-name = "Quant Portfolio Monitor"
+name = "Ganet - Project BWC"
 description = "Team 5 Investment Simulation — Hult International Business School"
 initial_capital = 1_000_000
 cash_balance = 53_955.71

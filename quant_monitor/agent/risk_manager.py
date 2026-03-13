@@ -39,7 +39,7 @@ class RiskManager:
         validated = []
         for trade in proposed_trades:
             trade = dict(trade)  # copy to avoid mutating input
-            ticker = trade["ticker"]
+            trade["ticker"]
             target_weight = trade.get("target_weight", 0.0)
 
             # Check: would the target weight breach position limit?
@@ -76,15 +76,20 @@ class RiskManager:
             if open_price and current and open_price > 0:
                 drawdown = (open_price - current) / open_price
                 if drawdown > threshold:
-                    kills.append({
-                        "ticker": ticker,
-                        "open_price": open_price,
-                        "current_price": current,
-                        "drawdown_pct": round(drawdown, 4),
-                    })
+                    kills.append(
+                        {
+                            "ticker": ticker,
+                            "open_price": open_price,
+                            "current_price": current,
+                            "drawdown_pct": round(drawdown, 4),
+                        }
+                    )
                     logger.critical(
                         "KILL SWITCH: %s down %.1f%% intraday (open=%.2f, now=%.2f)",
-                        ticker, drawdown * 100, open_price, current,
+                        ticker,
+                        drawdown * 100,
+                        open_price,
+                        current,
                     )
         return kills
 

@@ -48,8 +48,10 @@ class AlertType(StrEnum):
 
 class AlertDispatcher:
     """Sends formatted alerts to Telegram and ntfy."""
+
     def __init__(self) -> None:
         from quant_monitor.config import cfg
+
         self._last_alert_times: dict[str, datetime] = {}
         self._enabled = True
         self._cooldown_minutes = cfg.project.get("alert_cooldown_minutes", 60)
@@ -57,6 +59,7 @@ class AlertDispatcher:
         self._chat_id = cfg.secrets.TELEGRAM_CHAT_ID
         if self._telegram_token:
             from telegram import Bot
+
             self._bot = Bot(token=self._telegram_token)
         else:
             self._bot = None
@@ -237,6 +240,7 @@ class AlertDispatcher:
             f"Open: ${open_price:.2f} → Current: ${current:.2f}\n\n"
             f"<i>Immediate review recommended.</i>"
         )
+
     def format_macro_shift_alert(self, old_regime: str, new_regime: str, macro_data: dict) -> str:
         """Format a macro regime change alert."""
         vix = macro_data.get("vix", "N/A")
@@ -248,7 +252,9 @@ class AlertDispatcher:
             f"<i>Model weights have been adjusted.</i>"
         )
 
-    def format_sentiment_spike_alert(self, ticker: str, momentum: float, headline: str | None = None) -> str:
+    def format_sentiment_spike_alert(
+        self, ticker: str, momentum: float, headline: str | None = None
+    ) -> str:
         """Format a sentiment spike alert."""
         direction = "negative" if momentum < 0 else "positive"
         msg = (

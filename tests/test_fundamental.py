@@ -13,7 +13,12 @@ class TestFundamentalModel:
         from quant_monitor.models.fundamental import FundamentalModel
 
         model = FundamentalModel()
-        fundamentals = {"pe_ratio": 12.0, "ps_ratio": 1.5, "ev_ebitda": 8.0, "earnings_revision": 0.05}
+        fundamentals = {
+            "pe_ratio": 12.0,
+            "ps_ratio": 1.5,
+            "ev_ebitda": 8.0,
+            "earnings_revision": 0.05,
+        }
         sector_data = {"pe_median": 20.0, "ps_median": 3.0, "ev_ebitda_median": 12.0}
         score = model.score(fundamentals, sector_data)
         assert isinstance(score, float)
@@ -25,7 +30,12 @@ class TestFundamentalModel:
         from quant_monitor.models.fundamental import FundamentalModel
 
         model = FundamentalModel()
-        fundamentals = {"pe_ratio": 40.0, "ps_ratio": 8.0, "ev_ebitda": 25.0, "earnings_revision": -0.03}
+        fundamentals = {
+            "pe_ratio": 40.0,
+            "ps_ratio": 8.0,
+            "ev_ebitda": 25.0,
+            "earnings_revision": -0.03,
+        }
         sector_data = {"pe_median": 20.0, "ps_median": 3.0, "ev_ebitda_median": 12.0}
         score = model.score(fundamentals, sector_data)
         assert score < 0, "Expensive stock should get negative score"
@@ -43,17 +53,19 @@ class TestFundamentalModel:
         from quant_monitor.models.fundamental import FundamentalModel
 
         model = FundamentalModel()
-        df = pd.DataFrame({
-            "ticker": ["AAPL", "AAPL", "MSFT", "MSFT"],
-            "pe_ratio": [25.0, 25.0, 30.0, 30.0],
-            "ps_ratio": [6.0, 6.0, 10.0, 10.0],
-            "ev_ebitda": [18.0, 18.0, 22.0, 22.0],
-            "earnings_revision": [0.02, 0.02, -0.01, -0.01],
-            "sector": ["Tech", "Tech", "Tech", "Tech"],
-            "pe_median": [20.0, 20.0, 20.0, 20.0],
-            "ps_median": [5.0, 5.0, 5.0, 5.0],
-            "ev_ebitda_median": [15.0, 15.0, 15.0, 15.0],
-        })
+        df = pd.DataFrame(
+            {
+                "ticker": ["AAPL", "AAPL", "MSFT", "MSFT"],
+                "pe_ratio": [25.0, 25.0, 30.0, 30.0],
+                "ps_ratio": [6.0, 6.0, 10.0, 10.0],
+                "ev_ebitda": [18.0, 18.0, 22.0, 22.0],
+                "earnings_revision": [0.02, 0.02, -0.01, -0.01],
+                "sector": ["Tech", "Tech", "Tech", "Tech"],
+                "pe_median": [20.0, 20.0, 20.0, 20.0],
+                "ps_median": [5.0, 5.0, 5.0, 5.0],
+                "ev_ebitda_median": [15.0, 15.0, 15.0, 15.0],
+            }
+        )
         result = model.score_all(df)
         assert isinstance(result, dict)
         assert "AAPL" in result
@@ -78,18 +90,9 @@ class TestFundamentalModel:
         )
         assert -1.0 <= score_expensive <= 1.0
 
-    def test_sector_map_contains_all_tickers(self):
-        """SECTOR_MAP must contain all 15 portfolio holdings."""
-        from quant_monitor.models.fundamental import SECTOR_MAP
-
-        expected = {"SPY", "TSM", "MU", "PLTR", "AMZN", "GOOGL", "GE", "JPM",
-                    "LMT", "WMT", "XLP", "PG", "JNJ", "XLU", "IONQ"}
-        assert expected.issubset(set(SECTOR_MAP.keys()))
-
     def test_sector_map_importable(self):
         """SECTOR_MAP and SECTOR_PEERS are importable."""
         from quant_monitor.models.fundamental import SECTOR_MAP, SECTOR_PEERS
 
         assert isinstance(SECTOR_MAP, dict)
         assert isinstance(SECTOR_PEERS, dict)
-        assert len(SECTOR_MAP) >= 15

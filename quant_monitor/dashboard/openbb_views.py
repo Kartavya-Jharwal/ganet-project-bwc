@@ -19,6 +19,7 @@ def _get_openbb():
     """Lazy-import OpenBB with graceful failure."""
     try:
         from openbb import obb
+
         return obb
     except ImportError:
         logger.info("OpenBB not installed — enrichment views disabled.")
@@ -46,7 +47,9 @@ def render_economic_calendar(days_ahead: int = 7) -> Panel | None:
         )
         rows = result.to_df().head(15) if hasattr(result, "to_df") else []
 
-        table = Table(title="Economic Calendar (next 7d)", show_lines=True, header_style="bold cyan")
+        table = Table(
+            title="Economic Calendar (next 7d)", show_lines=True, header_style="bold cyan"
+        )
         table.add_column("Date")
         table.add_column("Event")
         table.add_column("Country")

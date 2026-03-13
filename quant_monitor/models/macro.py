@@ -31,6 +31,7 @@ class MacroModel:
             +1.0 = extreme risk-on
         """
         from quant_monitor.config import cfg
+
         thresholds = cfg.macro_thresholds
         signals = []
 
@@ -85,6 +86,7 @@ class MacroModel:
 
         """Classify current macro regime: RISK_ON | TRANSITION | CRISIS."""
         from quant_monitor.config import cfg
+
         thresholds = cfg.macro_thresholds
 
         vix = macro_snapshot.get("vix", 20.0)
@@ -122,6 +124,7 @@ class MacroModel:
         E.g., rising DXY → negative for TSM (ADR FX risk).
         """
         from quant_monitor.config import cfg
+
         thresholds = cfg.macro_thresholds
         impact = 0.0
 
