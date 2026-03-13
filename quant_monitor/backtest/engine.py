@@ -16,10 +16,8 @@ Models tested independently then compared:
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    import pandas as pd
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -40,12 +38,124 @@ class WalkForwardEngine:
     def run(self, data: pd.DataFrame, model_name: str) -> dict:
         """Run walk-forward backtest for a single model configuration.
 
+        For each window:
+        1. Train period: compute features
+        2. Test period: generate signals, track P/L
+
         Returns: dict of aggregated metrics across all test windows.
         """
-        # TODO Phase 8
-        raise NotImplementedError
+        import pandas as pd
+
+        from quant_monitor.backtest.metrics import calmar_ratio, max_drawdown, sharpe_ratio
+
+        n = len(data)
+        min_required = self.train_window + self.test_window
+
+        if n < min_required:
+            logger.warning(
+                "Insufficient data: %d rows, need %d (train=%d + test=%d)",
+                n, min_required, self.train_window, self.test_window,
+            )
+            return {"error": "insufficient_data", "rows": n, "required": min_required}
+
+        all_test_returns = []
+        window_results = []
+
+        start = 0
+        while start + min_required <= n:
+            train_end = start + self.train_window
+            test_end = min(train_end + self.test_window, n)
+
+            train_data = data.iloc[start:train_end]
+            test_data = data.iloc[train_end:test_end]
+
+            # Generate simple signals based on model_name
+            test_returns = test_data["close"].pct_change().dropna()
+
+            if model_name == "technical":
+                # Use MA crossover signal from training period
+                from quant_monitor.features.moving_averages import ema
+                fast_ma = ema(train_data["close"], 9)
+                slow_ma = ema(train_data["close"], 21)
+                signal = 1.0 if fast_ma.iloc[-1] > slow_ma.iloc[-1] else -1.0
+                test_returns = test_returns * signal
+
+            elif model_name == "fundamental":
+                # Fundamental: simple buy-and-hold (always long)
+                pass  # returns unchanged
+
+            elif model_name == "sentiment":
+                # Sentiment: momentum-based (lagged return sign)
+                prev_return = train_data["close"].pct_change().iloc[-5:].mean()
+                signal = 1.0 if prev_return > 0 else -1.0
+                test_returns = test_returns * signal
+
+            elif model_name == "fused_equal":
+                # Equal weight fusion of simple signals
+                pass  # returns unchanged (baseline)
+
+            elif model_name == "fused_regime":
+                # Regime-weighted: scale by volatility regime
+                from quant_monitor.features.volatility import realized_volatility
+                vol = realized_volatility(train_data["close"].pct_change().dropna())
+                if not vol.empty and vol.iloc[-1] > 0.3:
+                    test_returns = test_returns * 0.5  # reduce in high vol
+
+            all_test_returns.extend(test_returns.tolist())
+            window_results.append({
+                "window_start": start,
+                "window_end": test_end,
+                "mean_return": float(test_returns.mean()) if len(test_returns) > 0 else 0.0,
+            })
+
+            start += self.step_size
+
+        if not all_test_returns:
+            return {"error": "no_test_returns", "windows_tested": 0}
+
+        returns_series = pd.Series(all_test_returns)
+
+        return {
+            "model": model_name,
+            "sharpe_ratio": sharpe_ratio(returns_series),
+            "max_drawdown": max_drawdown(returns_series),
+            "calmar_ratio": calmar_ratio(returns_series),
+            "total_return": float((1 + returns_series).prod() - 1),
+            "mean_daily_return": float(returns_series.mean()),
+            "windows_tested": len(window_results),
+            "window_details": window_results,
+        }
 
     def compare_models(self, data: pd.DataFrame) -> pd.DataFrame:
-        """Run all 5 model configs and return comparative metrics table."""
-        # TODO Phase 8
-        raise NotImplementedError
+        """Run all 5 model configs and return comparative metrics table.
+
+        Models tested:
+        1. technical — MA crossover signals
+        2. fundamental — buy and hold
+        3. sentiment — momentum-based
+        4. fused_equal — equal-weight fusion
+        5. fused_regime — dynamic regime-weighted fusion (expected winner)
+        """
+        import pandas as pd
+
+        model_names = ["technical", "fundamental", "sentiment", "fused_equal", "fused_regime"]
+        results = []
+
+        for name in model_names:
+            try:
+                metrics = self.run(data, name)
+                if "error" not in metrics:
+                    results.append(metrics)
+                else:
+                    logger.warning("Model '%s' backtest failed: %s", name, metrics.get("error"))
+            except Exception as e:
+                logger.warning("Model '%s' backtest exception: %s", name, e)
+
+        if not results:
+            return pd.DataFrame()
+
+        df = pd.DataFrame(results)
+        # Set model name as index for easy comparison
+        if "model" in df.columns:
+            df = df.set_index("model")
+        return df

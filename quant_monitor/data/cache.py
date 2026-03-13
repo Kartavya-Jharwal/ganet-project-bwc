@@ -105,7 +105,7 @@ class DataCache:
         """Close the cache."""
         self._cache.close()
 
-    def __enter__(self) -> "DataCache":
+    def __enter__(self) -> DataCache:
         return self
 
     def __exit__(self, *args) -> None:

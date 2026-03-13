@@ -275,3 +275,4 @@ schedule_off_hours_minutes = 60     # run every N minutes outside market hours
 enabled = true
 cooldown_minutes = 30              # min time between repeated alerts for same ticker
 market_hours_only = false          # send critical alerts anytime
+

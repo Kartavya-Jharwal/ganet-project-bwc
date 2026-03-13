@@ -16,7 +16,6 @@ from typing import Any
 
 import pandas as pd
 from polygon import RESTClient
-from polygon.rest.models import Agg
 
 from quant_monitor.data.rate_limiter import rate_limiter
 

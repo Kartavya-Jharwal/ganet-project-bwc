@@ -1,10 +1,7 @@
 """Tests for MacroModel."""
 from __future__ import annotations
 
-import pytest
-
 from quant_monitor.models.macro import MacroModel
-
 
 RISK_ON_SNAPSHOT = {
     "vix": 14.0,

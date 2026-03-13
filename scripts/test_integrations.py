@@ -5,9 +5,8 @@ Run with: doppler run -- uv run python scripts/test_integrations.py
 """
 
 import sys
-import os
+from datetime import datetime
 from pathlib import Path
-from datetime import datetime, timedelta
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -32,14 +31,14 @@ def test_yfinance():
             print(f"  {ticker}: ${data['price']:.2f} ({data['change_percent']:+.2f}%)")
     
     # Test bars
-    print(f"\nFetching 5-day history for AAPL...")
+    print("\nFetching 5-day history for AAPL...")
     bars = feed.get_bars(["AAPL"], period="5d")
     if not bars.empty:
         print(f"Got {len(bars)} bars")
         print(bars.tail(3))
     
     # Test info
-    print(f"\nFetching info for AAPL...")
+    print("\nFetching info for AAPL...")
     info = feed.get_info("AAPL")
     if info:
         print(f"Name: {info.get('shortName', 'N/A')}")

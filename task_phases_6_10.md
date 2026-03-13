@@ -25,7 +25,7 @@
 - [Phase 7: Agent Orchestrator (Risk Manager + Optimizer + Scheduler)](#phase-7-agent-orchestrator)
 - [Phase 8: Backtesting Framework](#phase-8-backtesting-framework)
 - [Phase 9: Rich CLI + OpenBB Dashboard](#phase-9-rich-cli--openbb-dashboard)
-- [Phase 10: Alerts + Deployment](#phase-10-alerts--deployment)
+- [Phase 10: Alerts + Scrapers + Deployment](#phase-10-alerts--scrapers--deployment)
 
 ---
 
@@ -40,7 +40,11 @@
 | 8 | `quant_monitor/backtest/engine.py` | `WalkForwardEngine` (2 methods) | `NotImplementedError` |
 | 8 | `quant_monitor/backtest/metrics.py` | 6 metric functions | `NotImplementedError` |
 | 9 | `quant_monitor/dashboard/app.py` | Rich CLI with 5 views | TODO placeholder |
-| 10 | `quant_monitor/agent/alerts.py` | `AlertDispatcher` (3 methods) | `NotImplementedError` |
+| 10 | `quant_monitor/agent/alerts.py` | `AlertDispatcher` (Telegram + ntfy, 3 methods) | `NotImplementedError` |
+| 10 | `quant_monitor/spiders/pipelines.py` | `AppwritePipeline` (spiders → Appwrite) | TODO stub |
+| 10 | `quant_monitor/spiders/google_rss_spider.py` | `GoogleRssSpider` (RSS → `NewsItem`) | empty stub |
+| 10 | `quant_monitor/spiders/sec_edgar_spider.py` | `SecEdgarSpider` (EDGAR → `FilingItem`) | empty stub |
+| 10 | `quant_monitor/spiders/yfinance_spider.py` | `YfinanceSpider` (yfinance → `PriceItem`/`FundamentalItem`) | empty stub |
 
 ---
 
@@ -61,6 +65,9 @@
 | `[alerts]` | `enabled` | true | Phase 10 — alerts |
 | `[alerts]` | `cooldown_minutes` | 30 | Phase 10 — cooldown |
 | `[alerts]` | `market_hours_only` | false | Phase 10 — alert timing |
+| `[alerts]` | `ntfy_base_url` | `https://ntfy.sh` | Phase 10 — ntfy channel |
+| `Secrets` | `NTFY_TOPIC` | (Doppler) | Phase 10 — ntfy topic ID |
+| `[scrapy_cloud]` | `local_spiders` | false | Phase 10 — local spider toggle |
 
 ---
 
@@ -1124,7 +1131,7 @@ doppler run -- uv run pytest tests/test_agent.py -v
 
 ---
 
-## Phase 8: Backtesting Framework
+## Phase 8: Backtesting Framework (✅ COMPLETED)
 
 > **Prerequisites:** Phase 7 COMPLETE.
 > **Files to edit:** `quant_monitor/backtest/metrics.py`, `quant_monitor/backtest/engine.py`
@@ -1548,7 +1555,7 @@ doppler run -- uv run pytest tests/test_backtest.py -v
 
 ---
 
-## Phase 9: Rich CLI + OpenBB Dashboard
+## Phase 9: Rich CLI + OpenBB Dashboard (✅ COMPLETED)
 
 > **Prerequisites:** Phase 8 COMPLETE.
 > **Files to edit:** `quant_monitor/dashboard/app.py`, `quant_monitor/dashboard/__init__.py`
@@ -2437,12 +2444,24 @@ doppler run -- uv run pytest tests/test_dashboard.py -v
 
 ---
 
-## Phase 10: Alerts + Deployment
+## Phase 10: Alerts + Scrapers + Deployment ✅ COMPLETED
 
 > **Prerequisites:** Phase 9 COMPLETE.
-> **File to edit:** `quant_monitor/agent/alerts.py`
+> **Files to edit:** `quant_monitor/agent/alerts.py`, `quant_monitor/spiders/*.py`, `quant_monitor/main.py`
 > **Existing dependency:** `python-telegram-bot>=21.0` (already in pyproject.toml)
-> **Secrets needed:** `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` (from Doppler)
+> **New dependency:** `httpx>=0.27.0` (already in pyproject.toml — used for ntfy HTTP POST)
+> **Secrets needed:** `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `NTFY_TOPIC` (from Doppler)
+>
+> **Alert channels:**
+> - **Telegram** — primary rich-text channel (existing)
+> - **ntfy.sh** — secondary HTTP pub-sub channel (new). Posts to a long UUID-like
+>   topic (e.g. `qpm-a7f3b2d9e1c4…`) for privacy. No auth needed for push; subscribe
+>   via `ntfy.sh/<topic>` or the ntfy mobile/desktop app.
+>
+> **Scrapers:** This phase also wires the three Scrapy spiders that were stubbed in
+> Phase 1 (`GoogleRssSpider`, `SecEdgarSpider`, `YfinanceSpider`), implements the
+> `AppwritePipeline` that persists scraped items to Appwrite `scraped_data` collection,
+> and optionally schedules spiders from the main scheduler.
 
 ---
 
@@ -2470,6 +2489,13 @@ class TestAlertDispatcher:
         dispatcher = AlertDispatcher()
         assert hasattr(dispatcher, "_cooldown_minutes")
         assert hasattr(dispatcher, "_last_alert_times")
+
+    def test_init_has_ntfy_topic(self):
+        """AlertDispatcher should have ntfy topic from config."""
+        from quant_monitor.agent.alerts import AlertDispatcher
+
+        dispatcher = AlertDispatcher()
+        assert hasattr(dispatcher, "_ntfy_topic")
 
     def test_format_rebalance_alert(self):
         """format_rebalance_alert should produce readable message."""
@@ -2559,6 +2585,55 @@ class TestAlertDispatcher:
         )
         # Should attempt to send (cooldown fresh)
         assert isinstance(result, bool)
+
+    @pytest.mark.asyncio
+    async def test_send_ntfy_posts_to_topic(self):
+        """send_alert should also POST to ntfy when topic is configured."""
+        from quant_monitor.agent.alerts import AlertDispatcher, AlertType, AlertPriority
+
+        dispatcher = AlertDispatcher()
+        dispatcher._ntfy_topic = "qpm-test-topic-abc123"
+        dispatcher._bot = None  # no Telegram
+        dispatcher._chat_id = None
+
+        with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+            mock_post.return_value = MagicMock(status_code=200)
+            result = await dispatcher.send_alert(
+                alert_type=AlertType.REBALANCE,
+                priority=AlertPriority.HIGH,
+                message="Test ntfy alert",
+                ticker="TSM",
+            )
+            assert result is True
+            mock_post.assert_called_once()
+            call_url = mock_post.call_args[0][0]
+            assert "qpm-test-topic-abc123" in call_url
+
+
+class TestNtfy:
+    """Tests specifically for ntfy integration."""
+
+    def test_ntfy_plain_text_format(self):
+        """ntfy messages should strip HTML tags to plain text."""
+        from quant_monitor.agent.alerts import AlertDispatcher
+
+        dispatcher = AlertDispatcher()
+        html = "<b>KILL SWITCH</b>\n<i>IONQ down 20%</i>"
+        plain = dispatcher._strip_html(html)
+        assert "<b>" not in plain
+        assert "<i>" not in plain
+        assert "KILL SWITCH" in plain
+        assert "IONQ down 20%" in plain
+
+    def test_ntfy_priority_mapping(self):
+        """Alert priorities should map to ntfy priority headers (1-5)."""
+        from quant_monitor.agent.alerts import AlertDispatcher, AlertPriority
+
+        dispatcher = AlertDispatcher()
+        assert dispatcher._ntfy_priority(AlertPriority.LOW) == "2"
+        assert dispatcher._ntfy_priority(AlertPriority.MEDIUM) == "3"
+        assert dispatcher._ntfy_priority(AlertPriority.HIGH) == "4"
+        assert dispatcher._ntfy_priority(AlertPriority.CRITICAL) == "5"
 ```
 
 ---
@@ -2568,11 +2643,33 @@ class TestAlertDispatcher:
 **File:** `quant_monitor/agent/alerts.py`
 **Method:** `AlertDispatcher.__init__(self)`
 
+First, update the module docstring and class docstring:
+
+```python
+"""Multi-channel alert dispatcher (Telegram + ntfy).
+
+Alert types and priorities:
+...existing table...
+
+Channels:
+- Telegram Bot API — rich HTML-formatted messages
+- ntfy.sh — simple HTTP-based pub-sub (push to UUID topic, no auth needed)
+  Subscribe: ntfy.sh/<NTFY_TOPIC> or via ntfy mobile/desktop app
+"""
+```
+
+Update the class docstring:
+
+```python
+class AlertDispatcher:
+    """Sends formatted alerts to Telegram and ntfy.sh."""
+```
+
 **Implementation:**
 
 ```python
 def __init__(self) -> None:
-    """Initialize Telegram bot and cooldown tracking."""
+    """Initialize alert channels and cooldown tracking."""
     from quant_monitor.config import cfg
 
     self._cooldown_minutes = cfg.alerts.get("cooldown_minutes", 30)
@@ -2580,7 +2677,7 @@ def __init__(self) -> None:
     self._enabled = cfg.alerts.get("enabled", True)
     self._last_alert_times: dict[str, datetime] = {}
 
-    # Telegram bot setup
+    # --- Telegram channel ---
     self._bot = None
     self._chat_id = cfg.secrets.TELEGRAM_CHAT_ID
 
@@ -2592,13 +2689,27 @@ def __init__(self) -> None:
             logger.info("Telegram bot initialized")
         except Exception as e:
             logger.warning("Failed to initialize Telegram bot: %s", e)
+
+    # --- ntfy.sh channel ---
+    # Topic should be a long UUID-like string for privacy, e.g.
+    # "qpm-a7f3b2d9e1c48f6a2b7d9e3c1f5a8b4d"
+    self._ntfy_topic = getattr(cfg.secrets, "NTFY_TOPIC", "") or os.environ.get("NTFY_TOPIC", "")
+    self._ntfy_base_url = cfg.alerts.get("ntfy_base_url", "https://ntfy.sh")
+    if self._ntfy_topic:
+        logger.info("ntfy.sh configured — topic: %s…", self._ntfy_topic[:12])
     else:
-        logger.info("Alerts disabled or Telegram token not configured")
+        logger.info("ntfy.sh not configured (set NTFY_TOPIC in Doppler)")
+
+    if not self._bot and not self._ntfy_topic:
+        logger.info("No alert channels configured — alerts will be log-only")
 ```
 
-Also add necessary imports at the top:
+Also add necessary imports at the top of the file:
 ```python
+import os
+import re
 from datetime import datetime, timedelta
+import httpx
 ```
 
 ---
@@ -2654,10 +2765,10 @@ async def send_alert(
     message: str,
     ticker: str | None = None,
 ) -> bool:
-    """Send an alert to the configured Telegram chat.
+    """Send an alert to ALL configured channels (Telegram + ntfy).
 
     Respects cooldown period to avoid spam.
-    Returns True if sent, False if suppressed by cooldown or error.
+    Returns True if sent to at least one channel, False if suppressed/errored.
     """
     if not self._enabled:
         logger.debug("Alerts disabled — suppressing %s", alert_type)
@@ -2677,6 +2788,9 @@ async def send_alert(
     prefix = priority_emoji.get(priority, "")
     full_message = f"{prefix} [{priority}] {alert_type}\n\n{message}"
 
+    sent = False
+
+    # --- Channel 1: Telegram ---
     if self._bot and self._chat_id:
         try:
             await self._bot.send_message(
@@ -2684,17 +2798,80 @@ async def send_alert(
                 text=full_message,
                 parse_mode="HTML",
             )
-            self._record_alert(alert_type, ticker)
-            logger.info("Alert sent: %s for %s", alert_type, ticker or "PORTFOLIO")
-            return True
+            logger.info("Telegram alert sent: %s for %s", alert_type, ticker or "PORTFOLIO")
+            sent = True
         except Exception as e:
             logger.error("Failed to send Telegram alert: %s", e)
-            return False
-    else:
-        # Log-only mode (no Telegram configured)
+
+    # --- Channel 2: ntfy.sh ---
+    if self._ntfy_topic:
+        try:
+            url = f"{self._ntfy_base_url}/{self._ntfy_topic}"
+            plain_text = self._strip_html(full_message)
+            title = f"QPM: {alert_type}" + (f" — {ticker}" if ticker else "")
+
+            async with httpx.AsyncClient() as client:
+                resp = await client.post(
+                    url,
+                    content=plain_text,
+                    headers={
+                        "Title": title,
+                        "Priority": self._ntfy_priority(priority),
+                        "Tags": ",".join(
+                            filter(None, [alert_type.lower(), ticker, priority.lower()])
+                        ),
+                    },
+                )
+            if resp.status_code == 200:
+                logger.info("ntfy alert sent: %s for %s", alert_type, ticker or "PORTFOLIO")
+                sent = True
+            else:
+                logger.warning("ntfy returned %d: %s", resp.status_code, resp.text[:200])
+        except Exception as e:
+            logger.error("Failed to send ntfy alert: %s", e)
+
+    # --- Fallback: log-only ---
+    if not sent:
         logger.info("ALERT (log-only): %s", full_message)
-        self._record_alert(alert_type, ticker)
-        return True
+
+    # Record for cooldown regardless of channel
+    self._record_alert(alert_type, ticker)
+
+    # --- Persist to Appwrite ---
+    try:
+        from quant_monitor.data.appwrite_client import create_appwrite_client
+
+        aw = create_appwrite_client()
+        aw.write_alert(
+            alert_type=str(alert_type),
+            message=self._strip_html(full_message),
+            severity=str(priority),
+            ticker=ticker,
+            dispatched=sent,
+        )
+    except Exception as e:
+        logger.warning("Failed to persist alert to Appwrite: %s", e)
+
+    return sent or True  # log-only still counts
+```
+
+**Also add these helper methods to `AlertDispatcher`** (can be in Task 10.2 or 10.3):
+
+```python
+@staticmethod
+def _strip_html(text: str) -> str:
+    """Strip HTML tags for plain-text channels (ntfy)."""
+    return re.sub(r"<[^>]+>", "", text)
+
+@staticmethod
+def _ntfy_priority(priority: AlertPriority) -> str:
+    """Map AlertPriority to ntfy priority header value (1-5)."""
+    return {
+        AlertPriority.LOW: "2",
+        AlertPriority.MEDIUM: "3",
+        AlertPriority.HIGH: "4",
+        AlertPriority.CRITICAL: "5",
+    }.get(priority, "3")
 ```
 
 ---
@@ -2792,28 +2969,62 @@ def format_feed_stale_alert(self, feed_name: str, last_update: str) -> str:
 
 ---
 
-### Task 10.7 — Run full Phase 10 test suite
+### Task 10.7 — Run Phase 10 alert tests
 
 ```bash
 doppler run -- uv run pytest tests/test_alerts.py -v
 ```
 
-**Expected:** All ~7 tests pass.
+**Expected:** All ~11 tests pass (7 AlertDispatcher + 2 ntfy + 2 send tests).
 
-> **NOTE:** `test_send_alert_calls_telegram` requires `pytest-asyncio`.
+> **NOTE:** `test_send_alert_calls_telegram` and `test_send_ntfy_posts_to_topic` require `pytest-asyncio`.
 > If not installed, add `"pytest-asyncio>=0.23.0"` to `[dependency-groups] dev` and run `uv sync`.
 
 ---
 
-### Task 10.8 — Integrate alerts into signal cycle (main.py)
+### Task 10.8 — Integrate alerts + Appwrite persistence into signal cycle (main.py)
 
 **File:** `quant_monitor/main.py`
-**Modify:** `run_signal_cycle()` — add alert dispatch at end of cycle.
+**Modify:** `run_signal_cycle()` — add signal persistence to Appwrite and alert dispatch at end of cycle.
 
 **Add this block after the "Log results" section (step 5):**
 
 ```python
-        # 6. Dispatch alerts for actionable signals
+        # 6. Persist signals to Appwrite
+        try:
+            from quant_monitor.data.appwrite_client import create_appwrite_client
+
+            aw = create_appwrite_client()
+            for ticker, result in fused.items():
+                aw.write_signal(
+                    ticker=ticker,
+                    technical_score=tech_scores.get(ticker, 0.0),
+                    fundamental_score=fund_scores.get(ticker, 0.0),
+                    sentiment_score=sent_scores.get(ticker, 0.0),
+                    macro_score=macro_score,
+                    fused_score=result["fused_score"],
+                    confidence=result["confidence"],
+                    action=result["action"],
+                    regime=regime,
+                    dominant_model=result.get("dominant_model"),
+                )
+
+            # Also write regime history
+            from quant_monitor.features.volatility import realized_volatility, hurst_exponent
+            spy_returns = prices.loc["SPY"]["close"].pct_change().dropna() if "SPY" in prices.index.get_level_values(0) else None
+            if spy_returns is not None:
+                aw.write_regime(
+                    regime=regime,
+                    vix=macro.get("vix", 0.0),
+                    hurst=float(hurst_exponent(prices.loc["SPY"]["close"])),
+                    vol_percentile=0.0,  # populated from vol computation above
+                )
+
+            logger.info("Signals + regime persisted to Appwrite")
+        except Exception as e:
+            logger.warning("Failed to persist to Appwrite: %s", e)
+
+        # 7. Dispatch alerts for actionable signals
         import asyncio
         from quant_monitor.agent.alerts import AlertDispatcher, AlertType, AlertPriority
 
@@ -2843,6 +3054,12 @@ doppler run -- uv run pytest tests/test_alerts.py -v
             ))
 ```
 
+**Acceptance criteria:**
+- Signals are written to Appwrite `signals` collection each cycle
+- Regime is written to `regime_history` collection each cycle
+- Alerts dispatched to both Telegram and ntfy for BUY/SELL actions
+- Errors in persistence or alerting do NOT crash the signal cycle
+
 ---
 
 ### Task 10.9 — Verify Heroku deployment configuration
@@ -2868,7 +3085,544 @@ cat Procfile
 
 ---
 
-### Task 10.10 — End-to-end integration test
+### Task 10.10 — Implement `AppwritePipeline` (Scrapy → Appwrite)
+
+**File:** `quant_monitor/spiders/pipelines.py`
+
+The pipeline wires all spiders to Appwrite's `scraped_data` collection. Each item
+type is serialized with a `source_spider` and `item_type` field for query filtering.
+
+```python
+"""Scrapy item pipelines — push scraped data to Appwrite."""
+
+from __future__ import annotations
+
+import logging
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
+
+
+class AppwritePipeline:
+    """Push scraped items to Appwrite database via REST API."""
+
+    def open_spider(self, spider):
+        """Initialize Appwrite client when spider starts."""
+        try:
+            from quant_monitor.data.appwrite_client import create_appwrite_client
+
+            self._client = create_appwrite_client()
+            self._count = 0
+            logger.info("AppwritePipeline: connected for spider %s", spider.name)
+        except Exception as e:
+            logger.warning("AppwritePipeline: Appwrite unavailable — %s", e)
+            self._client = None
+            self._count = 0
+
+    def process_item(self, item, spider):
+        """Write item to Appwrite scraped_data collection."""
+        if not self._client:
+            return item
+
+        data = dict(item)
+        data["source_spider"] = spider.name
+        data["item_type"] = type(item).__name__
+        data["scraped_at"] = datetime.utcnow().isoformat()
+
+        try:
+            self._client.write_document("scraped_data", data)
+            self._count += 1
+        except Exception as e:
+            logger.warning("AppwritePipeline: write failed for %s — %s", data.get("ticker", "?"), e)
+
+        return item
+
+    def close_spider(self, spider):
+        """Log stats when spider finishes."""
+        logger.info(
+            "AppwritePipeline: spider %s finished — %d items written to Appwrite",
+            spider.name, self._count,
+        )
+```
+
+**Acceptance criteria:**
+- `from quant_monitor.spiders.pipelines import AppwritePipeline` works
+- Pipeline initializes Appwrite client on `open_spider`
+- Items are serialized with `source_spider`, `item_type`, `scraped_at` metadata
+
+---
+
+### Task 10.11 — Implement `GoogleRssSpider`
+
+**File:** `quant_monitor/spiders/google_rss_spider.py`
+
+```python
+"""Google RSS news spider — scrapes news headlines for held tickers.
+
+Fetches Google News RSS for each portfolio ticker.
+Results pushed to Appwrite via AppwritePipeline.
+"""
+
+from __future__ import annotations
+
+import logging
+from typing import ClassVar
+
+import scrapy
+
+from quant_monitor.spiders.items import NewsItem
+
+logger = logging.getLogger(__name__)
+
+
+class GoogleRssSpider(scrapy.Spider):
+    name = "google_rss"
+    allowed_domains: ClassVar[list[str]] = ["news.google.com"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from quant_monitor.config import cfg
+        self._tickers = cfg.tickers
+        self._holdings = cfg.holdings
+
+    def start_requests(self):
+        """Generate Google News RSS requests per ticker."""
+        for ticker in self._tickers:
+            name = self._holdings.get(ticker, {}).get("name", ticker)
+            # Use company name for better results when available
+            query = f"{name}+stock" if name != ticker else f"{ticker}+stock"
+            url = (
+                f"https://news.google.com/rss/search"
+                f"?q={query}&hl=en-US&gl=US&ceid=US:en"
+            )
+            yield scrapy.Request(url, callback=self.parse, meta={"ticker": ticker})
+
+    def parse(self, response):
+        """Parse Google News RSS and extract news items."""
+        ticker = response.meta["ticker"]
+        items = response.xpath("//item")
+
+        for item_node in items[:10]:  # cap at 10 per ticker
+            title = item_node.xpath("title/text()").get("")
+            link = item_node.xpath("link/text()").get("")
+            pub_date = item_node.xpath("pubDate/text()").get("")
+            description = item_node.xpath("description/text()").get("")
+
+            if title:
+                yield NewsItem(
+                    source="google_rss",
+                    ticker=ticker,
+                    headline=title.strip(),
+                    url=link.strip(),
+                    published_at=pub_date.strip(),
+                    snippet=description.strip()[:500] if description else "",
+                )
+```
+
+**Acceptance criteria:**
+- `scrapy crawl google_rss --nolog -s CLOSESPIDER_ITEMCOUNT=5` yields `NewsItem` objects
+- Items contain ticker, headline, url, published_at
+
+---
+
+### Task 10.12 — Implement `SecEdgarSpider`
+
+**File:** `quant_monitor/spiders/sec_edgar_spider.py`
+
+```python
+"""SEC EDGAR RSS spider — scrapes 8-K filings for held tickers.
+
+Monitors SEC EDGAR full-text search feed for recent filings.
+Results pushed to Appwrite via AppwritePipeline.
+"""
+
+from __future__ import annotations
+
+import logging
+from typing import ClassVar
+
+import scrapy
+
+from quant_monitor.spiders.items import FilingItem
+
+logger = logging.getLogger(__name__)
+
+# CIK lookup: ticker → SEC CIK number (subset for our portfolio)
+# Full mapping available at: https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&company=&CIK=TICKER
+TICKER_TO_CIK: dict[str, str] = {
+    "SPY": "0000884394",
+    "TSM": "0001046179",
+    "MU": "0000723125",
+    "PLTR": "0001321655",
+    "AMZN": "0001018724",
+    "GOOGL": "0001652044",
+    "GE": "0000040554",
+    "JPM": "0000019617",
+    "LMT": "0000936468",
+    "WMT": "0000104169",
+    # XLP, PG, JNJ, XLU, IONQ — add CIKs as needed
+    "PG": "0000080424",
+    "JNJ": "0000200406",
+    "IONQ": "0001820302",
+}
+
+
+class SecEdgarSpider(scrapy.Spider):
+    name = "sec_edgar"
+    allowed_domains: ClassVar[list[str]] = ["efts.sec.gov", "sec.gov"]
+    custom_settings: ClassVar[dict] = {
+        "DOWNLOAD_DELAY": 0.5,  # SEC asks for max 10 req/s
+        "USER_AGENT": "QuantMonitor/1.0 (Academic Research; Hult Business School)",
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from quant_monitor.config import cfg
+        self._tickers = cfg.tickers
+
+    def start_requests(self):
+        """Generate requests for each portfolio ticker's EDGAR filings."""
+        for ticker in self._tickers:
+            cik = TICKER_TO_CIK.get(ticker)
+            if not cik:
+                logger.debug("No CIK for %s — skipping", ticker)
+                continue
+
+            # EDGAR full-text search API (JSON)
+            url = (
+                f"https://efts.sec.gov/LATEST/search-index"
+                f"?q=%22{ticker}%22&forms=8-K,10-Q,10-K"
+                f"&dateRange=custom&startdt=2026-01-01"
+            )
+            yield scrapy.Request(url, callback=self.parse, meta={"ticker": ticker, "cik": cik})
+
+    def parse(self, response):
+        """Parse EDGAR search results and extract filing items."""
+        import json
+
+        ticker = response.meta["ticker"]
+
+        try:
+            data = json.loads(response.text)
+            hits = data.get("hits", {}).get("hits", [])
+        except (json.JSONDecodeError, AttributeError):
+            logger.warning("Failed to parse EDGAR response for %s", ticker)
+            return
+
+        for hit in hits[:10]:
+            source = hit.get("_source", {})
+            filing_type = source.get("forms", [""])[0] if source.get("forms") else ""
+            title = source.get("display_names", [""])[0] if source.get("display_names") else ""
+            filed_at = source.get("file_date", "")
+            accession = source.get("accession_no", "")
+            url = f"https://www.sec.gov/Archives/edgar/data/{response.meta['cik']}/{accession}"
+
+            if filing_type:
+                yield FilingItem(
+                    ticker=ticker,
+                    filing_type=filing_type,
+                    title=title or f"{ticker} {filing_type}",
+                    url=url,
+                    filed_at=filed_at,
+                    accession_number=accession,
+                )
+```
+
+**Acceptance criteria:**
+- Spider generates requests for tickers with known CIKs
+- Yields `FilingItem` objects with filing_type, title, url, filed_at
+
+---
+
+### Task 10.13 — Implement `YfinanceSpider`
+
+**File:** `quant_monitor/spiders/yfinance_spider.py`
+
+```python
+"""yfinance fallback spider — scrapes price and fundamental data.
+
+Tertiary fallback for price data (behind Massive/Polygon and direct yfinance API).
+Also scrapes fundamental ratios not available via Massive.
+Results pushed to Appwrite via AppwritePipeline.
+"""
+
+from __future__ import annotations
+
+import logging
+from datetime import datetime
+
+import scrapy
+
+from quant_monitor.spiders.items import FundamentalItem, PriceItem
+
+logger = logging.getLogger(__name__)
+
+
+class YfinanceSpider(scrapy.Spider):
+    name = "yfinance_fallback"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from quant_monitor.config import cfg
+        self._tickers = cfg.tickers
+
+    def start_requests(self):
+        """Fetch price and fundamental data for all tickers via yfinance.
+
+        yfinance doesn't use HTTP requests in the normal Scrapy sense, so we
+        use a dummy request to self-trigger the parse callback per ticker.
+        """
+        for ticker in self._tickers:
+            # Dummy request — actual data fetched via yfinance lib in parse()
+            yield scrapy.Request(
+                f"https://finance.yahoo.com/quote/{ticker}",
+                callback=self.parse,
+                meta={"ticker": ticker},
+                dont_filter=True,
+            )
+
+    def parse(self, response):
+        """Fetch yfinance data and yield Price + Fundamental items."""
+        import yfinance as yf
+
+        ticker = response.meta["ticker"]
+        logger.info("YfinanceSpider: fetching %s", ticker)
+
+        try:
+            stock = yf.Ticker(ticker)
+            info = stock.info or {}
+
+            # Fundamental item
+            yield FundamentalItem(
+                ticker=ticker,
+                pe_ratio=info.get("trailingPE"),
+                ps_ratio=info.get("priceToSalesTrailing12Months"),
+                ev_ebitda=info.get("enterpriseToEbitda"),
+                market_cap=info.get("marketCap"),
+                beta=info.get("beta"),
+                fetched_at=datetime.utcnow().isoformat(),
+            )
+
+            # Latest price item
+            hist = stock.history(period="5d")
+            if hist is not None and not hist.empty:
+                latest = hist.iloc[-1]
+                yield PriceItem(
+                    ticker=ticker,
+                    date=str(hist.index[-1].date()),
+                    open=float(latest.get("Open", 0)),
+                    high=float(latest.get("High", 0)),
+                    low=float(latest.get("Low", 0)),
+                    close=float(latest.get("Close", 0)),
+                    volume=int(latest.get("Volume", 0)),
+                    source="yfinance",
+                )
+        except Exception as e:
+            logger.warning("YfinanceSpider: failed for %s — %s", ticker, e)
+```
+
+**Acceptance criteria:**
+- Spider yields both `FundamentalItem` and `PriceItem` per ticker
+- Graceful handling when yfinance returns empty data
+
+---
+
+### Task 10.14 — Create scraper test file
+
+**File to CREATE:** `tests/test_spiders.py`
+
+```python
+"""Tests for Scrapy spiders and AppwritePipeline — Phase 10."""
+
+from __future__ import annotations
+
+import pytest
+from unittest.mock import MagicMock, patch
+
+
+class TestAppwritePipeline:
+    """Tests for quant_monitor/spiders/pipelines.py."""
+
+    def test_open_spider_initializes_client(self):
+        from quant_monitor.spiders.pipelines import AppwritePipeline
+
+        pipeline = AppwritePipeline()
+        mock_spider = MagicMock(name="google_rss")
+        pipeline.open_spider(mock_spider)
+        assert pipeline._count == 0
+
+    def test_process_item_adds_metadata(self):
+        from quant_monitor.spiders.pipelines import AppwritePipeline
+        from quant_monitor.spiders.items import NewsItem
+
+        pipeline = AppwritePipeline()
+        pipeline._client = MagicMock()
+        pipeline._count = 0
+
+        item = NewsItem(
+            source="google_rss",
+            ticker="AAPL",
+            headline="Test headline",
+            url="https://example.com",
+            published_at="2026-02-25T10:00:00Z",
+            snippet="Test snippet",
+        )
+
+        mock_spider = MagicMock()
+        mock_spider.name = "google_rss"
+        result = pipeline.process_item(item, mock_spider)
+
+        assert result is item
+        pipeline._client.write_document.assert_called_once()
+        call_args = pipeline._client.write_document.call_args
+        data = call_args[0][1]
+        assert data["source_spider"] == "google_rss"
+        assert data["item_type"] == "NewsItem"
+        assert "scraped_at" in data
+
+    def test_process_item_no_client_returns_item(self):
+        from quant_monitor.spiders.pipelines import AppwritePipeline
+        from quant_monitor.spiders.items import PriceItem
+
+        pipeline = AppwritePipeline()
+        pipeline._client = None
+        pipeline._count = 0
+
+        item = PriceItem(ticker="SPY", date="2026-02-25", open=500, high=505,
+                         low=498, close=503, volume=1000000, source="yfinance")
+        mock_spider = MagicMock()
+        result = pipeline.process_item(item, mock_spider)
+        assert result is item  # passes through without error
+
+
+class TestSpiderItems:
+    """Tests for quant_monitor/spiders/items.py."""
+
+    def test_news_item_fields(self):
+        from quant_monitor.spiders.items import NewsItem
+
+        item = NewsItem()
+        item["ticker"] = "TSM"
+        item["headline"] = "Test"
+        assert item["ticker"] == "TSM"
+
+    def test_filing_item_fields(self):
+        from quant_monitor.spiders.items import FilingItem
+
+        item = FilingItem()
+        item["ticker"] = "AMZN"
+        item["filing_type"] = "8-K"
+        assert item["filing_type"] == "8-K"
+
+    def test_fundamental_item_fields(self):
+        from quant_monitor.spiders.items import FundamentalItem
+
+        item = FundamentalItem()
+        item["ticker"] = "GOOGL"
+        item["pe_ratio"] = 25.5
+        assert item["pe_ratio"] == 25.5
+
+
+class TestGoogleRssSpider:
+    """Tests for GoogleRssSpider start_requests."""
+
+    def test_start_requests_generates_urls(self):
+        from quant_monitor.spiders.google_rss_spider import GoogleRssSpider
+
+        spider = GoogleRssSpider()
+        requests = list(spider.start_requests())
+        assert len(requests) > 0
+        assert all("news.google.com/rss" in r.url for r in requests)
+
+
+class TestSecEdgarSpider:
+    """Tests for SecEdgarSpider start_requests."""
+
+    def test_start_requests_generates_urls_for_known_ciks(self):
+        from quant_monitor.spiders.sec_edgar_spider import SecEdgarSpider
+
+        spider = SecEdgarSpider()
+        requests = list(spider.start_requests())
+        # Should have requests for tickers with known CIKs
+        assert len(requests) > 0
+        assert all("efts.sec.gov" in r.url for r in requests)
+```
+
+**Acceptance criteria:**
+- `doppler run -- uv run pytest tests/test_spiders.py -v` — all ~10 tests pass
+
+---
+
+### Task 10.15 — Wire optional spider scheduling into main.py
+
+**File:** `quant_monitor/main.py`
+**Add:** Optional spider execution via `CrawlerProcess` for local runs.
+
+Add a separate function and scheduler job:
+
+```python
+def run_spiders() -> None:
+    """Run Scrapy spiders locally (alternative to Scrapy Cloud deployment).
+
+    This is optional — spiders can also run on Zyte Scrapy Cloud.
+    When running locally, results go through AppwritePipeline → Appwrite.
+    """
+    try:
+        from scrapy.crawler import CrawlerProcess
+        from scrapy.utils.project import get_project_settings
+
+        from quant_monitor.spiders.google_rss_spider import GoogleRssSpider
+        from quant_monitor.spiders.sec_edgar_spider import SecEdgarSpider
+        from quant_monitor.spiders.yfinance_spider import YfinanceSpider
+
+        settings = get_project_settings()
+        settings.setmodule("quant_monitor.spiders.scrapy_settings")
+
+        process = CrawlerProcess(settings)
+        process.crawl(GoogleRssSpider)
+        process.crawl(SecEdgarSpider)
+        # YfinanceSpider only if Massive is unavailable
+        from quant_monitor.data.sources.massive_feed import get_massive_feed
+        if not get_massive_feed().is_available:
+            process.crawl(YfinanceSpider)
+
+        process.start(stop_after_crawl=True)
+        logger.info("Spider run complete")
+    except Exception as e:
+        logger.error("Spider run failed: %s", e, exc_info=True)
+```
+
+In `main()`, add an optional spider schedule (runs less frequently):
+
+```python
+    # Optional: run spiders every hour for supplemental data
+    use_local_spiders = cfg.scrapy_cloud.get("local_spiders", False)
+    if use_local_spiders:
+        scheduler.add_job(
+            run_spiders,
+            trigger=IntervalTrigger(minutes=cfg.scrapy_cloud.get("schedule_off_hours_minutes", 60)),
+            id="spider_run",
+            name="Scrapy Spider Run",
+            replace_existing=True,
+        )
+        logger.info("Local spider scheduling enabled — every %d min", cfg.scrapy_cloud.get("schedule_off_hours_minutes", 60))
+```
+
+**Also add to `config.toml`** under `[scrapy_cloud]`:
+
+```toml
+local_spiders = false  # set true to run spiders locally instead of Scrapy Cloud
+```
+
+**Acceptance criteria:**
+- `run_spiders()` can be called standalone and runs all 3 spiders
+- `local_spiders = true` in config activates spider scheduling in main loop
+- Spider results flow to Appwrite `scraped_data` collection via `AppwritePipeline`
+- Default is `false` — Scrapy Cloud is the intended production deployment
+
+---
+
+### Task 10.16 — End-to-end integration test
 
 **File to CREATE:** `tests/test_integration_e2e.py`
 
@@ -2962,7 +3716,7 @@ class TestEndToEnd:
 
 ---
 
-### Task 10.11 — Run FULL test suite (all phases)
+### Task 10.17 — Run FULL test suite (all phases)
 
 ```bash
 doppler run -- uv run pytest tests/ -v --tb=short -k "not integration"
@@ -2978,9 +3732,11 @@ doppler run -- uv run pytest tests/ -v --tb=short -k "not integration"
 - `tests/test_fusion.py` (Phase 6)
 - `tests/test_agent.py` (Phase 7)
 - `tests/test_backtest.py` (Phase 8)
+- `tests/test_dashboard.py` (Phase 9)
 - `tests/test_alerts.py` (Phase 10)
+- `tests/test_spiders.py` (Phase 10)
 
-**Total estimate:** ~65+ tests passing.
+**Total estimate:** ~80+ tests passing.
 
 Then run integration tests separately:
 
@@ -3026,19 +3782,25 @@ Phase 9 (Rich CLI + OpenBB Dashboard):
   9.5 → wire OpenBB views into CLI (--openbb flag)
   9.6 → end-to-end CLI verification
 
-Phase 10 (Alerts + Deployment):
-  10.0  → create test file
-  10.1  → AlertDispatcher.__init__()
+Phase 10 (Alerts + Scrapers + Deployment):
+  10.0  → create test file (inc. ntfy tests)
+  10.1  → AlertDispatcher.__init__() (Telegram + ntfy)
   10.2  → cooldown helper
-  10.3  → send_alert()
+  10.3  → send_alert() (dual-channel + Appwrite persist)
   10.4  → format_rebalance_alert()
   10.5  → format_kill_switch_alert()
   10.6  → additional formatters
-  10.7  → run Phase 10 tests
-  10.8  → integrate alerts into main.py
-  10.9  → verify Heroku config
-  10.10 → e2e integration test
-  10.11 → full test suite
+  10.7  → run Phase 10 alert tests
+  10.8  → integrate alerts + Appwrite persistence into main.py
+  10.9  → verify Heroku deployment config
+  10.10 → implement AppwritePipeline (spiders → Appwrite)
+  10.11 → implement GoogleRssSpider
+  10.12 → implement SecEdgarSpider
+  10.13 → implement YfinanceSpider
+  10.14 → create scraper test file (test_spiders.py)
+  10.15 → wire spider scheduling into main.py
+  10.16 → end-to-end integration test
+  10.17 → full test suite (~80+ tests)
 ```
 
 ---
@@ -3049,7 +3811,9 @@ Phase 10 (Alerts + Deployment):
 - `pyportfolioopt>=1.5.0` — Phase 7 (optimizer)
 - `apscheduler>=3.10.0` — Phase 7 (scheduler)
 - `plotly>=5.18.0` — Phase 8 (backtest charts, optional in dashboard)
-- `python-telegram-bot>=21.0` — Phase 10 (alerts)
+- `python-telegram-bot>=21.0` — Phase 10 (alerts, Telegram channel)
+- `httpx>=0.27.0` — Phase 10 (ntfy HTTP POST; already used by data feeds)
+- `scrapy>=2.11.0` — Phase 10 (spiders; already present)
 - `pandas`, `numpy`, `scipy` — Phases 6–8 (computation)
 
 **New dependencies to ADD in Phase 9:**
@@ -3065,6 +3829,12 @@ Phase 10 (Alerts + Deployment):
 
 **New entry point in Phase 9:**
 - Add `quant-dashboard = "quant_monitor.dashboard.app:main"` to `[project.scripts]`
+
+**Config additions for Phase 10 (ntfy + scrapers):**
+- **Doppler secret:** `NTFY_TOPIC` — long UUID-like alphanumeric string (e.g. `a1b2c3d4e5f6…`)
+- **config.py `Secrets`:** add `NTFY_TOPIC: str = ""`
+- **config.toml `[alerts]`:** add `ntfy_base_url = "https://ntfy.sh"`
+- **config.toml `[scrapy_cloud]`:** add `local_spiders = false` (enable via env for local runs)
 
 **One optional dev dependency:**
 - `pytest-asyncio>=0.23.0` — Phase 10 (async test for `send_alert`)

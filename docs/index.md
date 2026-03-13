@@ -28,6 +28,7 @@ for a $1,000,000 simulated portfolio on StockTrak.
 |----------|-------------|
 | [Phase 0: Scaffold](phase-0-scaffold.md) | Project infrastructure setup |
 | [Development Roadmap](roadmap.md) | Complete phase-by-phase plan |
+| [Phase 11-15 PM Track](phase-11-15-pm-track.md) | Evidence-first plan for quant PM positioning |
 
 ### Results *(populated at sunset)*
 

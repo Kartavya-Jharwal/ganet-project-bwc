@@ -7,6 +7,7 @@ Config-driven periods loaded from config.toml [moving_averages].
 from __future__ import annotations
 
 import logging
+
 import numpy as np
 import pandas as pd
 
@@ -84,7 +85,6 @@ def mvwap(ohlcv: pd.DataFrame, period: int = 20) -> pd.Series:
 
 def hma(series: pd.Series, period: int = 16) -> pd.Series:
     """Hull Moving Average — low-lag responsive trend signal."""
-    import numpy as np
 
     def weighted_ma(s: pd.Series, w: int) -> pd.Series:
         weights = np.arange(1, w + 1, dtype=float)
@@ -104,6 +104,7 @@ def hma(series: pd.Series, period: int = 16) -> pd.Series:
 def compute_ma_matrix(ohlcv: pd.DataFrame) -> pd.DataFrame:
     """Compute full MA matrix for a single ticker. Returns DataFrame with all MAs as columns."""
     import pandas as pd
+
     from quant_monitor.config import cfg
 
     # assume ohlcv columns are lowercase and include open/high/low/close/volume
