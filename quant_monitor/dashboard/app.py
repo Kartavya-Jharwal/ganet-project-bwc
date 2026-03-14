@@ -163,9 +163,6 @@ def make_signals() -> Panel:
     model_table.add_row("Technical Volatility", Text("███░░░░░░░ 34% Conf", style="red"))
     model_table.add_row("Fundamental Proxy", Text("████████░░ 85% Conf", style="green"))
 
-    from rich.console import Group
-    from rich.panel import Panel
-
     group = Group(table, Text("\n[bold dim]MODEL ENGINE SUB-STATE:[/bold dim]\n"), model_table)
 
     return Panel(
@@ -329,11 +326,23 @@ def make_health(ticks: int = 0, current_view: str = "main") -> Panel:
     )
 
 
+VIEW_RENDERERS = {
+    "header": make_header,
+    "holdings": make_holdings,
+    "signals": make_signals,
+    "metrics": make_metrics,
+    "macro": make_macro,
+    "health": make_health,
+}
+
+
 def draw_neofetch():
     import os
     import platform
+    import time
 
     from rich.columns import Columns
+    from rich.panel import Panel
 
     print("\x1b[2J\x1b[H", end="")
 
@@ -348,30 +357,35 @@ def draw_neofetch():
  ░░░░░            █████   █████    █████     
     [/bold cyan]"""
 
+    try:
+        user = os.getlogin()
+    except OSError:
+        user = os.environ.get("USER", os.environ.get("USERNAME", "Ganet"))
+
     metadata = f"""
-[bold yellow]User@Host[/bold yellow]     [cyan]{os.getlogin() if hasattr(os, "getlogin") else "Ganet"}@{platform.node()}[/cyan]
+[bold yellow]User@Host[/bold yellow]     [cyan]{user}@{platform.node()}[/cyan]
 [bold cyan]--------------------------------[/bold cyan]
 [bold yellow]OS:[/bold yellow]           {platform.system()} {platform.release()}
 [bold yellow]Kernel:[/bold yellow]       {platform.version()}
 [bold yellow]Shell:[/bold yellow]        {os.environ.get("SHELL", "pwsh")}
 
 [bold magenta]Project:[/bold magenta]      Ganet - Project BWC
-[bold magenta]Abbrev:[/bold magenta]       Brownies with White Chocolate
-[bold magenta]Version:[/bold magenta]      v2.1 (Tactical Mode)
-[bold magenta]Data Feeds:[/bold magenta]   [green]YFinance Primary[/green] | [yellow]Polygon.io Fallback[/yellow]
-[bold magenta]Graph Models:[/bold magenta] [cyan]Topological CV[/cyan]
+[bold magenta]Architecture:[/bold magenta] Zero-Copy Mathematical Pipeline
+[bold magenta]Version:[/bold magenta]      v2.1 (Evaluator Mode)
+[bold magenta]Data Feeds:[/bold magenta]   [green]YFinance Primary[/green] | [yellow]Local DuckDB Cache[/yellow]
+[bold magenta]Graph Models:[/bold magenta] [cyan]Topological Lasso CV[/cyan]
 """
 
     console.print()
-    console.print(
-        Align.center(
-            "[bold cyan]════════════ GANET: PROJECT BWC INITIALIZED ════════════[/bold cyan]"
-        )
-    )
+    title = "[bold cyan]════════════ GANET: PORTFOLIO ENGINE BOOTING ════════════[/bold cyan]"
+    
+    # Quick sweep animation for the title
+    for i in range(len(title)):
+        if "═" in title[i]:
+            console.print(Align.center(title[:i] + "█"), end="\r")
+            time.sleep(0.01)
+    console.print(Align.center(title))
     console.print()
-
-    # Render table-like string columns properly using panels or pre-aligned texts
-    from rich.panel import Panel
 
     col = Columns(
         [
@@ -381,7 +395,13 @@ def draw_neofetch():
     )
     console.print(Align.center(col))
     console.print()
-    time.sleep(2)
+    
+    # Elastic pausing - witty delay
+    console.print(Align.center("[dim]Executing math allocations and mounting structures...[/dim]"))
+    time.sleep(0.12)
+    console.print(Align.center("[bold green]✔ Handshake complete. Yielding UI Control.[/bold green]"))
+    time.sleep(0.12)
+    time.sleep(0.8)
 
 
 def generate_layout() -> Layout:
@@ -397,13 +417,13 @@ def generate_layout() -> Layout:
     return layout
 
 
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--view", help="Not used in multi-view layout, kept for compatibility", default=None
     )
     parser.add_argument("--live", action="store_true", help="Auto-refresh UI on timer")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     draw_neofetch()
 

@@ -55,6 +55,7 @@ dependencies = [
     "quantstats>=0.0.81",
     "seaborn>=0.13.2",
     "tabulate>=0.10.0",
+    "fpdf2>=2.8.7",
 ]
 
 [build-system]
