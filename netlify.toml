@@ -1,0 +1,13 @@
+[build]
+  publish = "frontend"
+  command = "echo 'No build step required for static frontend'"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "DENY"
+    X-Content-Type-Options = "nosniff"

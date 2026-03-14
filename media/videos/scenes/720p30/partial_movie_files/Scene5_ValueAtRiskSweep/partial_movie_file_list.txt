@@ -1,0 +1,9 @@
+# This file is used internally by FFMPEG.
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/Scene5_ValueAtRiskSweep/401893758_1034899510_223132457.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/Scene5_ValueAtRiskSweep/3522531460_1580215664_3165912498.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/Scene5_ValueAtRiskSweep/3522531460_2031869336_2264105862.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/Scene5_ValueAtRiskSweep/3522531460_4217992463_4103458737.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/Scene5_ValueAtRiskSweep/3522531460_1940120946_746673542.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/Scene5_ValueAtRiskSweep/3522531460_2640827665_2539718192.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/Scene5_ValueAtRiskSweep/3522531460_2616966423_954315482.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/Scene5_ValueAtRiskSweep/3522531460_2834709167_3364320255.mp4'

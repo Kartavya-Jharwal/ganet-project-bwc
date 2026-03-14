@@ -116,8 +116,8 @@ COLLECTIONS = {
         "name": "Correlations Cache",
         "attributes": [
             ("timestamp", "datetime", True),
-            ("nodes", "string", True, 10000),       # JSON encoded nodes
-            ("edges", "string", True, 10000),       # JSON encoded edgelist
+            ("nodes", "string", True, 10000),  # JSON encoded nodes
+            ("edges", "string", True, 10000),  # JSON encoded edgelist
         ],
     },
 }
