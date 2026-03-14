@@ -216,10 +216,33 @@ class DataPipeline:
                 logger.debug("Using cached latest prices")
                 return cached
 
+        # Minimum fraction of requested tickers that must be available locally
+        _LOCAL_CACHE_MIN_COVERAGE = 0.5
+
         if getattr(self, "mode", "consume") == "consume":
-            # Attempt to get from duckdb or appwrite proxy?
-            # Easiest way locally for SPY proxy is duckdb if we run sync, or appwrite.
-            pass
+            # In consume mode, try local DuckDB cache first before hitting yfinance
+            try:
+                import duckdb
+
+                conn = duckdb.connect(database="portfolio.duckdb", read_only=True)
+                result = conn.execute(
+                    "SELECT ticker, close AS price FROM eod_price_matrix "
+                    "WHERE (ticker, timestamp) IN ("
+                    "  SELECT ticker, MAX(timestamp) FROM eod_price_matrix GROUP BY ticker"
+                    ")"
+                ).fetchall()
+                conn.close()
+                if result:
+                    local_prices = {row[0]: {"price": row[1]} for row in result}
+                    # Only use local if we have data for most requested tickers
+                    if len(set(tickers) & set(local_prices)) >= len(tickers) * _LOCAL_CACHE_MIN_COVERAGE:
+                        logger.debug("Using DuckDB cached prices in consume mode")
+                        if use_cache:
+                            ttl = cfg.cache_ttl.get("price_realtime", 60)
+                            self._cache.set(cache_key, local_prices, ttl=ttl)
+                        return local_prices
+            except Exception:
+                logger.debug("DuckDB not available in consume mode, falling back to yfinance")
 
         prices = self._yfinance.get_latest_prices(tickers)
 
