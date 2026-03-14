@@ -85,8 +85,9 @@ class WalkForwardEngine:
                 test_returns = test_returns * signal
 
             elif model_name == "fundamental":
-                # Fundamental: simple buy-and-hold (always long)
-                pass  # returns unchanged
+                # Fundamental: pure beta exposure (always long)
+                signal = 1.0
+                test_returns = test_returns * signal
 
             elif model_name == "sentiment":
                 # Sentiment: momentum-based (lagged return sign)
@@ -96,7 +97,16 @@ class WalkForwardEngine:
 
             elif model_name == "fused_equal":
                 # Equal weight fusion of simple signals
-                pass  # returns unchanged (baseline)
+                from quant_monitor.features.moving_averages import ema
+                fast_ma = ema(train_data["close"], 9)
+                slow_ma = ema(train_data["close"], 21)
+                tech_sig = 1.0 if fast_ma.iloc[-1] > slow_ma.iloc[-1] else -1.0
+                fund_sig = 1.0
+                prev_return = train_data["close"].pct_change().iloc[-5:].mean()
+                sent_sig = 1.0 if prev_return > 0 else -1.0
+                
+                fused_signal = (tech_sig + fund_sig + sent_sig) / 3.0
+                test_returns = test_returns * fused_signal
 
             elif model_name == "fused_regime":
                 # Regime-weighted: scale by volatility regime

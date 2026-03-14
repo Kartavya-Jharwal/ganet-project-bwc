@@ -79,15 +79,52 @@ def deflated_sharpe_ratio(
 
 
 def probability_of_backtest_overfitting(matrix_of_returns: pd.DataFrame) -> float:
-    """Stub for Probability of Backtest Overfitting (PBO) via CSCV.
+    """Calculates Probability of Backtest Overfitting (PBO) via continuous subset combination (proxy).
 
     Args:
         matrix_of_returns: DataFrame of dimension (T observations x N strategies).
     """
-    # A full CSCV is computationally heavy. This is a simplified proxy check.
-    if matrix_of_returns.shape[1] < 2:
+    if matrix_of_returns.shape[1] < 2 or len(matrix_of_returns) < 10:
         return 0.0
 
-    # Simplistic mock PBO for now: just correlation based logic or simple return logic
-    # Real CSCV splits data into S subsets, creates combinations and evaluates rank degradation.
-    return 0.05  # Placeholder for complex implementation
+    # Execute a simplified symmetric cross validation
+    # Split the return dataset into evenly sized partitions
+    T, N = matrix_of_returns.shape
+    partitions = 4  # e.g., 4 subsets for combinatorial comparison
+    if T < partitions:
+        return 0.0
+        
+    subset_size = T // partitions
+    subsets = [matrix_of_returns.iloc[i * subset_size:(i + 1) * subset_size] for i in range(partitions)]
+    
+    # Calculate performance (Sharpe) in in-sample (IS) vs out-of-sample (OOS) pairs
+    degradations = 0
+    total_comparisons = 0
+    
+    for i in range(partitions):
+        # OOS is the i-th partition
+        oos_df = subsets[i]
+        
+        # IS is the rest
+        is_dfs = [subsets[j] for j in range(partitions) if j != i]
+        is_df = pd.concat(is_dfs)
+        
+        # Calculate Sharpe for all strategies IS
+        is_sharpes = is_df.mean() / (is_df.std() + 1e-8)
+        # Identify the "optimal" IS strategy
+        best_strat_is = is_sharpes.idxmax()
+        
+        # Calculate Sharpe for all strategies OOS
+        oos_sharpes = oos_df.mean() / (oos_df.std() + 1e-8)
+        
+        # Calculate OOS rank of the strategy that was strictly "best" IS
+        # If it falls below median, we consider it a degradation
+        best_strat_oos_rank = oos_sharpes.rank(ascending=False)[best_strat_is]
+        
+        if best_strat_oos_rank > (N / 2):
+            degradations += 1
+            
+        total_comparisons += 1
+
+    pbo = degradations / max(total_comparisons, 1)
+    return float(pbo)

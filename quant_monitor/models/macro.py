@@ -53,7 +53,7 @@ class MacroModel:
         spread = macro_snapshot.get("yield_10y_2y_spread", 0.5)
         if spread > 1.0:
             signals.append(1.0)
-        elif spread > 0 or spread > -1.0:
+        elif spread > -1.0:
             signals.append(spread / 1.0)
         else:
             signals.append(-1.0)

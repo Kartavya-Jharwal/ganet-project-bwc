@@ -23,11 +23,11 @@ class BWCTearSheet(FPDF):
         self.set_y(10)
         self.set_font("helvetica", "B", 24)
         self.set_text_color(*COLOR_BG)
-        self.cell(0, 10, "BWC PORTFOLIO: INSTITUTIONAL TELEMETRY", ln=True, align="L")
+        self.cell(0, 10, "BWC PORTFOLIO: INSTITUTIONAL TELEMETRY", new_x="LMARGIN", new_y="NEXT", align="L")
 
         self.set_y(12)
         self.set_font("helvetica", "I", 10)
-        self.cell(0, 10, "Project Final State & Fact Sheet", ln=True, align="R")
+        self.cell(0, 10, "Project Final State & Fact Sheet", new_x="LMARGIN", new_y="NEXT", align="R")
         self.ln(10)
 
     def footer(self):
@@ -44,7 +44,7 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
     # 1. Executive Summary
     pdf.set_font("helvetica", "B", 16)
     pdf.set_text_color(*COLOR_ACCENT)
-    pdf.cell(0, 10, "I. STRATEGY OVERVIEW", ln=True)
+    pdf.cell(0, 10, "I. STRATEGY OVERVIEW", new_x="LMARGIN", new_y="NEXT")
     pdf.set_draw_color(*COLOR_ACCENT)
     pdf.line(10, pdf.get_y(), 200, pdf.get_y())
     pdf.ln(5)
@@ -52,10 +52,8 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
     pdf.set_font("helvetica", "", 11)
     pdf.set_text_color(20, 20, 20)  # Readability over pure dark
     desc = (
-        "The BWC-Quant project represents an autonomous, defensively-postured pipeline tracking "
-        "algorithmic risk parity overrides dynamically injected against conventional long "
-        "equity baseline drifts. Factor analysis relies heavily on Cornish-Fisher VaR downside "
-        "mitigation and Cholesky-stabilized GBM pricing paths."
+        "Project BWC is a regime-aware quantitative portfolio tracking engine. Built to test structural alpha decay, hierarchical risk parity bisection, and topological model fusion on out-of-sample data. "
+        "It employs strictly mathematical implementations (DuckDB, Polars, GraphicalLassoCV) to observe algorithmic behavioral bypass and track geometric degradation natively terminating in May 2026."
     )
     pdf.multi_cell(0, 6, desc)
     pdf.ln(10)
@@ -63,7 +61,7 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
     # 2. Key Metrics Block
     pdf.set_font("helvetica", "B", 16)
     pdf.set_text_color(*COLOR_ACCENT)
-    pdf.cell(0, 10, "II. RISK & RETURN ANALYTICS", ln=True)
+    pdf.cell(0, 10, "II. RISK & RETURN ANALYTICS", new_x="LMARGIN", new_y="NEXT")
     pdf.line(10, pdf.get_y(), 200, pdf.get_y())
     pdf.ln(5)
 
@@ -72,7 +70,7 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
     pdf.set_text_color(50, 50, 50)
     pdf.cell(60, 8, "Metric", border=1)
     pdf.cell(60, 8, "Current Value", border=1)
-    pdf.cell(60, 8, f"Benchmark ({benchmark_ticker})", border=1, ln=True)
+    pdf.cell(60, 8, f"Benchmark ({benchmark_ticker})", border=1, new_x="LMARGIN", new_y="NEXT")
 
     pdf.set_font("helvetica", "", 11)
 
@@ -87,23 +85,23 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
     for row in data:
         pdf.cell(60, 8, row[0], border=1)
         pdf.cell(60, 8, row[1], border=1)
-        pdf.cell(60, 8, row[2], border=1, ln=True)
+        pdf.cell(60, 8, row[2], border=1, new_x="LMARGIN", new_y="NEXT")
 
     pdf.ln(10)
 
     # 3. Factor Loadings
     pdf.set_font("helvetica", "B", 16)
     pdf.set_text_color(*COLOR_ACCENT)
-    pdf.cell(0, 10, "III. FAMA-FRENCH ATTRIBUTION", ln=True)
+    pdf.cell(0, 10, "III. FAMA-FRENCH ATTRIBUTION", new_x="LMARGIN", new_y="NEXT")
     pdf.line(10, pdf.get_y(), 200, pdf.get_y())
     pdf.ln(5)
 
     pdf.set_font("helvetica", "", 11)
     pdf.set_text_color(20, 20, 20)
-    pdf.cell(0, 6, "Market (MKT): 0.85", ln=True)
-    pdf.cell(0, 6, "Size (SMB):   0.30", ln=True)
-    pdf.cell(0, 6, "Value (HML):  0.65", ln=True)
-    pdf.cell(0, 6, "Mom (UMD):    0.22", ln=True)
+    pdf.cell(0, 6, "Market (MKT): 0.85", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 6, "Size (SMB):   0.30", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 6, "Value (HML):  0.65", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 6, "Mom (UMD):    0.22", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(10)
 
     # Save the output

@@ -1,67 +1,51 @@
-# Ganet - Project BWC (Brownies with White Chocolate)
+# Ganet - Project BWC
 
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-[![uv](https://img.shields.io/badge/uv-package%20manager-blueviolet)](https://github.com/astral-sh/uv)
-[![CI/CD](https://github.com/Kartavya-Jharwal/ganet-project-bwc/actions/workflows/ci.yml/badge.svg)](https://github.com/Kartavya-Jharwal/ganet-project-bwc/actions)
+> A regime-aware quantitative portfolio tracking engine. Built to test structural alpha decay, hierarchical risk parity bisection, and topological model fusion on out-of-sample data.
 
-> **An Institutional-Grade Market Simulation & Topological Forward Tracker.**
+## Setup
+### The Data Layer
+BWC relies on a zero-config, reproducible math pipeline. Pricing and macroeconomic data are cached into a structured local **DuckDB** file (`portfolio.duckdb`). Matrix transformations are executed zero-copy via **Polars** ensuring performance over massive structural sets.
 
-## The Narrative & Systemic Pivot
-BWC represents an autonomous, highly-defensive quantitative portfolio tracking engine. Originating as a university simulation case study, the architecture pivoted heavily away from naive NLP scraping into a **Zero-Config, Reproducible Math Pipeline**. 
+### Environment
+We utilize `uv` for explicitly-locked dependency management and strict scientific reproducibility. Secrets are managed via decoupled **Doppler** environments.
 
-We operate entirely on local structures using **DuckDB**, zero-copy **Polars**, strict **Topological Parity algorithms**, and **Geometric Brownian Motion (GBM)** to mathematically prove risk, track factors (Alpha/Beta orthogonality), and project deep probabilistic Monte Carlo futures until the **Final Data Freeze Boundary (May 1, 2026)**.
-
-## Live Telemetry & GitHub Actions Infrastructure
-Because this is built on top of extreme mathematical rigor natively relying on `uv` reproducibility, we deploy utilizing strict security standards:
-
-- 🔒 **Doppler Service Tokens (OIDC):** The pipelines and GitHub Action endpoints pull API secrets directly via ephemeral Doppler Service Tokens bounded to exact configs (e.g. `prd` only) via the Principle of Least Privilege, completely abandoning risky legacy `.env` injections or broad Personal Access Tokens.
-- ⚡ **Lightning CI via UV:** All mathematical validation tests—including intense Fama-French stress testing and inverse covariance bounds checks—run dynamically inside CI utilizing heavily-cached `uv` pipelining over Git Actions workflows.
-- 📊 **Real-time WebSockets (Appwrite):** The frontend relies on Vercel/Netlify structural scaffolding pushing out an institutional-styled Brutalist HTML tracking surface that subscribes and morphs dynamically via CDN when the core backend fires metric updates.
-- 🛠️ **Config-Driven Architecture & Logging:** Every macro assumption (down to the exact Poisson string parameters for Jump Diffusion) lives decoupled inside TOML configurations or Doppler, wired tightly into structured Datadog/Appwrite system logging streams. We do not hide our edge cases; we emit them aggressively.
-
-### Launching the Pipeline Locally
 ```bash
-# 1) Sync dependencies ensuring strict ticker-agnostic scientific reproduciblity
+# Sync strictly-locked environment
 uv sync --frozen
 
-# 2) View configuration (experiment-driven parameters)
-cat config.toml
-
-# 3) Sync historical pricing and execute matrices via local engine securely
+# Ingest historical pricing and execute matrices
 doppler run -- uv run cli ingest
-doppler run -- uv run cli backtest
-
-# 4) Output the Instutional Tearsheet PDF
-uv run python scripts/generate_tearsheet.py --benchmark SPY
 ```
 
-### Rendering the 3Blue1Brown Calculus Architectures
-Our visual proofs are driven directly by **Manim**. To prevent repository bloat, we strictly `.gitignore` the computational output arrays (`media/`) but ship highly contextual visual artifacts inside the UI framework mapping ValueAtRisk geometry, Kelly Criterion parables, and Fama-French equilibrium balances.
-```bash
-uv run python -m manim -pqm docs/scenes.py Scene5_ValueAtRiskSweep
-```
+## Method
+### Signals & Features
+We employ feature engineering focused on momentum variance, regime shifts, and cross-asset correlations, bypassing noisy NLP scraping for statistically sound baseline metrics.
 
-## Architecture Layers
+### Strategy & Topological Fusion
+The system conditionally fuses multi-model signals based on macroeconomic regimes:
+- **Topological Risk Parity**: Computes sparse inverse covariance graphs (`GraphicalLassoCV`) to map true correlation structures.
+- **HRP Allocation**: Calculates risk sizing via Hierarchical Risk Parity cluster bisections.
+- **Dynamic Regime-Weighting**: Blends execution vectors conditionally based on ongoing volatility architectures.
 
-```text
-┌────────────────────────────────────────────────────────┐
-│              LAYER 4: INSTITUTIONAL UI                 │
-│ Appwrite WebSockets | Manim Mathematics | Brutalist UI │
-├────────────────────────────────────────────────────────┤
-│           LAYER 3: THE QUANTITATIVE ENGINE             │
-│   GBM Jump Diffusion | Brinson-Fachler | Cornish VaR   │
-├────────────────────────────────────────────────────────┤
-│           LAYER 2: TOPOLOGICAL REBALANCING             │
-│   Sparse Inverse Covariance | HRP | Kelly Criterion    │
-├────────────────────────────────────────────────────────┤
-│            LAYER 1: ZERO-CONFIG PIPELINE               │
-│ Config Logs | DuckDB | Polars | Doppler Service Tokens │
-└────────────────────────────────────────────────────────┘
-```
+### Backtesting Engine
+A robust walk-forward simulation engine tests signal decay out-of-sample. It computes advanced metrics:
+- Brinson-Fachler attribution arrays
+- Cornish-Fisher Value-at-Risk expansions
+- Probability of Backtest Overfitting (PBO)
+- Geometric Brownian Motion (GBM) Monte Carlo projections
 
-## The Endgame Constraint (May 1, 2026)
-> *The portfolio simulation has a strict expiration.*
+## Results
+*(Pending May 2026 Archive Freeze)*
+The final out-of-sample forward simulation tracks the model's predictive validity against a live market structure terminating on **May 1, 2026**.
+- **OOS Sharpe & Sortino**: Pending final snapshot.
+- **Drawdown Resilience**: Preliminary stress tests on 2024-2025 vectors show topological risk parities heavily restricting maximum drawdowns compared to standard benchmark models.
 
-The repository contains `scripts/export_for_archive.py`, which is fundamentally engineered to lock down and freeze all live backend connections marking the project completely static. A physical python failsafe exists within this sequence throwing a `sys.exit(1)` if any developer or CI agent attempts the freeze prior to **May 1, 2026**. This explicitly, aggressively defends the scientific validity of the final 29-day forward Monte Carlo window simulations.
+## Behavioural Analysis
+The engine natively evaluates algorithmic degradation versus emotional human intervention. By deploying autonomous regime weighting, the system strictly bypasses behavioral biases such as loss aversion and yield chasing.
 
+## Lessons
+- **Tooling vs Theory**: Heavy reliance on advanced DevOps pipelines initially obfuscated the underlying quantitative core. A robust statistical model requires highly legible narrative reporting, not just extreme CI/CD coverage.
+- **Complexity Decay**: Walk-forward stress tests continually reveal that complex, over-engineered models decay drastically faster out-of-sample compared to simple, robust heuristics systematically sized via HRP logic.
+
+---
 *MIT License — see [LICENSE](LICENSE) for details.*
