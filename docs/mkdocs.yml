@@ -4,7 +4,7 @@ site_url: https://kartavya-jharwal.github.io/ganet-project-bwc/
 repo_url: https://github.com/Kartavya-Jharwal/ganet-project-bwc
 repo_name: ganet-project-bwc
 docs_dir: .
-site_dir: ../site
+site_dir: ../frontend/docs
 
 theme:
   name: material
@@ -43,6 +43,7 @@ nav:
     - Demo Day Progress Report: progress-report.md
   - Results:
     - Performance: performance.md
+    - Interactive Dashboard: interactive-dashboard.md
     - Backtest Results: backtest-results.md
     - Signal History: signals-history.md
 

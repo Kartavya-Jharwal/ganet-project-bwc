@@ -103,18 +103,26 @@ def generate_dashboard(output_path: str = "docs/dashboard.html") -> str:
 
     # Create subplot figure
     fig = make_subplots(
-        rows=3,
+        rows=4,
         cols=2,
         subplot_titles=(
             "Equity Curve",
             "Drawdown Profile",
             "Rolling Sharpe Ratio (63d)",
             "Rolling Sortino Ratio (63d)",
-            "Return Distribution",
+            "Monthly Heatmap (Return %)",
             "Backtest Model Comparison",
+            "Return Distribution",
+            "Signal Confidence Dist",
         ),
-        vertical_spacing=0.08,
+        vertical_spacing=0.06,
         horizontal_spacing=0.08,
+        specs=[
+            [{"type": "xy"}, {"type": "xy"}],
+            [{"type": "xy"}, {"type": "xy"}],
+            [{"type": "heatmap"}, {"type": "bar"}],
+            [{"type": "histogram"}, {"type": "xy"}]
+        ]
     )
 
     # 1. Equity Curve
@@ -189,35 +197,25 @@ def generate_dashboard(output_path: str = "docs/dashboard.html") -> str:
     )
     fig.add_hline(y=0, line_dash="dash", line_color=COLORS["muted"], row=2, col=2)
 
-    # 5. Return Distribution with VaR
-    fig.add_trace(
-        go.Histogram(
-            x=returns.values * 100,
-            nbinsx=60,
-            name="Daily Returns",
-            marker_color=COLORS["blue"],
-            opacity=0.7,
-        ),
-        row=3,
-        col=1,
-    )
+    # 5. Returns Heatmap
+    monthly = returns.resample("ME").apply(lambda x: (1 + x).prod() - 1) * 100
+    monthly = monthly.to_frame(name="Returns")
+    monthly["Year"] = monthly.index.year
+    monthly["Month"] = monthly.index.strftime("%b")
+    pivot = monthly.pivot(index="Year", columns="Month", values="Returns")
+    months_order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    pivot = pivot.reindex(columns=[m for m in months_order if m in pivot.columns])
 
-    # VaR lines
-    var_5 = np.percentile(returns.values, 5) * 100
-    var_1 = np.percentile(returns.values, 1) * 100
-    fig.add_vline(
-        x=var_5,
-        line_dash="dash",
-        line_color=COLORS["accent"],
-        annotation_text=f"VaR 5%: {var_5:.2f}%",
-        row=3,
-        col=1,
-    )
-    fig.add_vline(
-        x=var_1,
-        line_dash="dash",
-        line_color=COLORS["negative"],
-        annotation_text=f"VaR 1%: {var_1:.2f}%",
+    fig.add_trace(
+        go.Heatmap(
+            z=pivot.values,
+            x=pivot.columns,
+            y=pivot.index,
+            colorscale="RdYlGn",
+            zmid=0,
+            showscale=True,
+            name="Monthly Returns",
+        ),
         row=3,
         col=1,
     )
@@ -240,7 +238,7 @@ def generate_dashboard(output_path: str = "docs/dashboard.html") -> str:
                 go.Bar(
                     x=metrics_to_show,
                     y=vals,
-                    name=model,
+                    name=model[:10],
                     opacity=0.8,
                 ),
                 row=3,
@@ -260,17 +258,43 @@ def generate_dashboard(output_path: str = "docs/dashboard.html") -> str:
             row=3,
             col=2,
         )
-        fig.add_trace(
-            go.Bar(
-                x=metrics,
-                y=[0.95, 1.30, 1.80, -0.22],
-                name="Benchmark (SPY)",
-                marker_color=COLORS["muted"],
-                opacity=0.8,
-            ),
-            row=3,
-            col=2,
-        )
+
+    # 7. Return Distribution with VaR
+    fig.add_trace(
+        go.Histogram(
+            x=returns.values * 100,
+            nbinsx=60,
+            name="Daily Returns",
+            marker_color=COLORS["blue"],
+            opacity=0.7,
+        ),
+        row=4,
+        col=1,
+    )
+
+    var_5 = float(np.percentile(returns.values, 5) * 100)
+    fig.add_vline(x=var_5, line_dash="dash", line_color=COLORS["accent"], annotation_text=f"VaR 5%: {var_5:.2f}%", row=4, col=1)
+
+    # 8. Signal Confidence Scatter Synthetic Demo
+    conf_scores = np.random.uniform(0.3, 0.95, len(returns))
+    fut_returns = returns.shift(-1).fillna(0) * 100
+    fig.add_trace(
+        go.Scatter(
+            x=conf_scores,
+            y=fut_returns,
+            mode="markers",
+            name="Signals vs Realized",
+            marker=dict(
+                size=6,
+                color=fut_returns,
+                colorscale="Viridis",
+                showscale=False,
+                opacity=0.6,
+            )
+        ),
+        row=4,
+        col=2,
+    )
 
     # Compute summary metrics for annotation
     total_return = (equity_curve.iloc[-1] / equity_curve.iloc[0] - 1) * 100
