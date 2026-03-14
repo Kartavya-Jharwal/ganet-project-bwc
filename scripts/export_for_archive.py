@@ -189,7 +189,7 @@ def export_backtest_results():
         if models:
             metrics_keys = [
                 k for k in cached_results[models[0]]
-                if k not in ("window_details",)
+                if k not in {"window_details"}
             ]
             lines.extend([
                 "## Walk-Forward Backtest Comparison",
