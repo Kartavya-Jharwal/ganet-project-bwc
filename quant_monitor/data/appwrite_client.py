@@ -165,16 +165,16 @@ class AppwriteClient:
             Number of successfully written documents
         """
         import concurrent.futures
-        
+
         success_count = 0
-        
+
         def _write(doc):
             try:
                 self.write_document(collection, doc)
                 return True
             except AppwriteException:
                 return False
-                
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             # We can use map to gather results
             results = executor.map(_write, documents)

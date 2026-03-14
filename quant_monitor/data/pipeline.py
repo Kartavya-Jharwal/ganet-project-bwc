@@ -44,7 +44,9 @@ class DataPipeline:
     def __init__(self) -> None:
         """Initialize data sources and cache."""
         self._cache = get_cache()
-        self.mode = "consume" if not cfg.secrets.MASSIVE_API_KEY else os.environ.get("MODE", "ingest")
+        self.mode = (
+            "consume" if not cfg.secrets.MASSIVE_API_KEY else os.environ.get("MODE", "ingest")
+        )
 
         # Price feeds (Massive primary, yfinance fallback)
         self._massive = get_massive_feed()
@@ -58,7 +60,9 @@ class DataPipeline:
 
         sources = ["Massive" if self._massive.is_available else "yfinance (fallback)"]
         sources.extend(["FRED", "SEC", "News", "Appwrite"])
-        logger.info(f"DataPipeline initialized in {self.mode.upper()} mode with: {', '.join(sources)}")
+        logger.info(
+            f"DataPipeline initialized in {self.mode.upper()} mode with: {', '.join(sources)}"
+        )
 
     def fetch_prices(
         self,
@@ -96,17 +100,20 @@ class DataPipeline:
         if getattr(self, "mode", "consume") == "consume":
             logger.info("Consume Mode: Attempting to fetch prices from local DuckDB cache...")
             import duckdb
+
             try:
                 conn = duckdb.connect("portfolio.duckdb", read_only=True)
-                duck_df = conn.execute("SELECT ticker, timestamp as date, close FROM eod_price_matrix").df()
+                duck_df = conn.execute(
+                    "SELECT ticker, timestamp as date, close FROM eod_price_matrix"
+                ).df()
                 conn.close()
                 if not duck_df.empty:
-                    duck_df['date'] = pd.to_datetime(duck_df['date'])
+                    duck_df["date"] = pd.to_datetime(duck_df["date"])
                     # For compatibility, we mimic OHLCV with just close if needed, but we do our best
-                    duck_df['open'] = duck_df['close']
-                    duck_df['high'] = duck_df['close']
-                    duck_df['low'] = duck_df['close']
-                    duck_df['volume'] = 0
+                    duck_df["open"] = duck_df["close"]
+                    duck_df["high"] = duck_df["close"]
+                    duck_df["low"] = duck_df["close"]
+                    duck_df["volume"] = 0
                     duck_df = duck_df.set_index(["ticker", "date"]).sort_index()
                     return duck_df
             except Exception as e:
@@ -120,6 +127,7 @@ class DataPipeline:
         if df.empty and self._massive.is_available:
             logger.debug("Falling back to Massive (Polygon)")
             import time
+
             massive_data = {}
             for ticker in tickers:
                 logger.debug(f"Fetching Massive price fallback for {ticker}")
@@ -144,7 +152,9 @@ class DataPipeline:
 
                 if frames:
                     df = pd.concat(frames).sort_index()
-                    logger.info(f"Got {len(df)} bars from Massive fallback for {len(massive_data)} tickers")
+                    logger.info(
+                        f"Got {len(df)} bars from Massive fallback for {len(massive_data)} tickers"
+                    )
 
         if not df.empty and use_cache:
             ttl = cfg.cache_ttl.get("price_historical", 900)
@@ -157,19 +167,24 @@ class DataPipeline:
                     dt = pd.to_datetime(date)
                     dt_str = dt.isoformat()
                     if dt.tzinfo is None:
-                        dt_str += "Z" # add utc
-                        
-                    records.append({
-                        "timestamp": dt_str,
-                        "ticker": ticker,
-                        "close": float(row.get("close", 0.0))
-                    })
+                        dt_str += "Z"  # add utc
+
+                    records.append(
+                        {
+                            "timestamp": dt_str,
+                            "ticker": ticker,
+                            "close": float(row.get("close", 0.0)),
+                        }
+                    )
                 if records:
                     from quant_monitor.data.appwrite_client import COLLECTIONS
+
                     # split into batches of 100 for Appwrite limits
                     for i in range(0, len(records), 100):
-                        batch = records[i:i+100]
-                        self._appwrite.write_batch(COLLECTIONS.get("eod_price_matrix", "eod_price_matrix"), batch)
+                        batch = records[i : i + 100]
+                        self._appwrite.write_batch(
+                            COLLECTIONS.get("eod_price_matrix", "eod_price_matrix"), batch
+                        )
                     logger.info(f"Ingested {len(records)} EOD prices to Appwrite.")
             except Exception as e:
                 logger.warning(f"Failed to ingest EOD prices: {e}")
@@ -215,14 +230,15 @@ class DataPipeline:
         if prices and getattr(self, "mode", "consume") == "ingest" and "SPY" in prices:
             try:
                 from quant_monitor.data.appwrite_client import COLLECTIONS
+
                 spy_price = prices["SPY"].get("price")
                 if spy_price:
                     self._appwrite.write_document(
                         COLLECTIONS.get("live_spy_proxy", "live_spy_proxy"),
                         {
                             "timestamp": datetime.utcnow().isoformat() + "Z",
-                            "price": float(spy_price)
-                        }
+                            "price": float(spy_price),
+                        },
                     )
                     logger.info(f"Ingested live SPY proxy: {spy_price}")
             except Exception as e:
@@ -281,11 +297,12 @@ class DataPipeline:
         # Supplement with Massive news if available AND needed (delayed)
         if self._massive.is_available:
             import time
+
             for ticker in tickers:
                 if len(news.get(ticker, [])) >= max_per_ticker:
                     continue  # Skip if we already have enough from primary sources
-                    
-                time.sleep(12) # Respect minimum 12 second delay (5/min limit)
+
+                time.sleep(12)  # Respect minimum 12 second delay (5/min limit)
                 try:
                     massive_news = self._massive.get_ticker_news(ticker, limit=max_per_ticker)
                     if massive_news and ticker in news:
