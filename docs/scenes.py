@@ -269,8 +269,10 @@ class Scene6_KellyCriterionCalculus(Scene):
         tracker = ValueTracker(0.1)
         tangent = always_redraw(
             lambda: axes.plot(
-                lambda x: (0.15 - 0.2 * tracker.get_value()) * (x - tracker.get_value())
-                + (0.15 * tracker.get_value() - 0.5 * (0.2) * tracker.get_value() ** 2),
+                lambda x: (
+                    (0.15 - 0.2 * tracker.get_value()) * (x - tracker.get_value())
+                    + (0.15 * tracker.get_value() - 0.5 * (0.2) * tracker.get_value() ** 2)
+                ),
                 color=COLOR_ACCENT,
                 x_range=[tracker.get_value() - 0.2, tracker.get_value() + 0.2],
             )
@@ -343,9 +345,11 @@ class Scene8_YieldCurveDynamics(Scene):
         t = ValueTracker(0)
         curve = always_redraw(
             lambda: axes.plot(
-                lambda x: interpolate(1.0, 5.0, t.get_value())
-                + (interpolate(5.0, 4.0, t.get_value()) - interpolate(1.0, 5.0, t.get_value()))
-                * (1 - np.exp(-0.2 * x)),
+                lambda x: (
+                    interpolate(1.0, 5.0, t.get_value())
+                    + (interpolate(5.0, 4.0, t.get_value()) - interpolate(1.0, 5.0, t.get_value()))
+                    * (1 - np.exp(-0.2 * x))
+                ),
                 color=interpolate_color(COLOR_BLUE, COLOR_NEGATIVE, t.get_value()),
             )
         )

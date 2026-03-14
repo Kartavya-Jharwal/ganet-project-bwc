@@ -49,6 +49,8 @@ dependencies = [
     "pyarrow>=23.0.1",
     "streamlit>=1.55.0",
     "streamlit-echarts>=0.6.0",
+    "pydantic>=2.12.5",
+    "pandera>=0.29.0",
 ]
 
 [build-system]
