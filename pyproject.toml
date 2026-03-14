@@ -51,6 +51,10 @@ dependencies = [
     "streamlit-echarts>=0.6.0",
     "pydantic>=2.12.5",
     "pandera>=0.29.0",
+    "statsmodels>=0.14.6",
+    "quantstats>=0.0.81",
+    "seaborn>=0.13.2",
+    "tabulate>=0.10.0",
 ]
 
 [build-system]
@@ -81,9 +85,7 @@ explicit = true
 [tool.uv.sources]
 torch = { index = "pytorch-cpu" }
 
-# Point uv cache to D: drive to avoid cross-drive copies and reuse existing downloads
-[tool.uv]
-cache-dir = "D:\\KJ\\.uv-cache"
+
 
 [tool.pytest.ini_options]
 markers = [
