@@ -7,16 +7,22 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+env:
+  # Bypass Node.js 20 deprecation warnings for GitHub Actions
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # Prevent .pyc files from polluting or hiding execution drift
+  PYTHONDONTWRITEBYTECODE: 1
+
 jobs:
   scientific-computation:
     name: "Reproducible Analytics Framework"
     runs-on: ubuntu-latest
-    
+
     # OIDC identity allows secure Doppler Service Token swaps
     permissions:
       id-token: write
       contents: read
-      
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -27,7 +33,7 @@ jobs:
         with:
           version: "latest"
           enable-cache: true
-      
+
       - name: "Set up Python 3.12"
         run: uv python install 3.12
 
@@ -39,42 +45,45 @@ jobs:
       # Uses short-lived ephemeral Service Tokens (Least Privilege access)
       - name: Install Doppler CLI
         uses: dopplerhq/cli-action@v3
-        
+
       - name: Aggressive Matrix & Backtest Validation
         env:
-          # In true production, map OIDC instead of plain secrets.
-          # NEVER use Personal Tokens here. Service Token restricts to 'prd' config.
+          # NEVER use Personal Tokens here. Service Token restricts to prd config.
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_SERVICE_TOKEN }}
         run: |
           doppler run -- uv run pytest tests/ -v
           doppler run -- uv run ruff check .
+          doppler run -- uv run ty check quant_monitor
+          doppler run -- uv run bandit -r quant_monitor/ -c pyproject.toml
+          doppler run -- uv run deptry .
 
   deploy-endpoints:
     name: "Deploy State & UI"
     needs: scientific-computation
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     permissions:
       contents: write
       pages: write
 
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install uv
         uses: astral-sh/setup-uv@v5
-        
+
       # Execute the Tearsheet Generator directly in CI
       - name: Build Tearsheet
         run: |
           uv sync --frozen
           uv run python scripts/generate_tearsheet.py --benchmark SPY
-          
-      # Expose Static Assets 
+
+      # Expose Static Assets
       - name: Deploy to GitHub Pages (Static UI)
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./frontend
           publish_branch: gh-pages
+

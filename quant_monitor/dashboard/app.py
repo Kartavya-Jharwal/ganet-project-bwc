@@ -112,7 +112,7 @@ def make_signals() -> Panel:
     from quant_monitor.dashboard.data_loader import load_portfolio_state, load_signals_from_appwrite
 
     signals = load_signals_from_appwrite()
-    state = load_portfolio_state()
+    load_portfolio_state()
 
     table = Table(box=None, expand=True, show_edge=False, row_styles=["none", "dim"])
     table.add_column("[dim]Tkr[/dim]", style="bold magenta")
@@ -335,7 +335,7 @@ def draw_neofetch():
 
     from rich.columns import Columns
 
-    os.system("cls" if os.name == "nt" else "clear")
+    print("\x1b[2J\x1b[H", end="")
 
     ascii_art = """[bold cyan]
       ██████                   ███    ████
@@ -428,7 +428,7 @@ def main():
         current_view = "main"
         force_update = True
 
-        with Live(layout, refresh_per_second=4, screen=True) as live:
+        with Live(layout, refresh_per_second=4, screen=True):
             ticks = 0
             while True:
                 # Key press detection mapping for Windows

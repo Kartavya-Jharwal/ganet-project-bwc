@@ -33,8 +33,8 @@ def get_dynamic_sector(ticker: str) -> str:
             if sector:
                 SECTOR_MAP[ticker] = sector
                 return sector
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("OpenBB sector lookup failed for %s: %s", ticker, e)
 
     # Fallback to yfinance
     try:
@@ -44,7 +44,8 @@ def get_dynamic_sector(ticker: str) -> str:
         sector = info.get("sector", "Unknown")
         SECTOR_MAP[ticker] = sector
         return sector
-    except Exception:
+    except Exception as e:
+        logger.debug("YFinance sector lookup failed for %s: %s", ticker, e)     
         SECTOR_MAP[ticker] = "Unknown"
         return "Unknown"
 

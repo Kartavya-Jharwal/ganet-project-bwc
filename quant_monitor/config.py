@@ -15,15 +15,15 @@ from __future__ import annotations
 
 import os
 import tomllib
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+
+from pydantic import BaseModel, Field
 
 CONFIG_PATH = Path(__file__).parent / "config.toml"
 
 
-@dataclass(frozen=True)
-class Secrets:
+class Secrets(BaseModel):
     """Secrets injected by Doppler via environment variables.
 
     Access as cfg.secrets.ALPACA_API_KEY etc.
@@ -49,32 +49,29 @@ class Secrets:
     @classmethod
     def from_env(cls) -> Secrets:
         """Load secrets from environment (Doppler injects these)."""
-        return cls(
-            **{f.name: os.environ.get(f.name, f.default) for f in cls.__dataclass_fields__.values()}
-        )
+        return cls(**{f: os.environ.get(f, "") for f in cls.model_fields})
 
 
-@dataclass
-class Config:
+class Config(BaseModel):
     """Unified configuration object combining TOML + environment secrets."""
 
     # Raw TOML sections
-    project: dict[str, Any] = field(default_factory=dict)
-    holdings: dict[str, dict[str, Any]] = field(default_factory=dict)
-    cache_ttl: dict[str, int] = field(default_factory=dict)
-    regime_weights: dict[str, dict[str, float]] = field(default_factory=dict)
-    risk_params: dict[str, dict[str, float]] = field(default_factory=dict)
-    signal_thresholds: dict[str, float] = field(default_factory=dict)
-    moving_averages: dict[str, int] = field(default_factory=dict)
-    volatility: dict[str, Any] = field(default_factory=dict)
-    sentiment: dict[str, Any] = field(default_factory=dict)
-    macro_thresholds: dict[str, float] = field(default_factory=dict)
-    appwrite: dict[str, Any] = field(default_factory=dict)
-    scrapy_cloud: dict[str, Any] = field(default_factory=dict)
-    alerts: dict[str, Any] = field(default_factory=dict)
+    project: dict[str, Any] = Field(default_factory=dict)
+    holdings: dict[str, dict[str, Any]] = Field(default_factory=dict)
+    cache_ttl: dict[str, int] = Field(default_factory=dict)
+    regime_weights: dict[str, dict[str, float]] = Field(default_factory=dict)
+    risk_params: dict[str, dict[str, float]] = Field(default_factory=dict)
+    signal_thresholds: dict[str, float] = Field(default_factory=dict)
+    moving_averages: dict[str, int] = Field(default_factory=dict)
+    volatility: dict[str, Any] = Field(default_factory=dict)
+    sentiment: dict[str, Any] = Field(default_factory=dict)
+    macro_thresholds: dict[str, float] = Field(default_factory=dict)
+    appwrite: dict[str, Any] = Field(default_factory=dict)
+    scrapy_cloud: dict[str, Any] = Field(default_factory=dict)
+    alerts: dict[str, Any] = Field(default_factory=dict)
 
     # Doppler secrets
-    secrets: Secrets = field(default_factory=Secrets)
+    secrets: Secrets = Field(default_factory=Secrets)
 
     @property
     def tickers(self) -> list[str]:
