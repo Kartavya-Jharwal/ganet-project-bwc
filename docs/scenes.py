@@ -827,3 +827,234 @@ class Scene18_ProjectMetaVisualization(ThreeDScene):
         self.begin_ambient_camera_rotation(rate=0.3)
         self.wait(5)
         self.stop_ambient_camera_rotation()
+
+
+class Scene19_QuadraticVariationBrownianMotion(Scene):
+    """Monte Carlo simulation of Quadratic Variation of Brownian Motion.
+
+    Demonstrates ⟨B⟩_t = t via path-wise quadratic variation:
+    Σ_i (B_{t_{i+1}} - B_{t_i})^2 → t as partition size → 0.
+
+    Color-mapped by partition granularity with equation annotated on the side.
+    """
+
+    def construct(self):
+        title = Text("19. Quadratic Variation of Brownian Motion", font_size=30).to_corner(UL)
+        self.add(title)
+
+        # Equation annotation on the right side
+        eq_box = RoundedRectangle(
+            corner_radius=0.2, width=4.5, height=4.5, color=COLOR_BLUE, fill_opacity=0.08
+        ).to_edge(RIGHT, buff=0.4).shift(UP * 0.3)
+
+        eq_title = Text("Quadratic Variation", font_size=18, color=COLOR_ACCENT).move_to(
+            eq_box.get_top() + DOWN * 0.45
+        )
+        eq_def = MathTex(
+            r"\langle B \rangle_t = t", font_size=36, color=COLOR_WHITE
+        ).next_to(eq_title, DOWN, buff=0.3)
+
+        eq_sum = MathTex(
+            r"\sum_{i} \left( B_{t_{i+1}} - B_{t_i} \right)^2 \to t",
+            font_size=26,
+            color=COLOR_MUTED,
+        ).next_to(eq_def, DOWN, buff=0.25)
+
+        eq_note = Text(
+            "As partition size → 0,\nthe sum of squared\nincrements converges\nto elapsed time t.",
+            font_size=14,
+            line_spacing=1.3,
+            color=COLOR_WHITE,
+        ).next_to(eq_sum, DOWN, buff=0.3)
+
+        self.play(FadeIn(eq_box), Write(eq_title))
+        self.play(Write(eq_def), run_time=1.5)
+        self.play(FadeIn(eq_sum), FadeIn(eq_note))
+
+        # Axes for the simulation
+        axes = Axes(
+            x_range=[0, 1.0, 0.2],
+            y_range=[0, 2.0, 0.5],
+            x_length=6.5,
+            y_length=4.5,
+            axis_config={"color": COLOR_MUTED, "include_numbers": True, "font_size": 20},
+        ).to_edge(LEFT, buff=0.8).shift(DOWN * 0.3)
+
+        x_label = axes.get_x_axis_label(
+            Text("t", font_size=20, color=COLOR_WHITE), edge=DOWN, direction=DOWN
+        )
+        y_label = axes.get_y_axis_label(
+            MathTex(r"\langle B \rangle_t", font_size=24, color=COLOR_WHITE),
+            edge=LEFT,
+            direction=LEFT,
+        )
+        self.play(Create(axes), FadeIn(x_label), FadeIn(y_label))
+
+        # True line: ⟨B⟩_t = t
+        true_line = axes.plot(lambda t: t, x_range=[0, 1.0], color=COLOR_ACCENT, stroke_width=3)
+        true_label = Text("⟨B⟩ₜ = t (theory)", font_size=14, color=COLOR_ACCENT).next_to(
+            true_line, UP, buff=0.15
+        )
+        self.play(Create(true_line), FadeIn(true_label), run_time=1.5)
+
+        # Color map: fewer partitions → red, more → green
+        partition_configs = [
+            (10, "#ff3366", "n=10"),
+            (50, "#ffaa33", "n=50"),
+            (200, "#33ccff", "n=200"),
+            (1000, "#00ff88", "n=1000"),
+        ]
+
+        np.random.seed(42)
+        legend_items = VGroup()
+
+        for n_partitions, color, label in partition_configs:
+            dt_step = 1.0 / n_partitions
+            # Monte Carlo: average over multiple paths
+            n_mc = 50
+            qv_curves = []
+            for _ in range(n_mc):
+                increments = np.random.normal(0, np.sqrt(dt_step), n_partitions)
+                sq_increments = increments**2
+                cumulative_qv = np.cumsum(sq_increments)
+                qv_curves.append(cumulative_qv)
+
+            # Average QV across MC paths
+            avg_qv = np.mean(qv_curves, axis=0)
+            t_vals = np.linspace(dt_step, 1.0, n_partitions)
+
+            # Subsample for plotting
+            step = max(1, n_partitions // 100)
+            t_plot = t_vals[::step]
+            qv_plot = avg_qv[::step]
+
+            graph = axes.plot_line_graph(
+                x_values=t_plot,
+                y_values=qv_plot,
+                add_vertex_dots=False,
+                line_color=color,
+            ).set_stroke(width=2, opacity=0.8)
+
+            leg_dot = Dot(color=color, radius=0.06)
+            leg_text = Text(label, font_size=14, color=color)
+            leg_entry = VGroup(leg_dot, leg_text).arrange(RIGHT, buff=0.15)
+            legend_items.add(leg_entry)
+
+            self.play(Create(graph), run_time=0.8)
+
+        legend_items.arrange(DOWN, buff=0.15, aligned_edge=LEFT)
+        legend_items.next_to(axes, DOWN, buff=0.3).align_to(axes, LEFT)
+        self.play(FadeIn(legend_items))
+
+        # Highlight convergence
+        converge_text = Text(
+            "Finer partitions → convergence to t",
+            font_size=16,
+            color=COLOR_POSITIVE,
+        ).next_to(axes, DOWN, buff=0.05)
+        self.play(FadeIn(converge_text, shift=UP * 0.2))
+        self.wait(3)
+
+
+class Scene20_StochasticLocalVolatilitySurface(ThreeDScene):
+    """Stochastic Local Volatility surface — the 3D implied vol surface.
+
+    σ(S, t, K, T): peaks indicate unstable pricing regions.
+    Used to calibrate options and inform delta hedging.
+    """
+
+    def construct(self):
+        title = Text("20. Stochastic Local Volatility Surface", font_size=30).to_corner(UL)
+        self.add_fixed_in_frame_mobjects(title)
+
+        # Insight panel
+        insight = LaymanInsight(
+            "Options Insight",
+            "This 3D 'chopping board'\nis the implied volatility\nsurface σ(K, T). Peaks show\nunstable pricing regions.\nUsed for delta hedging\ncalibration.",
+        )
+        insight.to_corner(DR).shift(UP * 0.3 + LEFT * 0.3)
+        self.add_fixed_in_frame_mobjects(insight)
+        self.play(FadeIn(insight))
+
+        # Equation annotation
+        eq = MathTex(
+            r"\sigma_{LV}(S, t, K, T)", font_size=30, color=COLOR_ACCENT
+        ).to_corner(UR).shift(DOWN * 1.5 + LEFT * 0.5)
+        self.add_fixed_in_frame_mobjects(eq)
+        self.play(Write(eq))
+
+        self.set_camera_orientation(phi=65 * DEGREES, theta=-50 * DEGREES, zoom=0.7)
+
+        axes = ThreeDAxes(
+            x_range=[0.5, 1.5, 0.25],
+            y_range=[0.1, 2.0, 0.5],
+            z_range=[0, 0.6, 0.1],
+            x_length=6,
+            y_length=6,
+            z_length=4,
+            axis_config={"color": COLOR_MUTED},
+        )
+        x_lbl = axes.get_x_axis_label(
+            MathTex("K/S", font_size=24, color=COLOR_WHITE), edge=RIGHT, direction=RIGHT
+        )
+        y_lbl = axes.get_y_axis_label(
+            MathTex("T", font_size=24, color=COLOR_WHITE), edge=UP, direction=UP
+        )
+        z_lbl = axes.get_z_axis_label(
+            MathTex(r"\sigma", font_size=24, color=COLOR_WHITE), edge=OUT, direction=OUT
+        )
+        self.add(axes, x_lbl, y_lbl, z_lbl)
+
+        # Implied vol surface: smile + term structure
+        def vol_surface(moneyness, maturity):
+            """Realistic implied vol surface with smile and skew."""
+            # Base vol with ATM term structure
+            base_vol = 0.20 + 0.05 * np.exp(-maturity)
+            # Smile: convexity in moneyness
+            smile = 0.15 * (moneyness - 1.0) ** 2
+            # Skew: OTM puts have higher vol
+            skew = -0.08 * (moneyness - 1.0) * np.exp(-0.5 * maturity)
+            # Wing curvature
+            wings = 0.02 * np.exp(-2.0 * maturity) * (moneyness - 1.0) ** 4
+            # Stochastic component (local vol roughness)
+            rough = 0.01 * np.sin(8 * moneyness) * np.cos(3 * maturity)
+            return np.clip(base_vol + smile + skew + wings + rough, 0.05, 0.60)
+
+        surface = Surface(
+            lambda u, v: axes.c2p(u, v, vol_surface(u, v)),
+            u_range=[0.5, 1.5],
+            v_range=[0.1, 2.0],
+            resolution=(40, 40),
+            fill_opacity=0.7,
+            stroke_width=0.5,
+            stroke_color=COLOR_MUTED,
+        )
+
+        # Color the surface by height (volatility level)
+        surface.set_fill_by_value(
+            axes=axes,
+            colorscale=[
+                (COLOR_POSITIVE, 0.10),
+                (COLOR_BLUE, 0.20),
+                (COLOR_PURPLE, 0.30),
+                (COLOR_ACCENT, 0.40),
+                (COLOR_NEGATIVE, 0.55),
+            ],
+            axis=2,
+        )
+
+        self.play(Create(surface), run_time=3)
+
+        # Ambient rotation to show 3D structure
+        self.begin_ambient_camera_rotation(rate=0.15)
+        self.wait(4)
+
+        # Highlight unstable region (deep OTM, short maturity)
+        peak_dot = Dot3D(
+            axes.c2p(0.7, 0.2, vol_surface(0.7, 0.2)),
+            color=COLOR_NEGATIVE,
+            radius=0.08,
+        )
+        self.play(FadeIn(peak_dot, scale=2))
+        self.wait(3)
+        self.stop_ambient_camera_rotation()
