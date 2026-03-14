@@ -56,11 +56,20 @@ jobs:
           # NEVER use Personal Tokens here. Service Token restricts to prd config.
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_SERVICE_TOKEN }}
         run: |
-          doppler run -- uv run pytest tests/ -v
-          doppler run -- uv run ruff check .
-          doppler run -- uv run ty check quant_monitor
-          doppler run -- uv run bandit -r quant_monitor/ -c pyproject.toml
-          doppler run -- uv run deptry .
+          if [ -z "$DOPPLER_TOKEN" ]; then
+            echo "No Doppler token provided, falling back to local ENV for testing..."
+            uv run pytest tests/ -v
+            uv run ruff check .
+            uv run ty check quant_monitor
+            uv run bandit -r quant_monitor/ -c pyproject.toml
+            uv run deptry .
+          else
+            doppler run -- uv run pytest tests/ -v
+            doppler run -- uv run ruff check .
+            doppler run -- uv run ty check quant_monitor
+            doppler run -- uv run bandit -r quant_monitor/ -c pyproject.toml
+            doppler run -- uv run deptry .
+          fi
 
   deploy-endpoints:
     name: "Deploy State & UI"
