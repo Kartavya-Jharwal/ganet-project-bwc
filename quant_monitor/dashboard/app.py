@@ -329,6 +329,16 @@ def make_health(ticks: int = 0, current_view: str = "main") -> Panel:
     )
 
 
+VIEW_RENDERERS = {
+    "header": make_header,
+    "holdings": make_holdings,
+    "signals": make_signals,
+    "metrics": make_metrics,
+    "macro": make_macro,
+    "health": make_health,
+}
+
+
 def draw_neofetch():
     import os
     import platform
@@ -348,8 +358,13 @@ def draw_neofetch():
  ░░░░░            █████   █████    █████     
     [/bold cyan]"""
 
+    try:
+        user = os.getlogin()
+    except OSError:
+        user = os.environ.get("USER", os.environ.get("USERNAME", "Ganet"))
+
     metadata = f"""
-[bold yellow]User@Host[/bold yellow]     [cyan]{os.getlogin() if hasattr(os, "getlogin") else "Ganet"}@{platform.node()}[/cyan]
+[bold yellow]User@Host[/bold yellow]     [cyan]{user}@{platform.node()}[/cyan]
 [bold cyan]--------------------------------[/bold cyan]
 [bold yellow]OS:[/bold yellow]           {platform.system()} {platform.release()}
 [bold yellow]Kernel:[/bold yellow]       {platform.version()}
@@ -397,13 +412,13 @@ def generate_layout() -> Layout:
     return layout
 
 
-def main():
+def main(argv: list[str] | None = None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--view", help="Not used in multi-view layout, kept for compatibility", default=None
     )
     parser.add_argument("--live", action="store_true", help="Auto-refresh UI on timer")
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     draw_neofetch()
 
