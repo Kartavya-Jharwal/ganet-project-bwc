@@ -1,15 +1,14 @@
 """Tests for Phase 22 metrics."""
+
 import pandas as pd
-import numpy as np
 from scipy.stats import norm
 
 from quant_monitor.backtest.metrics import (
-    sortino_ratio,
-    kappa_ratio,
-    cornish_fisher_var,
     conditional_var,
-    tail_ratio,
+    cornish_fisher_var,
     drawdown_duration,
+    sortino_ratio,
+    tail_ratio,
 )
 
 
@@ -55,4 +54,4 @@ def test_drawdown_duration():
     returns = pd.Series([0.01, -0.02, -0.01, 0.01, 0.04, -0.01, -0.02, -0.03, 0.05])
     # cumulative: 1.01, 0.9898, 0.9799, 0.9897, 1.029, 1.018, 0.998, ...
     dur = drawdown_duration(returns)
-    assert dur == 4 # First drawdown stretch is 4 days
+    assert dur == 4  # First drawdown stretch is 4 days

@@ -239,17 +239,17 @@ class YFinanceFeed:
     def is_market_open(self) -> bool:
         """Check if US market is currently open using NY calendar."""
         try:
-            import pandas_market_calendars as mcal
             import pandas as pd
-            
-            nyse = mcal.get_calendar('NYSE')
-            now = pd.Timestamp.now(tz='America/New_York')
+            import pandas_market_calendars as mcal
+
+            nyse = mcal.get_calendar("NYSE")
+            now = pd.Timestamp.now(tz="America/New_York")
             schedule = nyse.schedule(start_date=now.date(), end_date=now.date())
-            
+
             if schedule.empty:
                 return False
-            
-            return schedule.iloc[0]['market_open'] <= now <= schedule.iloc[0]['market_close']
+
+            return schedule.iloc[0]["market_open"] <= now <= schedule.iloc[0]["market_close"]
         except ImportError:
             # Fallback if pandas_market_calendars is missing
             now = datetime.now()

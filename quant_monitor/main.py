@@ -50,7 +50,7 @@ def run_signal_cycle() -> None:
         prices = pipeline.fetch_prices(tickers)
         macro = pipeline.fetch_macro()
         pipeline.fetch_news(tickers)
-        
+
         # 2. Classify volatility regime
         spy_prices = prices.loc["SPY"] if "SPY" in prices.index.get_level_values(0) else None
         if spy_prices is not None and len(spy_prices) > 200:
@@ -125,43 +125,48 @@ def run_signal_cycle() -> None:
         # === PHASE 13-17: TOPOLOGICAL MATH ENGINE ===
         logger.info("Initiating Phase 13-17 Topological Engine")
         import json
+
         import duckdb
+
         from quant_monitor.models.math.correlation_graph import CorrelationGraphBuilder
+        from quant_monitor.models.math.drift_predictor import DriftPredictor
         from quant_monitor.models.math.hrp_sizer import HRPSizer
         from quant_monitor.models.math.mst_pruner import MSTPruner
-        from quant_monitor.models.math.drift_predictor import DriftPredictor
-        
+
         target_weights = None
         mst_edges = []
-        
+
         try:
             # Phase 1: Graphical Lasso Correl
             builder = CorrelationGraphBuilder()
             graph_data = builder.build_graph()
-            
-            if "precision" in graph_data and graph_data["precision"]:
+
+            if graph_data.get("precision"):
                 import numpy as np
-                partial_corr = np.array(graph_data["precision"]) # this is actually partial corr after transformation in builder
+
+                partial_corr = np.array(
+                    graph_data["precision"]
+                )  # this is actually partial corr after transformation in builder
                 d = np.diag(partial_corr)
                 d_inv_sqrt = np.diag(1.0 / np.sqrt(np.clip(d, a_min=1e-12, a_max=None)))
-                partial_corr_matrix = - (d_inv_sqrt @ partial_corr @ d_inv_sqrt)
+                partial_corr_matrix = -(d_inv_sqrt @ partial_corr @ d_inv_sqrt)
                 np.fill_diagonal(partial_corr_matrix, 1.0)
-                
+
                 valid_tickers = graph_data["tickers"]
-                
+
                 # We need variances for HRP. Approximate using 252-day variance of daily returns.
                 returns_df = builder._extract_returns()
                 variances = returns_df.var().values
-                
+
                 # Phase 2: HRP allocation
                 sizer = HRPSizer(partial_corr_matrix, valid_tickers, variances)
                 target_weights = sizer.allocate()
-                
+
                 # Phase 4: MST Pruning
                 pruner = MSTPruner(partial_corr_matrix, valid_tickers)
                 mst_results = pruner.process_mst()
                 mst_edges = mst_results["mst_edges"]
-                
+
                 # Phase 3: Drift Adjustment
                 predictor = DriftPredictor()
                 spy_t_15 = current_prices_series.get("SPY", 0.0)
@@ -170,10 +175,15 @@ def run_signal_cycle() -> None:
                     try:
                         from rich.console import Console
                         from rich.table import Table
+
                         console = Console()
-                        table = Table(title="15-Minute Drift Execution Targets (Phase 19)", show_header=True, header_style="bold magenta")
+                        table = Table(
+                            title="15-Minute Drift Execution Targets (Phase 19)",
+                            show_header=True,
+                            header_style="bold magenta",
+                        )
                         table.add_column("Details", style="cyan", justify="left")
-                        
+
                         for d in drift_orders:
                             if "Buy" in d:
                                 table.add_row(f"[green]{d}[/green]")
@@ -186,7 +196,7 @@ def run_signal_cycle() -> None:
                         logger.info("--- Drift Predictor Execution Targets ---")
                         for d in drift_orders:
                             logger.info(d)
-                
+
                 # Logging state to DuckDB logic
                 conn = duckdb.connect("portfolio.duckdb", read_only=False)
                 conn.execute("""
@@ -198,12 +208,12 @@ def run_signal_cycle() -> None:
                 """)
                 conn.execute(
                     "INSERT INTO audit_log VALUES (CURRENT_TIMESTAMP, ?, ?)",
-                    (json.dumps(target_weights), json.dumps(mst_edges))
+                    (json.dumps(target_weights), json.dumps(mst_edges)),
                 )
                 conn.close()
                 logger.info("Topological pipeline succeeded.")
             else:
-                 raise ValueError("GraphicalLassoCV empty graph returned.")
+                raise ValueError("GraphicalLassoCV empty graph returned.")
 
         except Exception as e:
             logger.error(f"Topological engine failed: {e}. Falling back to equal weight logic.")
