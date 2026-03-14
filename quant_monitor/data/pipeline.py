@@ -216,6 +216,9 @@ class DataPipeline:
                 logger.debug("Using cached latest prices")
                 return cached
 
+        # Minimum fraction of requested tickers that must be available locally
+        _LOCAL_CACHE_MIN_COVERAGE = 0.5
+
         if getattr(self, "mode", "consume") == "consume":
             # In consume mode, try local DuckDB cache first before hitting yfinance
             try:
@@ -232,7 +235,7 @@ class DataPipeline:
                 if result:
                     local_prices = {row[0]: {"price": row[1]} for row in result}
                     # Only use local if we have data for most requested tickers
-                    if len(set(tickers) & set(local_prices)) >= len(tickers) * 0.5:
+                    if len(set(tickers) & set(local_prices)) >= len(tickers) * _LOCAL_CACHE_MIN_COVERAGE:
                         logger.debug("Using DuckDB cached prices in consume mode")
                         if use_cache:
                             ttl = cfg.cache_ttl.get("price_realtime", 60)
