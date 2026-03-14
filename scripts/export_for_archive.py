@@ -8,9 +8,20 @@ Usage:
 
 from __future__ import annotations
 
+import datetime
 import logging
+import sys
 
 logger = logging.getLogger(__name__)
+
+
+def verify_sunset_date():
+    """HARD ENFORCEMENT: Never run this before May 1, 2026."""
+    target_date = datetime.date(2026, 5, 1)
+    if datetime.date.today() < target_date:
+        logger.error(f"CRITICAL: Project sunset cannot occur before {target_date}.")
+        logger.error("The forward Monte Carlo window must elapse mathematically.")
+        sys.exit(1)
 
 
 def export_portfolio_performance():
@@ -39,6 +50,9 @@ def export_backtest_results():
 def main():
     logging.basicConfig(level=logging.INFO)
     logger.info("Starting pre-sunset export...")
+
+    verify_sunset_date()
+
     export_portfolio_performance()
     export_signal_history()
     export_backtest_results()

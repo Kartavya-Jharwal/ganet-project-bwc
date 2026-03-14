@@ -1,0 +1,9 @@
+# This file is used internally by FFMPEG.
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene6_ModernMetrics/3185320249_1744864082_3076434725.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene6_ModernMetrics/3630546233_2552429044_3416918067.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene6_ModernMetrics/3630546233_3378729332_3927469.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene6_ModernMetrics/3630546233_2921732877_2349424970.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene6_ModernMetrics/3630546233_2273091469_1826409487.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene6_ModernMetrics/3630546233_1305857832_3754665530.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene6_ModernMetrics/3630546233_2325788730_3582763191.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene6_ModernMetrics/3630546233_4217992463_2959370180.mp4'

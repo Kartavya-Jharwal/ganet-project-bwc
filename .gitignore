@@ -63,3 +63,8 @@ site/
 # Scrapy
 *.log
 *.jl
+
+# Manim Output
+media/
+partial_movie_files/
+

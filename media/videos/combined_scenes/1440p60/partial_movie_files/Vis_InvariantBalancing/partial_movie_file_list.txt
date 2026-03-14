@@ -1,0 +1,9 @@
+# This file is used internally by FFMPEG.
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_InvariantBalancing/3185320249_768455317_994947446.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_InvariantBalancing/3630546233_3046943921_2039171565.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_InvariantBalancing/3630546233_93208120_3168862227.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_InvariantBalancing/3630546233_3773159543_1983052079.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_InvariantBalancing/3630546233_2936619838_3571356887.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_InvariantBalancing/3630546233_3543305201_2754764369.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_InvariantBalancing/3630546233_41761066_3281170649.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_InvariantBalancing/3630546233_3366045169_3408396154.mp4'

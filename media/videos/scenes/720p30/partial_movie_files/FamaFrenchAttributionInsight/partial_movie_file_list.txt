@@ -1,0 +1,6 @@
+# This file is used internally by FFMPEG.
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/FamaFrenchAttributionInsight/2656656202_3599920542_223132457.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/FamaFrenchAttributionInsight/3730622836_2377100384_3345262843.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/FamaFrenchAttributionInsight/3730622836_2197885767_501784536.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/FamaFrenchAttributionInsight/3730622836_2589101474_2640450947.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/scenes/720p30/partial_movie_files/FamaFrenchAttributionInsight/3730622836_2552855209_2940616068.mp4'

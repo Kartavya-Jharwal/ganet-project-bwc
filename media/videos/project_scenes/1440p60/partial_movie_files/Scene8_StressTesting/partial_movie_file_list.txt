@@ -1,0 +1,8 @@
+# This file is used internally by FFMPEG.
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene8_StressTesting/3185320249_861464569_2764609942.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene8_StressTesting/3630546233_1819516003_3396646137.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene8_StressTesting/3630546233_1564838366_1820978960.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene8_StressTesting/3630546233_791099386_3698087687.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene8_StressTesting/3630546233_3370536073_4190123404.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene8_StressTesting/3630546233_2262386769_1626086919.mp4'
+file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/project_scenes/1440p60/partial_movie_files/Scene8_StressTesting/3630546233_4217992463_1391834451.mp4'
