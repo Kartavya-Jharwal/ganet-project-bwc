@@ -93,13 +93,21 @@ jobs:
           sudo apt-get install -y libcairo2-dev libpango1.0-dev ffmpeg
 
       # Execute the Tearsheet Generator directly in CI
-      - name: Build Tearsheet
+      - name: Build Financial Tearsheet
         run: |
           uv sync --frozen
           uv run python scripts/generate_tearsheet.py --benchmark SPY
 
+      # Execute Plotly Generator for Interactive Web View
+      - name: Build Interactive Dashboard
+        run: uv run python scripts/generate_plotly_dashboard.py --output docs/dashboard.html
+
+      # Build Mkdocs
+      - name: Build Docs Microsite
+        run: uv run mkdocs build
+
       # Expose Static Assets
-      - name: Deploy to GitHub Pages (Static UI)
+      - name: Deploy to GitHub Pages (Static UI & Docs)
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
