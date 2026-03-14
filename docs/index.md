@@ -1,81 +1,38 @@
-# Ganet - Project BWC
+# The BWC Quantitative Framework
 
-> Team 5 Investment Simulation — Hult International Business School London
+> Hult International Business School — Advanced Institutional Analytics Prototype
 
-## Overview
+## Executive Overview
+The **BWC Portfolio Engine** transcends conventional retail dashboards, operating as an autonomous, scientifically reproducible quantitative pipeline enforcing active risk mitigation against extreme fat-tail SDE events. 
 
-Autonomous signal generation, risk monitoring, and rebalancing recommendation system
-for a $1,000,000 simulated portfolio on StockTrak.
+It synthesizes four orthogonal signal engines (macro-sentimental momentum, technical drift, fundamental parsing) filtered heavily through **Sparse Inverse Covariance graphed correlations**, sizing risk-allocations exclusively using Inverse Volatility Hierarchical Risk Parity (HRP), completely bypassing generic fixed-weight assumptions. 
 
-- **15 positions** across AI infrastructure, defense, financials, and defensives
-- **4-model signal fusion** (technical, fundamental, sentiment, macro)
-- **Dynamic regime-weighted arbitration** using Hurst exponent volatility classifier
-- **Black-Litterman** portfolio optimization with confidence-weighted views
+All algorithmic outputs run real-time Appwrite WebSockets bound asynchronously to a Brutalist UI grid mapped visually utilizing computational Manim calculus geometry.
 
-Demo-day status (March 13, 2026): **Executable prototype (YES)** with required secrets configured.
+## The Architecture of the Pivot
+In mid-development, the systemic trajectory abandoned heavy manual scraping and API-bloated layers on legacy Heroku deployments to embrace a completely strictly reproducible local pipeline.
 
-## Documentation
+* **Configuration Driven Design**: Variables defining Monte Carlo paths, jump diffusion shock thresholds, and stress permutations are abstracted entirely to `.toml` and `doppler.yaml` bounds rather than embedded iteratively within classes.
+* **Aggressive Scientific Logging**: `quant_monitor/` components execute highly-structured JSON/stdout pipelines designed implicitly for remote Datadog/Sentry log capturing integrations rather than simple Python print statements. You don't just see the failure; you trap the multidimensional array trace mathematically predicting the failure.
+* **Strict Least-Privilege Identity:** Development secrets flow universally through dynamic **Doppler Service Tokens**, explicitly locking Appwrite/Vercel boundaries into `prd` scoped sandboxes and destroying potential horizontal escalation risks if external entities scrape CI architectures.
 
-### Getting Started
+## Execution Resources
+For quantitative engineers reviewing this architecture:
 
-| Resource | Description |
-|----------|-------------|
-| [Development Guide](development.md) | Setup, workflow, contributing |
-| [Architecture](architecture.md) | System design and data flow |
-| [Design Decisions](design.md) | Technology choices and trade-offs |
+### Phase 22+ Advanced Analytics
+Deep dives on our institutional metrics implementation. Includes exact regression matrix specifications for Fama-French multi-collinearity checks, Brinson-Fachler attribution arrays, and the `uv run ruff` validated test sequences pushing these engines to fail identically against COVID '20 shocks. 
+[Review Advanced Methodologies →](phase-22-onwards-advanced-analytics.md)
 
-### Implementation
-
-| Resource | Description |
-|----------|-------------|
-| [Phase 0: Scaffold](phase-0-scaffold.md) | Project infrastructure setup |
-| [Development Roadmap](roadmap.md) | Complete phase-by-phase plan |
-| [Demo Day Progress Report](progress-report.md) | Final readiness and capability status |
-| [Phase 11-21 Implementation Track](phase-11-21-implementation-track.md) | Evidence-first plan for quant PM positioning |
-| [Phase 22+ Advanced Analytics](phase-22-onwards-advanced-analytics.md) | Institutional metrics, Brinson attribution, and Monte Carlo |
-
-### Results *(populated at sunset)*
-
-| Resource | Description |
-|----------|-------------|
-| [Performance](performance.md) | Final portfolio performance vs benchmark |
-| [Backtest Results](backtest-results.md) | Walk-forward validation metrics |
-| [Signal History](signals-history.md) | Complete signal log export |
-
-## Quick Stats (March 13 Checkpoint)
-
-| Metric | Value |
-|--------|-------|
-| Current Capital | ~$982,206 |
-| Positions | 18 |
-| Cash Reserve | ~19.1% |
-| Benchmark | SPY |
-| Signal Models | 4 (Tech, Fund, Sent, Macro) |
-| Post-Hoc Analytics | Fama-French, Brinson-Fachler, Monte Carlo |
-
-## Timeline
-
-```
-Feb 24 ─────────────────────────────────────────────── May 1
-   │                                                     │
-   ├─ Phase 0-10: Development ────────────────────┤     │
-   │                                              │     │
-   │                                         Apr 10     │
-   │                                      Valuation     │
-   │                                                    │
-   │                                              May 1 │
-   │                                             Sunset │
-```
-
-- **Start:** February 24, 2026
-- **Valuation Checkpoint:** April 10, 2026
-- **Hard Sunset:** May 1, 2026
-
-## Source Code
-
-- **Repository:** [github.com/Kartavya-Jharwal/ganet-project-bwc](https://github.com/Kartavya-Jharwal/ganet-project-bwc)
-- **CI Status:** [![CI](https://github.com/Kartavya-Jharwal/ganet-project-bwc/actions/workflows/ci.yml/badge.svg)](https://github.com/Kartavya-Jharwal/ganet-project-bwc/actions/workflows/ci.yml)
+### The Brutalist UI / Visual Proof Engine
+Our telemetry isn't passive. We constructed 12 advanced calculus simulations generated via **Manim's Python Engine**, mapping real-time Geometric Brownian motion and Kelly fraction velocity derivations dynamically beneath standard 4-grid CSS component blocks mapped directly onto Vercel infrastructure. 
+[Review Telemetry & Endgame Sequences →](phase-finale-endgame.md)
 
 ---
 
-*This documentation serves as a permanent archive after the project sunset.*
+## 🔒 Failsafe Boundary Constraints 
+The system operates asynchronously over a 29-day forward Monte Carlo prediction window. 
+No state-freeze scripts or final repository wind-downs can physically invoke until `datetime.date(2026, 5, 1)`. 
+Bypassing this locks the continuous-time assumptions out of the framework and invalidates the probability models structurally. 
+
+---
+_Deployed via GitHub Actions + Fast-Sync `uv`. Monitored via Appwrite. Secured by Doppler. BWC-Quant 2026._

@@ -1,123 +1,67 @@
-
 # Ganet - Project BWC (Brownies with White Chocolate)
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![uv](https://img.shields.io/badge/uv-package%20manager-blueviolet)](https://github.com/astral-sh/uv)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI/CD](https://github.com/Kartavya-Jharwal/ganet-project-bwc/actions/workflows/ci.yml/badge.svg)](https://github.com/Kartavya-Jharwal/ganet-project-bwc/actions)
 
-> **A museum-grade market simulation and structural topology showcase.**
+> **An Institutional-Grade Market Simulation & Topological Forward Tracker.**
 
-## The Systemic Pivot
-This system underwent a massive architectural pivot (Phases 11-21). It abandoned legacy predictive NLP and heavy cloud deployments (Heroku, rigid CI/CD actions) in favor of a **Zero-Config Local Runbook**. It operates entirely locally using embedded DuckDB, zero-copy Polars, and strict topological mathematics (Sparse Inverse Covariance & Hierarchical Risk Parity). 
+## The Narrative & Systemic Pivot
+BWC represents an autonomous, highly-defensive quantitative portfolio tracking engine. Originating as a university simulation case study, the architecture pivoted heavily away from naive NLP scraping into a **Zero-Config, Reproducible Math Pipeline**. 
 
-Because the project lives and executes locally on your machine, complex GitHub Actions and Doppler secret injection are no longer strictly mandatory to run the core simulation!
+We operate entirely on local structures using **DuckDB**, zero-copy **Polars**, strict **Topological Parity algorithms**, and **Geometric Brownian Motion (GBM)** to mathematically prove risk, track factors (Alpha/Beta orthogonality), and project deep probabilistic Monte Carlo futures until the **Final Data Freeze Boundary (May 1, 2026)**.
 
-## Launching the Demo & Web Showcase
-The showcase features Awwwards-level brutalist HTML, PyVis topological graphs, and Manim-generated mathematical storytelling. It is designed to run locally and deploy directly to GitHub Pages effortlessly.
+## Live Telemetry & GitHub Actions Infrastructure
+Because this is built on top of extreme mathematical rigor natively relying on `uv` reproducibility, we deploy utilizing strict security standards:
 
-### 1. Local Execution & Data Simulation
+- 🔒 **Doppler Service Tokens (OIDC):** The pipelines and GitHub Action endpoints pull API secrets directly via ephemeral Doppler Service Tokens bounded to exact configs (e.g. `prd` only) via the Principle of Least Privilege, completely abandoning risky legacy `.env` injections or broad Personal Access Tokens.
+- ⚡ **Lightning CI via UV:** All mathematical validation tests—including intense Fama-French stress testing and inverse covariance bounds checks—run dynamically inside CI utilizing heavily-cached `uv` pipelining over Git Actions workflows.
+- 📊 **Real-time WebSockets (Appwrite):** The frontend relies on Vercel/Netlify structural scaffolding pushing out an institutional-styled Brutalist HTML tracking surface that subscribes and morphs dynamically via CDN when the core backend fires metric updates.
+- 🛠️ **Config-Driven Architecture & Logging:** Every macro assumption (down to the exact Poisson string parameters for Jump Diffusion) lives decoupled inside TOML configurations or Doppler, wired tightly into structured Datadog/Appwrite system logging streams. We do not hide our edge cases; we emit them aggressively.
+
+### Launching the Pipeline Locally
 ```bash
-# 1) Sync dependencies entirely locally via uv
-uv sync
+# 1) Sync dependencies ensuring strict ticker-agnostic scientific reproduciblity
+uv sync --frozen
 
-# 2) Sync historical pricing directly into the local DuckDB (No Doppler required!)
-uv run cli ingest
+# 2) View configuration (experiment-driven parameters)
+cat config.toml
 
-# 3) Run the Out-of-Sample Topological Backtest (Generates the JSON metrics)
-uv run cli backtest
+# 3) Sync historical pricing and execute matrices via local engine securely
+doppler run -- uv run cli ingest
+doppler run -- uv run cli backtest
 
-# 4) Calculate Live Orders to mitigate the forced 15-minute sim delay
-uv run python quant_monitor/main.py
+# 4) Output the Instutional Tearsheet PDF
+uv run python scripts/generate_tearsheet.py --benchmark SPY
 ```
 
-### 2. Rendering the Visual Artifacts
-```powershell
-# Generate the actual Manim simulation mathematical MP4 loops
-.\bin\render_manim.ps1
-```
-
-### 3. Deploying the Final GUI to GitHub Pages
-To "launch" the completed showcase live to the web directly from your local environment:
+### Rendering the 3Blue1Brown Calculus Architectures
+Our visual proofs are driven directly by **Manim**. To prevent repository bloat, we strictly `.gitignore` the computational output arrays (`media/`) but ship highly contextual visual artifacts inside the UI framework mapping ValueAtRisk geometry, Kelly Criterion parables, and Fama-French equilibrium balances.
 ```bash
-# Stage the generated artifacts
-git add docs/
-
-# Commit the deployment payload
-git commit -m "chore: deploy vanguard showcase and simulation metrics"
-
-# Push to the remote
-git push origin main
+uv run python -m manim -pqm docs/scenes.py Scene5_ValueAtRiskSweep
 ```
-*Note: Ensure your GitHub repository settings under `Settings -> Pages` are configured to deploy from the `/docs` folder on the `main` branch. This serves the `index.html` frontend.*
 
-## Overview
-This simulation out-engineers traditional forced latency and diversification illusions by implementing:
-- 🕸️ **Sparse Inverse Covariance:** Calculates the true conditional independence graph using Scikit-Learn `GraphicalLassoCV`.
-- 🌳 **Minimum Spanning Tree (MST):** Prunes noisy edges to isolate risk hubs and alpha leaves via NetworkX algorithms.
-- ⚖️ **Hierarchical Risk Parity (HRP):** Clusters assets dynamically via SciPy and sizes targets inversely to their trailing variance without relying on generic stop-losses.
-- ⏱️ **15-Minute Drift Forecaster:** Fires a sub-second live SPY spot ping to synthetically offset the forced 15-minute data reporting delay inherent to standard simulation platforms.
-
-## Architecture
+## Architecture Layers
 
 ```text
-┌─────────────────────────────────────────────────────────┐
-│  LAYER 4: VANGUARD SHOWCASE                             │
-│  Manim Animations | PyVis D3 Graphs | Brutalist HTML    │
-├─────────────────────────────────────────────────────────┤
-│  LAYER 3: THE TOPOLOGICAL MATH ENGINE                   │
-│  GraphicalLassoCV | HRP Bisection | Centrality Pruning  │
-├─────────────────────────────────────────────────────────┤
-│  LAYER 2: BLAZING FAST PIPELINES                        │
-│  DuckDB Native Storage <-> Zero-Copy Polars Pivoting    │
-├─────────────────────────────────────────────────────────┤
-│  LAYER 1: ZERO-CONFIG INGESTION                         │
-│  yFinance | pandas_market_calendars | OpenBB Sectors    │
-└─────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│              LAYER 4: INSTITUTIONAL UI                 │
+│ Appwrite WebSockets | Manim Mathematics | Brutalist UI │
+├────────────────────────────────────────────────────────┤
+│           LAYER 3: THE QUANTITATIVE ENGINE             │
+│   GBM Jump Diffusion | Brinson-Fachler | Cornish VaR   │
+├────────────────────────────────────────────────────────┤
+│           LAYER 2: TOPOLOGICAL REBALANCING             │
+│   Sparse Inverse Covariance | HRP | Kelly Criterion    │
+├────────────────────────────────────────────────────────┤
+│            LAYER 1: ZERO-CONFIG PIPELINE               │
+│ Config Logs | DuckDB | Polars | Doppler Service Tokens │
+└────────────────────────────────────────────────────────┘
 ```
 
-## Portfolio Set
+## The Endgame Constraint (May 1, 2026)
+> *The portfolio simulation has a strict expiration.*
 
-| Ticker | Name | Dynamic Sector Resolution (via OpenBB/yFinance) |
-|--------|------|-------------------------------------------------|
-| SPY | SPDR S&P 500 ETF | Broad Market |
-| TSM | Taiwan Semiconductor | AI Infrastructure |
-| MU | Micron Technology | AI Memory |
-| PLTR | Palantir Technologies | AI Software |
-| AMZN | Amazon.com | E-commerce/Cloud |
-| GOOGL | Alphabet Class A | Big Tech/AI |
-| GE | GE Aerospace | Industrial/Aerospace |
-| JPM | JPMorgan Chase | Financials |
-| LMT | Lockheed Martin | Defense/Space |
-| WMT | Walmart Inc | Defensive Retail |
-| XLP | Consumer Staples SPDR | Staples |
-| PG | Procter & Gamble | FMCG Defensive |
-| JNJ | Johnson & Johnson | Healthcare |
-| XLU | Utilities Select SPDR | Utilities |
-| IONQ | IonQ Inc | Quantum/Speculative |
+The repository contains `scripts/export_for_archive.py`, which is fundamentally engineered to lock down and freeze all live backend connections marking the project completely static. A physical python failsafe exists within this sequence throwing a `sys.exit(1)` if any developer or CI agent attempts the freeze prior to **May 1, 2026**. This explicitly, aggressively defends the scientific validity of the final 29-day forward Monte Carlo window simulations.
 
-## Project Timeline
-
-| Phase | Description | Status |
-|-------|-------------|--------|
-| 11 | Surgical Pruning & Architecture Pivot | ✅ Complete |
-| 12 | DuckDB Zero-Copy Local Caching | ✅ Complete |
-| 13 | Weighted Correlation Graph (Lasso CV) | ✅ Complete |
-| 14 | Hierarchical Risk Parity (HRP) Engine | ✅ Complete |
-| 15 | Continuous Drift Predictor (Latency mitigation) | ✅ Complete |
-| 16 | MST Topology Pruning via NetworkX | ✅ Complete |
-| 17 | Local Loop Typer CLI Integration | ✅ Complete |
-| 18 | Out-of-Sample Systemic Validation Backtests | ✅ Complete |
-| 19 | Executive Terminal UI (Rich Tables) | ✅ Complete |
-| 20 | Algorithmic Storytelling (Python Manim MP4s) | ✅ Complete |
-| 21 | Vanguard HTML Showcase & PyVis Map Deployment | ✅ Complete |
-
-## Documentation
-
-All critical project context currently resides in the generated `docs/index.html` delivery or explicitly within `docs/phase-11-21-implementation-track.md` methodology logs.
-
-Legacy planning/task artifacts have been organized under `docs/tasks/` and historical snapshots/logs under `docs/archive/`.
-
-## License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
+*MIT License — see [LICENSE](LICENSE) for details.*

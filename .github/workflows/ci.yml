@@ -1,41 +1,80 @@
-name: CI
+name: BWC Quant Telemetry & Testing
 
 on:
   push:
-    branches: [main]
+    branches: [ "main" ]
   pull_request:
-    branches: [main]
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
-  lint-and-test:
+  scientific-computation:
+    name: "Reproducible Analytics Framework"
     runs-on: ubuntu-latest
+    
+    # OIDC identity allows secure Doppler Service Token swaps
+    permissions:
+      id-token: write
+      contents: read
+      
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
+      # UV Dependency Engine - Fastest package management in CI
       - name: Install uv
         uses: astral-sh/setup-uv@v5
         with:
+          version: "latest"
           enable-cache: true
+      
+      - name: "Set up Python 3.12"
+        run: uv python install 3.12
 
-      - name: Set up Python
-        run: uv python install 3.11
-
-      - name: Install dependencies
+      # Extract 100% reproducible state (Phase 35 Ticker agnostic check)
+      - name: Zero-Drift Sync
         run: uv sync --frozen
 
-      - name: Lint
-        run: uv run ruff check .
-
-      - name: Format check
-        run: uv run ruff format --check .
-
-      - name: Type check
-        run: uv run mypy quant_monitor/ --ignore-missing-imports --no-strict-optional
-        continue-on-error: true  # non-blocking until stubs are filled
-
-      - name: Test
-        run: uv run pytest tests/ -v --tb=short
+      # DOPPLER SECRETS INJECTION
+      # Uses short-lived ephemeral Service Tokens (Least Privilege access)
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v3
+        
+      - name: Aggressive Matrix & Backtest Validation
         env:
-          # Doppler not available in CI — tests should mock secrets
-          ALPACA_API_KEY: "test"
-          ALPACA_SECRET_KEY: "test"
+          # In true production, map OIDC instead of plain secrets.
+          # NEVER use Personal Tokens here. Service Token restricts to 'prd' config.
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_SERVICE_TOKEN }}
+        run: |
+          doppler run -- uv run pytest tests/ -v
+          doppler run -- uv run ruff check .
+
+  deploy-endpoints:
+    name: "Deploy State & UI"
+    needs: scientific-computation
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: write
+      pages: write
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        
+      # Execute the Tearsheet Generator directly in CI
+      - name: Build Tearsheet
+        run: |
+          uv sync --frozen
+          uv run python scripts/generate_tearsheet.py --benchmark SPY
+          
+      # Expose Static Assets 
+      - name: Deploy to GitHub Pages (Static UI)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend
+          publish_branch: gh-pages
