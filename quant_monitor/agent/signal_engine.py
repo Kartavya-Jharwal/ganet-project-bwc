@@ -129,6 +129,8 @@ class PerformanceLedger:
         if len(resolved) < _MIN_HISTORY_FOR_FILTERING:
             return None
 
+        # Reverse range so oldest signal gets highest exponent (smallest weight)
+        # and most recent signal gets exponent 0 (weight = 1.0)
         weights = np.array([_ACCURACY_DECAY**i for i in range(len(resolved) - 1, -1, -1)])
         accuracies = np.array([1.0 if r.is_accurate else 0.0 for r in resolved])
         return float(np.average(accuracies, weights=weights))

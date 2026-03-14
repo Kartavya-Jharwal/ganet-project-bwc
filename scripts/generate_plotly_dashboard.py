@@ -78,24 +78,6 @@ def _rolling_sortino(returns: pd.Series, window: int = 63) -> pd.Series:
     return result.rename("rolling_sortino")
 
 
-def _rolling_max_drawdown(returns: pd.Series, window: int = 63) -> pd.Series:
-    """Compute rolling maximum drawdown."""
-    cumulative = (1 + returns).cumprod()
-
-    def _dd(x):
-        cum = (1 + x).cumprod()
-        peak = cum.cummax()
-        dd = (peak - cum) / peak
-        return dd.max()
-
-    return cumulative.rolling(window).apply(
-        lambda x: _dd(pd.Series(returns.iloc[x.index[0] - cumulative.index[0]:].values[:len(x)]))
-        if len(x) > 1
-        else 0,
-        raw=False,
-    ).rename("rolling_max_dd")
-
-
 def _compute_drawdown_series(returns: pd.Series) -> pd.Series:
     """Compute drawdown time series."""
     cumulative = (1 + returns).cumprod()
