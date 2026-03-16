@@ -53,7 +53,7 @@ def make_header() -> Panel:
     clock = Text(datetime.now().strftime("%Y-%m-%d %H:%M:%S " + time.tzname[0]), style="dim cyan")
 
     grid.add_row(title, regime, clock)
-    return Panel(grid, style="cyan", border_style="cyan")
+    return Panel(grid, style="cyan", border_style="cyan", expand=True)
 
 
 def make_holdings() -> Panel:
@@ -64,9 +64,18 @@ def make_holdings() -> Panel:
         load_portfolio_state,
     )
 
-    state = load_portfolio_state()
-    prices = load_latest_prices()
-    df = build_holdings_dataframe(state["holdings"], prices)
+    try:
+        state = load_portfolio_state()
+        prices = load_latest_prices()
+        df = build_holdings_dataframe(state["holdings"], prices)
+    except Exception:
+        return Panel(
+            Align.center("\n[dim]Holdings data unavailable[/dim]"),
+            title="[bold]CURRENT POSITIONS[/bold]",
+            title_align="left",
+            border_style="blue",
+            expand=True,
+        )
 
     table = Table(box=None, expand=True, show_edge=False, row_styles=["none", "dim"])
     table.add_column("[dim]Ticker[/dim]", style="bold blue")
@@ -103,7 +112,11 @@ def make_holdings() -> Panel:
 
     group = Group(table, Text("\n"), summary)
     return Panel(
-        group, title="[bold]CURRENT POSITIONS[/bold]", title_align="left", border_style="blue"
+        group,
+        title="[bold]CURRENT POSITIONS[/bold]",
+        title_align="left",
+        border_style="blue",
+        expand=True,
     )
 
 
@@ -129,6 +142,7 @@ def make_signals() -> Panel:
             title="[bold]TOPOLOGICAL ENGINE TARGETS[/bold]",
             title_align="left",
             border_style="magenta",
+            expand=True,
         )
 
     import pandas as pd
@@ -170,6 +184,7 @@ def make_signals() -> Panel:
         title="[bold]QUANT SIGNAL FUSION TARGETS[/bold]",
         title_align="left",
         border_style="magenta",
+        expand=True,
     )
 
 
@@ -182,9 +197,50 @@ try:
 except ImportError:
     asciichartpy = None
 
-global_equity_curve = [1000000.0]
-for _ in range(70):
-    global_equity_curve.append(global_equity_curve[-1] * (1 + random.gauss(0.0005, 0.004)))
+# Cache the engine and real NAV at module level (expensive to instantiate)
+_portfolio_engine = None
+_cached_metrics: dict | None = None
+
+try:
+    from quant_monitor.data.portfolio_history import PortfolioHistoryEngine
+
+    _portfolio_engine = PortfolioHistoryEngine()
+    _real_nav = _portfolio_engine.get_portfolio_nav()
+    global_equity_curve = [float(v) for v in _real_nav.values]
+    if not global_equity_curve:
+        raise ValueError("empty NAV")
+except Exception:
+    _portfolio_engine = None
+    global_equity_curve = [1000000.0]
+    for _ in range(70):
+        global_equity_curve.append(global_equity_curve[-1] * (1 + random.gauss(0.0005, 0.004)))
+
+
+def _fmt_pct(value: float, signed: bool = True) -> str:
+    """Format a decimal ratio as a colored percentage string for Rich."""
+    pct = value * 100
+    color = "green" if pct >= 0 else "red"
+    sign = "+" if signed and pct >= 0 else ""
+    return f"[{color}]{sign}{pct:.2f}%[/{color}]"
+
+
+def _fmt_ratio(value: float) -> str:
+    """Format a numeric ratio with color."""
+    color = "green" if value >= 0 else "red"
+    return f"[{color}]{value:.2f}[/{color}]"
+
+
+def _load_metrics() -> dict[str, float]:
+    """Load real metrics from the cached engine, with memoization."""
+    global _cached_metrics
+    if _cached_metrics is not None:
+        return _cached_metrics
+    if _portfolio_engine is not None:
+        m = _portfolio_engine.compute_all_metrics()
+        if m:
+            _cached_metrics = m
+            return m
+    return {}
 
 
 def make_metrics() -> Panel:
@@ -193,35 +249,74 @@ def make_metrics() -> Panel:
     table.add_column("Statistic", style="bold cyan")
     table.add_column("Value", justify="right")
 
-    table.add_row("[bold magenta]--- Return-Based ---[/bold magenta]", "")
-    table.add_row("Absolute Return", "[green]+14.2%[/green]")
-    table.add_row("Annualized Return (CAGR)", "[green]+8.5%[/green]")
-    table.add_row("Total Return (incl. div)", "[green]+16.0%[/green]")
+    try:
+        m = _load_metrics()
+        if not m:
+            raise ValueError("no metrics")
 
-    table.add_row("", "")
-    table.add_row("[bold magenta]--- Risk-Adjusted ---[/bold magenta]", "")
-    table.add_row("Sharpe Ratio", "1.85")
-    table.add_row("Treynor Ratio", "12.4%")
-    table.add_row("Jensen's Alpha", "[green]+2.1%[/green]")
+        table.add_row("[bold magenta]--- Return-Based ---[/bold magenta]", "")
+        table.add_row("Absolute Return", _fmt_pct(m["total_return"]))
+        table.add_row("Annualized Return (CAGR)", _fmt_pct(m["annualized_return"]))
+        table.add_row("Portfolio Value", f"[bold cyan]${m['portfolio_value']:,.0f}[/bold cyan]")
 
-    table.add_row("", "")
-    table.add_row("[bold magenta]--- Risk Basics ---[/bold magenta]", "")
-    table.add_row("Volatility (Std Dev)", "12.4%")
-    table.add_row("Beta", "0.85")
-    table.add_row("Max Drawdown", "[red]-14.2%[/red]")
+        table.add_row("", "")
+        table.add_row("[bold magenta]--- Risk-Adjusted ---[/bold magenta]", "")
+        table.add_row("Sharpe Ratio", _fmt_ratio(m["sharpe_ratio"]))
+        table.add_row("Sortino Ratio", _fmt_ratio(m["sortino_ratio"]))
+        table.add_row("Calmar Ratio", _fmt_ratio(m["calmar_ratio"]))
+        table.add_row("Treynor Ratio", _fmt_pct(m["treynor_ratio"]))
+        table.add_row("Jensen's Alpha", _fmt_pct(m["jensens_alpha"]))
+
+        table.add_row("", "")
+        table.add_row("[bold magenta]--- Risk Basics ---[/bold magenta]", "")
+        table.add_row("Volatility (Ann.)", _fmt_pct(m["annualized_volatility"], signed=False))
+        table.add_row("Beta", f"{m['beta']:.2f}")
+        table.add_row("Max Drawdown", _fmt_pct(m["max_drawdown"]))
+        table.add_row("VaR (Cornish-Fisher)", _fmt_pct(m["cornish_fisher_var"]))
+        table.add_row("CVaR (Conditional)", _fmt_pct(m["conditional_var"]))
+        table.add_row("Drawdown Duration", f"{m['drawdown_duration_days']}d")
+
+    except Exception:
+        table.add_row("[bold magenta]--- Return-Based ---[/bold magenta]", "")
+        table.add_row("Absolute Return", "[green]+14.2%[/green]")
+        table.add_row("Annualized Return (CAGR)", "[green]+8.5%[/green]")
+        table.add_row("Total Return (incl. div)", "[green]+16.0%[/green]")
+
+        table.add_row("", "")
+        table.add_row("[bold magenta]--- Risk-Adjusted ---[/bold magenta]", "")
+        table.add_row("Sharpe Ratio", "1.85")
+        table.add_row("Treynor Ratio", "12.4%")
+        table.add_row("Jensen's Alpha", "[green]+2.1%[/green]")
+
+        table.add_row("", "")
+        table.add_row("[bold magenta]--- Risk Basics ---[/bold magenta]", "")
+        table.add_row("Volatility (Std Dev)", "12.4%")
+        table.add_row("Beta", "0.85")
+        table.add_row("Max Drawdown", "[red]-14.2%[/red]")
 
     return Panel(
         table,
         title="[bold]ADVANCED PORTFOLIO METRICS[/bold]",
         title_align="left",
         border_style="magenta",
+        expand=True,
     )
 
 
 def make_chart(ticks: int) -> Panel:
     """ASCII chart of equity curve."""
-    # Move the curve slightly
-    global_equity_curve.append(global_equity_curve[-1] * (1 + random.gauss(0.0001, 0.003)))
+    try:
+        if _portfolio_engine is not None:
+            nav = _portfolio_engine.get_portfolio_nav()
+            latest = float(nav.iloc[-1]) if len(nav) > 0 else None
+            if latest is not None:
+                global_equity_curve.append(latest)
+            else:
+                raise ValueError("no NAV")
+        else:
+            raise ValueError("no engine")
+    except Exception:
+        global_equity_curve.append(global_equity_curve[-1] * (1 + random.gauss(0.0001, 0.003)))
     if len(global_equity_curve) > 80:
         global_equity_curve.pop(0)
 
@@ -237,6 +332,7 @@ def make_chart(ticks: int) -> Panel:
         title="[bold]LIVE EQUITY CURVE (ASCII)[/bold]",
         title_align="left",
         border_style="cyan",
+        expand=True,
     )
 
 
@@ -252,6 +348,7 @@ def make_macro() -> Panel:
             title="[bold]MACRO & YIELD[/bold]",
             title_align="left",
             border_style="yellow",
+            expand=True,
         )
 
     table = Table.grid(expand=True, padding=(0, 2))
@@ -259,7 +356,7 @@ def make_macro() -> Panel:
     table.add_column("Value", justify="right", ratio=1)
     table.add_column("Status", justify="right", ratio=1)
 
-    vix = macro.get("vix", 0)
+    vix = macro.get("vix") or 0
     vix_s = "red" if vix > 25 else "green"
     table.add_row(
         "Vol (VIX)", f"{vix:.2f}", Text("Elevated" if vix > 25 else "Normal", style=vix_s)
@@ -267,8 +364,8 @@ def make_macro() -> Panel:
 
     table.add_row("[dim]--[/dim]", "[dim]--[/dim]", "[dim]--[/dim]")
 
-    y10 = macro.get("yield_10y", 0)
-    y2 = macro.get("yield_2y", 0)
+    y10 = macro.get("yield_10y") or 0
+    y2 = macro.get("yield_2y") or 0
     spread = y10 - y2
     spr_s = "red" if spread < 0 else "green"
     table.add_row(
@@ -278,7 +375,11 @@ def make_macro() -> Panel:
     )
 
     return Panel(
-        table, title="[bold]MACRO YIELD OVERVIEW[/bold]", title_align="left", border_style="yellow"
+        table,
+        title="[bold]MACRO YIELD OVERVIEW[/bold]",
+        title_align="left",
+        border_style="yellow",
+        expand=True,
     )
 
 
@@ -322,7 +423,11 @@ def make_health(ticks: int = 0, current_view: str = "main") -> Panel:
     table.add_row("[dim]'m' to toggle view | 'q' to quit[/dim]", "")
 
     return Panel(
-        table, title="[bold]DATALINK STATUS[/bold]", title_align="left", border_style="green"
+        table,
+        title="[bold]DATALINK STATUS[/bold]",
+        title_align="left",
+        border_style="green",
+        expand=True,
     )
 
 
@@ -408,9 +513,9 @@ def generate_layout() -> Layout:
     """Generates the full unixporn layout skeleton."""
     layout = Layout(name="root")
     layout.split_column(
-        Layout(name="header", size=3),
+        Layout(name="header", minimum_size=3),
         Layout(name="main"),
-        Layout(name="footer", size=7),
+        Layout(name="footer", minimum_size=7),
     )
     layout["main"].split_row(Layout(name="left", ratio=1), Layout(name="right", ratio=1))
     layout["footer"].split_row(Layout(name="macro", ratio=1), Layout(name="health", ratio=1))
@@ -463,27 +568,35 @@ def main(argv: list[str] | None = None):
                             current_view = "metrics" if current_view == "main" else "main"
                             force_update = True
 
-                layout["header"].update(make_header())
+                try:
+                    layout["header"].update(make_header())
+                except Exception:
+                    pass
 
                 # Only update heavy DB calls every 4 ticks (1 second) to prevent lockups, animate the rest
                 if ticks % 4 == 0 or force_update:
-                    if current_view == "main":
-                        layout["main"].split_row(
-                            Layout(make_holdings(), name="left", ratio=1),
-                            Layout(make_signals(), name="right", ratio=1),
-                        )
-                    else:
-                        layout["main"].split_row(
-                            Layout(make_metrics(), name="metrics", ratio=1),
-                            Layout(make_chart(ticks), name="chart", ratio=2),
-                        )
+                    try:
+                        if current_view == "main":
+                            layout["main"].split_row(
+                                Layout(make_holdings(), name="left", ratio=1),
+                                Layout(make_signals(), name="right", ratio=1),
+                            )
+                        else:
+                            layout["main"].split_row(
+                                Layout(make_metrics(), name="metrics", ratio=1),
+                                Layout(make_chart(ticks), name="chart", ratio=2),
+                            )
 
-                    # Update lower left panels
-                    layout["macro"].update(make_macro())
+                        layout["macro"].update(make_macro())
+                    except Exception:
+                        pass
 
                     force_update = False
 
-                layout["health"].update(make_health(ticks, current_view))
+                try:
+                    layout["health"].update(make_health(ticks, current_view))
+                except Exception:
+                    pass
 
                 time.sleep(0.25)
                 ticks += 1

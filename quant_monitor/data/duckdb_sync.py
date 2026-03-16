@@ -19,6 +19,7 @@ class DuckDBSync:
         self.db_path = db_path
         self.conn = duckdb.connect(database=self.db_path, read_only=False)
         self.appwrite = create_appwrite_client()
+        self._appwrite_available = getattr(self.appwrite, "_available", False)
         self._init_schema()
 
     def _init_schema(self):
@@ -41,21 +42,23 @@ class DuckDBSync:
 
     def sync_eod_prices(self):
         """Fetch eod_price_matrix from Appwrite and merge into DuckDB."""
+        if not self._appwrite_available:
+            logger.info("Appwrite unavailable -- skipping sync, using local DuckDB only.")
+            return
+
         logger.info("Syncing eod_price_matrix from Appwrite to DuckDB...")
 
         # We need a query loop to get all pages, but for now we list the first max 100
         # In a real sync we would filter by `timestamp > latest_local_timestamp`
 
         try:
-            docs = self.appwrite._databases.list_documents(
-                database_id=DATABASE_ID, collection_id=COLLECTIONS["eod_price_matrix"]
-            )
+            docs = self.appwrite.query_documents(COLLECTIONS["eod_price_matrix"])
         except Exception as e:
             logger.error(f"Failed to fetch from Appwrite: {e}")
             return
 
         data = []
-        for doc in docs.get("documents", []):
+        for doc in docs:
             data.append(
                 {
                     "timestamp": doc.get("timestamp"),

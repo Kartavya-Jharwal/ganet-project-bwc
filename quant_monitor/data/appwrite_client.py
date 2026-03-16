@@ -4,6 +4,8 @@ Manages collections: portfolio_snapshots, position_snapshots, signals,
 alerts, regime_history, scraped_data.
 
 All secrets (endpoint, project ID, API key) injected via Doppler.
+When credentials are missing, a NullAppwriteClient is returned that
+silently no-ops all writes and returns empty results for reads.
 """
 
 from __future__ import annotations
@@ -12,12 +14,6 @@ import logging
 import os
 from datetime import datetime
 from typing import Any
-
-from appwrite.client import Client
-from appwrite.exception import AppwriteException
-from appwrite.id import ID
-from appwrite.query import Query
-from appwrite.services.tables_db import TablesDB
 
 from quant_monitor.data.rate_limiter import rate_limiter
 
@@ -40,8 +36,44 @@ COLLECTIONS = {
 }
 
 
+class NullAppwriteClient:
+    """No-op stub used when Appwrite credentials are unavailable.
+
+    Implements the same public interface as AppwriteClient so callers
+    never need to check which variant they hold.
+    """
+
+    _available = False
+
+    def write_document(self, collection: str, data: dict[str, Any], document_id: str | None = None) -> str:
+        return "null"
+
+    def query_documents(self, collection: str, queries: list[str] | None = None, limit: int = 100, offset: int = 0) -> list[dict[str, Any]]:
+        return []
+
+    def write_batch(self, collection: str, documents: list[dict[str, Any]], max_workers: int = 10) -> int:
+        return 0
+
+    def get_latest_snapshot(self) -> dict[str, Any] | None:
+        return None
+
+    def get_latest_signals(self, ticker: str | None = None) -> list[dict[str, Any]]:
+        return []
+
+    def write_signal(self, **kwargs: Any) -> str:
+        return "null"
+
+    def write_alert(self, **kwargs: Any) -> str:
+        return "null"
+
+    def write_regime(self, **kwargs: Any) -> str:
+        return "null"
+
+
 class AppwriteClient:
     """Wrapper around Appwrite Python SDK for database operations."""
+
+    _available = True
 
     def __init__(
         self,
@@ -49,23 +81,13 @@ class AppwriteClient:
         project_id: str | None = None,
         api_key: str | None = None,
     ) -> None:
-        """Initialize Appwrite client.
+        from appwrite.client import Client
+        from appwrite.services.tables_db import TablesDB
 
-        Args:
-            endpoint: Appwrite endpoint URL
-            project_id: Appwrite project ID
-            api_key: Appwrite API key
-
-        If any arg is None, reads from environment variables (Doppler).
-        """
         self.endpoint = endpoint or os.environ.get("APPWRITE_ENDPOINT", "")
         self.project_id = project_id or os.environ.get("APPWRITE_PROJECT_ID", "")
         self.api_key = api_key or os.environ.get("APPWRITE_API_KEY", "")
 
-        if not all([self.endpoint, self.project_id, self.api_key]):
-            logger.warning("Appwrite credentials incomplete - some operations will fail")
-
-        # Initialize client
         self._client = Client()
         if self.endpoint:
             self._client.set_endpoint(self.endpoint)
@@ -75,10 +97,10 @@ class AppwriteClient:
             self._client.set_key(self.api_key)
 
         self._databases = TablesDB(self._client)
-        logger.info(f"Appwrite client initialized for project: {self.project_id}")
+        logger.info("Appwrite client initialized for project: %s", self.project_id)
 
     @rate_limiter.rate_limited("appwrite")
-    def write_document(
+    def write_document(  # noqa: D401
         self,
         collection: str,
         data: dict[str, Any],
@@ -94,6 +116,9 @@ class AppwriteClient:
         Returns:
             Document ID
         """
+        from appwrite.exception import AppwriteException
+        from appwrite.id import ID
+
         collection_id = COLLECTIONS.get(collection, collection)
         doc_id = document_id or ID.unique()
 
@@ -104,10 +129,10 @@ class AppwriteClient:
                 row_id=doc_id,
                 data=data,
             )
-            logger.debug(f"Created document in {collection}: {result['$id']}")
+            logger.debug("Created document in %s: %s", collection, result["$id"])
             return result["$id"]
         except AppwriteException as e:
-            logger.error(f"Error writing to {collection}: {e}")
+            logger.error("Error writing to %s: %s", collection, e)
             raise
 
     @rate_limiter.rate_limited("appwrite")
@@ -129,6 +154,8 @@ class AppwriteClient:
         Returns:
             List of documents
         """
+        from appwrite.exception import AppwriteException
+
         collection_id = COLLECTIONS.get(collection, collection)
 
         try:
@@ -137,13 +164,11 @@ class AppwriteClient:
                 table_id=collection_id,
                 queries=queries or [],
             )
-            docs = result.get(
-                "rows", result.get("documents", [])
-            )  # Fallback to documents just in case
-            logger.debug(f"Queried {len(docs)} documents from {collection}")
+            docs = result.get("rows", result.get("documents", []))
+            logger.debug("Queried %d documents from %s", len(docs), collection)
             return docs
         except AppwriteException as e:
-            logger.error(f"Error querying {collection}: {e}")
+            logger.error("Error querying %s: %s", collection, e)
             return []
 
     def write_batch(
@@ -172,7 +197,7 @@ class AppwriteClient:
             try:
                 self.write_document(collection, doc)
                 return True
-            except AppwriteException:
+            except Exception:
                 return False
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -184,11 +209,9 @@ class AppwriteClient:
         return success_count
 
     def get_latest_snapshot(self) -> dict[str, Any] | None:
-        """Get the most recent portfolio snapshot.
+        """Get the most recent portfolio snapshot."""
+        from appwrite.query import Query
 
-        Returns:
-            Latest snapshot document or None
-        """
         docs = self.query_documents(
             "portfolio_snapshots",
             queries=[Query.order_desc("timestamp"), Query.limit(1)],
@@ -196,14 +219,9 @@ class AppwriteClient:
         return docs[0] if docs else None
 
     def get_latest_signals(self, ticker: str | None = None) -> list[dict[str, Any]]:
-        """Get latest signals, optionally filtered by ticker.
+        """Get latest signals, optionally filtered by ticker."""
+        from appwrite.query import Query
 
-        Args:
-            ticker: Optional ticker filter
-
-        Returns:
-            List of signal documents
-        """
         queries = [Query.order_desc("timestamp"), Query.limit(100)]
         if ticker:
             queries.append(Query.equal("ticker", ticker))
@@ -288,6 +306,22 @@ class AppwriteClient:
         return self.write_document("regime_history", data)
 
 
-def create_appwrite_client() -> AppwriteClient:
-    """Create Appwrite client with credentials from environment."""
-    return AppwriteClient()
+def create_appwrite_client() -> AppwriteClient | NullAppwriteClient:
+    """Create Appwrite client with credentials from environment.
+
+    Returns a NullAppwriteClient (silent no-op) when credentials are
+    missing, so the rest of the system runs on DuckDB alone.
+    """
+    endpoint = os.environ.get("APPWRITE_ENDPOINT", "")
+    project_id = os.environ.get("APPWRITE_PROJECT_ID", "")
+    api_key = os.environ.get("APPWRITE_API_KEY", "")
+
+    if not all([endpoint, project_id, api_key]):
+        logger.info("Appwrite credentials missing -- falling back to DuckDB-only mode")
+        return NullAppwriteClient()
+
+    try:
+        return AppwriteClient(endpoint, project_id, api_key)
+    except Exception as e:
+        logger.warning("Appwrite client init failed (%s) -- falling back to DuckDB-only mode", e)
+        return NullAppwriteClient()

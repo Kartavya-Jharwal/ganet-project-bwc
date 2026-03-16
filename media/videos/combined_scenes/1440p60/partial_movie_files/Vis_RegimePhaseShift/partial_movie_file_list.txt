@@ -1,8 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_RegimePhaseShift/1351240675_4135591765_1821776442.mp4'
-file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_RegimePhaseShift/217337906_3280270698_3132372333.mp4'
-file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_RegimePhaseShift/217337906_4280710682_2335901729.mp4'
-file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_RegimePhaseShift/217337906_240883575_385410564.mp4'
-file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_RegimePhaseShift/217337906_355607668_2703384853.mp4'
-file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_RegimePhaseShift/217337906_964017005_535937742.mp4'
-file 'file:D:/KJ/Personal_projects/_Python/Project-BWC/media/videos/combined_scenes/1440p60/partial_movie_files/Vis_RegimePhaseShift/217337906_3366045169_3334419902.mp4'

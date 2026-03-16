@@ -38,14 +38,13 @@ class RiskManager:
 
         validated = []
         for trade in proposed_trades:
-            trade = dict(trade)  # copy to avoid mutating input
-            trade["ticker"]
+            trade = dict(trade)
+            ticker = trade.get("ticker", "UNKNOWN")
             target_weight = trade.get("target_weight", 0.0)
 
-            # Check: would the target weight breach position limit?
             if target_weight > max_position:
                 trade["rejected_reason"] = (
-                    f"Target weight {target_weight:.1%} exceeds {regime} max {max_position:.0%}"
+                    f"{ticker}: target weight {target_weight:.1%} exceeds {regime} max {max_position:.0%}"
                 )
             else:
                 trade["rejected_reason"] = None

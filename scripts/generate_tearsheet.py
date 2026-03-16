@@ -11,8 +11,11 @@ Produces a comprehensive institutional-style post-mortem with:
 
 import argparse
 import json
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import numpy as np
 import pandas as pd
@@ -29,6 +32,16 @@ from quant_monitor.backtest.metrics import (
 )
 from quant_monitor.config import cfg
 
+try:
+    import yfinance as yf
+except ImportError:
+    yf = None
+
+try:
+    from quant_monitor.data.portfolio_history import PortfolioHistoryEngine
+except ImportError:
+    PortfolioHistoryEngine = None
+
 # AQR / Institutional brutalist color scheme
 COLOR_BG = (5, 5, 5)  # #050505
 COLOR_TEXT = (244, 244, 245)  # #f4f4f5
@@ -36,16 +49,11 @@ COLOR_ACCENT = (235, 94, 40)  # #eb5e28
 COLOR_MUTED = (161, 161, 170)  # #A1A1AA
 
 
-def _compute_portfolio_metrics() -> dict[str, float]:
-    """Compute real portfolio metrics from synthetic returns.
-
-    In production this would pull from the backtest engine or live returns.
-    Uses a deterministic seed for reproducibility.
-    """
+def _compute_portfolio_metrics_synthetic() -> dict[str, float]:
+    """Fallback: compute metrics from synthetic returns (deterministic seed)."""
     np.random.seed(42)
     n_days = 504
     returns = pd.Series(np.random.normal(0.0004, 0.012, n_days))
-    # Inject realistic drawdown event
     returns.iloc[200:230] = np.random.normal(-0.008, 0.02, 30)
     returns.iloc[230:260] = np.random.normal(0.005, 0.015, 30)
 
@@ -63,6 +71,40 @@ def _compute_portfolio_metrics() -> dict[str, float]:
     }
 
 
+def _compute_portfolio_metrics() -> dict[str, float]:
+    """Compute portfolio metrics from real data via PortfolioHistoryEngine.
+
+    Falls back to synthetic computation if the engine is unavailable or fails.
+    """
+    if PortfolioHistoryEngine is not None:
+        try:
+            engine = PortfolioHistoryEngine()
+            raw = engine.compute_all_metrics()
+            if raw:
+                return {
+                    "sharpe": raw["sharpe_ratio"],
+                    "sortino": raw["sortino_ratio"],
+                    "calmar": raw["calmar_ratio"],
+                    "max_drawdown": raw["max_drawdown"],
+                    "cf_var": raw["cornish_fisher_var"],
+                    "cvar": raw["conditional_var"],
+                    "tail_ratio": raw["tail_ratio"],
+                    "total_return": raw["total_return"],
+                    "ann_return": raw["annualized_return"],
+                    "ann_vol": raw["annualized_volatility"],
+                    "beta": raw.get("beta", 1.0),
+                    "treynor": raw.get("treynor_ratio", 0.0),
+                    "jensens_alpha": raw.get("jensens_alpha", 0.0),
+                    "n_trading_days": raw.get("n_trading_days", 0),
+                    "portfolio_value": raw.get("portfolio_value", 0.0),
+                    "_engine": engine,
+                }
+        except Exception as exc:
+            print(f"⚠ PortfolioHistoryEngine failed, using synthetic fallback: {exc}")
+
+    return _compute_portfolio_metrics_synthetic()
+
+
 def _load_backtest_results() -> dict | None:
     """Load cached backtest-results.json if available."""
     path = Path("docs/backtest-results.json")
@@ -72,6 +114,55 @@ def _load_backtest_results() -> dict | None:
         return json.loads(path.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, OSError):
         return None
+
+
+def _interpret_loading(name: str, value: float) -> str:
+    """Return a short qualitative interpretation of a factor loading."""
+    absv = abs(value)
+    if absv < 0.10:
+        intensity = "Negligible"
+    elif absv < 0.30:
+        intensity = "Mild"
+    elif absv < 0.60:
+        intensity = "Moderate"
+    else:
+        intensity = "Significant"
+    return f"{intensity} {name.lower()} exposure"
+
+
+_FACTOR_FALLBACK = [
+    ("Market (MKT-RF)", "0.85", "Moderate market exposure"),
+    ("Size (SMB)", "0.30", "Slight small-cap tilt"),
+    ("Value (HML)", "0.65", "Significant value tilt"),
+    ("Momentum (UMD)", "0.22", "Mild momentum exposure"),
+]
+
+
+def _build_factor_rows(metrics: dict) -> list[tuple[str, str, str]]:
+    """Build factor-attribution rows from real regression or hardcoded fallback."""
+    engine = metrics.get("_engine")
+    if engine is not None:
+        try:
+            reg = engine.run_factor_regression()
+            if "error" not in reg:
+                return [
+                    ("Market (MKT-RF)", f"{reg['c4_beta_mkt']:.2f}",
+                     _interpret_loading("market", reg["c4_beta_mkt"])),
+                    ("Size (SMB)", f"{reg['c4_beta_smb']:.2f}",
+                     _interpret_loading("small-cap", reg["c4_beta_smb"])),
+                    ("Value (HML)", f"{reg['c4_beta_hml']:.2f}",
+                     _interpret_loading("value", reg["c4_beta_hml"])),
+                    ("Momentum (UMD)", f"{reg['c4_beta_mom']:.2f}",
+                     _interpret_loading("momentum", reg["c4_beta_mom"])),
+                    ("FF3 Alpha (ann.)", f"{reg['ff3_alpha'] * 252:.4f}",
+                     f"R² = {reg['ff3_r_squared']:.2f}"),
+                    ("C4 Alpha (ann.)", f"{reg['c4_alpha'] * 252:.4f}",
+                     f"R² = {reg['c4_r_squared']:.2f}"),
+                ]
+        except Exception as exc:
+            print(f"⚠ Factor regression failed, using hardcoded fallback: {exc}")
+
+    return list(_FACTOR_FALLBACK)
 
 
 class BWCTearSheet(FPDF):
@@ -107,7 +198,31 @@ def _add_section_header(pdf: FPDF, title: str) -> None:
     pdf.ln(5)
 
 
-def generate_pdf(benchmark_ticker: str = "SPY"):
+def _fetch_live_prices(tickers: list[str]) -> dict[str, float]:
+    """Try to fetch latest prices via yfinance; return {ticker: price} for successes."""
+    if yf is None or not tickers:
+        return {}
+    try:
+        data = yf.download(tickers, period="1d", progress=False)
+        prices = {}
+        if "Close" in data.columns or hasattr(data["Close"], "iloc"):
+            close = data["Close"]
+            if len(tickers) == 1:
+                last = close.dropna().iloc[-1] if not close.dropna().empty else None
+                if last is not None:
+                    prices[tickers[0]] = float(last)
+            else:
+                for t in tickers:
+                    if t in close.columns:
+                        col = close[t].dropna()
+                        if not col.empty:
+                            prices[t] = float(col.iloc[-1])
+        return prices
+    except Exception:
+        return {}
+
+
+def generate_pdf(benchmark_ticker: str = "SPY", output_path: str | None = None):
     metrics = _compute_portfolio_metrics()
     backtest = _load_backtest_results()
 
@@ -124,7 +239,7 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
         "Project BWC is a regime-aware quantitative portfolio tracking engine. Built to test structural alpha decay, hierarchical risk parity bisection, and topological model fusion on out-of-sample data. "
         "It employs strictly mathematical implementations (DuckDB, Polars, GraphicalLassoCV) to observe algorithmic behavioral bypass and track geometric degradation natively terminating in May 2026.\n\n"
         f"Report generated: {now}\n"
-        f"Initial capital: $ | "
+        f"Initial capital: ${cfg.project.get('initial_capital', 0):,.0f} | "
         f"Benchmark: {benchmark_ticker}"
     )
     pdf.multi_cell(0, 6, desc)
@@ -188,12 +303,7 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
     pdf.cell(60, 8, "Interpretation", border=1, new_x="LMARGIN", new_y="NEXT")
 
     pdf.set_font("helvetica", "", 11)
-    factors = [
-        ("Market (MKT-RF)", "0.85", "Moderate market exposure"),
-        ("Size (SMB)", "0.30", "Slight small-cap tilt"),
-        ("Value (HML)", "0.65", "Significant value tilt"),
-        ("Momentum (UMD)", "0.22", "Mild momentum exposure"),
-    ]
+    factors = _build_factor_rows(metrics)
     for factor in factors:
         pdf.cell(60, 8, factor[0], border=1)
         pdf.cell(60, 8, factor[1], border=1)
@@ -216,18 +326,25 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
 
     pdf.set_font("helvetica", "", 9)
     holdings = cfg.holdings
-    total_value = sum(h["qty"] * h["price_paid"] for h in holdings.values())
+    live_prices = _fetch_live_prices(list(holdings.keys()))
+
+    total_value = 0.0
+    for ticker, info in holdings.items():
+        price = live_prices.get(ticker, info["price_paid"])
+        total_value += info["qty"] * price
 
     for ticker, info in holdings.items():
-        mkt_val = info["qty"] * info["price_paid"]
+        price = live_prices.get(ticker, info["price_paid"])
+        avg_cost = info["price_paid"]
+        mkt_val = info["qty"] * price
         weight = mkt_val / total_value * 100 if total_value else 0
         row = [
             ticker,
             info.get("name", "")[:18],
             info.get("sector", "")[:12],
             str(info.get("qty", 0)),
-            f"$",
-            f"$",
+            f"${avg_cost:,.2f}",
+            f"${mkt_val:,.2f}",
             f"{weight:.1f}%",
         ]
         for w, v in zip(col_widths, row, strict=True):
@@ -269,10 +386,21 @@ def generate_pdf(benchmark_ticker: str = "SPY"):
                 pdf.ln()
 
     # Save the output
-    out_dir = Path("docs")
-    out_file = out_dir / "BWC_Institutional_Tearsheet.pdf"
+    if output_path:
+        out_file = Path(output_path)
+        out_file.parent.mkdir(parents=True, exist_ok=True)
+    else:
+        out_file = Path("docs") / "BWC_Institutional_Tearsheet.pdf"
     pdf.output(str(out_file))
     print(f"✅ Generated Tearsheet -> {out_file}")
+
+
+def generate_tearsheet(
+    output_path: str = "docs/BWC_Institutional_Tearsheet.pdf",
+    benchmark: str = "SPY",
+) -> None:
+    """Public entry point for the build pipeline."""
+    generate_pdf(benchmark_ticker=benchmark, output_path=output_path)
 
 
 if __name__ == "__main__":
@@ -285,6 +413,12 @@ if __name__ == "__main__":
         default="SPY",
         help="Benchmark ticker to compare against (e.g., SPY, QQQ, URTH).",
     )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help="Output path for the PDF (default: docs/BWC_Institutional_Tearsheet.pdf).",
+    )
     args = parser.parse_args()
 
-    generate_pdf(benchmark_ticker=args.benchmark)
+    generate_pdf(benchmark_ticker=args.benchmark, output_path=args.output)

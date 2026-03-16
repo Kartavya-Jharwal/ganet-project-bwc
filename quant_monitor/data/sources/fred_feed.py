@@ -135,15 +135,33 @@ class FredFeed:
             if value is not None:
                 logger.debug(f"{name}: {value:.2f}")
 
-        # Compute yield curve spread
+        # Compute yield curve spread (key matches MacroModel expectation)
         y10 = snapshot.get("yield_10y")
         y2 = snapshot.get("yield_2y")
         if y10 is not None and y2 is not None:
-            snapshot["yield_curve_spread"] = y10 - y2
-            snapshot["yield_curve_inverted"] = snapshot["yield_curve_spread"] < 0
+            snapshot["yield_10y_2y_spread"] = y10 - y2
+            snapshot["yield_curve_inverted"] = snapshot["yield_10y_2y_spread"] < 0
         else:
-            snapshot["yield_curve_spread"] = None
+            snapshot["yield_10y_2y_spread"] = None
             snapshot["yield_curve_inverted"] = None
+
+        # Compute DXY weekly change percentage (MacroModel expects dxy_weekly_change_pct)
+        dxy_series = self.get_series(FRED_SERIES["dxy"], limit=10)
+        if len(dxy_series) >= 2:
+            latest_dxy = float(dxy_series.iloc[-1])
+            prev_dxy = float(dxy_series.iloc[-6]) if len(dxy_series) >= 6 else float(dxy_series.iloc[0])
+            snapshot["dxy_weekly_change_pct"] = ((latest_dxy - prev_dxy) / prev_dxy) * 100 if prev_dxy else 0.0
+        else:
+            snapshot["dxy_weekly_change_pct"] = 0.0
+
+        # Compute 10Y yield weekly change in bps (MacroModel expects ten_year_yield_weekly_bps)
+        y10_series = self.get_series(FRED_SERIES["yield_10y"], limit=10)
+        if len(y10_series) >= 2:
+            latest_y10 = float(y10_series.iloc[-1])
+            prev_y10 = float(y10_series.iloc[-6]) if len(y10_series) >= 6 else float(y10_series.iloc[0])
+            snapshot["ten_year_yield_weekly_bps"] = (latest_y10 - prev_y10) * 100
+        else:
+            snapshot["ten_year_yield_weekly_bps"] = 0.0
 
         logger.info(f"Fetched macro snapshot: VIX={snapshot.get('vix')}")
         return snapshot

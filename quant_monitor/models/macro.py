@@ -133,22 +133,28 @@ class MacroModel:
         vix = macro_snapshot.get("vix", 20.0)
 
         # DXY sensitivity: ADRs and international revenue companies
-        dxy_sensitive = {"TSM", "AMZN", "GOOGL"}
+        dxy_sensitive = {"TSM", "AMZN", "NBIS"}
         if ticker in dxy_sensitive and abs(dxy_change) > thresholds["dxy_spike_weekly_pct"]:
             impact -= 0.3 * (dxy_change / thresholds["dxy_spike_weekly_pct"])
 
         # Rate sensitivity: high-multiple growth names hurt by rising yields
-        rate_sensitive = {"PLTR", "IONQ", "AMZN", "GOOGL"}
+        rate_sensitive = {"PLTR", "IONQ", "AMZN", "NVDA", "NBIS"}
         if ticker in rate_sensitive and yield_bps > thresholds["ten_year_yield_spike_bps"]:
             impact -= 0.3 * (yield_bps / thresholds["ten_year_yield_spike_bps"])
 
         # Defensive tickers benefit from risk-off
-        defensive = {"WMT", "XLP", "PG", "JNJ", "XLU"}
+        defensive = {"TGT", "XLP", "PG", "JNJ", "XLU"}
         if ticker in defensive and vix > thresholds["vix_risk_off"]:
             impact += 0.2
 
-        # Financials benefit from rising rates
-        if ticker == "JPM" and yield_bps > 0:
-            impact += 0.15 * min(yield_bps / thresholds["ten_year_yield_spike_bps"], 1.0)
+        # Energy benefits from inflation / commodity spikes
+        energy = {"XLE", "XOM"}
+        if ticker in energy and yield_bps > 0:
+            impact += 0.1 * min(yield_bps / thresholds["ten_year_yield_spike_bps"], 1.0)
+
+        # Defense/Aerospace: low macro sensitivity
+        defense = {"LMT", "ITA"}
+        if ticker in defense:
+            impact += 0.05
 
         return float(max(-1.0, min(1.0, impact)))

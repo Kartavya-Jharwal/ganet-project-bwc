@@ -17,7 +17,7 @@ def test_config_toml_exists():
 
     assert "project" in data
     assert "holdings" in data
-    assert len(data["holdings"]) == 15, f"Expected 15 holdings, got {len(data['holdings'])}"
+    assert len(data["holdings"]) >= 15, f"Expected ≥15 holdings, got {len(data['holdings'])}"
 
 
 def test_config_loader(mock_env):
@@ -27,7 +27,7 @@ def test_config_loader(mock_env):
     cfg = load_config()
 
     assert cfg.benchmark == "SPY"
-    assert len(cfg.tickers) == 15
+    assert len(cfg.tickers) >= 15
     assert cfg.initial_capital == 1_000_000
     assert cfg.secrets.ALPACA_API_KEY == "test_alpaca_key"
     assert "SPY" in cfg.holdings

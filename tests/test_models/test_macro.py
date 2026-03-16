@@ -91,15 +91,15 @@ class TestMacroModel:
         impact = self.model.per_ticker_impact(snapshot, "TSM", "Semiconductor")
         assert impact < 0, f"Expected negative DXY impact for TSM, got {impact}"
 
-    def test_per_ticker_impact_jpm_rising_rates(self):
-        """JPM should benefit from rising 10Y yields."""
+    def test_per_ticker_impact_rate_sensitive_rising_rates(self):
+        """Rate-sensitive growth tickers should get negative impact from rising yields."""
         snapshot = {
             "vix": 18.0,
             "dxy_weekly_change_pct": 0.5,
             "ten_year_yield_weekly_bps": 30.0,  # big positive rate move
         }
-        impact = self.model.per_ticker_impact(snapshot, "JPM", "Financials")
-        assert impact > 0, f"Expected positive rate impact for JPM, got {impact}"
+        impact = self.model.per_ticker_impact(snapshot, "PLTR", "AI Software")
+        assert impact < 0, f"Expected negative rate impact for PLTR, got {impact}"
 
     def test_per_ticker_impact_range(self):
         for ticker, sector in [("TSM", "Semiconductor"), ("JPM", "Financials"), ("AAPL", "Tech")]:

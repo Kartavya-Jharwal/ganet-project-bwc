@@ -22,16 +22,16 @@ def extract_all_data(db_path: str) -> pd.DataFrame:
         logger.warning(f"Database {db_path} not found. Cannot run Systemic Validation.")
         return pd.DataFrame()
 
+    import polars as pl
+
+    pl_df = pl.DataFrame()
     conn = duckdb.connect(db_path, read_only=True)
     try:
-        import polars as pl
-
         query = """
             SELECT timestamp::DATE as date, ticker, close
             FROM eod_price_matrix
             ORDER BY date ASC
         """
-        # Harness DuckDB's Native Polars integration for zero-copy memory speed
         pl_df = conn.execute(query).pl()
     except duckdb.CatalogException:
         logger.error("eod_price_matrix missing from DuckDB.")

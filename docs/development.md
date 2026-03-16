@@ -30,7 +30,6 @@ This guide covers setting up your development environment, running the system lo
 ### Optional (for full workflow)
 
 - **GitHub CLI** (`gh`) — For repo operations
-- **Heroku CLI** — For deployment debugging
 
 ---
 
@@ -338,22 +337,6 @@ doppler run -- uv run python -m quant_monitor.main
 doppler run -- uv run quant-dashboard --view health
 ```
 
-### Heroku
-
-Automatic deployment via GitHub Actions on push to `main`.
-
-Manual deployment:
-```bash
-# Generate requirements.txt for Heroku
-uv pip compile pyproject.toml -o requirements.txt
-
-# Push to Heroku
-git push heroku main
-
-# Check logs
-heroku logs --tail
-```
-
 ### Scrapy Cloud (Zyte)
 
 ```bash
@@ -390,12 +373,6 @@ uv run mkdocs build -f docs/mkdocs.yml
 ---
 
 ## Troubleshooting
-
-### uv sync hangs on torch
-
-torch is 108MB. First sync is slow. Solutions:
-1. Set `UV_CACHE_DIR` to local drive (avoids cross-drive copies)
-2. Wait — subsequent syncs use cache
 
 ### Doppler not found
 
@@ -462,4 +439,4 @@ def compute_signal(
 
 ---
 
-*Last updated: February 24, 2026*
+*Last updated: March 14, 2026*

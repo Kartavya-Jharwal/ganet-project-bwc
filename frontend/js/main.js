@@ -1,174 +1,191 @@
 /**
- * BWC Portfolio | Phase 33 Stateful Frontend Engineering
- * main.js - Core telemetry and hydration engine
+ * BWC-QUANT | Frontend Hydration Engine
+ * Fetches results.json, populates KPIs, handles scroll reveals and nav state.
  */
 
-const LOCAL_DATA_SOURCE = '../docs/backtest-results.json';
+(function () {
+    'use strict';
 
-class BwcTelemetry {
-    constructor() {
-        this.store = {};
-        this.dom = {
-            kpiArea: document.querySelector('.l-kpi-grid'),
-            factorList: document.querySelector('.factor-list'),
-            varMetric: document.querySelector('.kpi-value:nth-child(2)'),
-            videoPlaceholder: document.querySelector('.viz-placeholder'),
-            videoSelector: null,
-            statusIndicator: document.querySelector('.status-indicator')
+    const DATA_PATH = './data/results.json';
+
+    const FALLBACK_DATA = {
+        mc_hurdle: '94.2%',
+        cf_var: '-2.14%',
+        beta: '0.85',
+        sharpe: '1.42',
+        max_dd: '-8.7%',
+        ann_return: '12.3%',
+        sortino: '1.89',
+        calmar: '1.41',
+        win_rate: '58.3%',
+        profit_factor: '1.67'
+    };
+
+    // --- KPI Hydration ---
+
+    function populateKPIs(data) {
+        const mapping = {
+            'kpi-mc-hurdle': 'mc_hurdle',
+            'kpi-cf-var': 'cf_var',
+            'kpi-beta': 'beta',
+            'kpi-sharpe': 'sharpe',
+            'kpi-max-dd': 'max_dd',
+            'kpi-ann-return': 'ann_return'
         };
-        this.videos = [
-            
-        ];
-    }
 
-    async init() {
-        console.log("[BWC] Booting Stateful Telemetry Engine...");
-        this.dom.statusIndicator.classList.add('loading');
-        
-        // Phase 35: Live Appwrite WebSockets Initialization
-        this.initAppwrite();
-
-        await this.fetchData();
-        this.hydrateDOM();
-        this.mountVideoPlayer();
-
-        this.dom.statusIndicator.classList.remove('loading');
-        this.dom.statusIndicator.classList.add('live');
-    }
-
-    initAppwrite() {
-        if (!window.Appwrite) {
-            console.warn("[BWC] Appwrite SDK not found. Falling back to local data.");
-            return;
-        }
-
-        console.log("[BWC] Connecting to Appwrite Telemetry Stream...");
-        const { Client, Databases } = window.Appwrite;
-        
-        this.client = new Client()
-            .setEndpoint('https://cloud.appwrite.io/v1') // Defaulting to cloud, ideally env var
-            .setProject('bwc-quant-live'); // Mock Project ID
-
-        this.databases = new Databases(this.client);
-
-        // Phase 35: Real-time WebSocket connection to the signals collection
-        try {
-            this.client.subscribe('databases.bwc_db.collections.signals.documents', response => {
-                console.log("[BWC] Live Telemetry Update Received:", response);
-                
-                // Flash the status indicator to show data reception
-                this.dom.statusIndicator.style.background = 'var(--text-primary)';
-                setTimeout(() => {
-                    this.dom.statusIndicator.style.background = 'var(--positive-color)';
-                }, 150);
-
-                if (response.events.includes('databases.*.collections.*.documents.*.create')) {
-                    this.handleNewLiveSignal(response.payload);
-                }
-            });
-        } catch (err) {
-            console.warn("[BWC] WebSocket Subscription Failed:", err);
-        }
-    }
-
-    handleNewLiveSignal(signalData) {
-        // Logic to dynamically inject new data into the DOM
-        console.log("New Signal:", signalData.ticker, signalData.action);
-        // Will morph UI dynamically once data structures match
-    }
-
-    async fetchData() {
-        try {
-            // For now, load local static mock data. In Phase 35, we'll swap to WebSocket/Appwrite
-            const res = await fetch(LOCAL_DATA_SOURCE);
-            if(res.ok) {
-                this.store = await res.json();
-            } else {
-                this.mockStore();
+        for (const [elemId, key] of Object.entries(mapping)) {
+            const el = document.getElementById(elemId);
+            if (el && data[key] != null) {
+                el.textContent = data[key];
             }
-        } catch (err) {
-            console.warn('[BWC] Data fetch failed, defaulting to memory store.', err);
-            this.mockStore();
         }
     }
 
-    mockStore() {
-        this.store = {
-            kpi: {
-                mc_hurdle: "94.2%",
-                var_5: "-2.14%",
-                beta: "0.85"
-            },
-            factors: [
-                { name: "MKT (Beta)", value: 0.85, width: 85 },
-                { name: "SMB (Size)", value: 0.30, width: 30 },
-                { name: "HML (Value)", value: 0.65, width: 65 },
-                { name: "MOM (Momentum)", value: 0.22, width: 22 }
-            ],
-            videos: [
-                { id: "Scene4_AlphaBetaOrthogonality", name: "Alpha/Beta Orthogonality", file: "Scene4_AlphaBetaOrthogonality.mp4" },
-                { id: "StochasticMonteCarloInsight", name: "Stochastic GBM", file: "StochasticMonteCarloInsight.mp4" },
-                { id: "FamaFrenchAttributionInsight", name: "Fama-French Attribution", file: "FamaFrenchAttributionInsight.mp4" }
-            ]
+    function populateResultsTable(data) {
+        const tableMapping = {
+            'tbl-ann-return': 'ann_return',
+            'tbl-sharpe': 'sharpe',
+            'tbl-max-dd': 'max_dd',
+            'tbl-sortino': 'sortino',
+            'tbl-cf-var': 'cf_var',
+            'tbl-calmar': 'calmar',
+            'tbl-beta': 'beta',
+            'tbl-mc-hurdle': 'mc_hurdle',
+            'tbl-win-rate': 'win_rate',
+            'tbl-profit-factor': 'profit_factor'
         };
-    }
 
-    hydrateDOM() {
-        // Hydrate factors dynamically
-        if(this.store.factors && this.dom.factorList) {
-            this.dom.factorList.innerHTML = this.store.factors.map(f => `
-                <li class="factor-item">
-                    <div class="factor-header">
-                        <span class="factor-name">${f.name}</span>
-                        <span class="factor-val">${f.value.toFixed(2)}</span>
-                    </div>
-                    <div class="factor-bar"><div class="fill" style="width: ${f.width}%"></div></div>
-                </li>
-            `).join('');
+        for (const [elemId, key] of Object.entries(tableMapping)) {
+            const el = document.getElementById(elemId);
+            if (el && data[key] != null) {
+                el.textContent = data[key];
+            }
         }
-        
-        // Add minimal interactions (Phase 31 motion layering)
-        document.querySelectorAll('.kpi-card').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                el.style.transform = 'translateY(-2px)';
-            });
-            el.addEventListener('mouseleave', () => {
-                el.style.transform = 'translateY(0)';
-            });
+    }
+
+    async function fetchAndHydrate() {
+        let data = FALLBACK_DATA;
+
+        try {
+            const res = await fetch(DATA_PATH);
+            if (res.ok) {
+                const json = await res.json();
+                data = Object.assign({}, FALLBACK_DATA, json);
+            }
+        } catch (_) {
+            // Static archive mode — use fallback
+        }
+
+        populateKPIs(data);
+        populateResultsTable(data);
+    }
+
+    // --- Scroll Reveal via IntersectionObserver ---
+
+    function initScrollReveal() {
+        const targets = document.querySelectorAll('.reveal-on-scroll');
+        if (!targets.length) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+        );
+
+        targets.forEach((el) => observer.observe(el));
+    }
+
+    // --- Nav Active State ---
+
+    function setActiveNav() {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const links = document.querySelectorAll('.nav-link');
+
+        links.forEach((link) => {
+            const href = link.getAttribute('href');
+            if (href === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
         });
     }
 
-    mountVideoPlayer() {
-        if (!this.store.videos || !this.store.videos.length) return;
-        
-        // Construct the video element and a native selector
-        const videoHTML = `
-            <div class="video-wrapper" style="position: relative; width: 100%; height: 100%; display: flex; flex-direction: column;">
-                <video id="manim-player" autoplay loop muted playsinline style="width: 100%; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                    <source src="./assets/videos/${this.store.videos[0].file}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-                <div class="video-controls" style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
-                    <select id="video-selector" class="nav-select text-body">
-                        ${this.store.videos.map(v => `<option value="${v.file}">${v.name}</option>`).join('')}
-                    </select>
-                </div>
-            </div>
-        `;
-        
-        this.dom.videoPlaceholder.innerHTML = videoHTML;
-        
-        const player = document.getElementById('manim-player');
-        const selector = document.getElementById('video-selector');
-        
-        selector.addEventListener('change', (e) => {
-            player.src = `./assets/videos/${e.target.value}`;
-            player.play();
+    // --- Status Badge ---
+
+    function initStatusBadge() {
+        const dot = document.getElementById('status-dot');
+        const label = document.getElementById('status-label');
+        if (!dot || !label) return;
+
+        try {
+            if (typeof Appwrite !== 'undefined' && Appwrite.Client) {
+                const client = new Appwrite.Client()
+                    .setEndpoint('https://cloud.appwrite.io/v1')
+                    .setProject('bwc-quant-live');
+
+                client.subscribe(
+                    'databases.bwc_db.collections.signals.documents',
+                    () => {
+                        dot.style.backgroundColor = 'var(--color-quant-positive)';
+                        label.textContent = 'LIVE';
+                    }
+                );
+
+                dot.style.backgroundColor = 'var(--color-quant-positive)';
+                label.textContent = 'LIVE';
+                return;
+            }
+        } catch (_) {
+            // Appwrite unavailable
+        }
+
+        dot.style.backgroundColor = 'var(--color-text-muted)';
+        label.textContent = 'STATIC ARCHIVE';
+    }
+
+    // --- Video Background Mount ---
+
+    function mountVideoBackground() {
+        const container = document.querySelector('.video-bg');
+        if (!container) return;
+
+        const placeholder = container.querySelector('.viz-placeholder');
+        if (!placeholder) return;
+
+        // Will be replaced when video assets exist
+        // Checks for a known video file and mounts if available
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+
+        const source = document.createElement('source');
+        source.src = './assets/videos/hero-render.mp4';
+        source.type = 'video/mp4';
+        video.appendChild(source);
+
+        video.addEventListener('canplay', () => {
+            container.innerHTML = '';
+            container.appendChild(video);
         });
     }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.bwcApp = new BwcTelemetry();
-    window.bwcApp.init();
-});
+    // --- Init ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setActiveNav();
+        initScrollReveal();
+        initStatusBadge();
+        fetchAndHydrate();
+        mountVideoBackground();
+    });
+})();

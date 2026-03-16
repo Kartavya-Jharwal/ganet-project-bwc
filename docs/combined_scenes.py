@@ -18,6 +18,28 @@ COLOR_PURPLE = "#8b5cf6"
 
 config.background_color = COLOR_BG
 
+MICRO_SPEED_MULTIPLIER = 1.25
+MICRO_INTERACTION_MAX_SECONDS = 1.2
+FINAL_FRAME_HOLD_SECONDS = 3.0
+
+
+def smootherstep(t):
+    t = np.clip(t, 0.0, 1.0)
+    return t * t * t * (t * (t * 6 - 15) + 10)
+
+
+class BWCTimedScene(Scene):
+    def play(self, *args, **kwargs):
+        run_time = kwargs.get("run_time")
+        if isinstance(run_time, (int, float)) and run_time <= MICRO_INTERACTION_MAX_SECONDS:
+            kwargs["run_time"] = run_time / MICRO_SPEED_MULTIPLIER
+            if "rate_func" not in kwargs:
+                kwargs["rate_func"] = smootherstep
+        return super().play(*args, **kwargs)
+
+    def hold_final_frame(self):
+        self.wait(FINAL_FRAME_HOLD_SECONDS)
+
 
 class GlowDot(VGroup):
     def __init__(self, point, color=COLOR_POSITIVE, radius=0.05, glow_factor=3, **kwargs):
@@ -40,7 +62,7 @@ def PhilosophyInsight(title_str, body_str):
 # =======================================================
 # 1. THE STOCHASTIC METAPHOR (Animating Possibility, Not Paths)
 # =======================================================
-class Vis_TheStochasticVoid(Scene):
+class Vis_TheStochasticVoid(BWCTimedScene):
     def construct(self):
         title = Text("1. The Geometry of Unknowns (SDEs)", font_size=32).to_corner(UL)
         self.add(title)
@@ -76,8 +98,17 @@ class Vis_TheStochasticVoid(Scene):
         dot = GlowDot(axes.c2p(0, 100), color=COLOR_WHITE)
         self.add(dot)
 
-        # Let's cleanly animate it using Create on the path
-        self.play(Create(first_path), run_time=2, rate_func=linear)
+        # Updater-driven motion keeps the probe physically attached to the evolving path.
+        path_progress = ValueTracker(0.0)
+        dot.add_updater(lambda m: m.move_to(first_path.point_from_proportion(path_progress.get_value())))
+
+        self.play(
+            Create(first_path),
+            path_progress.animate.set_value(1.0),
+            run_time=2,
+            rate_func=smootherstep,
+        )
+        dot.clear_updaters()
 
         # 2. Generalization: The explosion of possibilities
         paths = VGroup()
@@ -125,13 +156,13 @@ class Vis_TheStochasticVoid(Scene):
             paths.animate.set_color(COLOR_MUTED).set_stroke(opacity=0.05),
             run_time=1.5,
         )
-        self.wait(1.5)
+        self.hold_final_frame()
 
 
 # =======================================================
 # 2. THE EFFICIENT FRONTIER (Spatial Metaphors over Numbers)
 # =======================================================
-class Vis_TheOptimalEdge(Scene):
+class Vis_TheOptimalEdge(BWCTimedScene):
     def construct(self):
         title = Text("2. The Optimal Edge (Markowitz)", font_size=32).to_corner(UL)
         self.add(title)
@@ -184,13 +215,13 @@ class Vis_TheOptimalEdge(Scene):
                 optimal_anims.append(d.animate.set_color(COLOR_POSITIVE).scale(1.5))
 
         self.play(*optimal_anims, run_time=1)
-        self.wait(1.5)
+        self.hold_final_frame()
 
 
 # =======================================================
 # 3. REGIME CHANGE & STRESS (Color Shifts = Deep Semantics)
 # =======================================================
-class Vis_RegimePhaseShift(Scene):
+class Vis_RegimePhaseShift(BWCTimedScene):
     def construct(self):
         title = Text("3. Phase Shifts & Stress", font_size=32).to_corner(UL)
         self.add(title)
@@ -258,13 +289,13 @@ class Vis_RegimePhaseShift(Scene):
             run_time=1.5,
             rate_func=rate_functions.ease_in_out_sine,
         )
-        self.wait(1.5)
+        self.hold_final_frame()
 
 
 # =======================================================
 # 4. DATA PIPELINE (Abstraction & Architecture)
 # =======================================================
-class Vis_StructuralDataFlow(Scene):
+class Vis_StructuralDataFlow(BWCTimedScene):
     def construct(self):
         title = Text("4. The BWC Pipeline Logic", font_size=32).to_corner(UL)
         self.add(title)
@@ -336,13 +367,13 @@ class Vis_StructuralDataFlow(Scene):
             rate_func=rate_functions.ease_in_out_sine,
         )
         self.play(model.animate.set_fill(opacity=0.8), run_time=0.5)
-        self.wait(1.5)
+        self.hold_final_frame()
 
 
 # =======================================================
 # 5. RISK ALLOCATION SCALE (Balancing Invariants)
 # =======================================================
-class Vis_InvariantBalancing(Scene):
+class Vis_InvariantBalancing(BWCTimedScene):
     def construct(self):
         title = Text("5. The Optimization Invariant", font_size=32).to_corner(UL)
         self.add(title)
@@ -414,4 +445,4 @@ class Vis_InvariantBalancing(Scene):
             rate_func=rate_functions.ease_out_elastic,
         )
 
-        self.wait(1.5)
+        self.hold_final_frame()
