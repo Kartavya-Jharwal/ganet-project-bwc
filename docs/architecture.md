@@ -34,18 +34,18 @@ The system follows a 6-layer architecture where data flows upward through proces
 ├─────────────────────────────────────────────────────────────────────┤
 │  LAYER 3: ANALYSIS MODELS                                           │
 │  ┌───────────┬──────────────┬────────────────┬──────────────────┐  │
-│  │ Technical │ Fundamental  │ Sentiment      │ Macro            │  │
-│  │ MA/RSI/   │ P/E, P/S,    │ FinBERT NLP,   │ VIX, DXY,        │  │
-│  │ MACD/BBs  │ EV/EBITDA    │ News Score     │ Yield Curve      │  │
+│  │ Technical │ Fundamental  │ Factor         │ Macro            │  │
+│  │ MA/RSI/   │ P/E, P/S,    │ Fama-French,   │ VIX, DXY,        │  │
+│  │ MACD/BBs  │ EV/EBITDA    │ Carhart        │ Yield Curve      │  │
 │  └───────────┴──────────────┴────────────────┴──────────────────┘  │
 │                               ↑ features ↑                          │
 ├─────────────────────────────────────────────────────────────────────┤
 │  LAYER 2: FEATURE ENGINEERING                                       │
 │  ┌─────────────────┬─────────────────────┬───────────────────────┐ │
-│  │ MA Matrix       │ Volatility          │ Sentiment Processing  │ │
-│  │ EMA,SMA,KAMA,   │ Hurst Exponent,     │ FinBERT Scoring,      │ │
-│  │ HMA,VWAP,MVWAP  │ Vol Percentile,     │ Rolling Averages,     │ │
-│  │                 │ Regime Classifier   │ Momentum              │ │
+│  │ MA Matrix       │ Volatility          │ Behavioural Audit     │ │
+│  │ EMA,SMA,KAMA,   │ Hurst Exponent,     │ Trade Timing,         │ │
+│  │ HMA,VWAP,MVWAP  │ Vol Percentile,     │ Disposition Effect,   │ │
+│  │                 │ Regime Classifier   │ Conviction Metrics    │ │
 │  └─────────────────┴─────────────────────┴───────────────────────┘ │
 │                               ↑ raw data ↑                          │
 ├─────────────────────────────────────────────────────────────────────┤
@@ -97,22 +97,21 @@ graph LR
         AW --> Coll6[scraped_data]
     end
     
-    subgraph "Heroku"
-        HK[Heroku App] --> Worker[Worker Dyno<br/>APScheduler]
+    subgraph "Local Runtime"
+        LR[Local Worker] --> Sched[APScheduler Loop]
     end
     
     subgraph "External APIs"
-        Alpaca[Alpaca Markets]
+        YFinance[yfinance]
         FRED[FRED API]
         TG[Telegram Bot API]
     end
     
     SC --> AW
-    Worker --> Alpaca
-    Worker --> FRED
-    Worker --> AW
-    Worker --> TG
-    Actions --> HK
+    LR --> YFinance
+    LR --> FRED
+    LR --> AW
+    LR --> TG
 ```
 
 Note: UI monitoring is delivered via a Rich CLI dashboard (`quant-dashboard`) and can be run locally or in remote shell sessions. Optional OpenBB views are non-blocking.
@@ -180,17 +179,16 @@ The Hurst exponent is the key differentiator. Most quant systems only look at vo
 | LOW_VOL_RANGE | H < 0.4 | Low | Sideways, wait |
 | TRANSITION | 0.4 ≤ H ≤ 0.6 | Any | Random walk, neutral |
 
-### Sentiment Processing
+### Behavioural Audit (Layer 5)
 
-```
-News Headlines → FinBERT → Score ∈ [-1, 1]
-                              ↓
-                  Time-Decay Weighting (recent > stale)
-                              ↓
-                  Rolling Averages (3h, 24h, 72h)
-                              ↓
-                  Sentiment Momentum = short_ma - long_ma
-```
+Post-hoc analysis of the actual trade history to quantify behavioural biases:
+
+- **Trade Timing:** Did buys cluster near local highs (momentum-chasing) or lows (contrarian)?
+- **Disposition Effect:** Tendency to sell winners too early, hold losers too long.
+- **Conviction Metrics:** Position sizing relative to portfolio, concentration analysis.
+- **Turnover:** Activity rate, dividend income tracking.
+
+> **Note:** Sentiment analysis via FinBERT was evaluated during early phases but removed due to dependency weight (torch). Sentiment model weights are redistributed to technical and macro models.
 
 ---
 
@@ -202,8 +200,8 @@ Each model produces a **signal score ∈ [-1, +1]** for each ticker:
 |-------|--------|----------------|
 | **Technical** | MA crossovers, RSI, MACD, BBs, volume | +1 = strong buy, -1 = strong sell |
 | **Fundamental** | P/E, P/S, EV/EBITDA vs sector median | +1 = undervalued, -1 = overvalued |
-| **Sentiment** | FinBERT news scores, momentum | +1 = positive sentiment surge, -1 = negative |
 | **Macro** | VIX, DXY, yield curve | +1 = risk-on, -1 = risk-off |
+| **Factor** | Fama-French 3-factor, Carhart 4-factor | Exposure decomposition |
 
 ### Technical Model Details
 
@@ -244,26 +242,25 @@ def score_macro():
 
 The key innovation: model weights change based on the current volatility regime.
 
-| Regime | Technical | Fundamental | Sentiment | Macro |
-|--------|-----------|-------------|-----------|-------|
-| HIGH_VOL_TREND | 45% | 15% | 30% | 10% |
-| HIGH_VOL_CHOP | 20% | 20% | 25% | 35% |
-| LOW_VOL_TREND | 30% | 40% | 15% | 15% |
-| LOW_VOL_RANGE | 25% | 35% | 20% | 20% |
-| CRISIS | 10% | 10% | 20% | 60% |
+| Regime | Technical | Fundamental | Macro |
+|--------|-----------|-------------|-------|
+| HIGH_VOL_TREND | 55% | 20% | 25% |
+| HIGH_VOL_CHOP | 30% | 25% | 45% |
+| LOW_VOL_TREND | 40% | 40% | 20% |
+| LOW_VOL_RANGE | 35% | 40% | 25% |
+| CRISIS | 15% | 15% | 70% |
 
 ### Fusion Algorithm
 
 ```python
-def fuse(tech, fund, sent, macro, regime):
+def fuse(tech, fund, macro, regime):
     weights = REGIME_WEIGHTS[regime]
     
-    # Weighted average of tech, fund, sent (macro treated separately)
+    # Weighted average of tech, fund (macro treated separately)
     base_score = (
         weights['technical'] * tech +
-        weights['fundamental'] * fund +
-        weights['sentiment'] * sent
-    ) / (weights['technical'] + weights['fundamental'] + weights['sentiment'])
+        weights['fundamental'] * fund
+    ) / (weights['technical'] + weights['fundamental'])
     
     # Macro is an adjustment, not blended in
     macro_adjustment = weights['macro'] * macro * 0.5
@@ -271,7 +268,7 @@ def fuse(tech, fund, sent, macro, regime):
     fused_score = clip(base_score + macro_adjustment, -1, 1)
     
     # Confidence = agreement among models
-    confidence = 1 - std([tech, fund, sent, macro])
+    confidence = 1 - std([tech, fund, macro])
     
     return fused_score, confidence
 ```
@@ -384,16 +381,9 @@ Samples actual 29-day trailing portfolio structure (empiric correlation/cholesky
 
 ## Infrastructure Details
 
-### Heroku Deployment
+### Local Execution
 
-```yaml
-# Procfile
-web: streamlit run quant_monitor/dashboard/app.py --server.port=$PORT
-worker: python -m quant_monitor.main
-```
-
-- **Web dyno**: Serves Streamlit dashboard
-- **Worker dyno**: Runs APScheduler signal loop
+The system runs locally via `uv run python -m quant_monitor.main` (APScheduler worker) and `uv run quant-dashboard` (Rich CLI). There is no remote compute deployment; the static frontend is served via GitHub Pages.
 
 ### Appwrite Collections Schema
 
@@ -436,8 +426,8 @@ worker: python -m quant_monitor.main
 
 #### Deploy Pipeline (`deploy.yml`)
 - Triggers: push to main
-- Steps: Generate requirements.txt → Deploy to Heroku → Build MkDocs → Deploy to GitHub Pages
-- **Note:** GitHub Pages serves as the permanent interactive case study. As of Phase 22+, rendering scripts pull Appwrite data, calculate attribution/distribution curves, embed the resulting histograms/metrics into MkDocs explicitly during this step, and preserve the final post-sunset state indefinitely.
+- Steps: Build frontend assets → Build MkDocs → Deploy to GitHub Pages
+- **Note:** GitHub Pages serves as the permanent interactive case study. Rendering scripts compute attribution/distribution curves, embed the resulting Plotly charts and metrics into the frontend, and preserve the final post-sunset state indefinitely.
 
 ---
 
@@ -448,10 +438,10 @@ For detailed design decisions and trade-offs, see [Design Decisions](design.md).
 Key architectural choices:
 - **DuckDB over PostgreSQL** — Embedded, no server overhead
 - **Doppler over .env** — Centralized, environment-aware secrets
-- **Heroku over VM** — Managed platform, simple for 2-month project
-- **Appwrite over Firebase** — Open-source, GitHub Education credits
-- **Local FinBERT over API** — No per-request cost, offline capable
+- **Local execution over cloud compute** — No deployment overhead, runs on dev machine
+- **Appwrite over Firebase** — Open-source, GitHub Education credits (graceful fallback to DuckDB-only)
+- **GitHub Pages over dynamic hosting** — Static archive, zero maintenance post-sunset
 
 ---
 
-*Last updated: February 24, 2026*
+*Last updated: March 14, 2026*

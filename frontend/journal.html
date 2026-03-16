@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project BWC | Audit Log</title>
+    <meta name="description" content="Audit log for Project BWC — project timeline, design constraints, failure modes, lessons learned, and technical credits.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/tokens.css">
+    <link rel="stylesheet" href="./styles/layout.css">
+    <link rel="stylesheet" href="./styles/motion.css">
+    <link rel="stylesheet" href="./styles/pages.css">
+</head>
+<body class="theme-dark noise-bg">
+    <div class="texture-overlay"></div>
+
+    <nav class="l-navbar">
+        <a href="index.html" class="nav-brand text-display">PROJECT BWC</a>
+        <div class="nav-links">
+            <a href="research.html" class="nav-link">Methodology</a>
+            <a href="results.html" class="nav-link">Telemetry</a>
+            <a href="journal.html" class="nav-link active">Audit Log</a>
+        </div>
+        <div class="nav-status">
+            <div class="status-indicator" id="status-dot"></div>
+            <span id="status-label">AUDIT LOG</span>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <header class="page-header reveal-on-scroll">
+            <h1 class="text-hero">Audit<br>Log.</h1>
+            <p class="text-body-large text-muted">A record of the build sequence, model concessions, and operating assumptions behind the attempt to measure human error under live market pressure.</p>
+        </header>
+
+        <!-- Timeline -->
+        <section class="journal-section reveal-on-scroll" id="timeline">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">01</span>
+                <h2 class="text-display">Project Timeline</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-entry">
+                    <div class="timeline-date">
+                        <span class="text-mono text-accent">FEB 24</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Phase 1 — Foundation</h3>
+                        <p class="text-muted">Project inception. Established the 6-layer DAG architecture. Built data ingestion pipeline with FRED and Yahoo Finance feeds. Set up DuckDB as the local analytical store with Appwrite cloud sync.</p>
+                    </div>
+                </div>
+                <div class="timeline-entry">
+                    <div class="timeline-date">
+                        <span class="text-mono text-accent">MAR 10</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Phase 2 — Regime Detection & Signals</h3>
+                        <p class="text-muted">Implemented Hidden Markov Model for macro regime classification. Built momentum, value, carry, and volatility signal generators. Established the regime-weighted fusion layer with softmax weight redistribution.</p>
+                    </div>
+                </div>
+                <div class="timeline-entry">
+                    <div class="timeline-date">
+                        <span class="text-mono text-accent">MAR 24</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Phase 3 — Portfolio Construction</h3>
+                        <p class="text-muted">Integrated GraphicalLassoCV for sparse covariance estimation. Implemented Hierarchical Risk Parity with MST-based dendrogram. Built the topological backtest engine with proper walk-forward validation.</p>
+                    </div>
+                </div>
+                <div class="timeline-entry">
+                    <div class="timeline-date">
+                        <span class="text-mono text-accent">APR 07</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Phase 4 — Risk & Simulation</h3>
+                        <p class="text-muted">Monte Carlo forward simulation with GBM + jump diffusion. Cornish-Fisher VaR implementation. Kelly criterion position sizing. Stress testing against historical crisis scenarios (GFC, COVID).</p>
+                    </div>
+                </div>
+                <div class="timeline-entry">
+                    <div class="timeline-date">
+                        <span class="text-mono text-accent">APR 18</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Phase 5 — Attribution & Metrics</h3>
+                        <p class="text-muted">Brinson-Fachler performance attribution. Fama-French factor decomposition. Modern metrics suite: PSR, DSR, PBO. Plotly chart generation pipeline for all analytics.</p>
+                    </div>
+                </div>
+                <div class="timeline-entry">
+                    <div class="timeline-date">
+                        <span class="text-mono text-accent">MAY 01</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Phase 6 — Frontend & Archive</h3>
+                        <p class="text-muted">Static frontend microsite for GitHub Pages. Manim mathematical visualizations. PDF tearsheet generation. Project sunset and archival.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Design Decisions -->
+        <section class="journal-section reveal-on-scroll" id="design-decisions">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">02</span>
+                <h2 class="text-display">Design Decisions</h2>
+            </div>
+            <div class="decisions-grid">
+                <div class="decision-card">
+                    <h3>DuckDB over PostgreSQL</h3>
+                    <p class="text-muted">Chose DuckDB as the local analytical engine for its columnar storage, zero-dependency deployment, and native Parquet support. The entire dataset fits in memory, making a client-server database unnecessary overhead.</p>
+                </div>
+                <div class="decision-card">
+                    <h3>HRP over Mean-Variance</h3>
+                    <p class="text-muted">Markowitz mean-variance optimization is notoriously unstable with estimated inputs. HRP avoids matrix inversion entirely, producing more robust allocations that degrade gracefully under estimation error.</p>
+                </div>
+                <div class="decision-card">
+                    <h3>Topological Backtest</h3>
+                    <p class="text-muted">The backtest engine processes the strategy DAG topologically, ensuring each node's dependencies are resolved before execution. This prevents look-ahead bias by construction rather than convention.</p>
+                </div>
+                <div class="decision-card">
+                    <h3>Cornish-Fisher over Gaussian VaR</h3>
+                    <p class="text-muted">Financial returns exhibit fat tails and negative skewness. The Cornish-Fisher expansion adjusts quantile estimates for non-normality, producing more realistic risk measures than the Gaussian assumption.</p>
+                </div>
+                <div class="decision-card">
+                    <h3>Static Archive Philosophy</h3>
+                    <p class="text-muted">The project is designed to sunset gracefully. All live telemetry degrades to static JSON, all charts are self-contained HTML files, and the frontend requires no backend to serve.</p>
+                </div>
+                <div class="decision-card">
+                    <h3>Brutalist Aesthetic</h3>
+                    <p class="text-muted">The visual language deliberately rejects the rounded-corner, pastel SaaS aesthetic. Sharp edges, high contrast, monospaced data, and film grain texture signal institutional seriousness over consumer friendliness.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lessons Learned -->
+        <section class="journal-section reveal-on-scroll" id="lessons">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">03</span>
+                <h2 class="text-display">Lessons Learned</h2>
+            </div>
+            <div class="lessons-list">
+                <div class="lesson-item">
+                    <span class="lesson-num text-mono text-accent">01</span>
+                    <div>
+                        <h3>Covariance estimation is the bottleneck</h3>
+                        <p class="text-muted">The quality of portfolio construction is bounded by the quality of the covariance estimate. GraphicalLasso with cross-validation was the single most impactful improvement to allocation stability.</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <span class="lesson-num text-mono text-accent">02</span>
+                    <div>
+                        <h3>Regime detection requires humility</h3>
+                        <p class="text-muted">HMMs provide probabilistic regime estimates, not certainties. The system works best when regime signals modulate weights gradually rather than triggering binary switches.</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <span class="lesson-num text-mono text-accent">03</span>
+                    <div>
+                        <h3>Backtest overfitting is the default outcome</h3>
+                        <p class="text-muted">Without PBO and DSR, every backtest looks good. These metrics should be computed first, not last. They determine whether the rest of the analysis is meaningful.</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <span class="lesson-num text-mono text-accent">04</span>
+                    <div>
+                        <h3>DAG-based execution prevents subtle bugs</h3>
+                        <p class="text-muted">Processing nodes in topological order eliminates an entire class of look-ahead and dependency-ordering bugs that plague sequential backtests.</p>
+                    </div>
+                </div>
+                <div class="lesson-item">
+                    <span class="lesson-num text-mono text-accent">05</span>
+                    <div>
+                        <h3>Design for sunset from day one</h3>
+                        <p class="text-muted">Building the system to degrade gracefully to static files meant every component had a clear data contract. This constraint improved the architecture more than any optimization.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tearsheet Download -->
+        <section class="journal-section reveal-on-scroll" id="tearsheet">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">04</span>
+                <h2 class="text-display">Tearsheet</h2>
+            </div>
+            <div class="tearsheet-block">
+                <p>The full quantitative tearsheet is available as a PDF, containing all performance metrics, factor exposures, risk analytics, and attribution results in a single document.</p>
+                <a href="./assets/tearsheet.pdf" class="cta-btn" download style="margin-top:var(--spacing-6);display:inline-block;">Download Tearsheet (PDF) →</a>
+            </div>
+        </section>
+
+        <!-- Credits -->
+        <section class="journal-section reveal-on-scroll" id="credits">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">05</span>
+                <h2 class="text-display">Credits & Tools</h2>
+            </div>
+            <div class="credits-grid">
+                <div class="credit-group">
+                    <h3 class="text-display" style="font-size:0.85rem;margin-bottom:var(--spacing-4);">LANGUAGES & RUNTIME</h3>
+                    <ul class="credit-list text-muted">
+                        <li>Python 3.12</li>
+                        <li>HTML / CSS / JavaScript</li>
+                    </ul>
+                </div>
+                <div class="credit-group">
+                    <h3 class="text-display" style="font-size:0.85rem;margin-bottom:var(--spacing-4);">DATA & STORAGE</h3>
+                    <ul class="credit-list text-muted">
+                        <li>DuckDB</li>
+                        <li>Appwrite</li>
+                        <li>FRED API</li>
+                        <li>Yahoo Finance</li>
+                    </ul>
+                </div>
+                <div class="credit-group">
+                    <h3 class="text-display" style="font-size:0.85rem;margin-bottom:var(--spacing-4);">QUANTITATIVE</h3>
+                    <ul class="credit-list text-muted">
+                        <li>NumPy / SciPy</li>
+                        <li>pandas</li>
+                        <li>scikit-learn (GraphicalLassoCV)</li>
+                        <li>statsmodels (HMM)</li>
+                        <li>NetworkX (MST)</li>
+                    </ul>
+                </div>
+                <div class="credit-group">
+                    <h3 class="text-display" style="font-size:0.85rem;margin-bottom:var(--spacing-4);">VISUALIZATION</h3>
+                    <ul class="credit-list text-muted">
+                        <li>Plotly</li>
+                        <li>Manim</li>
+                        <li>KaTeX</li>
+                    </ul>
+                </div>
+                <div class="credit-group">
+                    <h3 class="text-display" style="font-size:0.85rem;margin-bottom:var(--spacing-4);">TYPOGRAPHY</h3>
+                    <ul class="credit-list text-muted">
+                        <li>Space Grotesk (display)</li>
+                        <li>DM Sans (body)</li>
+                        <li>JetBrains Mono (data)</li>
+                    </ul>
+                </div>
+                <div class="credit-group">
+                    <h3 class="text-display" style="font-size:0.85rem;margin-bottom:var(--spacing-4);">INFRASTRUCTURE</h3>
+                    <ul class="credit-list text-muted">
+                        <li>GitHub Pages</li>
+                        <li>GitHub Actions</li>
+                        <li>TOML configuration</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <span class="text-display" style="font-size:0.85rem;">PROJECT BWC</span>
+                <p class="text-muted" style="font-size:0.8rem;margin-top:0.5rem;">Quantitative audit of human portfolio decisions under live constraints. Not investment advice.</p>
+            </div>
+            <div class="footer-col">
+                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE: 2026-05-01</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">STATIC ARCHIVE / GITHUB PAGES</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/main.js"></script>
+</body>
+</html>

@@ -26,12 +26,16 @@ Feb 24 ────────────────────────�
 
 **Total estimated effort:** ~8.5 focused days
 
-## Status Update (March 13, 2026)
+## Status Update (March 14, 2026)
 
 - Phase 0-6: Complete
 - Phase 7-9: Implemented for prototype and actively used
-- Phase 10: In hardening (deployment readiness, UX polish, reliability fixes)
+- Phase 10: In hardening (UX polish, reliability fixes)
+- Phase 22+: Post-hoc analytics (PortfolioHistoryEngine, Brinson, Factor, Monte Carlo, Behavioural Audit) -- Complete
+- Frontend microsite: 4 pages built, Plotly charts wired, tearsheet generation ready
 - Demo-day executable: YES (with required Doppler secrets configured)
+- Heroku deployment: **Deprecated** (local execution only)
+- FinBERT/Sentiment: **Removed** (torch dependency too heavy; weights redistributed)
 
 ---
 
@@ -215,29 +219,9 @@ Implement the technical analysis model and macro regime model.
 
 ## Phase 4: Sentiment Model
 
-**Status:** ⬜ Planned  
-**Estimated:** 1 day
+**Status:** ❌ Removed  
 
-### Objectives
-Implement the FinBERT-driven sentiment model.
-
-### Tasks
-- [ ] Load FinBERT model and tokenizer
-- [ ] Process news from Appwrite scraped_data
-- [ ] Aggregate sentiment per ticker
-- [ ] Weight recent news higher than stale
-- [ ] Track sentiment momentum (3h - 72h)
-- [ ] Implement `score()` — sentiment signal per ticker
-- [ ] Add 8-K classification (earnings surprise, guidance cut)
-
-### Tests
-- [ ] Test FinBERT on known positive/negative headlines
-- [ ] Test sentiment aggregation logic
-- [ ] Test momentum calculation
-
-### Definition of Done
-- Sentiment model scores in <5 seconds (batch mode)
-- Correctly identifies negative sentiment spike
+> FinBERT was evaluated but removed due to the torch dependency (~108MB). Sentiment model weights have been redistributed to technical and macro models in `config.toml`. The fusion engine passes `sentiment=0.0` for all regimes.
 
 ---
 
@@ -393,14 +377,13 @@ Complete Telegram integration and production deployment.
 - [ ] Set up Telegram bot via BotFather
 - [ ] Implement all alert formatters
 - [ ] Implement cooldown logic
-- [ ] Deploy to Heroku (web + worker dynos)
-- [ ] Verify GitHub Actions deployment
+- [ ] Verify GitHub Actions deployment (GitHub Pages)
 - [ ] Test end-to-end signal → alert flow
 
 ### Definition of Done
 - Alerts appear in Telegram when thresholds crossed
-- Both dynos running on Heroku
-- System operational for valuation checkpoint
+- System operational locally for valuation checkpoint
+- Frontend deployed to GitHub Pages
 
 ---
 
@@ -412,12 +395,11 @@ Complete Telegram integration and production deployment.
 - [ ] Prepare presentation materials
 
 ### Before Sunset (May 1)
-- [ ] Run `scripts/export_for_archive.py`
+- [ ] Run `scripts/build_frontend_assets.py`
 - [ ] Generate final performance charts
 - [ ] Export complete signal history
 - [ ] Build final MkDocs site
 - [ ] Deploy to GitHub Pages
-- [ ] Delete Heroku app
 - [ ] Archive repository
 
 ---
@@ -427,11 +409,10 @@ Complete Telegram integration and production deployment.
 | Risk | Mitigation |
 |------|------------|
 | API rate limits | Aggressive caching, fallback sources |
-| Heroku dyno sleep | Use Basic plan or two dynos |
-| FinBERT slow inference | Batch processing, not real-time |
+| Appwrite unavailable | Graceful fallback to DuckDB-only mode |
 | Data quality issues | Cross-validation, data integrity checks |
 | Time constraints | Prioritize core signal loop over polish |
 
 ---
 
-*Last updated: February 24, 2026*
+*Last updated: March 14, 2026*

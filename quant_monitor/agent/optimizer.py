@@ -56,16 +56,16 @@ class PortfolioOptimizer:
             )
 
             # Market-cap weights as prior (equal weight fallback)
-            (
+            market_prices = (
                 current_prices[tickers]
-                if isinstance(current_prices, pd.Series)
+                if isinstance(current_prices, pd.Series) and all(t in current_prices.index for t in tickers)
                 else pd.Series({t: 1.0 for t in tickers})
             )
+            market_prior = market_prices / market_prices.sum()
 
-            # Black-Litterman model
             bl = BlackLittermanModel(
                 cov_matrix,
-                pi="equal",  # equal-weight prior
+                pi=market_prior,
                 absolute_views=views,
                 omega="idzorek",
                 view_confidences=[view_confidences.get(t, 0.5) for t in views],

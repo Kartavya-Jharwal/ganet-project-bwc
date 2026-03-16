@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project BWC | Methodology Dossier</title>
+    <meta name="description" content="Methodology dossier for Project BWC — forensic attribution, probabilistic measurement, regime-aware signaling, HRP allocation, and stochastic simulation.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+    <link rel="stylesheet" href="./styles/tokens.css">
+    <link rel="stylesheet" href="./styles/layout.css">
+    <link rel="stylesheet" href="./styles/motion.css">
+    <link rel="stylesheet" href="./styles/pages.css">
+</head>
+<body class="theme-dark noise-bg">
+    <div class="texture-overlay"></div>
+
+    <nav class="l-navbar">
+        <a href="index.html" class="nav-brand text-display">PROJECT BWC</a>
+        <div class="nav-links">
+            <a href="research.html" class="nav-link active">Methodology</a>
+            <a href="results.html" class="nav-link">Telemetry</a>
+            <a href="journal.html" class="nav-link">Audit Log</a>
+        </div>
+        <div class="nav-status">
+            <div class="status-indicator" id="status-dot"></div>
+            <span id="status-label">METHODOLOGY</span>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <header class="page-header reveal-on-scroll" id="methodology-dossier">
+            <h1 class="text-hero">Methodology<br>Dossier.</h1>
+            <p class="text-body-large text-muted">The quantitative stack used to reconstruct human decisions, constrain uncertainty, and project the systematic counterfactual against which the live operator is audited.</p>
+        </header>
+
+        <!-- 3-Layer Architecture -->
+        <section class="research-section reveal-on-scroll" id="architecture">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">01</span>
+                <h2 class="text-display">3-Layer Architecture</h2>
+            </div>
+            <div class="section-body">
+                <p>Project BWC is organized around three audit layers. Each layer answers a separate question: what happened, what risk remained, and what the systematic engine would have done instead.</p>
+                <div class="architecture-diagram">
+                    <div class="arch-layer">
+                        <span class="arch-num text-mono">01</span>
+                        <span class="arch-name">Forensic Attribution</span>
+                        <span class="arch-desc text-muted">Brinson-Fachler plus actual-versus-model execution reconstruction</span>
+                    </div>
+                    <div class="arch-connector">↓</div>
+                    <div class="arch-layer">
+                        <span class="arch-num text-mono">02</span>
+                        <span class="arch-name">Probabilistic Measurement</span>
+                        <span class="arch-desc text-muted">Cornish-Fisher VaR and GBM plus jump diffusion to a freeze date</span>
+                    </div>
+                    <div class="arch-connector">↓</div>
+                    <div class="arch-layer">
+                        <span class="arch-num text-mono">03</span>
+                        <span class="arch-name">Regime-Aware Signaling</span>
+                        <span class="arch-desc text-muted">Sparse inverse covariance, macro regime fusion, and HRP allocation</span>
+                    </div>
+                </div>
+                <p style="margin-top:var(--spacing-6);">The underlying implementation remains modular, but the public frame is deliberately narrower: isolate behavior, measure risk, and compare discretionary action against a disciplined model path.</p>
+            </div>
+        </section>
+
+        <!-- Regime-Weighted Signal Fusion -->
+        <section class="research-section reveal-on-scroll" id="regime-fusion">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">02</span>
+                <h2 class="text-display">Regime-Aware Signaling</h2>
+            </div>
+            <div class="section-body">
+                <p>The signaling layer redistributes exposures as macro conditions change. Five regimes govern how the systematic benchmark should rotate before the human operator overrides it:</p>
+                <div class="regime-grid">
+                    <div class="regime-card">
+                        <span class="regime-label text-mono text-success">EXPANSION</span>
+                        <p class="text-muted">Risk-on. Momentum and carry signals dominate. Full equity exposure with growth tilt.</p>
+                    </div>
+                    <div class="regime-card">
+                        <span class="regime-label text-mono" style="color:#3b82f6;">RECOVERY</span>
+                        <p class="text-muted">Early cycle. Value signals gain weight. Gradual re-risking from defensive positioning.</p>
+                    </div>
+                    <div class="regime-card">
+                        <span class="regime-label text-mono text-accent">SLOWDOWN</span>
+                        <p class="text-muted">Late cycle. Volatility signals increase. Defensive rotation, quality factor emphasis.</p>
+                    </div>
+                    <div class="regime-card">
+                        <span class="regime-label text-mono text-danger">CONTRACTION</span>
+                        <p class="text-muted">Risk-off. Maximum hedging. Treasury duration extended, equity beta minimized.</p>
+                    </div>
+                    <div class="regime-card">
+                        <span class="regime-label text-mono" style="color:#8b5cf6;">CRISIS</span>
+                        <p class="text-muted">Tail event. All signals suppressed. Portfolio collapses to minimum-variance allocation with cash buffer.</p>
+                    </div>
+                </div>
+                <p style="margin-top:var(--spacing-6);">Weight redistribution follows a softmax transformation over regime-conditional signal performance, ensuring smooth transitions rather than hard switches between allocation regimes.</p>
+            </div>
+        </section>
+
+        <!-- Hierarchical Risk Parity -->
+        <section class="research-section reveal-on-scroll" id="hrp">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">03</span>
+                <h2 class="text-display">Hierarchical Risk Parity</h2>
+            </div>
+            <div class="section-body">
+                <p>The allocation pipeline uses a three-stage process to construct the covariance-aware portfolio:</p>
+                <div class="pipeline-steps">
+                    <div class="pipeline-step">
+                        <span class="step-num text-mono text-accent">A</span>
+                        <div>
+                            <strong>GraphicalLassoCV</strong>
+                            <p class="text-muted">Sparse precision matrix estimation via L1-penalized maximum likelihood. Cross-validated to select optimal regularization, producing a denoised covariance structure.</p>
+                        </div>
+                    </div>
+                    <div class="pipeline-step">
+                        <span class="step-num text-mono text-accent">B</span>
+                        <div>
+                            <strong>Hierarchical Risk Parity</strong>
+                            <p class="text-muted">López de Prado's HRP algorithm clusters assets by correlation distance, then allocates risk inversely proportional to cluster variance via recursive bisection.</p>
+                        </div>
+                    </div>
+                    <div class="pipeline-step">
+                        <span class="step-num text-mono text-accent">C</span>
+                        <div>
+                            <strong>Minimum Spanning Tree</strong>
+                            <p class="text-muted">The MST extracted from the correlation matrix provides the dendrogram for hierarchical clustering, revealing the true dependency structure of the asset universe.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-embed">
+                    <div class="chart-card">
+                        <div class="chart-title text-display">Correlation Graph / MST</div>
+                        <iframe src="./charts/correlation-graph.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Monte Carlo Forward Simulation -->
+        <section class="research-section reveal-on-scroll" id="monte-carlo">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">04</span>
+                <h2 class="text-display">Monte Carlo Forward Simulation</h2>
+            </div>
+            <div class="section-body">
+                <p>Forward portfolio paths are generated using Geometric Brownian Motion augmented with a compound Poisson jump-diffusion process. The stochastic differential equation governing the asset price is:</p>
+                <div class="equation-block">
+                    $$dS_t = \mu S_t \, dt + \sigma S_t \, dW_t + S_t \, dJ_t$$
+                </div>
+                <p>where $W_t$ is a standard Wiener process and $J_t$ is a compound Poisson process with intensity $\lambda$ and log-normal jump sizes $\ln(1+J) \sim \mathcal{N}(\mu_J, \sigma_J^2)$.</p>
+                <p style="margin-top:var(--spacing-4);">10,000 paths are simulated over the 29-day forward horizon. The Monte Carlo hurdle represents the fraction of paths exceeding the risk-free rate, providing a probabilistic confidence measure for the portfolio's forward outlook.</p>
+                <div class="chart-embed">
+                    <div class="chart-card">
+                        <div class="chart-title text-display">Monte Carlo Simulation</div>
+                        <iframe src="./charts/monte-carlo.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Attribution -->
+        <section class="research-section reveal-on-scroll" id="attribution">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">05</span>
+                <h2 class="text-display">Forensic Attribution</h2>
+            </div>
+            <div class="section-body">
+                <p>Returns are decomposed using the Brinson-Fachler model, separating total active return into allocation, selection, and interaction effects:</p>
+                <div class="equation-block">
+                    $$R_{\text{active}} = \underbrace{\sum_i (w_i^p - w_i^b) R_i^b}_{\text{Allocation}} + \underbrace{\sum_i w_i^b (R_i^p - R_i^b)}_{\text{Selection}} + \underbrace{\sum_i (w_i^p - w_i^b)(R_i^p - R_i^b)}_{\text{Interaction}}$$
+                </div>
+                <p>This decomposition is used as an audit instrument, not a victory lap. It reveals whether performance came from the intended exposures, from incidental factor drift, or from discretionary deviation away from the model.</p>
+                <div class="chart-embed">
+                    <div class="chart-card">
+                        <div class="chart-title text-display">Attribution Analysis</div>
+                        <iframe src="./charts/attribution.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modern Metrics -->
+        <section class="research-section reveal-on-scroll" id="modern-metrics">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">06</span>
+                <h2 class="text-display">Modern Metrics</h2>
+            </div>
+            <div class="section-body">
+                <p>Beyond classical Sharpe, the system computes three modern statistical tests to guard against overfitting and data-mining bias:</p>
+                <div class="metrics-grid">
+                    <div class="metric-block">
+                        <h3 class="text-display" style="font-size:1rem;">Probabilistic Sharpe Ratio (PSR)</h3>
+                        <p class="text-muted">Tests whether the observed Sharpe ratio is statistically distinguishable from a benchmark, accounting for skewness and kurtosis of the return distribution.</p>
+                    </div>
+                    <div class="metric-block">
+                        <h3 class="text-display" style="font-size:1rem;">Deflated Sharpe Ratio (DSR)</h3>
+                        <p class="text-muted">Adjusts the Sharpe ratio for the number of trials conducted, penalizing strategies that emerge from extensive backtesting over many parameter combinations.</p>
+                    </div>
+                    <div class="metric-block">
+                        <h3 class="text-display" style="font-size:1rem;">Probability of Backtest Overfitting (PBO)</h3>
+                        <p class="text-muted">Uses combinatorial symmetric cross-validation to estimate the probability that the optimal in-sample strategy underperforms out-of-sample.</p>
+                    </div>
+                </div>
+
+                <h3 class="text-display" style="font-size:1rem;margin-top:var(--spacing-8);">Key Equations</h3>
+
+                <p style="margin-top:var(--spacing-4);"><strong>Kelly Criterion</strong> — optimal fractional sizing under uncertainty:</p>
+                <div class="equation-block">
+                    $$f^* = \frac{p}{a} - \frac{q}{b} = \frac{pb - qa}{ab}$$
+                </div>
+                <p class="text-muted">where $p$ is win probability, $q = 1-p$, $b$ is win/loss ratio, and $a$ is the loss amount.</p>
+
+                <p style="margin-top:var(--spacing-6);"><strong>Cornish-Fisher Expansion</strong> — VaR adjusted for non-normality:</p>
+                <div class="equation-block">
+                    $$z_{CF} = z_\alpha + \frac{1}{6}(z_\alpha^2 - 1)S + \frac{1}{24}(z_\alpha^3 - 3z_\alpha)(K - 3) - \frac{1}{36}(2z_\alpha^3 - 5z_\alpha)S^2$$
+                </div>
+                <p class="text-muted">where $S$ is skewness, $K$ is kurtosis, and $z_\alpha$ is the standard normal quantile.</p>
+
+                <div class="chart-embed" style="margin-top:var(--spacing-8);">
+                    <div class="chart-card">
+                        <div class="chart-title text-display">Return Distribution</div>
+                        <iframe src="./charts/return-dist.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <span class="text-display" style="font-size:0.85rem;">PROJECT BWC</span>
+                <p class="text-muted" style="font-size:0.8rem;margin-top:0.5rem;">Quantitative audit of human portfolio decisions under live constraints. Not investment advice.</p>
+            </div>
+            <div class="footer-col">
+                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE: 2026-05-01</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">STATIC ARCHIVE / GITHUB PAGES</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/main.js"></script>
+</body>
+</html>

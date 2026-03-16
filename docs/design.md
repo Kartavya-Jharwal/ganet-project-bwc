@@ -124,18 +124,6 @@ This document captures the key architectural and design decisions made for the G
 
 **Trade-off:** Adds another external service. Latency for scraped data.
 
-### NLP: Local FinBERT over API-based sentiment
-
-**Decision:** Run FinBERT inference locally via HuggingFace transformers.
-
-**Rationale:**
-- No per-request API costs
-- Full control over model behavior
-- Offline capability for development
-- FinBERT specifically tuned for financial text
-
-**Trade-off:** Requires torch (~108MB). Slower than API on first load.
-
 ### Dashboard: Rich CLI + OpenBB over Streamlit
 
 **Decision:** Use Rich (terminal UI) + OpenBB Platform (financial data toolkit) for the monitoring dashboard, delivered as a CLI tool.
@@ -200,7 +188,7 @@ All timestamps normalized to UTC before storage. Display layer converts to ET fo
 
 ## Signal Generation
 
-### Why 4 Models?
+### Why 3 Models + Factor Layer?
 
 Each model captures different market dynamics:
 
@@ -208,20 +196,20 @@ Each model captures different market dynamics:
 |-------|----------|-----------|
 | Technical | Price momentum, support/resistance | Days to weeks |
 | Fundamental | Valuation, earnings quality | Quarters |
-| Sentiment | News-driven moves, fear/greed | Hours to days |
 | Macro | Regime shifts, risk-on/off | Weeks to months |
+| Factor (post-hoc) | Fama-French/Carhart exposure decomposition | Full history |
 
-Single-model systems miss regime changes. Multi-model fusion adapts.
+Single-model systems miss regime changes. Multi-model fusion adapts. The sentiment model (FinBERT) was evaluated but removed due to torch dependency weight; its allocation is redistributed to technical and macro.
 
 ### Why Dynamic Regime Weights?
 
 Static equal weighting assumes all models are equally useful in all conditions. This is false.
 
-| Regime | Technical | Fundamental | Sentiment | Macro |
-|--------|-----------|-------------|-----------|-------|
-| HIGH_VOL_TREND | 45% | 15% | 30% | 10% |
-| LOW_VOL_TREND | 30% | 40% | 15% | 15% |
-| CRISIS | 10% | 10% | 20% | 60% |
+| Regime | Technical | Fundamental | Macro |
+|--------|-----------|-------------|-------|
+| HIGH_VOL_TREND | 55% | 20% | 25% |
+| LOW_VOL_TREND | 40% | 40% | 20% |
+| CRISIS | 15% | 15% | 70% |
 
 **Example:** In a crisis (VIX > 30), macro signals dominate. Fundamentals are irrelevant when correlation goes to 1.
 
@@ -237,8 +225,8 @@ Most systems use volatility alone. Hurst separates:
 ### Confidence Gating
 
 ```
-fusion_score = weighted_avg(tech, fund, sent) + macro_adjustment
-confidence = 1 - std(tech, fund, sent, macro)
+fusion_score = weighted_avg(tech, fund) + macro_adjustment
+confidence = 1 - std(tech, fund, macro)
 
 if confidence > 0.65 AND |fusion_score| > 0.35:
     generate_signal()
@@ -296,29 +284,18 @@ This bypasses the normal signal cycle for time-critical situations.
 
 ## Infrastructure
 
-### Why Heroku over DigitalOcean Droplet?
+### Local Execution over Cloud Compute
 
-Original plan: $6/mo DO droplet.
-
-**Revised:** Heroku with GitHub Education credits.
+**Decision:** Run the worker and dashboard locally instead of deploying to a cloud platform.
 
 **Rationale:**
-- Managed platform, no server administration
-- Automatic deploys from GitHub
-- Easy scaling (just add dynos)
-- Better fit for 2-month project lifespan
-- "Just delete the app" on May 1
+- Zero infrastructure overhead during the 2-month project lifespan
+- No deployment debugging or dyno management
+- Rich CLI dashboard runs instantly in terminal
+- APScheduler worker runs via `uv run python -m quant_monitor.main`
+- Heroku was evaluated but deprecated in favour of simplicity
 
-**Trade-off:** Less control. No persistent filesystem (use Appwrite instead).
-
-### Two-Dyno Architecture
-
-```
-worker: APScheduler signal loop
-```
-
-Dashboard is a Rich CLI tool (`quant-dashboard`) run on-demand, not a web dyno.
-Worker runs the signal loop. Dashboard reads from Appwrite when invoked.
+**Trade-off:** System only runs when the developer's machine is on. Acceptable for a personal portfolio monitor.
 
 ### GitHub Pages for Post-Sunset
 
@@ -339,9 +316,9 @@ MkDocs-Material generates a static site from Markdown. Pre-sunset export script 
 2. **No multi-user support**
    - Single-user personal tool. No auth complexity.
 
-3. **CPU-only torch**
-   - No GPU. FinBERT inference is slow on first call.
-   - Acceptable for batch processing, not real-time.
+3. **No NLP sentiment model**
+   - FinBERT was evaluated but removed to eliminate the torch dependency (~108MB).
+   - Sentiment weight redistributed to technical and macro models.
 
 4. **Scrapy Cloud latency**
    - Scraped data has 15-30 minute delay.
@@ -357,13 +334,13 @@ MkDocs-Material generates a static site from Markdown. Pre-sunset export script 
 |---------|----------|
 | DuckDB | TimescaleDB or ClickHouse |
 | diskcache | Redis Cluster |
-| Heroku | Kubernetes on AWS/GCP |
+| Local execution | Kubernetes on AWS/GCP |
 | Rich CLI + OpenBB | React + FastAPI |
 | Single process | Celery workers |
-| torch CPU | GPU inference server |
+| Statistical models | GPU-accelerated deep learning |
 
 But for a 2-month academic project? Current stack is optimal.
 
 ---
 
-*Last updated: February 24, 2026*
+*Last updated: March 14, 2026*
