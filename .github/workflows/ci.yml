@@ -73,11 +73,9 @@ jobs:
 
   deploy-endpoints:
     name: "Deploy State & UI"
-    needs: scientific-computation
     runs-on: ubuntu-latest
-    # Allow GitHub Pages deployment even if lint/test job fails.
-    # The website build does not depend on the scientific-computation results.
-    if: always() && github.ref == 'refs/heads/main'
+    # Deploy only from the main branch.
+    if: github.ref == 'refs/heads/main'
 
     permissions:
       contents: write
