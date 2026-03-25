@@ -101,7 +101,7 @@ jobs:
 
       - name: Build MkDocs Documentation
         run: |
-          uv run mkdocs build -f docs/mkdocs.yml -d ./frontend/docs
+          uv run mkdocs build -f docs/mkdocs.yml -d ../frontend/docs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
