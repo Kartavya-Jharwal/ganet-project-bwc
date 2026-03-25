@@ -75,7 +75,9 @@ jobs:
     name: "Deploy State & UI"
     needs: scientific-computation
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    # Allow GitHub Pages deployment even if lint/test job fails.
+    # The website build does not depend on the scientific-computation results.
+    if: always() && github.ref == 'refs/heads/main'
 
     permissions:
       contents: write
@@ -99,7 +101,7 @@ jobs:
 
       - name: Build MkDocs Documentation
         run: |
-          uv run mkdocs build -f docs/mkdocs.yml -d ../frontend/docs
+          uv run mkdocs build -f docs/mkdocs.yml -d ./frontend/docs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
