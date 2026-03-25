@@ -1,12 +1,12 @@
 {
   "timing": {
-    "avg_buy_timing_score": 0.6456,
+    "avg_buy_timing_score": 0.6532,
     "avg_sell_timing_score": 0.3741,
     "buy_at_highs_pct": 0.3158,
     "sell_at_lows_pct": 0.3333,
     "n_buys_analysed": 19,
     "n_sells_analysed": 6,
-    "interpretation": "Buy timing is neutral relative to local price range; Sell timing is neutral relative to local price range"
+    "interpretation": "Buys tend to cluster near local highs (momentum-chasing bias); Sell timing is neutral relative to local price range"
   },
   "disposition": {
     "avg_winner_holding_days": 17.0,
