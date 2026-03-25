@@ -1,0 +1,19 @@
+{
+    "naive_equal_weight": {
+        "total_return": 0.053095362367024945,
+        "annualized_sharpe": 1.3409404161355152,
+        "annualized_sortino": 2.749047330684943,
+        "max_drawdown": -0.09393283487455167
+    },
+    "topological_hrp": {
+        "total_return": 0.05227889620884962,
+        "annualized_sharpe": 1.3211451781839259,
+        "annualized_sortino": 2.704603122249382,
+        "max_drawdown": -0.09418779007174022
+    },
+    "delta": {
+        "sharpe_improvement": -0.01979523795158933,
+        "drawdown_reduction": 0.0002549551971885444
+    },
+    "windows_tested": 2
+}

@@ -1,0 +1,362 @@
+/* Phase 29: Aesthetic Direction - Asymmetrical/Editorial Grid */
+/* Fully responsive architecture for Mobile, Tablet, Laptop, and 4K */
+
+/* ----------------------------------------------------
+   Base Layout & Navigation (Common)
+   ---------------------------------------------------- */
+.l-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-4) var(--spacing-8);
+    border-bottom: var(--line-thickness) solid var(--border-color);
+    background: rgba(5, 5, 5, 0.85); /* Darker glass pane */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    position: sticky;
+    top: 0;
+    z-index: 100; /* Ensure it floats above grain overlay */
+}
+
+.nav-brand {
+    font-size: 1.25rem;
+    color: var(--color-text-primary);
+}
+
+.nav-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--color-accent-primary);
+    letter-spacing: 0.1em;
+}
+
+.status-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-accent-primary);
+    box-shadow: 0 0 12px var(--color-accent-primary);
+    animation: pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.85); }
+}
+
+/* ----------------------------------------------------
+   Grid Layout Modules 
+   ---------------------------------------------------- */
+.l-grid-main {
+    display: grid;
+    gap: var(--spacing-8);
+    padding: var(--spacing-12) var(--spacing-8) calc(var(--spacing-16) * 2);
+    max-width: 1920px; /* Scales up to true 4K without breaking */
+    margin: 0 auto;
+}
+
+.kpi-card {
+    background: linear-gradient(180deg, var(--color-bg-surface) 0%, var(--color-bg-base) 100%);
+    padding: var(--spacing-8) var(--spacing-6);
+    border: var(--line-thickness) solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-2);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-ambient), var(--shadow-inset);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glass glare effect inside cards */
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-highlight), transparent);
+    opacity: 0.3;
+}
+
+.kpi-label {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.08em;
+}
+
+.kpi-value {
+    /* Fluid KPI sizes bounded by font maps */
+    font-family: var(--font-mono);
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+    line-height: 1;
+    font-weight: 500;
+    letter-spacing: -0.05em;
+}
+
+.l-viz-area {
+    background: var(--color-bg-surface);
+    border: var(--line-thickness) solid var(--border-color);
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-ambient), var(--shadow-inset);
+    position: relative;
+}
+
+.viz-container {
+    padding: var(--spacing-8);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.viz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-6);
+    flex-wrap: wrap; 
+    gap: var(--spacing-4);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.viz-header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.5vw, 1.1rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-primary);
+}
+
+.tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    background: rgba(235, 94, 40, 0.05);
+    color: var(--color-accent-primary);
+    border: 1px solid rgba(235, 94, 40, 0.3);
+    border-radius: var(--border-radius-sm);
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+.viz-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed rgba(255,255,255, 0.05); /* Stealthier dash */
+    min-height: 400px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.l-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+}
+
+.sidebar-module {
+    background: var(--color-bg-surface);
+    border: var(--line-thickness) solid var(--border-color);
+    padding: var(--spacing-8) var(--spacing-6);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-ambient), var(--shadow-inset);
+}
+
+.sidebar-module h3 {
+    font-family: var(--font-display);
+    font-size: clamp(0.85rem, 1vw, 1rem);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-6);
+    padding-bottom: var(--spacing-4);
+    border-bottom: 1px solid var(--color-bg-surface-elevated);
+    color: var(--color-text-secondary);
+}
+
+.factor-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+}
+
+.factor-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.factor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.factor-name {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--color-text-primary);
+    letter-spacing: 0.05em;
+}
+
+.factor-val {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.factor-bar {
+    width: 100%;
+    height: 2px; /* Razor thin progress bars */
+    background: var(--color-bg-surface-elevated);
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.factor-bar .fill {
+    height: 100%;
+    background: var(--color-text-primary);
+    box-shadow: 0 0 10px rgba(255,255,255,0.2);
+}
+
+
+/* ----------------------------------------------------
+   Responsive Breakpoints
+   ---------------------------------------------------- */
+
+/* 1. Mobile Phone Breakpoint (< 768px) */
+@media (max-width: 767px) {
+    .l-navbar {
+        padding: var(--spacing-4);
+    }
+    
+    .l-grid-main {
+        display: flex;
+        flex-direction: column;
+        padding: var(--spacing-6) var(--spacing-4);
+        gap: var(--spacing-6);
+    }
+
+    /* Horizontal Snap Scrolling for Mobile KPIs */
+    .l-kpi-grid {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        margin-left: calc(var(--spacing-4) * -1);
+        margin-right: calc(var(--spacing-4) * -1);
+        padding: 0 var(--spacing-4);
+        gap: var(--spacing-4);
+    }
+    
+    .l-kpi-grid::-webkit-scrollbar {
+        display: none;
+    }
+
+    .kpi-card {
+        flex: 0 0 85vw;
+        scroll-snap-align: center;
+        padding: var(--spacing-6); /* slightly tighter on mobile */
+    }
+
+    .viz-container {
+        padding: var(--spacing-4);
+    }
+}
+
+/* 2. Tablet Breakpoint (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .l-grid-main {
+        grid-template-columns: 1fr;
+        padding: var(--spacing-8) var(--spacing-6);
+    }
+
+    .l-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-4);
+    }
+    
+    .l-viz-area {
+        min-height: 500px;
+    }
+
+    .sidebar-module .factor-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-6);
+    }
+}
+
+/* 3. Laptop & Setup Default Grid (1025px - 1440px) */
+@media (min-width: 1025px) {
+    .l-grid-main {
+        grid-template-columns: repeat(12, 1fr);
+    }
+    
+    .l-header {
+        grid-column: 1 / 10;
+        margin-bottom: var(--spacing-4);
+    }
+    
+    .l-kpi-grid {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-6);
+    }
+    
+    /* True Asymmetry - Viz Area takes 8 columns, Sidebar takes 4 */
+    .l-viz-area {
+        grid-column: 1 / 9;
+    }
+    
+    .l-sidebar {
+        grid-column: 9 / 13;
+    }
+}
+
+/* 4. Large Monitor / 4K Breakpoint (> 1441px) */
+@media (min-width: 1441px) {
+    .l-grid-main {
+        grid-template-columns: repeat(12, 1fr);
+        gap: var(--spacing-12);
+    }
+    
+    .l-header {
+        grid-column: 1 / 8;
+        margin-bottom: var(--spacing-8);
+    }
+    
+    .l-kpi-grid {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-8);
+    }
+    
+    .l-viz-area {
+        grid-column: 1 / 10;
+        min-height: 700px; /* Expansive real estate for math rendering */
+    }
+    
+    .l-sidebar {
+        grid-column: 10 / 13;
+    }
+}

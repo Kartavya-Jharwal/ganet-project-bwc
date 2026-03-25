@@ -1,0 +1,109 @@
+........................................................................ [ 63%]
+.........F...............................                                [100%]
+================================== FAILURES ===================================
+_____________ TestFullPipeline.test_pipeline_to_volatility_regime _____________
+
+self = <tests.test_integration_models.TestFullPipeline object at 0x000001ED71C84D70>
+
+    def test_pipeline_to_volatility_regime(self):
+        """Fetch data → compute vol features → classify regime."""
+        from quant_monitor.data.pipeline import DataPipeline
+        from quant_monitor.features.volatility import (
+            realized_volatility,
+            volatility_percentile,
+            hurst_exponent,
+            classify_regime,
+        )
+    
+        pipeline = DataPipeline()
+        prices = pipeline.fetch_prices(["SPY"], period="1y")
+        # fetch_prices returns a MultiIndex (ticker, date) DataFrame
+        ohlcv = prices.xs("SPY", level=0)
+        returns = ohlcv["close"].pct_change().dropna()
+    
+        vol = realized_volatility(returns, window=20)
+        vol_pct = volatility_percentile(vol.dropna(), lookback=252)
+        hurst = hurst_exponent(ohlcv["close"])
+    
+        macro = pipeline.fetch_macro()
+        vix = macro.get("vix", 20.0)
+    
+>       regime = classify_regime(
+            realized_vol=vol.iloc[-1],
+            vol_percentile=vol_pct.iloc[-1],
+            hurst=hurst,
+            vix=vix,
+        )
+
+tests\test_integration_models.py:80: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+realized_vol = np.float64(0.11480844962860227)
+vol_percentile = np.float64(0.44155844155844154)
+hurst = np.float64(1.0355277490959707), vix = None, vix_crisis_threshold = 30.0
+
+    def classify_regime(
+        realized_vol: float,
+        vol_percentile: float,
+        hurst: float,
+        vix: float,
+        vix_crisis_threshold: float = 30.0,
+    ) -> VolRegime:
+        """Classify current volatility regime from multiple inputs."""
+        # Rule 1: VIX above crisis threshold → CRISIS
+>       if vix >= vix_crisis_threshold:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: '>=' not supported between instances of 'NoneType' and 'float'
+
+quant_monitor\features\volatility.py:104: TypeError
+------------------------------ Captured log call ------------------------------
+WARNING  quant_monitor.data.sources.fred_feed:fred_feed.py:45 FRED_API_KEY not set - FRED queries will fail
+WARNING  quant_monitor.data.sources.sec_feed:sec_feed.py:57 SEC_EDGAR_USER_AGENT not set. SEC API requires a User-Agent. Set it to: 'Your Name your.email@domain.com'
+WARNING  quant_monitor.data.appwrite_client:appwrite_client.py:63 Appwrite credentials incomplete - some operations will fail
+============================== warnings summary ===============================
+tests/test_alerts.py::TestAlertDispatcher::test_cooldown_prevents_spam
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\tests\test_alerts.py:67: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    dispatcher._last_alert_times[key] = datetime.utcnow()
+
+tests/test_alerts.py::TestAlertDispatcher::test_cooldown_prevents_spam
+tests/test_alerts.py::TestAlertDispatcher::test_cooldown_expires
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\quant_monitor\agent\alerts.py:87: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    elapsed = datetime.utcnow() - last_sent
+
+tests/test_alerts.py::TestAlertDispatcher::test_cooldown_expires
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\tests\test_alerts.py:80: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    dispatcher._last_alert_times[key] = datetime.utcnow() - timedelta(minutes=60)
+
+tests/test_alerts.py::TestAlertDispatcher::test_critical_alerts_bypass_cooldown
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\tests\test_alerts.py:91: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    dispatcher._last_alert_times[key] = datetime.utcnow()  # just sent
+
+tests/test_alerts.py::TestAlertDispatcher::test_send_alert_calls_telegram
+tests/test_alerts.py::TestAlertDispatcher::test_send_ntfy_posts_to_topic
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\quant_monitor\agent\alerts.py:93: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    self._last_alert_times[key] = datetime.utcnow()
+
+tests/test_alerts.py::TestAlertDispatcher::test_send_alert_calls_telegram
+tests/test_alerts.py::TestAlertDispatcher::test_send_ntfy_posts_to_topic
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\quant_monitor\data\appwrite_client.py:242: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    "timestamp": datetime.utcnow().isoformat(),
+
+tests/test_alerts.py::TestAlertDispatcher::test_send_alert_calls_telegram
+tests/test_alerts.py::TestAlertDispatcher::test_send_ntfy_posts_to_topic
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\quant_monitor\data\appwrite_client.py:95: DeprecationWarning: Call to deprecated function 'create_document'. This API has been deprecated since 1.8.0. Please use `tablesDB.create_row` instead.
+    result = self._databases.create_document(
+
+tests/test_sentiment.py::TestSentimentFeatureEngine::test_score_headlines_returns_list_of_dicts
+tests/test_sentiment.py::TestSentimentFeatureEngine::test_positive_headline_scored_positive
+tests/test_sentiment.py::TestSentimentFeatureEngine::test_negative_headline_scored_negative
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\.venv\Lib\site-packages\transformers\models\bert\tokenization_bert.py:104: DeprecationWarning: Deprecated in 0.9.0: WordPiece.__init__ will not create from files anymore, try `WordPiece.from_file` instead
+    self._tokenizer = Tokenizer(WordPiece(self._vocab, unk_token=str(unk_token)))
+
+tests/test_spiders.py::TestAppwritePipeline::test_process_item_adds_metadata
+  D:\KJ\Personal_projects\_Python_fun_scripts_and_games\Quant\quant_monitor\spiders\pipelines.py:35: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    data["scraped_at"] = datetime.utcnow().isoformat()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_integration_models.py::TestFullPipeline::test_pipeline_to_volatility_regime
+1 failed, 112 passed, 15 warnings in 46.36s

@@ -1,0 +1,126 @@
+/* Phase 30: Typography, Color & Textural Atmosphere */
+
+:root {
+    /* Color Palette: Dark Luxury Quantitative & Institutional Brutalism */
+    --color-bg-base: #050505; /* Deeper, purer black acting as void */
+    --color-bg-surface: #0a0a0a;
+    --color-bg-surface-elevated: #141414;
+    --color-bg-panel: rgba(18, 18, 18, 0.65); /* Glass pane backing */
+    
+    --color-text-primary: #f4f4f5;
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #52525b;
+    
+    /* Accents */
+    --color-accent-primary: #eb5e28;  /* Bold orange/rust */
+    --color-accent-glow: rgba(235, 94, 40, 0.25);
+    
+    /* Quantitative Status Tokens */
+    --color-quant-positive: #00ff88;
+    --color-quant-negative: #ff3366;
+    --color-quant-neutral: #8888aa;
+    
+    /* Typography */
+    /* Banning default system sans-serifs completely */
+    --font-display: 'Space Grotesk', monospace, sans-serif;
+    --font-body: 'DM Sans', serif;
+    --font-mono: 'JetBrains Mono', 'Space Mono', monospace; /* Dedicated data font */
+    
+    /* Layout Tokens (Fluid spacing map) */
+    --spacing-1: clamp(0.25rem, 0.5vw, 0.5rem);
+    --spacing-2: clamp(0.5rem, 1vw, 0.75rem);
+    --spacing-4: clamp(1rem, 2vw, 1.25rem);
+    --spacing-6: clamp(1.5rem, 3vw, 2rem);
+    --spacing-8: clamp(2rem, 4vw, 2.5rem);
+    --spacing-12: clamp(3rem, 6vw, 4rem);
+    --spacing-16: clamp(4rem, 8vw, 6rem);
+    
+    /* Borders & Physicality */
+    --line-thickness: 1px;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-highlight: rgba(255, 255, 255, 0.2);
+    --border-radius-sm: 0px; /* Rigid, brutalist edges */
+    --border-radius-md: 0px;
+    
+    /* Box shadows mimicking optical depth rather than 'drop shadows' */
+    --shadow-ambient: 0px 4px 24px rgba(0, 0, 0, 0.9);
+    --shadow-inset: inset 0px 1px 1px rgba(255, 255, 255, 0.05);
+    --shadow-glow: 0px 0px 12px var(--color-accent-glow);
+}
+
+/* Base Reset & Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body.theme-dark {
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    font-family: var(--font-body);
+    font-size: clamp(15px, 1.2vw, 17px);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Typography Classes */
+.text-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+}
+
+.text-hero {
+    font-family: var(--font-display);
+    /* True fluid typography scaling seamlessly from mobile to 4k */
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    line-height: 0.95;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    margin-bottom: var(--spacing-4);
+    background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+}
+
+.text-body-large {
+    font-family: var(--font-body);
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+    line-height: 1.6;
+    max-width: 65ch;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+.text-mono {
+    font-family: var(--font-mono);
+    letter-spacing: -0.02em;
+}
+
+.text-muted { color: var(--color-text-muted); }
+.text-accent { color: var(--color-accent-primary); }
+.text-success { color: var(--color-quant-positive); }
+.text-danger { color: var(--color-quant-negative); }
+
+/* Texture Overlay (Grain) */
+.noise-bg {
+    position: relative;
+}
+
+.texture-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+

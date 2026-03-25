@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project BWC | Live Telemetry</title>
+    <meta name="description" content="Live telemetry for Project BWC — freeze-dated portfolio metrics, Monte Carlo projections, drawdown analysis, and attribution diagnostics.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/tokens.css">
+    <link rel="stylesheet" href="./styles/layout.css">
+    <link rel="stylesheet" href="./styles/motion.css">
+    <link rel="stylesheet" href="./styles/pages.css">
+</head>
+<body class="theme-dark noise-bg">
+    <div class="texture-overlay"></div>
+
+    <nav class="l-navbar">
+        <a href="index.html" class="nav-brand text-display">PROJECT BWC</a>
+        <div class="nav-links">
+            <a href="research.html" class="nav-link">Methodology</a>
+            <a href="results.html" class="nav-link active">Telemetry</a>
+            <a href="journal.html" class="nav-link">Audit Log</a>
+        </div>
+        <div class="nav-status">
+            <div class="status-indicator" id="status-dot"></div>
+            <span id="status-label">TELEMETRY</span>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <header class="page-header reveal-on-scroll">
+            <h1 class="text-hero">Live<br>Telemetry.</h1>
+            <p class="text-body-large text-muted">Freeze-dated measurement from the audit run: realized performance, projected path dispersion, and the risk terms under which human discretion is being judged.</p>
+        </header>
+
+        <!-- Summary Metrics Table -->
+        <section class="metrics-table-section reveal-on-scroll">
+            <h2 class="text-display" style="font-size:1rem;margin-bottom:var(--spacing-6);letter-spacing:0.08em;">AUDIT METRICS</h2>
+            <div class="metrics-table-wrap">
+                <table class="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody id="metrics-table-body">
+                        <tr>
+                            <td>Annualized Return</td>
+                            <td class="text-mono" id="tbl-ann-return">—</td>
+                            <td>Sharpe Ratio</td>
+                            <td class="text-mono" id="tbl-sharpe">—</td>
+                        </tr>
+                        <tr>
+                            <td>Max Drawdown</td>
+                            <td class="text-mono text-danger" id="tbl-max-dd">—</td>
+                            <td>Sortino Ratio</td>
+                            <td class="text-mono" id="tbl-sortino">—</td>
+                        </tr>
+                        <tr>
+                            <td>Cornish-Fisher VaR</td>
+                            <td class="text-mono" id="tbl-cf-var">—</td>
+                            <td>Calmar Ratio</td>
+                            <td class="text-mono" id="tbl-calmar">—</td>
+                        </tr>
+                        <tr>
+                            <td>Portfolio Beta</td>
+                            <td class="text-mono" id="tbl-beta">—</td>
+                            <td>MC Hurdle %</td>
+                            <td class="text-mono text-accent" id="tbl-mc-hurdle">—</td>
+                        </tr>
+                        <tr>
+                            <td>Win Rate</td>
+                            <td class="text-mono" id="tbl-win-rate">—</td>
+                            <td>Profit Factor</td>
+                            <td class="text-mono" id="tbl-profit-factor">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Chart Grid -->
+        <section class="chart-grid">
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Equity Curve</div>
+                <iframe src="./charts/equity-curve.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Drawdown Analysis</div>
+                <iframe src="./charts/drawdown.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Rolling Metrics</div>
+                <iframe src="./charts/rolling-metrics.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Correlation Heatmap</div>
+                <iframe src="./charts/heatmap.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Return Distribution</div>
+                <iframe src="./charts/return-dist.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Backtest Comparison</div>
+                <iframe src="./charts/backtest-compare.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Monte Carlo Simulation</div>
+                <iframe src="./charts/monte-carlo.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Correlation Graph</div>
+                <iframe src="./charts/correlation-graph.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Factor Loadings</div>
+                <iframe src="./charts/factor-loadings.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+
+            <div class="chart-card reveal-on-scroll">
+                <div class="chart-title text-display">Performance Attribution</div>
+                <iframe src="./charts/attribution.html" frameborder="0" style="width:100%;height:500px;border:none;background:transparent" loading="lazy"></iframe>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <span class="text-display" style="font-size:0.85rem;">PROJECT BWC</span>
+                <p class="text-muted" style="font-size:0.8rem;margin-top:0.5rem;">Quantitative audit of human portfolio decisions under live constraints. Not investment advice.</p>
+            </div>
+            <div class="footer-col">
+                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE: 2026-05-01</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">STATIC ARCHIVE / GITHUB PAGES</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/main.js"></script>
+</body>
+</html>

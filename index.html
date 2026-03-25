@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project BWC | Quantitative Audit Engine</title>
+    <meta name="description" content="Project BWC quantifies the basis-point cost of human discretion by auditing live execution against forensic attribution, probabilistic measurement, and regime-aware signaling.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles/tokens.css">
+    <link rel="stylesheet" href="./styles/layout.css">
+    <link rel="stylesheet" href="./styles/motion.css">
+    <link rel="stylesheet" href="./styles/pages.css">
+</head>
+<body class="theme-dark noise-bg">
+    <div class="texture-overlay"></div>
+
+    <nav class="l-navbar reveal-step-1">
+        <a href="index.html" class="nav-brand text-display">PROJECT BWC</a>
+        <div class="nav-links">
+            <a href="research.html" class="nav-link">Methodology</a>
+            <a href="results.html" class="nav-link">Telemetry</a>
+            <a href="journal.html" class="nav-link">Audit Log</a>
+        </div>
+        <div class="nav-status">
+            <div class="status-indicator" id="status-dot"></div>
+            <span id="status-label">CONNECTING</span>
+        </div>
+    </nav>
+
+    <main class="l-grid-main">
+        <header class="l-header reveal-step-2">
+            <div class="hero-kicker text-mono text-accent">LIVE HUMAN DECISION AUDIT / NOT A RETAIL TRADING BOT</div>
+            <h1 class="text-hero">Project BWC quantifies the basis-point cost of human discretion inside a live portfolio simulation.</h1>
+            <p class="text-body-large text-muted"><span class="text-mono">60 DAYS</span> / <span class="text-mono">$1M LIVE DEPLOYMENT</span> / <span class="text-mono">3-LAYER ARCHITECTURE</span> built by an undergraduate to audit human failure against systematic logic using forensic attribution, probabilistic measurement, and regime-aware signaling.</p>
+            <div class="hero-actions">
+                <a href="results.html" class="cta-btn">View Live Telemetry</a>
+                <a href="research.html" class="cta-btn cta-btn-secondary">Read the Methodology PDF</a>
+            </div>
+        </header>
+
+        <section class="video-hero reveal-step-2" style="grid-column: 1 / -1;">
+            <div class="video-bg">
+                <div class="viz-placeholder landing-proof-placeholder">
+                    <div class="proof-placeholder-copy">
+                        <p class="text-muted text-mono proof-placeholder-title">[ MANIM PROOF REEL / AWAITING RENDER ]</p>
+                        <p class="text-muted text-mono proof-placeholder-line">VAR GEOMETRY / FACTOR ORTHOGONALITY / BEHAVIORAL DRAG SURFACE</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="landing-section landing-ribbon reveal-step-3" style="grid-column: 1 / -1;">
+            <div class="ribbon-item">
+                <span class="ribbon-label text-mono">AUDIT TARGET</span>
+                <span class="ribbon-value">Human discretionary execution</span>
+            </div>
+            <div class="ribbon-item">
+                <span class="ribbon-label text-mono">BENCHMARK</span>
+                <span class="ribbon-value">Regime-aware systematic path</span>
+            </div>
+            <div class="ribbon-item">
+                <span class="ribbon-label text-mono">ALLOCATION CORE</span>
+                <span class="ribbon-value">HRP + sparse inverse covariance</span>
+            </div>
+            <div class="ribbon-item">
+                <span class="ribbon-label text-mono">RISK MODEL</span>
+                <span class="ribbon-value">Cornish-Fisher VaR + GBM jump diffusion</span>
+            </div>
+        </section>
+
+        <section class="landing-section reveal-on-scroll" id="thesis" style="grid-column: 1 / -1;">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">01</span>
+                <h2 class="text-display">The Friction</h2>
+            </div>
+            <div class="section-body thesis-panel">
+                <p>Human intuition degrades under volatility. Project BWC quantifies that degradation as <span class="text-mono">behavioral drag</span>: the basis-point gap between live discretionary execution and the systematic, regime-aware actions available at the same decision time.</p>
+                <p>It is an audit of human failure versus systematic logic. The model is not treated as omniscient. It is treated as a fixed counterfactual so execution error can be isolated, reconstructed, and attributed instead of narrated after the fact.</p>
+            </div>
+        </section>
+
+        <section class="landing-section reveal-on-scroll" id="architecture" style="grid-column: 1 / -1;">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">02</span>
+                <h2 class="text-display">The Engine</h2>
+            </div>
+            <div class="architecture-grid landing-architecture-grid">
+                <article class="engine-card">
+                    <span class="engine-index text-mono text-accent">LAYER 1</span>
+                    <h3 class="text-display">Forensic Attribution</h3>
+                    <p class="text-muted">Brinson-Fachler attribution paired with an actual-versus-model execution log to decompose allocation error, selection error, timing slippage, and discretionary override cost.</p>
+                </article>
+                <article class="engine-card">
+                    <span class="engine-index text-mono text-accent">LAYER 2</span>
+                    <h3 class="text-display">Probabilistic Measurement</h3>
+                    <p class="text-muted">Cornish-Fisher VaR and GBM with Poisson jumps projected to a hard freeze date so forward uncertainty is constrained, not hand-waved.</p>
+                </article>
+                <article class="engine-card">
+                    <span class="engine-index text-mono text-accent">LAYER 3</span>
+                    <h3 class="text-display">Regime-Aware Signaling</h3>
+                    <p class="text-muted">A fusion engine conditioned on macro regime, using sparse inverse covariance structure and Hierarchical Risk Parity to project the systematic portfolio the human operator is judged against.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="landing-section reveal-on-scroll" id="proof-of-work" style="grid-column: 1 / -1;">
+            <div class="section-header">
+                <span class="section-number text-mono text-accent">03</span>
+                <h2 class="text-display">Proof Of Work</h2>
+            </div>
+            <div class="section-body">
+                <p>The visual mathematics are not decorative. Each Manim sequence reconstructs a specific claim so the model can be inspected under motion rather than accepted as a static slogan.</p>
+            </div>
+            <div class="visual-proof-grid">
+                <article class="proof-card">
+                    <span class="proof-label text-mono">VaR Geometry</span>
+                    <p class="text-muted">Reconstructs how Cornish-Fisher deformation shifts the tail boundary away from the Gaussian baseline when skew and kurtosis are non-trivial.</p>
+                </article>
+                <article class="proof-card">
+                    <span class="proof-label text-mono">Factor Orthogonality</span>
+                    <p class="text-muted">Shows whether factor exposures are genuinely distinct or just repeated beta under cleaner notation.</p>
+                </article>
+                <article class="proof-card">
+                    <span class="proof-label text-mono">Behavioral Drag Surface</span>
+                    <p class="text-muted">Maps the spread between live human execution and the systematic counterfactual across regime states to isolate where discretion destroyed edge.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <span class="text-display" style="font-size:0.85rem;">PROJECT BWC</span>
+                <p class="text-muted" style="font-size:0.8rem;margin-top:0.5rem;">Quantitative audit of human portfolio decisions under live constraints. Not investment advice.</p>
+            </div>
+            <div class="footer-col">
+                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE: 2026-05-01</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">STATIC ARCHIVE / GITHUB PAGES</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/main.js"></script>
+</body>
+</html>
