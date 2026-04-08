@@ -52,12 +52,14 @@ def get_dynamic_sector(ticker: str) -> str:
 
 # Sector peer groups for relative valuation
 SECTOR_PEERS = {
-    "AI Infrastructure": ["TSM", "MU"],
+    "AI Infrastructure": ["TSM", "MU", "NVDA", "NBIS"],
     "AI Software": ["PLTR"],
-    "Big Tech/AI": ["GOOGL", "AMZN"],
-    "Defensive": ["WMT", "XLP", "PG", "JNJ", "XLU"],
+    "Big Tech/AI": ["GOOGL", "AMZN", "ORCL"],
+    "Defensive": ["WMT", "XLP", "PG", "JNJ", "XLU", "TGT"],
     "Financials": ["JPM"],
-    "Industrial": ["GE", "LMT"],
+    "Healthcare": ["IBB"],
+    "Energy": ["XLE", "XOM"],
+    "Industrial": ["GE", "LMT", "ITA", "SIEGY"],
     "Speculative": ["IONQ"],
 }
 
