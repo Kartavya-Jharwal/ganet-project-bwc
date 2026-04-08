@@ -8,7 +8,7 @@
 name = "Ganet - Project BWC"
 description = "Team 5 Investment Simulation — Hult International Business School"
 initial_capital = 1_000_000
-cash_balance = 67_000.00
+cash_balance = 43574.49
 benchmark = "SPY"
 valuation_date = "2026-04-10"
 sunset_date = "2026-05-01"
@@ -16,9 +16,9 @@ rebalance_interval_minutes = 15
 trade_history = "tests/test_data/TransactionHistory_2026-03-13.csv"
 first_trade_date = "2026-02-12"
 
-# =============================================================================
-# Portfolio Holdings (as of March 13, 2026 Checkpoint)
-# =============================================================================
+# ============================================================================= 
+# Portfolio Holdings (as of March 16, 2026 Checkpoint)
+# ============================================================================= 
 
 [holdings.SPY]
 name = "SPDR S&P 500 ETF"
@@ -59,35 +59,35 @@ sector = "E-commerce/Cloud"
 name = "NVIDIA Corporation"
 type = "Stock"
 qty = 274
-price_paid = 120.50
+price_paid = 184.04
 sector = "AI Infrastructure"
 
 [holdings.ITA]
 name = "iShares U.S. Aerospace & Defense ETF"
 type = "ETF"
 qty = 100
-price_paid = 155.00
+price_paid = 231.91
 sector = "Defense/Aerospace"
 
 [holdings.NBIS]
 name = "Nebius Group"
 type = "Stock"
 qty = 135
-price_paid = 45.00
+price_paid = 124.80
 sector = "AI Infrastructure"
 
 [holdings.LMT]
 name = "Lockheed Martin"
 type = "Stock"
 qty = 120
-price_paid = 643.25
+price_paid = 651.62
 sector = "Defense/Space"
 
 [holdings.TGT]
 name = "Target Corporation"
 type = "Stock"
 qty = 610
-price_paid = 120.00
+price_paid = 116.98
 sector = "Defensive Retail"
 
 [holdings.XLP]
@@ -129,15 +129,36 @@ sector = "Quantum/Speculative"
 name = "Energy Select SPDR"
 type = "ETF"
 qty = 60
-price_paid = 85.00
+price_paid = 57.95
 sector = "Energy"
 
 [holdings.XOM]
 name = "Exxon Mobil"
 type = "Stock"
 qty = 75
-price_paid = 108.00
+price_paid = 159.75
 sector = "Energy"
+
+[holdings.IBB]
+name = "iShares Biotechnology ETF"
+type = "ETF"
+qty = 120
+price_paid = 167.12
+sector = "Healthcare"
+
+[holdings.ORCL]
+name = "Oracle Corporation"
+type = "Stock"
+qty = 161
+price_paid = 155.76
+sector = "Software"
+
+[holdings.SIEGY]
+name = "Siemens AG"
+type = "Stock"
+qty = 150
+price_paid = 126.70
+sector = "Industrials/Infrastructure"
 
 # =============================================================================
 # Cache TTL (seconds)

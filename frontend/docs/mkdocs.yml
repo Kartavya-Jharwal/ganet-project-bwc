@@ -1,0 +1,67 @@
+site_name: Ganet - Project BWC
+site_description: Team 5 Investment Simulation — Hult International Business School
+site_url: https://kartavya-jharwal.github.io/ganet-project-bwc/
+repo_url: https://github.com/Kartavya-Jharwal/ganet-project-bwc
+repo_name: ganet-project-bwc
+docs_dir: .
+site_dir: ../frontend/docs
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Development Guide: development.md
+    - Architecture: architecture.md
+    - Design Decisions: design.md
+  - Implementation:
+    - Phase 0 - Scaffold: phase-0-scaffold.md
+    - Phase 11-21 Implementation Track: phase-11-21-implementation-track.md
+    - Phase 22+ Advanced Analytics & UI: phase-22-onwards-advanced-analytics.md
+    - Phase FINALE - The Endgame: phase-finale-endgame.md
+    - Development Roadmap: roadmap.md
+    - Demo Day Progress Report: progress-report.md
+  - Results:
+    - Performance: performance.md
+    - Interactive Dashboard: interactive-dashboard.md
+    - Backtest Results: backtest-results.md
+    - Signal History: signals-history.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+
+plugins:
+  - search

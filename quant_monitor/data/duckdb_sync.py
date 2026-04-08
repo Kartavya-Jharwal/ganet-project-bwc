@@ -22,6 +22,59 @@ class DuckDBSync:
         self._appwrite_available = getattr(self.appwrite, "_available", False)
         self._init_schema()
 
+    def _eod_price_matrix_has_primary_key(self) -> bool:
+        try:
+            row = self.conn.execute(
+                """
+                SELECT COUNT(*) FROM duckdb_constraints()
+                WHERE table_name = 'eod_price_matrix' AND constraint_type = 'PRIMARY KEY'
+                """
+            ).fetchone()
+            if row and row[0] > 0:
+                return True
+        except duckdb.Error:
+            pass
+        row = self.conn.execute(
+            "SELECT sql FROM duckdb_tables() WHERE table_name = 'eod_price_matrix'"
+        ).fetchone()
+        return bool(row and row[0] and "PRIMARY KEY" in row[0].upper())
+
+    def _ensure_eod_price_matrix_upsert_key(self) -> None:
+        """Legacy DBs may have eod_price_matrix without a PK; ON CONFLICT requires one."""
+        exists = self.conn.execute(
+            """
+            SELECT COUNT(*) FROM information_schema.tables
+            WHERE table_schema = 'main' AND table_name = 'eod_price_matrix'
+            """
+        ).fetchone()
+        if not exists or exists[0] == 0:
+            return
+        if self._eod_price_matrix_has_primary_key():
+            return
+        logger.info(
+            "Migrating eod_price_matrix: adding PRIMARY KEY (timestamp, ticker) for upsert support"
+        )
+        self.conn.execute("""
+            CREATE TABLE eod_price_matrix__bwc_mig (
+                timestamp TIMESTAMP,
+                ticker VARCHAR,
+                close DOUBLE,
+                PRIMARY KEY (timestamp, ticker)
+            );
+        """)
+        self.conn.execute("""
+            INSERT INTO eod_price_matrix__bwc_mig (timestamp, ticker, close)
+            SELECT timestamp, ticker, close FROM (
+                SELECT timestamp, ticker, close,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY timestamp, ticker ORDER BY close NULLS LAST
+                    ) AS rn
+                FROM eod_price_matrix
+            ) sub WHERE rn = 1;
+        """)
+        self.conn.execute("DROP TABLE eod_price_matrix")
+        self.conn.execute("ALTER TABLE eod_price_matrix__bwc_mig RENAME TO eod_price_matrix")
+
     def _init_schema(self):
         """Create tables if they do not exist."""
         self.conn.execute("""
@@ -32,6 +85,7 @@ class DuckDBSync:
                 PRIMARY KEY (timestamp, ticker)
             );
         """)
+        self._ensure_eod_price_matrix_upsert_key()
         self.conn.execute("""
             CREATE TABLE IF NOT EXISTS live_spy_proxy (
                 timestamp TIMESTAMP,

@@ -9,32 +9,36 @@ This document outlines the architecture, integration specification, and testing 
 
 ---
 
-## The March 13, 2026 Portfolio Checkpoint
+## The March 16, 2026 Portfolio Checkpoint
 All analytical engines and tests will initialize with the following validated portfolio state. 
-*Note: Pending open orders for ITA, NVDA, and NBIS are treated as executed for the purpose of the forward-looking simulation.*
+*Note: Includes new tactical purchases (IBB, ORCL, SIEGY) and active sizes.*
 
 **Positions & Share Counts:**
 - **AMZN:** 250
-- **GOOGL:** 130 *(Sell order -95 cancelled)*
-- **IONQ:** 800 *(Sell expired; extra buy cancelled)*
-- **ITA:** 100 *(Assuming 03/13 Open order executes)*
+- **GOOGL:** 130
+- **IBB:** 120
+- **IONQ:** 800
+- **ITA:** 100
 - **JNJ:** 260
-- **LMT:** 120 *(Bought 100, Sold 100, Bought 120)*
-- **MU:** 15 *(Bought 110, Sold 95)*
-- **NBIS:** 135 *(Assuming 03/13 Open order executes)*
-- **NVDA:** 274 *(Assuming 03/13 Open order executes)*
+- **LMT:** 120
+- **MU:** 15
+- **NBIS:** 135
+- **NVDA:** 274
+- **ORCL:** 161
 - **PG:** 235
 - **PLTR:** 388
+- **SIEGY:** 150
 - **SPY:** 295
 - **TGT:** 610
 - **TSM:** 230
 - **XLE:** 60
-- **XLP:** 440 *(Bought 875, Sold 435)*
+- **XLP:** 440
 - **XLU:** 800
-- **XOM:** 75 *(Order for 60 cancelled, order for 75 filled)*
-- **Cash:** ~$67,000 (~19.1%)
+- **XOM:** 75
+- **Cash:** ~$43,574 (~4.36%)
 
 ---
+
 
 ## Phase 22: Advanced Risk & Downside Metrics Expansion
 **Goal:** Move beyond standard-deviation metrics to capture true tail risk, asymmetry, and regime-specific volatility.
