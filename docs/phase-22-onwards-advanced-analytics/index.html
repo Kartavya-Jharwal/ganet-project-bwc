@@ -704,10 +704,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-march-13-2026-portfolio-checkpoint" class="md-nav__link">
+  <a href="#the-march-16-2026-portfolio-checkpoint" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The March 13, 2026 Portfolio Checkpoint
+        The March 16, 2026 Portfolio Checkpoint
       
     </span>
   </a>
@@ -1177,10 +1177,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-march-13-2026-portfolio-checkpoint" class="md-nav__link">
+  <a href="#the-march-16-2026-portfolio-checkpoint" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The March 13, 2026 Portfolio Checkpoint
+        The March 16, 2026 Portfolio Checkpoint
       
     </span>
   </a>
@@ -1370,29 +1370,32 @@
 <li><strong>Data Forwarding:</strong> Data ingested for factor models or regressions must utilize the existing caches (<code>quant_monitor/data/cache.py</code>) to prevent overloading public APIs.</li>
 </ol>
 <hr />
-<h2 id="the-march-13-2026-portfolio-checkpoint">The March 13, 2026 Portfolio Checkpoint</h2>
+<h2 id="the-march-16-2026-portfolio-checkpoint">The March 16, 2026 Portfolio Checkpoint</h2>
 <p>All analytical engines and tests will initialize with the following validated portfolio state. 
-<em>Note: Pending open orders for ITA, NVDA, and NBIS are treated as executed for the purpose of the forward-looking simulation.</em></p>
+<em>Note: Includes new tactical purchases (IBB, ORCL, SIEGY) and active sizes.</em></p>
 <p><strong>Positions &amp; Share Counts:</strong>
 - <strong>AMZN:</strong> 250
-- <strong>GOOGL:</strong> 130 <em>(Sell order -95 cancelled)</em>
-- <strong>IONQ:</strong> 800 <em>(Sell expired; extra buy cancelled)</em>
-- <strong>ITA:</strong> 100 <em>(Assuming 03/13 Open order executes)</em>
+- <strong>GOOGL:</strong> 130
+- <strong>IBB:</strong> 120
+- <strong>IONQ:</strong> 800
+- <strong>ITA:</strong> 100
 - <strong>JNJ:</strong> 260
-- <strong>LMT:</strong> 120 <em>(Bought 100, Sold 100, Bought 120)</em>
-- <strong>MU:</strong> 15 <em>(Bought 110, Sold 95)</em>
-- <strong>NBIS:</strong> 135 <em>(Assuming 03/13 Open order executes)</em>
-- <strong>NVDA:</strong> 274 <em>(Assuming 03/13 Open order executes)</em>
+- <strong>LMT:</strong> 120
+- <strong>MU:</strong> 15
+- <strong>NBIS:</strong> 135
+- <strong>NVDA:</strong> 274
+- <strong>ORCL:</strong> 161
 - <strong>PG:</strong> 235
 - <strong>PLTR:</strong> 388
+- <strong>SIEGY:</strong> 150
 - <strong>SPY:</strong> 295
 - <strong>TGT:</strong> 610
 - <strong>TSM:</strong> 230
 - <strong>XLE:</strong> 60
-- <strong>XLP:</strong> 440 <em>(Bought 875, Sold 435)</em>
+- <strong>XLP:</strong> 440
 - <strong>XLU:</strong> 800
-- <strong>XOM:</strong> 75 <em>(Order for 60 cancelled, order for 75 filled)</em>
-- <strong>Cash:</strong> ~$67,000 (~19.1%)</p>
+- <strong>XOM:</strong> 75
+- <strong>Cash:</strong> ~$43,574 (~4.36%)</p>
 <hr />
 <h2 id="phase-22-advanced-risk-downside-metrics-expansion">Phase 22: Advanced Risk &amp; Downside Metrics Expansion</h2>
 <p><strong>Goal:</strong> Move beyond standard-deviation metrics to capture true tail risk, asymmetry, and regime-specific volatility.

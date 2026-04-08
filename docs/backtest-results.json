@@ -7,12 +7,12 @@
     },
     "topological_hrp": {
         "total_return": 0.05227889620884962,
-        "annualized_sharpe": 1.3211451781839259,
-        "annualized_sortino": 2.704603122249382,
+        "annualized_sharpe": 1.3211451781839252,
+        "annualized_sortino": 2.7046031222493814,
         "max_drawdown": -0.09418779007174022
     },
     "delta": {
-        "sharpe_improvement": -0.01979523795158933,
+        "sharpe_improvement": -0.019795237951589995,
         "drawdown_reduction": 0.0002549551971885444
     },
     "windows_tested": 2
