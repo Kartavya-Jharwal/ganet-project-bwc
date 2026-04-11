@@ -24,7 +24,7 @@ dependencies = [
     # Data feeds
     "yfinance>=0.2.36",
     # Dashboard (CLI)
-    "rich>=13.0.0",
+    "rich>=14.3.4",
     "openbb>=4.3.0",
     # Alerts
     "python-telegram-bot>=21.0",
