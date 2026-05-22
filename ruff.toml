@@ -1,6 +1,15 @@
 target-version = "py311"
 line-length = 100
 
+exclude = [
+    ".git",
+    ".venv",
+    "docs/archive",
+    "deliverables",
+    "frontend",
+    "BWC",
+]
+
 [lint]
 select = [
     "E",    # pycodestyle errors
@@ -14,6 +23,9 @@ select = [
 ignore = [
     "E501",  # line too long (handled by formatter)
 ]
+
+[lint.per-file-ignores]
+"scripts/*.py" = ["E402"]
 
 [lint.isort]
 known-first-party = ["quant_monitor"]

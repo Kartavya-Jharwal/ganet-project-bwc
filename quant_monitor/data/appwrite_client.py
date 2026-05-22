@@ -100,7 +100,7 @@ class AppwriteClient:
         logger.info("Appwrite client initialized for project: %s", self.project_id)
 
     @rate_limiter.rate_limited("appwrite")
-    def write_document(  # noqa: D401
+    def write_document(
         self,
         collection: str,
         data: dict[str, Any],

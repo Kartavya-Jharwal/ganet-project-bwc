@@ -1,20 +1,19 @@
 # Backtest Results
 
-!!! note "Pre-sunset placeholder"
-    This page will be populated with backtest results before sunset.
+**Generated:** 2026-05-22 14:27 UTC
 
-## Walk-Forward Configuration
+## Walk-Forward Backtest Comparison
 
-- **Training window:** 252 days (1 year)
-- **Test window:** 21 days (1 month)
-- **Step size:** 21 days
+| Metric | naive_equal_weight | topological_hrp |
+|--------|--------|--------|
+| total_return | 0.3987 | 0.3406 |
+| annualized_sharpe | 2.7902 | 3.1870 |
+| annualized_sortino | 4.1367 | 4.7970 |
+| max_drawdown | -0.0536 | -0.0502 |
 
-## Model Comparison
+### Delta (HRp vs baseline)
 
-| Model | Sharpe | Calmar | Max DD | Hit Rate | Avg Hold |
-|-------|--------|--------|--------|----------|----------|
-| Technical only | *TBD* | *TBD* | *TBD* | *TBD* | *TBD* |
-| Fundamental only | *TBD* | *TBD* | *TBD* | *TBD* | *TBD* |
-| Sentiment only | *TBD* | *TBD* | *TBD* | *TBD* | *TBD* |
-| Fused (equal wt) | *TBD* | *TBD* | *TBD* | *TBD* | *TBD* |
-| Fused (regime wt) | *TBD* | *TBD* | *TBD* | *TBD* | *TBD* |
+- **sharpe_improvement:** 0.3968
+- **drawdown_reduction:** -0.0034
+
+_Windows tested: **11**_

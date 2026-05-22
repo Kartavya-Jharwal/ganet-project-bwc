@@ -1,6 +1,17 @@
 /* Phase 29: Aesthetic Direction - Asymmetrical/Editorial Grid */
 /* Fully responsive architecture for Mobile, Tablet, Laptop, and 4K */
 
+/* Sunset freeze ribbon */
+.sunset-freeze-bar {
+    text-align: center;
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    color: var(--color-text-secondary);
+    background: linear-gradient(90deg, transparent, rgba(235, 94, 40, 0.12), transparent);
+    border-bottom: var(--line-thickness) solid var(--border-color);
+}
+
 /* ----------------------------------------------------
    Base Layout & Navigation (Common)
    ---------------------------------------------------- */

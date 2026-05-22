@@ -99,7 +99,7 @@ class TestSimulationEdgeCases:
                 "A": np.random.normal(0, 5.0, 100),  # 500% daily vol
             }
         )
-        paths, terminal = run_monte_carlo_simulation(returns, days_forward=5, num_simulations=10)
+        _paths, terminal = run_monte_carlo_simulation(returns, days_forward=5, num_simulations=10)
         assert not np.isnan(terminal).any()
 
 

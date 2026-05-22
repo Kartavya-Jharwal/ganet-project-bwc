@@ -121,7 +121,7 @@ All analytical engines and tests will initialize with the following validated po
 
 ## Phase 32: Manim Mathematical Rendering Engine
 **Goal:** Visually prove the institutional math (Phase 26 + Phase 24) using procedural, high-fidelity animations.
-- **Implementations (`scripts/render_manim.ps1` & `docs/scenes.py`):**
+- **Implementations (`scripts/render_manim.py` & archived `docs/archive/manim/` sources):**
   - Use the Manim engine to procedurally animate the generation of the 10,000 Monte Carlo stochastic paths and regime-shifting correlation networks.
   - Render complex mathematical outputs into WebM/MP4 video assets designed to loop seamlessly within the newly established aesthetic UI.
 - **Integration:** Python-based mathematical rendering piped directly into the static web directory.
@@ -147,4 +147,4 @@ All analytical engines and tests will initialize with the following validated po
   - Stream live regime classifications, active signals, confidence scores, and real-time Monte Carlo forecast updates to the dashboard.
 - **Integration:** Heroku web dyno deployment or Vercel edge functions handling WebSockets/Polling from the backend data lake.
 
-*(Note: The final Project Sunset and Data Freeze has been moved to its own dedicated file: `docs/phase-finale-endgame.md`)*
+*(Note: The final Project Sunset and Data Freeze has been moved to its own dedicated file: [phase-finale-endgame.md](phase-finale-endgame.md))*

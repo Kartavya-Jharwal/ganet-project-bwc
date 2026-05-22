@@ -1,51 +1,70 @@
-# Ganet - Project BWC
+# Ganet — Project BWC (Team BWX)
 
-> A regime-aware quantitative portfolio tracking engine. Built to test structural alpha decay, hierarchical risk parity bisection, and topological model fusion on out-of-sample data.
+> **Public post-mortem** for a Hult $1M investment simulation. **Client deliverables** (`deliverables/`) are the main narrative; **`quant_monitor/`** is the reproducible audit module—a useful but partial slice of the program.
 
-## Setup
-### The Data Layer
-BWC relies on a zero-config, reproducible math pipeline. Pricing and macroeconomic data are cached into a structured local **DuckDB** file (`portfolio.duckdb`). Matrix transformations are executed zero-copy via **Polars** ensuring performance over massive structural sets.
+**Sunset freeze:** valuation `2026-04-10` · reporting `2026-05-01` · Team **BWX**
 
-### Environment
-We utilize `uv` for explicitly-locked dependency management and strict scientific reproducibility. Secrets are managed via decoupled **Doppler** environments.
-
-```bash
-# Sync strictly-locked environment
-uv sync --frozen
-
-# Ingest historical pricing and execute matrices
-doppler run -- uv run cli ingest
-```
-
-## Method
-### Signals & Features
-We employ feature engineering focused on momentum variance, regime shifts, and cross-asset correlations, bypassing noisy NLP scraping for statistically sound baseline metrics.
-
-### Strategy & Topological Fusion
-The system conditionally fuses multi-model signals based on macroeconomic regimes:
-- **Topological Risk Parity**: Computes sparse inverse covariance graphs (`GraphicalLassoCV`) to map true correlation structures.
-- **HRP Allocation**: Calculates risk sizing via Hierarchical Risk Parity cluster bisections.
-- **Dynamic Regime-Weighting**: Blends execution vectors conditionally based on ongoing volatility architectures.
-
-### Backtesting Engine
-A robust walk-forward simulation engine tests signal decay out-of-sample. It computes advanced metrics:
-- Brinson-Fachler attribution arrays
-- Cornish-Fisher Value-at-Risk expansions
-- Probability of Backtest Overfitting (PBO)
-- Geometric Brownian Motion (GBM) Monte Carlo projections
-
-## Results
-*(Pending May 2026 Archive Freeze)*
-The final out-of-sample forward simulation tracks the model's predictive validity against a live market structure terminating on **May 1, 2026**.
-- **OOS Sharpe & Sortino**: Pending final snapshot.
-- **Drawdown Resilience**: Preliminary stress tests on 2024-2025 vectors show topological risk parities heavily restricting maximum drawdowns compared to standard benchmark models.
-
-## Behavioural Analysis
-The engine natively evaluates algorithmic degradation versus emotional human intervention. By deploying autonomous regime weighting, the system strictly bypasses behavioral biases such as loss aversion and yield chasing.
-
-## Lessons
-- **Tooling vs Theory**: Heavy reliance on advanced DevOps pipelines initially obfuscated the underlying quantitative core. A robust statistical model requires highly legible narrative reporting, not just extreme CI/CD coverage.
-- **Complexity Decay**: Walk-forward stress tests continually reveal that complex, over-engineered models decay drastically faster out-of-sample compared to simple, robust heuristics systematically sized via HRP logic.
+| Surface | URL / path |
+|---------|------------|
+| Microsite | [frontend/index.html](frontend/index.html) |
+| Technical docs | `uv run python -m mkdocs build -f docs/mkdocs.yml` → [frontend/docs/](frontend/docs/) |
+| Committee packet | [deliverables/](deliverables/README.md) |
+| Code review | [REVIEWERS.md](REVIEWERS.md) (includes [publication checklist](REVIEWERS.md#publication-checklist-sunset-seal)) |
 
 ---
-*MIT License — see [LICENSE](LICENSE) for details.*
+
+## Quick start
+
+```bash
+uv sync --frozen
+.\scripts\sunset_freeze.ps1    # Windows — or scripts/sunset_freeze.sh
+```
+
+Manual steps:
+
+```bash
+uv run python scripts/prep_duckdb_and_sync.py
+uv run python scripts/clean_duckdb_prices.py
+uv run python -m pytest tests/ -m "not integration"
+uv run python scripts/build_frontend_assets.py
+uv run python -m mkdocs build -f docs/mkdocs.yml --strict
+```
+
+Optional Manim hero reel:
+
+```bash
+uv run python scripts/render_manim.py --quality 720p --scene Scene01_GeometricBrownianMotion
+```
+
+---
+
+## Repository map
+
+```
+deliverables/       Client post-mortem, charter, Excel, journals (Team BWX)
+quant_monitor/      Quant audit engine (config, data, models, backtest, CLI)
+scripts/            prep_duckdb, build_frontend_assets, export, sunset_freeze
+tests/              Unit tests + journal_transaction_history.csv
+docs/               MkDocs source, phases/, exported JSON/MD
+frontend/           Static microsite (HTML, charts/, data/, assets/)
+docker/             Optional container entrypoint
+```
+
+**Not in git:** `portfolio.duckdb`, `.venv/`, secrets (Doppler).
+
+---
+
+## CLI (`project`)
+
+| Command | Notes |
+|---------|--------|
+| `project doctor` | Environment check |
+| `project run-backtest` | Walk-forward test |
+
+Prefer `scripts/` for sunset—avoid `project sync-data` (may start scheduler).
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).

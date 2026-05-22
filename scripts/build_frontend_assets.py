@@ -13,7 +13,9 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import shutil
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 # Ensure project root and scripts/ are importable
@@ -118,17 +120,151 @@ def build_all(output_dir: str = "frontend") -> None:
     except Exception as e:
         logger.error("Tearsheet generation failed: %s", e, exc_info=True)
 
-    # --- 5. Copy backtest results JSON ---
-    logger.info("=== Copying backtest results ===")
-    backtest_src = Path("docs/backtest-results.json")
-    backtest_dst = data_dir / "backtest-results.json"
-    if backtest_src.exists():
-        backtest_dst.write_text(backtest_src.read_text(encoding="utf-8"), encoding="utf-8")
-        logger.info("Backtest results copied -> %s", backtest_dst)
+    # --- 4b. Institutional PDF mirrors (methodology / report dossier) ---
+    inst_pdf = Path("deliverables/source/BWC_Institutional_Tearsheet.pdf")
+    if not inst_pdf.is_file():
+        inst_pdf = Path("docs/BWC_Institutional_Tearsheet.pdf")
+    if inst_pdf.is_file():
+        for name in ("methodology.pdf", "institutional_report.pdf"):
+            dest = assets_dir / name
+            shutil.copy2(inst_pdf, dest)
+            logger.info("Copied institutional PDF -> %s", dest)
     else:
-        logger.warning("No backtest-results.json found at %s", backtest_src)
+        logger.warning("Missing %s — methodology/report PDF mirrors skipped", inst_pdf)
+
+    # --- 5. Client post-mortem PDF (primary narrative) ---
+    _copy_post_mortem_pdf(assets_dir)
+
+    # --- 6. Copy backtest / MC JSON ---
+    logger.info("=== Copying backtest & MC results ===")
+    for name in ("backtest-results.json", "mc-forward-results.json"):
+        src = Path("docs") / name
+        dst = data_dir / name
+        if src.exists():
+            dst.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+            logger.info("Copied %s -> %s", name, dst)
+        else:
+            logger.warning("Missing %s", src)
+
+    # --- 7. Committee deliverables (BWX packet) ---
+    logger.info("=== Syncing deliverables to frontend ===")
+    _sync_deliverables(root)
+    _write_deliverables_manifest(data_dir)
 
     logger.info("=== Build complete ===")
+
+
+def _copy_post_mortem_pdf(assets_dir: Path) -> None:
+    """Mirror client post-mortem PDF into frontend/assets/post-mortem.pdf."""
+    candidates = [
+        Path("deliverables/source/Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf"),
+        Path("deliverables/Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf"),
+    ]
+    for src in candidates:
+        if src.is_file():
+            dest = assets_dir / "post-mortem.pdf"
+            shutil.copy2(src, dest)
+            logger.info("Post-mortem PDF -> %s", dest)
+            return
+    logger.warning("Client post-mortem PDF not found under deliverables/")
+
+
+def _write_deliverables_manifest(data_dir: Path) -> None:
+    """Write JSON manifest of committee files for static site / health checks."""
+    source = Path("deliverables/source")
+    if not source.is_dir():
+        logger.warning("No deliverables/source — manifest skipped")
+        return
+
+    files = sorted(
+        (
+            {
+                "name": p.name,
+                "size_bytes": p.stat().st_size,
+                "href": f"./deliverables/source/{p.name}",
+            }
+            for p in source.iterdir()
+            if p.is_file()
+        ),
+        key=lambda row: row["name"],
+    )
+    post_mortem = next(
+        (f for f in files if "Post_Mortem" in f["name"] and f["name"].endswith(".pdf")),
+        None,
+    )
+    manifest = {
+        "generated_at": datetime.now(UTC).isoformat(),
+        "team": "BWX",
+        "project": "BWC",
+        "source_dir": "deliverables/source",
+        "post_mortem_pdf": post_mortem["name"] if post_mortem else None,
+        "file_count": len(files),
+        "files": files,
+    }
+    out = data_dir / "deliverables-manifest.json"
+    out.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    logger.info("Deliverables manifest -> %s (%d files)", out, len(files))
+
+
+def _sync_deliverables(frontend_root: Path) -> None:
+    """Mirror deliverables/source into frontend/deliverables for GitHub Pages."""
+    src_root = Path("deliverables")
+    dst_root = frontend_root / "deliverables"
+    source_src = src_root / "source"
+    if not source_src.is_dir():
+        logger.warning("No deliverables/source — skip")
+        return
+
+    dst_source = dst_root / "source"
+    if dst_source.exists():
+        shutil.rmtree(dst_source)
+    shutil.copytree(source_src, dst_source)
+
+    files = sorted(f.name for f in dst_source.iterdir() if f.is_file())
+    rows = "\n".join(
+        f'                <tr><td><a href="./source/{name}" download>{name}</a></td></tr>'
+        for name in files
+    )
+    dst_root.mkdir(parents=True, exist_ok=True)
+    (dst_root / "index.html").write_text(
+        f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team BWX Deliverables | Project BWC</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans&family=JetBrains+Mono&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/tokens.css">
+    <link rel="stylesheet" href="../styles/layout.css">
+    <link rel="stylesheet" href="../styles/pages.css">
+</head>
+<body class="theme-dark noise-bg">
+    <div class="sunset-freeze-bar text-mono" role="status">TEAM BWX · COMMITTEE DELIVERABLES · SUNSET 2026-05-01</div>
+    <nav class="l-navbar">
+        <a href="../index.html" class="nav-brand text-display">BWX · BWC</a>
+        <div class="nav-links">
+            <a href="../research.html" class="nav-link">Program</a>
+            <a href="../results.html" class="nav-link">Quant telemetry</a>
+            <a href="../docs/index.html" class="nav-link">Technical docs</a>
+            <a href="../assets/post-mortem.pdf" class="nav-link" download>Post-mortem PDF</a>
+        </div>
+    </nav>
+    <main class="page-content" style="max-width:900px;margin:0 auto;padding:var(--spacing-8);">
+        <h1 class="text-hero">Committee deliverables</h1>
+        <p class="text-muted">Primary narrative for the Hult investment program. Faculty feedback is incorporated. The quant engine is documented separately.</p>
+        <table class="results-table" style="width:100%;margin-top:var(--spacing-6);">
+            <thead><tr><th>File</th></tr></thead>
+            <tbody>
+{rows}
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
+""",
+        encoding="utf-8",
+    )
+    logger.info("Deliverables synced -> %s (%d files)", dst_root, len(files))
 
 
 if __name__ == "__main__":

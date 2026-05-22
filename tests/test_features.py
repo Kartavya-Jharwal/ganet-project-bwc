@@ -202,3 +202,15 @@ class TestVolatility:
             vix=25.0,
         )
         assert result == VolRegime.HIGH_VOL_RANGE
+
+    def test_classify_regime_none_vix_skips_crisis_rule(self):
+        """Missing VIX (e.g. feed gap) falls through to vol/Hurst rules."""
+        from quant_monitor.features.volatility import VolRegime, classify_regime
+
+        result = classify_regime(
+            realized_vol=0.10,
+            vol_percentile=0.25,
+            hurst=0.7,
+            vix=None,
+        )
+        assert result == VolRegime.LOW_VOL_TREND

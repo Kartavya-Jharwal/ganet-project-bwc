@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class AppwritePipeline:
         data = dict(item)
         data["source_spider"] = spider.name
         data["item_type"] = type(item).__name__
-        data["scraped_at"] = datetime.utcnow().isoformat()
+        data["scraped_at"] = datetime.now(UTC).isoformat()
 
         try:
             # We assume a valid `write_document` on the Appwrite client

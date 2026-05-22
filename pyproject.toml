@@ -40,6 +40,7 @@ dependencies = [
     "scikit-learn>=1.8.0",
     "cvxopt>=1.3.3",
     "networkx>=3.6.1",
+    "pyvis>=0.3.2",
     "manim>=0.20.1",
     "duckdb>=1.5.0",
     "typer>=0.24.1",
@@ -84,6 +85,39 @@ dev = [
 markers = [
     "integration: tests that require network access and Doppler secrets",
 ]
+
+[tool.deptry]
+extend_exclude = ["docs", "frontend", "deliverables"]
+
+[tool.deptry.per_rule_ignores]
+DEP002 = [
+    "alpaca-py",
+    "cvxpy",
+    "cvxopt",
+    "pyarrow",
+    "streamlit",
+    "streamlit-echarts",
+    "quantstats",
+    "seaborn",
+    "tabulate",
+    "matplotlib",
+    "manim",
+]
+DEP001 = ["generate_plotly_dashboard", "generate_tearsheet"]
+
+[tool.ty.rules]
+# Third-party SDK stubs (Alpaca, Polygon) and optional viz deps are incomplete.
+unresolved-attribute = "ignore"
+unresolved-import = "ignore"
+not-subscriptable = "ignore"
+invalid-argument-type = "warn"
+invalid-return-type = "warn"
+invalid-assignment = "warn"
+no-matching-overload = "warn"
+unsupported-operator = "warn"
+call-non-callable = "warn"
+not-iterable = "warn"
+deprecated = "warn"
 
 [tool.hatch.build.targets.wheel]
 packages = ["quant_monitor"]

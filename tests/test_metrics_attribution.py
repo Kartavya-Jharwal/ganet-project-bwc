@@ -25,10 +25,7 @@ def test_brinson_fachler():
 
     assert np.isclose(attr["Total"].sum(), excess_return)
 
-    # Check specific calculation for Tech
-    overall_bm = (
-        benchmark_total  # (0.4*0.08 + 0.4*0.06 + 0.2*-0.01) = 0.032 + 0.024 - 0.002 = 0.054
-    )
+    # Check specific calculation for Tech (benchmark_total = 0.054)
     # Tech Allocation -> (0.5 - 0.4) * (0.08 - 0.054) = 0.1 * 0.026 = 0.0026
     assert np.isclose(attr.loc["Tech", "Allocation"], 0.0026)
 

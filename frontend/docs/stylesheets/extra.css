@@ -1,0 +1,19 @@
+/* Sunset freeze polish for MkDocs Material */
+:root {
+  --md-primary-fg-color: #1a1a2e;
+  --md-accent-fg-color: #eb5e28;
+}
+
+.md-typeset h1 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.md-typeset table:not([class]) {
+  font-size: 0.82rem;
+}
+
+.md-typeset .admonition {
+  border-radius: 0;
+  border-left-width: 4px;
+}

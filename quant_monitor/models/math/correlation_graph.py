@@ -24,8 +24,12 @@ class CorrelationGraphBuilder:
     def _extract_returns(self) -> pd.DataFrame:
         """Extract pivoted returns spanning ~252 days from DuckDB."""
         logger.info("Extracting prices for Correlation Graph...")
-        # Since we might be lacking data initially, we do not strictly enforce 252 days in the query.
-        conn = duckdb.connect(self.db_path, read_only=True)
+        conn = None
+        try:
+            conn = duckdb.connect(self.db_path, read_only=True)
+        except Exception as e:
+            logger.warning("Correlation graph: cannot open DuckDB (%s)", e)
+            return pd.DataFrame()
         try:
             # Get latest 252 available trading days per ticker
             query = """
@@ -38,7 +42,8 @@ class CorrelationGraphBuilder:
             # table might not exist if duckdb sync hasnt run
             return pd.DataFrame()
         finally:
-            conn.close()
+            if conn is not None:
+                conn.close()
 
         if df.empty:
             return df
@@ -127,19 +132,21 @@ class CorrelationGraphBuilder:
 
             # Write DuckDB explicitly as well
             conn = duckdb.connect(self.db_path, read_only=False)
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS correlations_cache (
-                    timestamp TIMESTAMP,
-                    nodes VARCHAR,
-                    edges VARCHAR
+            try:
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS correlations_cache (
+                        timestamp TIMESTAMP,
+                        nodes VARCHAR,
+                        edges VARCHAR
+                    )
+                """)
+                conn.execute(
+                    "INSERT INTO correlations_cache VALUES (CURRENT_TIMESTAMP, ?, ?)",
+                    (json.dumps(tickers), json.dumps(edges)),
                 )
-            """)
-            conn.execute(
-                "INSERT INTO correlations_cache VALUES (CURRENT_TIMESTAMP, ?, ?)",
-                (json.dumps(tickers), json.dumps(edges)),
-            )
-            conn.close()
-            logger.info("Successfully pushed topology to Appwrite and DuckDB.")
+                logger.info("Successfully pushed topology to Appwrite and DuckDB.")
+            finally:
+                conn.close()
         except Exception as e:
             logger.warning(f"Failed to push topology state to Appwrite/DuckDB: {e}")
 

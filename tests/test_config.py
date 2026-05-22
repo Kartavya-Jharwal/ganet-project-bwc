@@ -31,7 +31,8 @@ def test_config_loader(mock_env):
     assert cfg.initial_capital == 1_000_000
     assert cfg.secrets.ALPACA_API_KEY == "test_alpaca_key"
     assert "SPY" in cfg.holdings
-    assert cfg.holdings["SPY"]["qty"] == 295
+    assert cfg.holdings["SPY"]["qty"] == 173
+    assert cfg.holdings["XLU"]["qty"] == 1200
 
 
 def test_all_holdings_have_required_fields():

@@ -132,7 +132,7 @@ class RiskManager:
     def compute_portfolio_beta(self, weights: dict[str, float], betas: dict[str, float]) -> float:
         """Compute weighted portfolio beta.
 
-        β_portfolio = Σ(w_i × β_i) for all positions.
+        beta_portfolio = sum(w_i * beta_i) for all positions.
         """
         total_beta = 0.0
         for ticker, weight in weights.items():

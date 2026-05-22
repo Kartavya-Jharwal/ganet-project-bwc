@@ -1,0 +1,38 @@
+{
+  "timing": {
+    "avg_buy_timing_score": 0.6501,
+    "avg_sell_timing_score": 0.3582,
+    "buy_at_highs_pct": 0.3778,
+    "sell_at_lows_pct": 0.4348,
+    "n_buys_analysed": 45,
+    "n_sells_analysed": 23,
+    "interpretation": "Buys tend to cluster near local highs (momentum-chasing bias); Sell timing is neutral relative to local price range"
+  },
+  "disposition": {
+    "avg_winner_holding_days": 15.3,
+    "avg_loser_holding_days": 33.4,
+    "disposition_ratio": 2.1752,
+    "n_winning_sells": 6,
+    "n_losing_sells": 17,
+    "interpretation": "Strong disposition effect: losers held significantly longer than winners"
+  },
+  "conviction": {
+    "avg_position_size_pct": 5.4,
+    "max_position_size_pct": 20.2,
+    "min_position_size_pct": 0.35,
+    "std_position_size_pct": 3.88,
+    "n_positions": 45,
+    "concentration_top3_pct": 49.72,
+    "interpretation": "Moderate conviction: some differentiation in position sizing"
+  },
+  "turnover": {
+    "total_trades": 68,
+    "total_buys": 45,
+    "total_sells": 23,
+    "total_dividends": 0,
+    "trades_per_week": 8.65,
+    "active_days": 11,
+    "date_range_days": 55,
+    "dividend_income": 0
+  }
+}

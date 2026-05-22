@@ -16,12 +16,15 @@
 <body class="theme-dark noise-bg">
     <div class="texture-overlay"></div>
 
+    <div class="sunset-freeze-bar text-mono" role="status">TEAM BWX · SUNSET FREEZE · VALUATION 2026-04-10 · REPORTING 2026-05-01</div>
     <nav class="l-navbar">
-        <a href="index.html" class="nav-brand text-display">PROJECT BWC</a>
+        <a href="index.html" class="nav-brand text-display">BWX · BWC</a>
         <div class="nav-links">
-            <a href="research.html" class="nav-link">Methodology</a>
-            <a href="results.html" class="nav-link">Telemetry</a>
-            <a href="journal.html" class="nav-link active">Audit Log</a>
+            <a href="research.html" class="nav-link">Program</a>
+            <a href="results.html" class="nav-link">Quant telemetry</a>
+            <a href="journal.html" class="nav-link active">Audit log</a>
+            <a href="deliverables/index.html" class="nav-link">Deliverables</a>
+            <a href="./assets/post-mortem.pdf" class="nav-link" download>Post-mortem</a>
         </div>
         <div class="nav-status">
             <div class="status-indicator" id="status-dot"></div>
@@ -48,7 +51,7 @@
                     </div>
                     <div class="timeline-content">
                         <h3>Phase 1 — Foundation</h3>
-                        <p class="text-muted">Project inception. Established the 6-layer DAG architecture. Built data ingestion pipeline with FRED and Yahoo Finance feeds. Set up DuckDB as the local analytical store with Appwrite cloud sync.</p>
+                        <p class="text-muted">Project inception. Established the Directed Acyclic Graph execution backbone and data ingestion rails (FRED, Yahoo Finance, DuckDB, optional Appwrite sync).</p>
                     </div>
                 </div>
                 <div class="timeline-entry">
@@ -182,10 +185,16 @@
         <section class="journal-section reveal-on-scroll" id="tearsheet">
             <div class="section-header">
                 <span class="section-number text-mono text-accent">04</span>
-                <h2 class="text-display">Tearsheet</h2>
+                <h2 class="text-display">Tearsheet &amp; Deliverables</h2>
             </div>
             <div class="tearsheet-block">
-                <p>The full quantitative tearsheet is available as a PDF, containing all performance metrics, factor exposures, risk analytics, and attribution results in a single document.</p>
+                <p>Static PDF bundles generated for committee review and archival mirrors. Replace `frontend/assets/slide_deck.pdf` locally if exporting the slide deck.</p>
+                <div class="hero-actions" style="margin-top:var(--spacing-6);">
+                    <a href="./assets/methodology.pdf" class="cta-btn" download target="_blank" rel="noopener">Methodology PDF</a>
+                    <a href="./assets/institutional_report.pdf" class="cta-btn cta-btn-secondary" download target="_blank" rel="noopener">Institutional Report PDF</a>
+                </div>
+                <p class="text-muted" style="margin-top:var(--spacing-6);font-size:0.85rem;">Slide deck artifact is intentionally not shipped in-repo; archive an exported PDF to <span class="text-mono">frontend/assets/slide_deck.pdf</span> when publishing.</p>
+                <p style="margin-top:var(--spacing-8);">The generated tearsheet from the automated pipeline is synced alongside the Plotly dashboards.</p>
                 <a href="./assets/tearsheet.pdf" class="cta-btn" download style="margin-top:var(--spacing-6);display:inline-block;">Download Tearsheet (PDF) →</a>
             </div>
         </section>
@@ -258,7 +267,8 @@
                 <p class="text-muted" style="font-size:0.8rem;margin-top:0.5rem;">Quantitative audit of human portfolio decisions under live constraints. Not investment advice.</p>
             </div>
             <div class="footer-col">
-                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE: 2026-05-01</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">VALUATION / LAST FILLS (CSV): 2026-04-10</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE (MC WINDOW END): 2026-05-01</p>
                 <p class="text-muted text-mono" style="font-size:0.7rem;">STATIC ARCHIVE / GITHUB PAGES</p>
             </div>
         </div>

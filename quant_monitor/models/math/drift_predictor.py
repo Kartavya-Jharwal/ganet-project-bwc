@@ -15,7 +15,11 @@ class DriftPredictor:
 
     def _get_60_day_returns(self) -> pd.DataFrame:
         """Fetch past 60 days of returns."""
-        conn = duckdb.connect(self.db_path, read_only=True)
+        try:
+            conn = duckdb.connect(self.db_path, read_only=True)
+        except Exception as e:
+            logger.warning("Drift predictor: DuckDB open failed (%s)", e)
+            return pd.DataFrame()
         try:
             query = """
                 SELECT timestamp::DATE as date, ticker, close
