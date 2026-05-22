@@ -16,6 +16,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def _coerce_vix(macro: dict | None, default: float = 20.0) -> float:
+    """Coerce VIX; explicit JSON/TOML null means key is present but value is missing for dict.get()."""
+    if not macro:
+        return default
+    v = macro.get("vix")
+    if v is None:
+        return default
+    return float(v)
+
+
 def run_signal_cycle() -> None:
     """Execute one full signal generation cycle.
 
@@ -52,13 +62,17 @@ def run_signal_cycle() -> None:
         pipeline.fetch_news(tickers)
 
         # 2. Classify volatility regime
-        spy_prices = prices.loc["SPY"] if "SPY" in prices.index.get_level_values(0) else None
+        import pandas as pd
+
+        spy_level = prices.index.get_level_values(0) if hasattr(prices.index, "get_level_values") else []
+        spy_prices = prices.loc["SPY"] if "SPY" in spy_level else None
+
         if spy_prices is not None and len(spy_prices) > 200:
             returns = spy_prices["close"].pct_change().dropna()
             vol = realized_volatility(returns)
             vol_pct = volatility_percentile(vol.dropna())
             hurst = hurst_exponent(spy_prices["close"])
-            vix = macro.get("vix", 20.0)
+            vix = _coerce_vix(macro)
             regime = str(classify_regime(vol.iloc[-1], vol_pct.iloc[-1], hurst, vix))
         else:
             regime = "LOW_VOL_TREND"  # safe default
@@ -83,8 +97,6 @@ def run_signal_cycle() -> None:
         fused = fusion.fuse_all(tech_scores, fund_scores, sent_scores, macro_score, regime)
 
         # 5. Risk-check + optimization
-        import pandas as pd
-
         from quant_monitor.agent.optimizer import PortfolioOptimizer
         from quant_monitor.agent.risk_manager import RiskManager
 
@@ -156,7 +168,13 @@ def run_signal_cycle() -> None:
 
                 # We need variances for HRP. Approximate using 252-day variance of daily returns.
                 returns_df = builder._extract_returns()
-                variances = returns_df.var().values
+                if returns_df.empty:
+                    variances = np.ones(len(valid_tickers), dtype=float) * 1e-4
+                    logger.warning(
+                        "HRP using uniform variance fallback (returns extract empty or DB locked)."
+                    )
+                else:
+                    variances = returns_df.var().values
 
                 # Phase 2: HRP allocation
                 sizer = HRPSizer(partial_corr_matrix, valid_tickers, variances)
@@ -197,20 +215,28 @@ def run_signal_cycle() -> None:
                         for d in drift_orders:
                             logger.info(d)
 
-                # Logging state to DuckDB logic
-                conn = duckdb.connect("portfolio.duckdb", read_only=False)
-                conn.execute("""
-                    CREATE TABLE IF NOT EXISTS audit_log (
-                        timestamp TIMESTAMP,
-                        target_weights VARCHAR,
-                        mst_edges VARCHAR
-                    );
-                """)
-                conn.execute(
-                    "INSERT INTO audit_log VALUES (CURRENT_TIMESTAMP, ?, ?)",
-                    (json.dumps(target_weights), json.dumps(mst_edges)),
-                )
-                conn.close()
+                # Logging state to DuckDB logic (never fail the topological/HRP path on lock/IO)
+                try:
+                    conn = duckdb.connect("portfolio.duckdb", read_only=False)
+                    try:
+                        conn.execute("""
+                            CREATE TABLE IF NOT EXISTS audit_log (
+                                timestamp TIMESTAMP,
+                                target_weights VARCHAR,
+                                mst_edges VARCHAR
+                            );
+                        """)
+                        conn.execute(
+                            "INSERT INTO audit_log VALUES (CURRENT_TIMESTAMP, ?, ?)",
+                            (json.dumps(target_weights), json.dumps(mst_edges)),
+                        )
+                    finally:
+                        conn.close()
+                    logger.info("Topological audit_log written to DuckDB.")
+                except Exception as audit_err:
+                    logger.warning(
+                        "Skipping DuckDB audit_log (non-fatal): %s", audit_err
+                    )
                 logger.info("Topological pipeline succeeded.")
             else:
                 raise ValueError("GraphicalLassoCV empty graph returned.")
@@ -293,7 +319,7 @@ def run_signal_cycle() -> None:
             if spy_returns is not None:
                 aw.write_regime(
                     regime=regime,
-                    vix=macro.get("vix", 0.0),
+                    vix=_coerce_vix(macro, default=0.0),
                     hurst=float(hurst_exponent(prices.loc["SPY"]["close"])),
                     vol_percentile=0.0,  # populated from vol computation above
                 )

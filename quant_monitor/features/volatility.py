@@ -97,12 +97,12 @@ def classify_regime(
     realized_vol: float,
     vol_percentile: float,
     hurst: float,
-    vix: float,
+    vix: float | None,
     vix_crisis_threshold: float = 30.0,
 ) -> VolRegime:
     """Classify current volatility regime from multiple inputs."""
-    # Rule 1: VIX above crisis threshold → CRISIS
-    if vix >= vix_crisis_threshold:
+    # Rule 1: VIX above crisis threshold → CRISIS (skip if VIX unavailable)
+    if vix is not None and vix >= vix_crisis_threshold:
         return VolRegime.CRISIS
 
     # Rule 2: High/Low vol by percentile

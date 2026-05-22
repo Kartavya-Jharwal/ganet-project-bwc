@@ -1,0 +1,20 @@
+{
+    "simulation_params": {
+        "days_forward": 21,
+        "num_simulations": 10000,
+        "jump_diffusion": true,
+        "assets": 16,
+        "history_days": 501
+    },
+    "terminal_return_stats": {
+        "mean": 0.01826680475365596,
+        "std": 0.051885709297078045,
+        "p5": -0.0640307184284077,
+        "p25": -0.017424520337505356,
+        "median": 0.01704607217966736,
+        "p75": 0.052698780803326295,
+        "p95": 0.10630893105889688,
+        "prob_positive": 0.631,
+        "prob_loss_gt_5pct": 0.0902
+    }
+}

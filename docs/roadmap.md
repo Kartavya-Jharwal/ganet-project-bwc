@@ -60,7 +60,7 @@ Feb 24 ────────────────────────�
 - [x] Pushed to GitHub
 
 ### Documentation
-- [Phase 0 Details](phase-0-scaffold.md)
+- [Phase 0 Details](phases/phase-00-scaffold.md)
 
 ---
 

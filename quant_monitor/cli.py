@@ -1,16 +1,14 @@
 import os
-import subprocess
+import sys
 import time
 
 import typer
+from rich.align import Align
 from rich.console import Console
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskID
-from rich.table import Table
-from rich.align import Align
+from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn
 from rich.prompt import Prompt
-import sys
-from rich.text import Text
+from rich.table import Table
 
 app = typer.Typer(
     name="quant",
@@ -101,10 +99,14 @@ def ingest(
             f"DuckDB Sync Failed. ({e!s})",
             "Ensure Appwrite containers are deployed and Doppler secrets are injected."
         )
-        raise typer.Exit(1)
+        raise typer.Exit(1) from None
 
     time.sleep(0.12)
     _animated_reveal("[magenta]All data sequences loaded into local state.[/magenta]", 0.08)
+
+    # Ingestion is done; signal cycles should only *consume* cached data, not re-upload
+    # the full EOD matrix to Appwrite on every 15-minute tick.
+    os.environ["MODE"] = "consume"
     
     with console.status("[bold cyan]Spinning up the Main Engine...[/bold cyan]", spinner="pipe"):
         time.sleep(0.12)
@@ -210,7 +212,7 @@ def dashboard(
     
     # We maintain previous module loading or visual mock
     with Progress(SpinnerColumn("dots12"), TextColumn("[cyan]Rendering Institutional View...")) as p:
-        task = p.add_task("", total=None)
+        p.add_task("", total=None)
         time.sleep(0.4)
     
     try:
@@ -249,7 +251,7 @@ def make_tearsheet(benchmark: str = typer.Option("SPY", help="Benchmark ticker t
     console.print(
         Panel(
             "[bold green]✔ Institutional Tearsheet Generated[/bold green]\n\n"
-            "View [cyan]docs/BWC_Institutional_Tearsheet.pdf[/cyan]",
+            "View [cyan]deliverables/source/BWC_Institutional_Tearsheet.pdf[/cyan]",
             border_style="green",
         )
     )

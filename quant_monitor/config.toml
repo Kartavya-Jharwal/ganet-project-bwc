@@ -8,135 +8,110 @@
 name = "Ganet - Project BWC"
 description = "Team 5 Investment Simulation — Hult International Business School"
 initial_capital = 1_000_000
-cash_balance = 43574.49
+cash_balance = 111830.47
 benchmark = "SPY"
 valuation_date = "2026-04-10"
 sunset_date = "2026-05-01"
+# Calendar days from valuation_date to sunset_date (post-sim forward projection window).
+mc_forward_days = 21
 rebalance_interval_minutes = 15
-trade_history = "tests/test_data/TransactionHistory_2026-03-13.csv"
-first_trade_date = "2026-02-12"
+trade_history = "tests/test_data/journal_transaction_history.csv"
+first_trade_date = "2026-02-17"
+# Authoritative discretionary journal (Open/Close/Adjust only). Fixture path for CI and reviewers.
 
-# ============================================================================= 
-# Portfolio Holdings (as of March 16, 2026 Checkpoint)
-# ============================================================================= 
+# =============================================================================
+# Portfolio Holdings (as of valuation_date 2026-04-10; quantities + cost basis helpers from trade log)
+# =============================================================================
 
 [holdings.SPY]
 name = "SPDR S&P 500 ETF"
 type = "ETF"
-qty = 295
-price_paid = 684.89
+qty = 173
+price_paid = 674.64
 sector = "Broad Market"
-
-[holdings.TSM]
-name = "Taiwan Semiconductor ADR"
-type = "Stock"
-qty = 230
-price_paid = 363.94
-sector = "AI Infrastructure"
-
-[holdings.MU]
-name = "Micron Technology"
-type = "Stock"
-qty = 15
-price_paid = 408.82
-sector = "AI Memory"
-
-[holdings.PLTR]
-name = "Palantir Technologies"
-type = "Stock"
-qty = 388
-price_paid = 131.48
-sector = "AI Software"
 
 [holdings.AMZN]
 name = "Amazon.com"
 type = "Stock"
-qty = 250
-price_paid = 200.87
+qty = 310
+price_paid = 221.03
 sector = "E-commerce/Cloud"
 
-[holdings.NVDA]
-name = "NVIDIA Corporation"
-type = "Stock"
-qty = 274
-price_paid = 184.04
-sector = "AI Infrastructure"
-
-[holdings.ITA]
-name = "iShares U.S. Aerospace & Defense ETF"
+[holdings.GLD]
+name = "SPDR Gold Shares"
 type = "ETF"
-qty = 100
-price_paid = 231.91
-sector = "Defense/Aerospace"
+qty = 450
+price_paid = 436.80
+sector = "Commodities"
 
-[holdings.NBIS]
-name = "Nebius Group"
+[holdings.GOOGL]
+name = "Alphabet Inc Class A"
 type = "Stock"
-qty = 135
-price_paid = 124.80
-sector = "AI Infrastructure"
+qty = 210
+price_paid = 316.65
+sector = "Big Tech/AI"
 
-[holdings.LMT]
-name = "Lockheed Martin"
+[holdings.PLTR]
+name = "Palantir Technologies"
 type = "Stock"
-qty = 120
-price_paid = 651.62
-sector = "Defense/Space"
-
-[holdings.TGT]
-name = "Target Corporation"
-type = "Stock"
-qty = 610
-price_paid = 116.98
-sector = "Defensive Retail"
-
-[holdings.XLP]
-name = "Consumer Staples SPDR"
-type = "ETF"
-qty = 440
-price_paid = 89.52
-sector = "Staples"
-
-[holdings.PG]
-name = "Procter & Gamble"
-type = "Stock"
-qty = 235
-price_paid = 162.45
-sector = "FMCG Defensive"
-
-[holdings.JNJ]
-name = "Johnson & Johnson"
-type = "Stock"
-qty = 260
-price_paid = 244.64
-sector = "Healthcare"
+qty = 438
+price_paid = 147.10
+sector = "AI Software"
 
 [holdings.XLU]
 name = "Utilities Select SPDR"
 type = "ETF"
-qty = 800
-price_paid = 45.45
+qty = 1200
+price_paid = 45.74
 sector = "Utilities"
 
-[holdings.IONQ]
-name = "IonQ Inc"
+[holdings.XLF]
+name = "Financial Select SPDR"
+type = "ETF"
+qty = 700
+price_paid = 51.25
+sector = "Financials"
+
+[holdings.XLI]
+name = "Industrial Select SPDR"
+type = "ETF"
+qty = 270
+price_paid = 170.75
+sector = "Industrials"
+
+[holdings.CAT]
+name = "Caterpillar Inc"
 type = "Stock"
-qty = 800
-price_paid = 33.60
-sector = "Quantum/Speculative"
+qty = 100
+price_paid = 766.00
+sector = "Industrials"
+
+[holdings.JPM]
+name = "JPMorgan Chase"
+type = "Stock"
+qty = 110
+price_paid = 307.06
+sector = "Financials"
+
+[holdings.ESGU]
+name = "iShares ESG Aware MSCI USA ETF"
+type = "ETF"
+qty = 330
+price_paid = 146.90
+sector = "Broad Market"
+
+[holdings.XOM]
+name = "Exxon Mobil"
+type = "Stock"
+qty = 305
+price_paid = 154.89
+sector = "Energy"
 
 [holdings.XLE]
 name = "Energy Select SPDR"
 type = "ETF"
 qty = 60
 price_paid = 57.95
-sector = "Energy"
-
-[holdings.XOM]
-name = "Exxon Mobil"
-type = "Stock"
-qty = 75
-price_paid = 159.75
 sector = "Energy"
 
 [holdings.IBB]
@@ -146,19 +121,19 @@ qty = 120
 price_paid = 167.12
 sector = "Healthcare"
 
+[holdings.NVDA]
+name = "NVIDIA Corporation"
+type = "Stock"
+qty = 274
+price_paid = 184.04
+sector = "AI Infrastructure"
+
 [holdings.ORCL]
 name = "Oracle Corporation"
 type = "Stock"
 qty = 161
 price_paid = 155.76
 sector = "Software"
-
-[holdings.SIEGY]
-name = "Siemens AG"
-type = "Stock"
-qty = 150
-price_paid = 126.70
-sector = "Industrials/Infrastructure"
 
 # =============================================================================
 # Cache TTL (seconds)

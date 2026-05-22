@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 import textwrap
-from io import StringIO
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pandas as pd
 import pytest
-
 
 # ---------------------------------------------------------------------------
 # Helpers

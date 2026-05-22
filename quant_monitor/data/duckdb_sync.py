@@ -7,7 +7,7 @@ import logging
 import duckdb
 import pandas as pd
 
-from quant_monitor.data.appwrite_client import COLLECTIONS, DATABASE_ID, create_appwrite_client
+from quant_monitor.data.appwrite_client import COLLECTIONS, create_appwrite_client
 
 logger = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ Results pushed to Appwrite via AppwritePipeline.
 from __future__ import annotations
 
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 
 import scrapy
 
@@ -60,7 +60,7 @@ class YfinanceSpider(scrapy.Spider):
                 ev_ebitda=info.get("enterpriseToEbitda"),
                 market_cap=info.get("marketCap"),
                 beta=info.get("beta"),
-                fetched_at=datetime.utcnow().isoformat(),
+                fetched_at=datetime.now(UTC).isoformat(),
             )
 
             # Latest price item

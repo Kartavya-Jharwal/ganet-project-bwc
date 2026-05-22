@@ -3,6 +3,9 @@ Rich CLI Dashboard — Unixporn-level tactical interface.
 """
 
 import argparse
+import contextlib
+import math
+import random
 import time
 from datetime import datetime
 
@@ -30,7 +33,7 @@ def make_header() -> Panel:
 
         macro = load_macro_snapshot()
         regime_text = MacroModel().classify_regime(macro) if macro else "STANDBY"
-    except:
+    except Exception:
         regime_text = "STANDBY"
 
     grid = Table.grid(expand=True)
@@ -189,9 +192,6 @@ def make_signals() -> Panel:
 
 
 # Define global curve for metric chart moving
-import math
-import random
-
 try:
     import asciichartpy
 except ImportError:
@@ -568,14 +568,12 @@ def main(argv: list[str] | None = None):
                             current_view = "metrics" if current_view == "main" else "main"
                             force_update = True
 
-                try:
+                with contextlib.suppress(Exception):
                     layout["header"].update(make_header())
-                except Exception:
-                    pass
 
                 # Only update heavy DB calls every 4 ticks (1 second) to prevent lockups, animate the rest
                 if ticks % 4 == 0 or force_update:
-                    try:
+                    with contextlib.suppress(Exception):
                         if current_view == "main":
                             layout["main"].split_row(
                                 Layout(make_holdings(), name="left", ratio=1),
@@ -588,15 +586,11 @@ def main(argv: list[str] | None = None):
                             )
 
                         layout["macro"].update(make_macro())
-                    except Exception:
-                        pass
 
                     force_update = False
 
-                try:
+                with contextlib.suppress(Exception):
                     layout["health"].update(make_health(ticks, current_view))
-                except Exception:
-                    pass
 
                 time.sleep(0.25)
                 ticks += 1

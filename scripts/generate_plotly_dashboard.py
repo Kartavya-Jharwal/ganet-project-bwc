@@ -21,7 +21,11 @@ import plotly.graph_objects as go
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from quant_monitor.config import cfg
+
 logger = logging.getLogger(__name__)
+
+_MC_DAYS = cfg.mc_forward_days
 
 COLORS = {
     "bg": "#050505",
@@ -341,7 +345,9 @@ def generate_monte_carlo_fan(output_dir: Path) -> Path:
         engine = _get_engine()
         if engine is None:
             raise RuntimeError("engine unavailable")
-        paths, term = engine.run_monte_carlo(days_forward=29, num_simulations=5000)
+        paths, term = engine.run_monte_carlo(
+            days_forward=_MC_DAYS, num_simulations=5000
+        )
         if paths is not None and len(paths) > 0:
             cum_paths = np.cumprod(1 + paths, axis=1)
             terminal = term
@@ -356,13 +362,19 @@ def generate_monte_carlo_fan(output_dir: Path) -> Path:
             from quant_monitor.backtest.simulation import run_monte_carlo_simulation
             rng = np.random.default_rng(42)
             hist = pd.DataFrame(rng.normal(0.0004, 0.012, (252, 3)), columns=["A", "B", "C"])
-            _, terminal = run_monte_carlo_simulation(hist, days_forward=29, num_simulations=5000)
-            hist_series = pd.DataFrame(rng.normal(0.0004, 0.012, (252, 3)), columns=["A", "B", "C"])
-            paths, _ = run_monte_carlo_simulation(hist_series, days_forward=29, num_simulations=5000)
+            _, terminal = run_monte_carlo_simulation(
+                hist, days_forward=_MC_DAYS, num_simulations=5000
+            )
+            hist_series = pd.DataFrame(
+                rng.normal(0.0004, 0.012, (252, 3)), columns=["A", "B", "C"]
+            )
+            paths, _ = run_monte_carlo_simulation(
+                hist_series, days_forward=_MC_DAYS, num_simulations=5000
+            )
             cum_paths = np.cumprod(1 + paths, axis=1)
         except Exception:
             rng = np.random.default_rng(42)
-            n_sims, n_days = 5000, 29
+            n_sims, n_days = 5000, _MC_DAYS
             daily = rng.normal(0.0004, 0.012, (n_sims, n_days))
             cum_paths = np.cumprod(1 + daily, axis=1)
             terminal = cum_paths[:, -1] - 1
@@ -379,7 +391,7 @@ def generate_monte_carlo_fan(output_dir: Path) -> Path:
         line=dict(width=0), showlegend=False, hoverinfo="skip",
     ))
     fig.add_trace(go.Scatter(
-        x=days, y=pct_values[5], mode="lines", name="5th–95th",
+        x=days, y=pct_values[5], mode="lines", name="5th-95th",
         line=dict(width=0), fill="tonexty",
         fillcolor="rgba(59,130,246,0.12)",
         hoverinfo="skip",
@@ -389,7 +401,7 @@ def generate_monte_carlo_fan(output_dir: Path) -> Path:
         line=dict(width=0), showlegend=False, hoverinfo="skip",
     ))
     fig.add_trace(go.Scatter(
-        x=days, y=pct_values[25], mode="lines", name="25th–75th",
+        x=days, y=pct_values[25], mode="lines", name="25th-75th",
         line=dict(width=0), fill="tonexty",
         fillcolor="rgba(59,130,246,0.25)",
         hoverinfo="skip",
@@ -405,7 +417,10 @@ def generate_monte_carlo_fan(output_dir: Path) -> Path:
     fig.add_hline(y=1.0, line_dash="dot", line_color=COLORS["muted"], line_width=1)
 
     fig.update_layout(**_base_layout(
-        title=dict(text="Monte Carlo Forward Simulation (29-day)", x=0.02),
+        title=dict(
+            text=f"Monte Carlo Forward Simulation ({_MC_DAYS}-day, valuation → sunset)",
+            x=0.02,
+        ),
         yaxis=dict(title="Wealth Multiplier", tickformat=".2f"),
         xaxis=dict(title="Trading Days Forward"),
         height=420,
@@ -430,17 +445,15 @@ def _synthetic_correlation_data():
 
 def _real_correlation_data():
     """Fetch real correlation matrix from portfolio tickers via yfinance."""
-    from quant_monitor.config import cfg
     import yfinance as yf
+
+    from quant_monitor.config import cfg
 
     tickers = cfg.tickers
     if not tickers:
         raise ValueError("No tickers in config")
     data = yf.download(tickers, period="1y", auto_adjust=True, progress=False)
-    if isinstance(data.columns, pd.MultiIndex):
-        closes = data["Close"]
-    else:
-        closes = data
+    closes = data["Close"] if isinstance(data.columns, pd.MultiIndex) else data
     closes = closes.dropna(axis=1, how="all").dropna()
     if closes.shape[1] < 2 or len(closes) < 20:
         raise ValueError("Insufficient price data for correlation")
@@ -467,7 +480,7 @@ def generate_correlation_network(output_dir: Path) -> Path:
     y_pos = radius * np.sin(theta)
     z_pos = rng.uniform(-0.5, 0.5, n)
 
-    edge_x, edge_y, edge_z, edge_colors = [], [], [], []
+    edge_x, edge_y, edge_z = [], [], []
     threshold = 0.25
     for i in range(n):
         for j in range(i + 1, n):
@@ -491,13 +504,13 @@ def generate_correlation_network(output_dir: Path) -> Path:
         marker=dict(
             size=12, color=node_colors,
             colorscale=[[0, COLORS["negative"]], [0.5, COLORS["muted"]], [1, COLORS["positive"]]],
-            colorbar=dict(title="Avg ρ", len=0.6),
+            colorbar=dict(title="Avg rho", len=0.6),
             line=dict(width=1, color=COLORS["text"]),
         ),
         text=assets,
         textposition="top center",
         textfont=dict(size=11, color=COLORS["text"]),
-        hovertemplate="%{text}<br>Avg ρ: %{marker.color:.2f}<extra></extra>",
+        hovertemplate="%{text}<br>Avg rho: %{marker.color:.2f}<extra></extra>",
         showlegend=False,
     ))
 
@@ -628,14 +641,18 @@ def generate_results_json(returns: pd.Series, output_dir: Path) -> Path:
 
         # Monte Carlo hurdle via engine
         try:
-            _, terminal = engine.run_monte_carlo(days_forward=29, num_simulations=10_000)
+            _, terminal = engine.run_monte_carlo(
+                days_forward=_MC_DAYS, num_simulations=10_000
+            )
             if terminal is not None and len(terminal) > 0:
                 hurdle_pct = float(np.mean(terminal >= 0.03) * 100)
             else:
                 raise ValueError("empty MC result")
         except Exception:
             rng = np.random.default_rng(42)
-            terminal = np.cumprod(1 + rng.normal(0.0004, 0.012, (10000, 29)), axis=1)[:, -1] - 1
+            terminal = np.cumprod(
+                1 + rng.normal(0.0004, 0.012, (10000, _MC_DAYS)), axis=1
+            )[:, -1] - 1
             hurdle_pct = float(np.mean(terminal >= 0.03) * 100)
 
         results = {
@@ -673,10 +690,14 @@ def generate_results_json(returns: pd.Series, output_dir: Path) -> Path:
             from quant_monitor.backtest.simulation import run_monte_carlo_simulation
             rng = np.random.default_rng(42)
             hist = pd.DataFrame(rng.normal(0.0004, 0.012, (252, 3)), columns=["A", "B", "C"])
-            _, terminal = run_monte_carlo_simulation(hist, days_forward=29, num_simulations=10000)
+            _, terminal = run_monte_carlo_simulation(
+                hist, days_forward=_MC_DAYS, num_simulations=10000
+            )
         except Exception:
             rng = np.random.default_rng(42)
-            terminal = np.cumprod(1 + rng.normal(0.0004, 0.012, (10000, 29)), axis=1)[:, -1] - 1
+            terminal = np.cumprod(
+                1 + rng.normal(0.0004, 0.012, (10000, _MC_DAYS)), axis=1
+            )[:, -1] - 1
 
         hurdle_pct = float(np.mean(terminal >= 0.03) * 100)
 

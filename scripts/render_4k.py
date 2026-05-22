@@ -4,10 +4,9 @@ import sys
 import time
 from pathlib import Path
 
-
 SCENE_GROUPS = [
-    (Path("docs/combined_scenes.py"), r"class\s+(Vis_[a-zA-Z_0-9]+)\("),
-    (Path("docs/project_scenes.py"), r"class\s+(Scene\d+_[a-zA-Z_0-9]+)\("),
+    (Path("docs/archive/manim/combined_scenes.py"), r"class\s+(Vis_[a-zA-Z_0-9]+)\("),
+    (Path("docs/archive/manim/project_scenes.py"), r"class\s+(Scene\d+_[a-zA-Z_0-9]+)\("),
 ]
 MEDIA_DIR = Path("media")
 MASTER_OUTPUT = MEDIA_DIR / "videos" / "master_4k" / "bwc_master_4k.mp4"

@@ -1,6 +1,6 @@
 """Render all 17 curated Manim scenes at 4K 60fps.
 
-Outputs MP4 files to frontend/media/ for embedding in the microsite.
+Outputs MP4 files to frontend/assets/videos/ for embedding in the microsite.
 
 Usage:
     uv run python scripts/render_manim.py
@@ -15,8 +15,9 @@ import subprocess
 import sys
 from pathlib import Path
 
-SCENES_FILE = Path("docs/scenes_final.py")
-OUTPUT_DIR = Path("frontend/media")
+SCENES_FILE = Path("docs/archive/manim/scenes_final.py")
+OUTPUT_DIR = Path("frontend/assets/videos")
+HERO_SCENE = "Scene01_GeometricBrownianMotion"
 
 ALL_SCENES = [
     "Scene01_GeometricBrownianMotion",
@@ -83,6 +84,20 @@ def main() -> None:
             success += 1
 
     print(f"\nComplete: {success}/{total} scenes rendered to {OUTPUT_DIR}")
+    _maybe_copy_hero()
+
+
+def _maybe_copy_hero() -> None:
+    """Copy first scene MP4 to hero-render.mp4 for landing page."""
+    import shutil
+
+    hero = OUTPUT_DIR / "hero-render.mp4"
+    candidates = list(OUTPUT_DIR.rglob(f"{HERO_SCENE}.mp4"))
+    if not candidates:
+        candidates = list(OUTPUT_DIR.rglob("*.mp4"))
+    if candidates:
+        shutil.copy2(candidates[0], hero)
+        print(f"Hero reel: {hero}")
 
 
 if __name__ == "__main__":

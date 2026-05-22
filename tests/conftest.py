@@ -41,7 +41,9 @@ def mock_env():
 @pytest.fixture(autouse=True)
 def bypass_sleep():
     """Bypass explicit time.sleep() and prompt asks to prevent tests from hanging or running too slow."""
-    with patch("time.sleep", return_value=None):
-        with patch("rich.prompt.Prompt.ask", return_value="5"): # default option to prevent looping
-            yield
+    with (
+        patch("time.sleep", return_value=None),
+        patch("rich.prompt.Prompt.ask", return_value="5"),  # default option to prevent looping
+    ):
+        yield
 

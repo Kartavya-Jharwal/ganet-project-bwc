@@ -98,12 +98,12 @@ class TechnicalModel:
             lower = mid - bb_std * std
             price = close.iloc[-1]
             u = upper.iloc[-1]
-            l = lower.iloc[-1]
-            band_width = u - l
+            low_band = lower.iloc[-1]
+            band_width = u - low_band
             if not np.isnan(band_width) and band_width > 0:
                 if (u - price) / band_width < 0.05:
                     bb_signal = -0.5
-                elif (price - l) / band_width < 0.05:
+                elif (price - low_band) / band_width < 0.05:
                     bb_signal = 0.5
         except Exception:
             bb_signal = 0.0

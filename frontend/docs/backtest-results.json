@@ -1,19 +1,19 @@
 {
     "naive_equal_weight": {
-        "total_return": 0.053095362367024945,
-        "annualized_sharpe": 1.3409404161355152,
-        "annualized_sortino": 2.749047330684943,
-        "max_drawdown": -0.09393283487455167
+        "total_return": 0.39870974096356004,
+        "annualized_sharpe": 2.790218060647556,
+        "annualized_sortino": 4.136682780080401,
+        "max_drawdown": -0.05357876585832134
     },
     "topological_hrp": {
-        "total_return": 0.05227889620884962,
-        "annualized_sharpe": 1.3211451781839252,
-        "annualized_sortino": 2.7046031222493814,
-        "max_drawdown": -0.09418779007174022
+        "total_return": 0.3406376076100808,
+        "annualized_sharpe": 3.187011576706435,
+        "annualized_sortino": 4.797046736639021,
+        "max_drawdown": -0.0502032135879772
     },
     "delta": {
-        "sharpe_improvement": -0.019795237951589995,
-        "drawdown_reduction": 0.0002549551971885444
+        "sharpe_improvement": 0.3967935160588789,
+        "drawdown_reduction": -0.00337555227034414
     },
-    "windows_tested": 2
+    "windows_tested": 11
 }

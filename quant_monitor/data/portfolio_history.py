@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import logging
 import re
-from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -50,6 +49,15 @@ _SECTOR_MAP: dict[str, str] = {
     "IBB": "Healthcare",
     "ORCL": "Software",
     "SIEGY": "Industrials/Infrastructure",
+    "GLD": "Commodities",
+    "XLF": "Financials",
+    "XLI": "Industrials",
+    "CAT": "Industrials",
+    "ESGU": "Broad Market",
+    "CENX": "Materials",
+    "AA": "Materials",
+    "SH": "Inverse/Hedge",
+    "PSQ": "Inverse/Hedge",
 }
 
 
@@ -76,11 +84,22 @@ class PortfolioHistoryEngine:
 
         if csv_path is None:
             csv_path = cfg.project.get(
-                "trade_history", "tests/test_data/TransactionHistory_2026-03-13.csv"
+                "trade_history", "tests/test_data/TransactionHistory_2026-05-13.csv"
             )
-        self._csv_path = Path(csv_path)
+        _repo_root = Path(__file__).resolve().parent.parent.parent
+        _raw = Path(csv_path)
+        self._csv_path = (
+            _raw.resolve()
+            if _raw.is_absolute()
+            else (_repo_root / _raw).resolve()
+        )
         self._initial_capital = initial_capital or cfg.initial_capital
         self._benchmark = benchmark or cfg.benchmark
+        # Cap reconstructed history at valuation_date (simulation freeze) vs wall clock.
+        self._history_end = min(
+            pd.Timestamp.now().normalize(),
+            pd.Timestamp(cfg.valuation_date).normalize(),
+        )
 
         self._trade_log: pd.DataFrame | None = None
         self._prices: pd.DataFrame | None = None
@@ -97,6 +116,17 @@ class PortfolioHistoryEngine:
     def get_trade_log(self) -> pd.DataFrame:
         """Parse the transaction CSV into a clean DataFrame."""
         if self._trade_log is not None:
+            return self._trade_log
+
+        from quant_monitor.data.journal_trade_csv import (
+            is_journal_trade_csv,
+            parse_journal_trade_csv,
+        )
+
+        if is_journal_trade_csv(self._csv_path):
+            df = parse_journal_trade_csv(self._csv_path)
+            df["sector"] = df["symbol"].map(_SECTOR_MAP).fillna("Other")
+            self._trade_log = df
             return self._trade_log
 
         df = pd.read_csv(self._csv_path)
@@ -185,16 +215,19 @@ class PortfolioHistoryEngine:
         trades = self.get_trade_log()
         prices = self._fetch_prices()
 
-        bdays = pd.bdate_range(
-            start=trades["date"].min(),
-            end=pd.Timestamp.now().normalize(),
+        hist_end = getattr(
+            self,
+            "_history_end",
+            pd.Timestamp.now().normalize(),
         )
+
+        bdays = pd.bdate_range(start=trades["date"].min(), end=hist_end)
         bdays = bdays[bdays.isin(prices.index) | (bdays <= prices.index.max())]
         bdays = bdays.intersection(prices.index)
 
-        all_tickers = sorted(
-            set(trades["symbol"].unique()) - {self._benchmark}
-        )
+        # Include every traded symbol, including the benchmark (e.g. SPY can be
+        # held in the portfolio while still used as the benchmark return series).
+        all_tickers = sorted(set(trades["symbol"].unique()))
 
         positions = pd.DataFrame(0.0, index=bdays, columns=all_tickers)
         cash = pd.Series(self._initial_capital, index=bdays, dtype=float)
@@ -305,10 +338,7 @@ class PortfolioHistoryEngine:
         sector_weights = pd.DataFrame(0.0, index=weights.index, columns=[])
 
         for ticker in weights.columns:
-            if ticker == "CASH":
-                sector = "Cash"
-            else:
-                sector = _SECTOR_MAP.get(ticker, "Other")
+            sector = "Cash" if ticker == "CASH" else _SECTOR_MAP.get(ticker, "Other")
             if sector not in sector_weights.columns:
                 sector_weights[sector] = 0.0
             sector_weights[sector] += weights[ticker]
@@ -364,10 +394,7 @@ class PortfolioHistoryEngine:
                 auto_adjust=True,
                 progress=False,
             )
-            if isinstance(etfs.columns, pd.MultiIndex):
-                closes = etfs["Close"]
-            else:
-                closes = etfs
+            closes = etfs["Close"] if isinstance(etfs.columns, pd.MultiIndex) else etfs
 
             rets = closes.pct_change().dropna()
             rf_daily = 0.04 / 252  # ~4% annualized risk-free proxy
@@ -401,11 +428,11 @@ class PortfolioHistoryEngine:
             calmar_ratio,
             conditional_var,
             cornish_fisher_var,
+            drawdown_duration,
             max_drawdown,
             sharpe_ratio,
             sortino_ratio,
             tail_ratio,
-            drawdown_duration,
         )
 
         returns = self.get_daily_returns()
@@ -462,14 +489,16 @@ class PortfolioHistoryEngine:
 
         returns = self.get_daily_returns()
         factors = self.get_factor_returns()
-        rf = factors.get("RF", 0)
-        excess_returns = returns - rf
+        rf = factors["RF"]
+        excess_returns = (returns.astype(float).sub(rf, axis=0)).rename(
+            "portfolio_excess"
+        )
 
         aligned = pd.concat([excess_returns, factors], axis=1).dropna()
         if len(aligned) < 10:
             return {"error": "insufficient data"}
 
-        port_excess = aligned["daily_returns"]
+        port_excess = aligned["portfolio_excess"]
         factor_df = aligned[["MKT-RF", "SMB", "HML", "MOM"]]
 
         ff3 = fama_french_3_factor(port_excess, factor_df)
@@ -562,10 +591,14 @@ class PortfolioHistoryEngine:
         return brinson_fachler_attribution(pw, pr, bw, br)
 
     def run_monte_carlo(
-        self, days_forward: int = 29, num_simulations: int = 10_000
+        self, days_forward: int | None = None, num_simulations: int = 10_000
     ) -> tuple[np.ndarray, np.ndarray]:
         """Run Monte Carlo simulation using real historical covariance."""
         from quant_monitor.backtest.simulation import run_monte_carlo_simulation
+        from quant_monitor.config import cfg
+
+        if days_forward is None:
+            days_forward = cfg.mc_forward_days
 
         prices = self._fetch_prices()
         weights = self.get_daily_weights()

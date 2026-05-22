@@ -28,24 +28,36 @@ theme:
     - content.code.copy
     - toc.follow
 
+exclude_docs: |
+  archive/**
+  DOCS_LAYOUT.md
+  *.py
+
 nav:
   - Home: index.md
+  - Deliverables (BWX): deliverables-index.md
   - Getting Started:
     - Development Guide: development.md
     - Architecture: architecture.md
     - Design Decisions: design.md
   - Implementation:
-    - Phase 0 - Scaffold: phase-0-scaffold.md
-    - Phase 11-21 Implementation Track: phase-11-21-implementation-track.md
-    - Phase 22+ Advanced Analytics & UI: phase-22-onwards-advanced-analytics.md
-    - Phase FINALE - The Endgame: phase-finale-endgame.md
-    - Development Roadmap: roadmap.md
-    - Demo Day Progress Report: progress-report.md
+    - Phase index (0-21): phases/README.md
+    - Phase 0 - Scaffold: phases/phase-00-scaffold.md
+    - Phases 1-5: phases/phase-01-05-roadmap.md
+    - Phases 6-10: phases/phase-06-10-core.md
+    - Phases 11-21: phases/phase-11-21-track.md
+    - Phase 22+ Advanced Analytics: phase-22-onwards-advanced-analytics.md
+    - Phase FINALE - Endgame: phase-finale-endgame.md
+    - Roadmap (detail): roadmap.md
+    - Progress report: progress-report.md
   - Results:
     - Performance: performance.md
     - Interactive Dashboard: interactive-dashboard.md
     - Backtest Results: backtest-results.md
+    - Monte Carlo Forward: monte-carlo-forward.md
     - Signal History: signals-history.md
+  - Review:
+    - External Reviewers: external-review.md
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -62,6 +74,9 @@ markdown_extensions:
   - attr_list
   - md_in_html
   - tables
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search

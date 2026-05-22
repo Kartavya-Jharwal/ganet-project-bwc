@@ -390,13 +390,13 @@ def generate_pdf(benchmark_ticker: str = "SPY", output_path: str | None = None):
         out_file = Path(output_path)
         out_file.parent.mkdir(parents=True, exist_ok=True)
     else:
-        out_file = Path("docs") / "BWC_Institutional_Tearsheet.pdf"
+        out_file = Path("deliverables/source/BWC_Institutional_Tearsheet.pdf")
     pdf.output(str(out_file))
     print(f"✅ Generated Tearsheet -> {out_file}")
 
 
 def generate_tearsheet(
-    output_path: str = "docs/BWC_Institutional_Tearsheet.pdf",
+    output_path: str = "deliverables/source/BWC_Institutional_Tearsheet.pdf",
     benchmark: str = "SPY",
 ) -> None:
     """Public entry point for the build pipeline."""
@@ -417,7 +417,7 @@ if __name__ == "__main__":
         "--output",
         type=str,
         default=None,
-        help="Output path for the PDF (default: docs/BWC_Institutional_Tearsheet.pdf).",
+        help="Output path for the PDF (default: deliverables/source/BWC_Institutional_Tearsheet.pdf).",
     )
     args = parser.parse_args()
 

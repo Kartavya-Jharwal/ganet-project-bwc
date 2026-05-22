@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def ema(series: pd.Series, period: int) -> pd.Series:
     """Exponential Moving Average."""
-    # Phase 2 implementation – standard EMA using pandas
+    # Phase 2 implementation - standard EMA using pandas
     # adjust=False yields the recursive EMA formula used in finance
     return series.ewm(span=period, adjust=False).mean()
 

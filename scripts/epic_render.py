@@ -12,7 +12,7 @@ def parse_scenes(file_path):
 
 
 def render_scenes():
-    scenes_file = "docs/combined_scenes.py"
+    scenes_file = "docs/archive/manim/combined_scenes.py"
     scenes = parse_scenes(scenes_file)
 
     if not scenes:

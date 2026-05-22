@@ -32,7 +32,6 @@ def probabilistic_sharpe_ratio(
 
     n = len(returns)
     sr_daily = (returns.mean() - risk_free_rate) / returns.std()
-    sr_ann = sr_daily * np.sqrt(252)
 
     # Skewness and kurtosis of daily returns
     skew = returns.skew()
@@ -91,7 +90,7 @@ def probability_of_backtest_overfitting(matrix_of_returns: pd.DataFrame) -> floa
     # Split the return dataset into evenly sized partitions
     T, N = matrix_of_returns.shape
     partitions = 4  # e.g., 4 subsets for combinatorial comparison
-    if T < partitions:
+    if partitions > T:
         return 0.0
         
     subset_size = T // partitions

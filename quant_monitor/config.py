@@ -94,6 +94,11 @@ class Config(BaseModel):
     def sunset_date(self) -> str:
         return self.project.get("sunset_date", "2026-05-01")
 
+    @property
+    def mc_forward_days(self) -> int:
+        """Monte Carlo horizon: valuation_date → sunset_date (calendar days)."""
+        return int(self.project.get("mc_forward_days", 21))
+
 
 def load_config(config_path: Path = CONFIG_PATH) -> Config:
     """Load configuration from TOML file and environment."""

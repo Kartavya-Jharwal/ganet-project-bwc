@@ -184,13 +184,18 @@ def export_backtest_results():
     if isinstance(cached_results, dict) and "error" in cached_results:
         lines.append(f"_Backtest could not be completed: {cached_results['error']}_")
     elif isinstance(cached_results, dict):
-        # Build comparison table from model results
-        models = list(cached_results.keys())
+        # Build comparison table from model results (skip int/float leaves like windows_tested)
+        models = [
+            k
+            for k, v in cached_results.items()
+            if isinstance(v, dict) and k not in {"delta"}
+        ]
         if models:
-            metrics_keys = [
-                k for k in cached_results[models[0]]
-                if k not in {"window_details"}
-            ]
+            metrics_keys: list[str] = []
+            for m in models:
+                for key in cached_results[m]:
+                    if key != "window_details" and key not in metrics_keys:
+                        metrics_keys.append(key)
             lines.extend([
                 "## Walk-Forward Backtest Comparison",
                 "",
@@ -206,6 +211,18 @@ def export_backtest_results():
                     else:
                         row_vals.append(str(val))
                 lines.append(f"| {metric} | " + " | ".join(row_vals) + " |")
+            if "delta" in cached_results and isinstance(cached_results["delta"], dict):
+                lines.extend(["", "### Delta (HRp vs baseline)", ""])
+                for k, v in cached_results["delta"].items():
+                    if isinstance(v, float):
+                        lines.append(f"- **{k}:** {v:.4f}")
+                    else:
+                        lines.append(f"- **{k}:** {v}")
+            if "windows_tested" in cached_results:
+                lines.append("")
+                lines.append(
+                    f"_Windows tested: **{cached_results['windows_tested']}**_"
+                )
     else:
         lines.append("_No backtest results available._")
 

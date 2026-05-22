@@ -71,6 +71,16 @@
     position: relative;
 }
 
+.hero-video {
+    display: none;
+    width: 100%;
+    height: 100%;
+    min-height: 360px;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+}
+
 /* --- CTA Button --- */
 .cta-btn {
     display: inline-block;

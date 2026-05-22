@@ -1,6 +1,9 @@
 # Demo Day Progress Report
 
-Date: March 13, 2026
+!!! warning "SUNSET COMPLETE"
+    Engineering freeze **2026-05-01**. Public surfaces: [deliverables/](https://github.com/Kartavya-Jharwal/ganet-project-bwc/tree/main/deliverables), [microsite](https://kartavya-jharwal.github.io/ganet-project-bwc/), [MkDocs](index.md). Rebuild: `scripts/sunset_freeze.ps1`.
+
+Date: March 13, 2026 (updated at sunset May 2026)
 
 ## Executive Summary
 

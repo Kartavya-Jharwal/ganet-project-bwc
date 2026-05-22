@@ -11,7 +11,7 @@ import pandas as pd
 
 def run_monte_carlo_simulation(
     historical_returns: pd.DataFrame,
-    days_forward: int = 29,
+    days_forward: int = 21,
     num_simulations: int = 10000,
     jump_diffusion: bool = True,
 ) -> tuple[np.ndarray, np.ndarray]:

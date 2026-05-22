@@ -16,7 +16,7 @@ env/
 # uv
 .python-version
 
-# Project data
+# Project data (regenerate locally)
 portfolio.duckdb
 portfolio.duckdb.wal
 .cache/
@@ -27,9 +27,10 @@ portfolio.duckdb.wal
 .env.*
 !.env.example
 
-# IDE
+# IDE / editor
 .vscode/
 .idea/
+.cursor/
 *.swp
 *.swo
 *~
@@ -42,29 +43,42 @@ desktop.ini
 # Jupyter
 .ipynb_checkpoints/
 
-# Coverage
+# Coverage / typing / lint caches
 htmlcov/
 .coverage
 .coverage.*
 coverage.xml
-
-# mypy
 .mypy_cache/
-
-# pytest
 .pytest_cache/
+.ruff_cache/
 
-# Heroku
+# Heroku legacy
 requirements.txt
 
-# MkDocs build output
+# MkDocs build output (also emitted under frontend/docs by mkdocs.yml)
 site/
 
 # Scrapy
 *.log
+debug*.log
 *.jl
 
 # Manim Output
 media/
 partial_movie_files/
+frontend/assets/videos/Tex/
+frontend/assets/videos/texts/
+frontend/assets/videos/images/
+frontend/assets/videos/videos/
 
+# Client working copy (canonical packet: deliverables/source/)
+BWC/
+
+# Orphan scaffold (data lives under quant_monitor/data/ and frontend/data/)
+/data/
+
+# Legacy paths (data now under deliverables/ or tests/)
+docs/Different format-transaction history.csv
+docs/TransactionHistory_2026-05-13.csv
+docs/viz_output/
+docs/__pycache__/
