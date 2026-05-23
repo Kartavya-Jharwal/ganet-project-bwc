@@ -16,12 +16,15 @@
 <body class="theme-dark noise-bg">
     <div class="texture-overlay"></div>
 
+    <div class="sunset-freeze-bar text-mono" role="status">TEAM BWX · SUNSET FREEZE · VALUATION 2026-04-10 · REPORTING 2026-05-01</div>
     <nav class="l-navbar">
-        <a href="index.html" class="nav-brand text-display">PROJECT BWC</a>
+        <a href="index.html" class="nav-brand text-display">BWX · BWC</a>
         <div class="nav-links">
-            <a href="research.html" class="nav-link">Methodology</a>
-            <a href="results.html" class="nav-link active">Telemetry</a>
-            <a href="journal.html" class="nav-link">Audit Log</a>
+            <a href="research.html" class="nav-link">Program</a>
+            <a href="results.html" class="nav-link active">Quant telemetry</a>
+            <a href="journal.html" class="nav-link">Audit log</a>
+            <a href="deliverables/index.html" class="nav-link">Deliverables</a>
+            <a href="./assets/post-mortem.pdf" class="nav-link" download>Post-mortem</a>
         </div>
         <div class="nav-status">
             <div class="status-indicator" id="status-dot"></div>
@@ -38,6 +41,7 @@
         <!-- Summary Metrics Table -->
         <section class="metrics-table-section reveal-on-scroll">
             <h2 class="text-display" style="font-size:1rem;margin-bottom:var(--spacing-6);letter-spacing:0.08em;">AUDIT METRICS</h2>
+            <p class="text-muted text-mono" style="font-size:0.75rem;margin-bottom:var(--spacing-6);letter-spacing:0.04em;max-width:90ch;">Supplementary payloads: <a href="./data/full-metrics.json" style="color:var(--color-accent-primary);">full-metrics.json</a> · <a href="./data/behavioural-audit.json" style="color:var(--color-accent-primary);">behavioural-audit.json</a> · <a href="./data/backtest-results.json" style="color:var(--color-accent-primary);">backtest-results.json</a> · <a href="./data/mc-forward-results.json" style="color:var(--color-accent-primary);">mc-forward-results.json</a></p>
             <div class="metrics-table-wrap">
                 <table class="metrics-table">
                     <thead>
@@ -145,7 +149,8 @@
                 <p class="text-muted" style="font-size:0.8rem;margin-top:0.5rem;">Quantitative audit of human portfolio decisions under live constraints. Not investment advice.</p>
             </div>
             <div class="footer-col">
-                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE: 2026-05-01</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">VALUATION / LAST FILLS (CSV): 2026-04-10</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE (MC WINDOW END): 2026-05-01</p>
                 <p class="text-muted text-mono" style="font-size:0.7rem;">STATIC ARCHIVE / GITHUB PAGES</p>
             </div>
         </div>

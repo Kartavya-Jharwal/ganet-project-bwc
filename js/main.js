@@ -1,27 +1,12 @@
 /**
  * BWC-QUANT | Frontend Hydration Engine
- * Fetches results.json, populates KPIs, handles scroll reveals and nav state.
+ * Static archive: loads metrics from data/results.json only (no live Appwrite).
  */
 
 (function () {
     'use strict';
 
     const DATA_PATH = './data/results.json';
-
-    const FALLBACK_DATA = {
-        mc_hurdle: '94.2%',
-        cf_var: '-2.14%',
-        beta: '0.85',
-        sharpe: '1.42',
-        max_dd: '-8.7%',
-        ann_return: '12.3%',
-        sortino: '1.89',
-        calmar: '1.41',
-        win_rate: '58.3%',
-        profit_factor: '1.67'
-    };
-
-    // --- KPI Hydration ---
 
     function populateKPIs(data) {
         const mapping = {
@@ -64,23 +49,18 @@
     }
 
     async function fetchAndHydrate() {
-        let data = FALLBACK_DATA;
-
         try {
             const res = await fetch(DATA_PATH);
-            if (res.ok) {
-                const json = await res.json();
-                data = Object.assign({}, FALLBACK_DATA, json);
+            if (!res.ok) {
+                return;
             }
+            const data = await res.json();
+            populateKPIs(data);
+            populateResultsTable(data);
         } catch (_) {
-            // Static archive mode — use fallback
+            // Static archive — metrics appear after build_frontend_assets
         }
-
-        populateKPIs(data);
-        populateResultsTable(data);
     }
-
-    // --- Scroll Reveal via IntersectionObserver ---
 
     function initScrollReveal() {
         const targets = document.querySelectorAll('.reveal-on-scroll');
@@ -101,8 +81,6 @@
         targets.forEach((el) => observer.observe(el));
     }
 
-    // --- Nav Active State ---
-
     function setActiveNav() {
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
         const links = document.querySelectorAll('.nav-link');
@@ -117,69 +95,30 @@
         });
     }
 
-    // --- Status Badge ---
-
     function initStatusBadge() {
         const dot = document.getElementById('status-dot');
         const label = document.getElementById('status-label');
         if (!dot || !label) return;
 
-        try {
-            if (typeof Appwrite !== 'undefined' && Appwrite.Client) {
-                const client = new Appwrite.Client()
-                    .setEndpoint('https://cloud.appwrite.io/v1')
-                    .setProject('bwc-quant-live');
-
-                client.subscribe(
-                    'databases.bwc_db.collections.signals.documents',
-                    () => {
-                        dot.style.backgroundColor = 'var(--color-quant-positive)';
-                        label.textContent = 'LIVE';
-                    }
-                );
-
-                dot.style.backgroundColor = 'var(--color-quant-positive)';
-                label.textContent = 'LIVE';
-                return;
-            }
-        } catch (_) {
-            // Appwrite unavailable
-        }
-
         dot.style.backgroundColor = 'var(--color-text-muted)';
         label.textContent = 'STATIC ARCHIVE';
     }
 
-    // --- Video Background Mount ---
-
     function mountVideoBackground() {
-        const container = document.querySelector('.video-bg');
-        if (!container) return;
+        const video = document.querySelector('.hero-video');
+        const fallback = document.getElementById('hero-fallback');
+        if (!video) return;
 
-        const placeholder = container.querySelector('.viz-placeholder');
-        if (!placeholder) return;
+        const hideFallback = () => {
+            if (fallback) fallback.style.display = 'none';
+            video.style.display = 'block';
+        };
 
-        // Will be replaced when video assets exist
-        // Checks for a known video file and mounts if available
-        const video = document.createElement('video');
-        video.autoplay = true;
-        video.loop = true;
-        video.muted = true;
-        video.playsInline = true;
-        video.style.cssText = 'width:100%;height:100%;object-fit:cover;';
-
-        const source = document.createElement('source');
-        source.src = './assets/videos/hero-render.mp4';
-        source.type = 'video/mp4';
-        video.appendChild(source);
-
-        video.addEventListener('canplay', () => {
-            container.innerHTML = '';
-            container.appendChild(video);
+        video.addEventListener('canplay', hideFallback);
+        video.addEventListener('error', () => {
+            video.style.display = 'none';
         });
     }
-
-    // --- Init ---
 
     document.addEventListener('DOMContentLoaded', () => {
         setActiveNav();

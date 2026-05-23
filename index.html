@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project BWC | Quantitative Audit Engine</title>
-    <meta name="description" content="Project BWC quantifies the basis-point cost of human discretion by auditing live execution against forensic attribution, probabilistic measurement, and regime-aware signaling.">
+    <title>Team BWX — Project BWC | Investment Post-Mortem</title>
+    <meta name="description" content="Team BWX (Hult): public post-mortem of a $1M investment simulation. Client deliverables are primary; the quant audit engine is one reproducible module.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
@@ -16,12 +16,18 @@
 <body class="theme-dark noise-bg">
     <div class="texture-overlay"></div>
 
+    <div class="sunset-freeze-bar text-mono" role="status">
+        TEAM BWX · SUNSET FREEZE · VALUATION 2026-04-10 · REPORTING 2026-05-01
+    </div>
+
     <nav class="l-navbar reveal-step-1">
-        <a href="index.html" class="nav-brand text-display">PROJECT BWC</a>
+        <a href="index.html" class="nav-brand text-display">BWX · BWC</a>
         <div class="nav-links">
-            <a href="research.html" class="nav-link">Methodology</a>
-            <a href="results.html" class="nav-link">Telemetry</a>
-            <a href="journal.html" class="nav-link">Audit Log</a>
+            <a href="research.html" class="nav-link">Program</a>
+            <a href="results.html" class="nav-link">Quant telemetry</a>
+            <a href="journal.html" class="nav-link">Audit log</a>
+            <a href="deliverables/index.html" class="nav-link">Deliverables</a>
+            <a href="./assets/post-mortem.pdf" class="nav-link" download>Post-mortem PDF</a>
         </div>
         <div class="nav-status">
             <div class="status-indicator" id="status-dot"></div>
@@ -31,21 +37,25 @@
 
     <main class="l-grid-main">
         <header class="l-header reveal-step-2">
-            <div class="hero-kicker text-mono text-accent">LIVE HUMAN DECISION AUDIT / NOT A RETAIL TRADING BOT</div>
-            <h1 class="text-hero">Project BWC quantifies the basis-point cost of human discretion inside a live portfolio simulation.</h1>
-            <p class="text-body-large text-muted"><span class="text-mono">60 DAYS</span> / <span class="text-mono">$1M LIVE DEPLOYMENT</span> / <span class="text-mono">3-LAYER ARCHITECTURE</span> built by an undergraduate to audit human failure against systematic logic using forensic attribution, probabilistic measurement, and regime-aware signaling.</p>
+            <div class="hero-kicker text-mono text-accent">TEAM BWX · HULT INVESTMENT CHALLENGE · PUBLIC POST-MORTEM</div>
+            <h1 class="text-hero">Project BWC was a live $1M program—this site archives the client story and the quant module that audited it.</h1>
+            <p class="text-body-large text-muted"><span class="text-mono">DELIVERABLES FIRST</span> — charter, post-mortem, and trading record in <span class="text-mono">deliverables/</span>. <span class="text-mono">QUANT LAYER</span> — regime-aware signals, HRP topology, and walk-forward tests in <span class="text-mono">quant_monitor/</span> (one slice of total capability).</p>
             <div class="hero-actions">
-                <a href="results.html" class="cta-btn">View Live Telemetry</a>
-                <a href="research.html" class="cta-btn cta-btn-secondary">Read the Methodology PDF</a>
+                <a href="./assets/post-mortem.pdf" class="cta-btn" download>Client post-mortem (PDF)</a>
+                <a href="results.html" class="cta-btn cta-btn-secondary">Quant telemetry</a>
+                <a href="docs/index.html" class="cta-btn cta-btn-secondary">Technical docs</a>
             </div>
         </header>
 
         <section class="video-hero reveal-step-2" style="grid-column: 1 / -1;">
             <div class="video-bg">
-                <div class="viz-placeholder landing-proof-placeholder">
+                <video class="hero-video" autoplay muted loop playsinline poster="./assets/videos/poster.svg" aria-label="Manim proof reel">
+                    <source src="./assets/videos/hero-render.mp4" type="video/mp4">
+                </video>
+                <div class="viz-placeholder landing-proof-placeholder" id="hero-fallback">
                     <div class="proof-placeholder-copy">
-                        <p class="text-muted text-mono proof-placeholder-title">[ MANIM PROOF REEL / AWAITING RENDER ]</p>
-                        <p class="text-muted text-mono proof-placeholder-line">VAR GEOMETRY / FACTOR ORTHOGONALITY / BEHAVIORAL DRAG SURFACE</p>
+                        <p class="text-muted text-mono proof-placeholder-title">[ PROOF REEL — RUN scripts/render_manim.py ]</p>
+                        <p class="text-muted text-mono proof-placeholder-line">GBM · VaR GEOMETRY · REGIME PHASE SHIFT</p>
                     </div>
                 </div>
             </div>
@@ -137,7 +147,8 @@
                 <p class="text-muted" style="font-size:0.8rem;margin-top:0.5rem;">Quantitative audit of human portfolio decisions under live constraints. Not investment advice.</p>
             </div>
             <div class="footer-col">
-                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE: 2026-05-01</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">VALUATION / LAST FILLS (CSV): 2026-04-10</p>
+                <p class="text-muted text-mono" style="font-size:0.7rem;">FREEZE DATE (MC WINDOW END): 2026-05-01</p>
                 <p class="text-muted text-mono" style="font-size:0.7rem;">STATIC ARCHIVE / GITHUB PAGES</p>
             </div>
         </div>

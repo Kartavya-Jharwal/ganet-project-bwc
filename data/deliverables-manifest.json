@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-05-23T06:45:02.669734+00:00",
+  "team": "BWX",
+  "project": "BWC",
+  "source_dir": "deliverables/source",
+  "post_mortem_pdf": "Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf",
+  "file_count": 9,
+  "files": [
+    {
+      "name": "BWC_Institutional_Tearsheet.pdf",
+      "size_bytes": 6913,
+      "href": "./deliverables/source/BWC_Institutional_Tearsheet.pdf"
+    },
+    {
+      "name": "CHL0200_InvestmentChallenge_PeerEvaluationForm.docx",
+      "size_bytes": 33345,
+      "href": "./deliverables/source/CHL0200_InvestmentChallenge_PeerEvaluationForm.docx"
+    },
+    {
+      "name": "Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf",
+      "size_bytes": 39837001,
+      "href": "./deliverables/source/Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf"
+    },
+    {
+      "name": "Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pptx",
+      "size_bytes": 30573601,
+      "href": "./deliverables/source/Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pptx"
+    },
+    {
+      "name": "Different format-transaction history.csv",
+      "size_bytes": 36578,
+      "href": "./deliverables/source/Different format-transaction history.csv"
+    },
+    {
+      "name": "Final Excel model.xlsx",
+      "size_bytes": 258150,
+      "href": "./deliverables/source/Final Excel model.xlsx"
+    },
+    {
+      "name": "Investment-CHL-Team-5-BWC-1 (1).docx",
+      "size_bytes": 149308,
+      "href": "./deliverables/source/Investment-CHL-Team-5-BWC-1 (1).docx"
+    },
+    {
+      "name": "Investment_Team_Charter_Team_5 (1).docx",
+      "size_bytes": 3433161,
+      "href": "./deliverables/source/Investment_Team_Charter_Team_5 (1).docx"
+    },
+    {
+      "name": "Trading_Log-5_Team_5 (4).2.csv",
+      "size_bytes": 13280,
+      "href": "./deliverables/source/Trading_Log-5_Team_5 (4).2.csv"
+    }
+  ]
+}
