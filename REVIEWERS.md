@@ -1,6 +1,8 @@
 # External code review guide
 
-**Team BWX / Project BWC** — this guide is for **software auditors**. The primary public narrative (client post-mortem, charter, Excel model) lives in [`deliverables/`](../deliverables/README.md); faculty feedback is already incorporated there.
+**Team BWC / Project BWC** — archived `2026-05-01`. This guide is for **software auditors** and fork maintainers.
+
+**Author:** [Kartavya Jharwal](https://kartavya.tech) · MIT — preserve copyright when forking. The primary public narrative (client post-mortem, charter, Excel model) lives in [`deliverables/`](../deliverables/README.md); faculty feedback is already incorporated there.
 
 This document orients code reviewers who do not have Doppler secrets or live Appwrite access.
 
@@ -21,7 +23,7 @@ This document orients code reviewers who do not have Doppler secrets or live App
 
 ```
 project-bwc/
-├── deliverables/           # Team BWX committee packet (primary narrative)
+├── deliverables/           # Team BWC committee packet (primary narrative)
 ├── quant_monitor/          # Application package (audit module)
 │   ├── config.toml         # Version-controlled configuration
 │   ├── main.py             # Signal cycle entry (scheduler in main())

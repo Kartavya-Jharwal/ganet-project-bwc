@@ -1,9 +1,9 @@
-# Team BWX — Project BWC
+# Team BWC — Project BWC
 
 > Hult Investment Challenge · public engineering archive · sunset `2026-05-01`
 
 !!! success "Post-mortem framing"
-    **Deliverables** ([committee packet](deliverables-index.md)) describe the full investment program. **`quant_monitor/`** documents the systematic audit layer—topology, walk-forward tests, and behavioural metrics—not the entire BWX capability surface.
+    **Deliverables** ([committee packet](deliverables-index.md)) describe the full investment program. **`quant_monitor/`** documents the systematic audit layer—topology, walk-forward tests, and behavioural metrics—not the entire BWC capability surface.
 
 ## What this site contains
 
@@ -28,4 +28,4 @@ uv run python -m mkdocs build -f docs/mkdocs.yml --strict
 
 ---
 
-_Deployed via GitHub Pages · optional Appwrite · secrets via Doppler · Team BWX 2026._
+_Deployed via GitHub Pages · optional Appwrite · secrets via Doppler · Team BWC 2026._

@@ -35,7 +35,7 @@ exclude_docs: |
 
 nav:
   - Home: index.md
-  - Deliverables (BWX): deliverables-index.md
+  - Deliverables (BWC): deliverables-index.md
   - Getting Started:
     - Development Guide: development.md
     - Architecture: architecture.md

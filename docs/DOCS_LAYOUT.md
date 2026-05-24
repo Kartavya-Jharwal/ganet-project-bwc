@@ -6,7 +6,7 @@ MkDocs source for the technical site (built to `frontend/docs/`).
 
 | Path | Purpose |
 |------|---------|
-| `index.md` | Site home (Team BWX post-mortem framing) |
+| `index.md` | Site home (Team BWC post-mortem framing) |
 | `phases/` | Public implementation timeline (phases 0–21) |
 | `phase-22-onwards-advanced-analytics.md` | Post-21 analytics |
 | `phase-finale-endgame.md` | Sunset / endgame |

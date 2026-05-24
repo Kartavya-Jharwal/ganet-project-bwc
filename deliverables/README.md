@@ -1,4 +1,4 @@
-# Team BWX — Project BWC deliverables
+# Team BWC — Project BWC deliverables
 
 **Sunset freeze:** valuation `2026-04-10` · reporting `2026-05-01` · Hult Investment Challenge (Team 5)
 

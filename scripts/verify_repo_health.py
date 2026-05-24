@@ -93,7 +93,7 @@ def bootstrap_static_artifacts() -> bool:
             json.dumps(
                 {
                     "generated_at": datetime.now(UTC).isoformat(),
-                    "team": "BWX",
+                    "team": "BWC",
                     "project": "BWC",
                     "source_dir": "deliverables/source",
                     "post_mortem_pdf": post["name"] if post else None,
