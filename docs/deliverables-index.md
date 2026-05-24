@@ -1,6 +1,6 @@
-# Team BWX deliverables
+# Team BWC deliverables
 
-The committee packet and client post-mortem live in the repository at [`deliverables/`](https://github.com/Kartavya-Jharwal/ganet-project-bwc/tree/main/deliverables) (Team BWX, Project BWC).
+The committee packet and client post-mortem live in the repository at [`deliverables/`](https://github.com/Kartavya-Jharwal/ganet-project-bwc/tree/main/deliverables) (Team BWC, Project BWC).
 
 - **Primary narrative:** client post-mortem PDF (mirrored on the [microsite](https://kartavya-jharwal.github.io/ganet-project-bwc/assets/post-mortem.pdf))
 - **Quant audit module:** `quant_monitor/` — supplementary to the broader investment program

@@ -146,7 +146,7 @@ def build_all(output_dir: str = "frontend") -> None:
         else:
             logger.warning("Missing %s", src)
 
-    # --- 7. Committee deliverables (BWX packet) ---
+    # --- 7. Committee deliverables (BWC packet) ---
     logger.info("=== Syncing deliverables to frontend ===")
     _sync_deliverables(root)
     _write_deliverables_manifest(data_dir)
@@ -194,7 +194,7 @@ def _write_deliverables_manifest(data_dir: Path) -> None:
     )
     manifest = {
         "generated_at": datetime.now(UTC).isoformat(),
-        "team": "BWX",
+        "team": "BWC",
         "project": "BWC",
         "source_dir": "deliverables/source",
         "post_mortem_pdf": post_mortem["name"] if post_mortem else None,
@@ -232,16 +232,16 @@ def _sync_deliverables(frontend_root: Path) -> None:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team BWX Deliverables | Project BWC</title>
+    <title>Team BWC Deliverables | Project BWC</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans&family=JetBrains+Mono&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles/tokens.css">
     <link rel="stylesheet" href="../styles/layout.css">
     <link rel="stylesheet" href="../styles/pages.css">
 </head>
 <body class="theme-dark noise-bg">
-    <div class="sunset-freeze-bar text-mono" role="status">TEAM BWX · COMMITTEE DELIVERABLES · SUNSET 2026-05-01</div>
+    <div class="sunset-freeze-bar text-mono" role="status">TEAM BWC · COMMITTEE DELIVERABLES · SUNSET 2026-05-01</div>
     <nav class="l-navbar">
-        <a href="../index.html" class="nav-brand text-display">BWX · BWC</a>
+        <a href="../index.html" class="nav-brand text-display">BWC</a>
         <div class="nav-links">
             <a href="../research.html" class="nav-link">Program</a>
             <a href="../results.html" class="nav-link">Quant telemetry</a>
