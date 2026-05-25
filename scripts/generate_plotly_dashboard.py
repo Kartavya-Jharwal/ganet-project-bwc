@@ -99,8 +99,41 @@ def _get_engine():
         return None
 
 
+def _load_desk_timeline() -> dict | None:
+    """Load frozen Hult desk timeline (sheet011) when present."""
+    for path in (
+        Path("frontend/data/desk-timeline.json"),
+        Path(__file__).resolve().parent.parent / "frontend/data/desk-timeline.json",
+    ):
+        if path.is_file():
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                if data.get("series", {}).get("dates"):
+                    logger.info("Loaded desk timeline from %s", path)
+                    return data
+            except (json.JSONDecodeError, OSError) as exc:
+                logger.warning("Desk timeline unreadable at %s: %s", path, exc)
+    return None
+
+
+def _desk_returns_series() -> pd.Series | None:
+    """Daily returns from interpolated Hult desk NAV (Feb 02 – Apr 11 2026)."""
+    desk = _load_desk_timeline()
+    if desk is None:
+        return None
+    series = desk["series"]
+    idx = pd.to_datetime(series["dates"])
+    returns = pd.Series(series["daily_returns"], index=idx, name="daily_returns")
+    return returns
+
+
 def _get_real_returns() -> pd.Series:
-    """Try to load real daily returns; fall back to synthetic."""
+    """Prefer Hult desk freeze; else quant engine; else synthetic."""
+    desk_returns = _desk_returns_series()
+    if desk_returns is not None and not desk_returns.empty:
+        logger.info("Using HULT desk returns (%d days)", len(desk_returns))
+        return desk_returns
+
     engine = _get_engine()
     if engine is not None:
         try:
@@ -148,9 +181,105 @@ def _cornish_fisher_var(returns: np.ndarray, alpha: float = 0.05) -> float:
 # Individual chart generators
 # ---------------------------------------------------------------------------
 
+def generate_desk_performance(output_dir: Path) -> Path | None:
+    """Portfolio vs SPY cumulative return (Hult desk freeze) -> desk-performance.html."""
+    desk = _load_desk_timeline()
+    if desk is None:
+        logger.warning("desk-performance skipped — no desk-timeline.json")
+        return None
+
+    series = desk["series"]
+    dates = pd.to_datetime(series["dates"])
+    port_pct = series["portfolio_return_pct"]
+    spy_pct = series["spy_return_pct"]
+    ann = desk.get("annotations", {})
+    phases = desk.get("phases", [])
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=dates, y=port_pct,
+        mode="lines", name="Team 5 Portfolio",
+        line=dict(color=COLORS["blue"], width=2.5),
+        hovertemplate="%{x|%b %d}<br>%{y:.2f}%<extra>Portfolio</extra>",
+    ))
+    fig.add_trace(go.Scatter(
+        x=dates, y=spy_pct,
+        mode="lines", name="SPY Benchmark",
+        line=dict(color=COLORS["negative"], width=2, dash="dash"),
+        hovertemplate="%{x|%b %d}<br>%{y:.2f}%<extra>SPY</extra>",
+    ))
+
+    for phase in phases:
+        fig.add_vrect(
+            x0=phase["start"], x1=phase["end"],
+            fillcolor="rgba(59,130,246,0.06)",
+            line_width=0,
+            annotation_text=phase["label"],
+            annotation_position="top left",
+            annotation=dict(font=dict(size=9, color=COLORS["muted"])),
+        )
+
+    start = ann.get("start", {})
+    trough = ann.get("trough", {})
+    close = ann.get("close", {})
+    if start.get("date"):
+        fig.add_annotation(
+            x=start["date"], y=0,
+            text=start.get("label", "$1,000,000 start"),
+            showarrow=True, arrowhead=2, ay=-40,
+            font=dict(size=10, color=COLORS["text"]),
+        )
+    if trough.get("date"):
+        fig.add_annotation(
+            x=trough["date"],
+            y=trough.get("portfolio_return_pct", 0),
+            text=(
+                f"Trough: Portfolio {trough.get('portfolio_return_pct', 0):.2f}% "
+                f"vs SPY {trough.get('spy_return_pct', 0):.2f}% "
+                f"(max DD {trough.get('max_drawdown_pct', 0):.2f}%)"
+            ),
+            showarrow=True, arrowhead=2, ay=30,
+            font=dict(size=9, color=COLORS["muted"]),
+        )
+    if close.get("date"):
+        nav = close.get("portfolio_nav", 0)
+        fig.add_annotation(
+            x=close["date"], y=close.get("portfolio_return_pct", 0),
+            text=f"${nav:,.0f} close",
+            showarrow=True, arrowhead=2, ay=-35,
+            font=dict(size=10, color=COLORS["text"]),
+        )
+
+    t0 = dates.min().strftime("%b %d")
+    t1 = dates.max().strftime("%b %d %Y")
+    port_final = desk.get("portfolio_return_pct", port_pct[-1])
+    spy_final = desk.get("benchmark_return_pct", spy_pct[-1])
+    fig.update_layout(**_base_layout(
+        title=dict(
+            text=(
+                f"Performance Overview: Portfolio vs SPY | {t0} – {t1}  "
+                f"<span style='color:{COLORS['muted']};font-size:12px'>"
+                f"Final: {port_final:+.2f}% vs {spy_final:+.2f}%</span>"
+            ),
+            x=0.02,
+        ),
+        yaxis=dict(title="Cumulative Return (%)", ticksuffix="%"),
+        xaxis=dict(title=""),
+        height=460,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0),
+    ))
+    return _write_chart(fig, output_dir, "desk-performance.html")
+
+
 def generate_equity_curve(returns: pd.Series, output_dir: Path) -> Path:
     """Equity curve with high-water mark overlay -> equity-curve.html."""
-    equity = (1 + returns).cumprod() * 1_000_000
+    desk = _load_desk_timeline()
+    if desk is not None:
+        series = desk["series"]
+        idx = pd.to_datetime(series["dates"])
+        equity = pd.Series(series["portfolio_nav"], index=idx)
+    else:
+        equity = (1 + returns).cumprod() * 1_000_000
     hwm = equity.cummax()
 
     fig = go.Figure()
@@ -179,7 +308,16 @@ def generate_equity_curve(returns: pd.Series, output_dir: Path) -> Path:
 
 def generate_drawdown_profile(returns: pd.Series, output_dir: Path) -> Path:
     """Drawdown time series -> drawdown.html."""
-    dd = _compute_drawdown(returns)
+    desk = _load_desk_timeline()
+    if desk is not None:
+        nav = pd.Series(
+            desk["series"]["portfolio_nav"],
+            index=pd.to_datetime(desk["series"]["dates"]),
+        )
+        peak = nav.cummax()
+        dd = ((peak - nav) / peak).rename("drawdown")
+    else:
+        dd = _compute_drawdown(returns)
     max_dd = dd.max() * 100
 
     fig = go.Figure()
@@ -767,7 +905,12 @@ def generate_all_charts(output_dir: str | Path = "frontend/charts") -> list[Path
     out = Path(output_dir)
     returns = _get_real_returns()
 
-    paths = [
+    paths: list[Path] = []
+    desk_perf = generate_desk_performance(out)
+    if desk_perf is not None:
+        paths.append(desk_perf)
+
+    paths.extend([
         generate_equity_curve(returns, out),
         generate_drawdown_profile(returns, out),
         generate_rolling_metrics(returns, out),
@@ -779,7 +922,7 @@ def generate_all_charts(output_dir: str | Path = "frontend/charts") -> list[Path
         generate_factor_loadings(out),
         generate_brinson_attribution(out),
         generate_results_json(returns, out),
-    ]
+    ])
 
     print(f"✅ Generated {len(paths)} artifacts → {out.resolve()}")
     return paths

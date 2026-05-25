@@ -1,0 +1,42 @@
+{
+  "source": "Investment-CHL-Team-5-BWC-1 (1).htm",
+  "word_count": 2616,
+  "excerpts": [
+    {
+      "id": "executive",
+      "kicker": "EXECUTIVE SUMMARY",
+      "text": "Team 5's in the CHL-0200 Investment Challenge underperformed the benchmark by 208 basis points, closing the simulation at 956,279.80 versus an initial 1,000,000, with negative Jensen\u2019s alpha of approximately -0.000443 and an information ratio of -2.0. The key conclusion is straightforward: the portfolio\u2019s risk architecture was defensible, but the conversion of macro views into realised P&L was weak, especially during regime transitions, risk hedging implementation, and post-shock re-risking. The Team created a low-beta portfolio to invest in a market environment characterised by extreme risk, with an added crisis-hedge position. The strategy proved successful because of the sharp downturn in the stock market between late March, when the portfolio experienced a maximum drawdown of approximately -6.5%, compared with -8.5% for the benchmark.",
+      "full_report_href": "./report.html"
+    },
+    {
+      "id": "conclusion",
+      "kicker": "KEY CONCLUSION",
+      "text": "The key conclusion is straightforward: the portfolio\u2019s risk architecture was defensible, but the conversion of macro views into realised P&L was weak, especially during regime transitions, risk hedging implementation, and post-shock re-risking. The Team created a low-beta portfolio to invest in a market environment characterised by extreme risk, with an added crisis-hedge position. The strategy proved successful because of the sharp downturn in the stock market between late March, when the portfolio experienced a maximum drawdown of approximately -6.5%, compared with -8.5% for the benchmark. The low portfolio beta of 0.627 at that point in time also supports the effectiveness of the portfolio construction. However, one of the main flaws in Team 5's investment strategy is that their portfolio underperformed during the recovery after the ceasefire declared on April 8.",
+      "full_report_href": "./report.html"
+    },
+    {
+      "id": "hedge-success",
+      "kicker": "CRISIS HEDGE",
+      "text": "The Team created a low-beta portfolio to invest in a market environment characterised by extreme risk, with an added crisis-hedge position. The strategy proved successful because of the sharp downturn in the stock market between late March, when the portfolio experienced a maximum drawdown of approximately -6.5%, compared with -8.5% for the benchmark. The low portfolio beta of 0.627 at that point in time also supports the effectiveness of the portfolio construction. However, one of the main flaws in Team 5's investment strategy is that their portfolio underperformed during the recovery after the ceasefire declared on April 8. The slow, careful reallocation of assets to stocks led to an inefficient recovery of the portfolio from its losses.",
+      "full_report_href": "./report.html"
+    },
+    {
+      "id": "recovery-failure",
+      "kicker": "RECOVERY GAP",
+      "text": "However, one of the main flaws in Team 5's investment strategy is that their portfolio underperformed during the recovery after the ceasefire declared on April 8. The slow, careful reallocation of assets to stocks led to an inefficient recovery of the portfolio from its losses. A professional post-mortem therefore should not ask only, \u201cDid the portfolio win?\u201d but rather, \u201cWhere did the portfolio add value, where did it leak value, and which failures were structural versus incidental?\u201d On that basis, the answer is clear: the team showed above-average awareness of regime risk, below-average precision in execution, and sub- institutional operating discipline in moments when speed and control mattered most 1. Introduction: Strategy Choice and Rationale When the CHL-0200 Investment Challenge came along, Team 5 chose a mix of different equity strategy.",
+      "full_report_href": "./report.html"
+    },
+    {
+      "id": "post-mortem-frame",
+      "kicker": "POST-MORTEM FRAME",
+      "text": "A professional post-mortem therefore should not ask only, \u201cDid the portfolio win?\u201d but rather, \u201cWhere did the portfolio add value, where did it leak value, and which failures were structural versus incidental?\u201d On that basis, the answer is clear: the team showed above-average awareness of regime risk, below-average precision in execution, and sub- institutional operating discipline in moments when speed and control mattered most 1. Introduction: Strategy Choice and Rationale When the CHL-0200 Investment Challenge came along, Team 5 chose a mix of different equity strategy. The strategy initially was based on standard portfolio theory, implemented entirely through exchange-listed equities and ETFs.",
+      "full_report_href": "./report.html"
+    },
+    {
+      "id": "strategy-rationale",
+      "kicker": "STRATEGY RATIONALE",
+      "text": "Introduction: Strategy Choice and Rationale When the CHL-0200 Investment Challenge came along, Team 5 chose a mix of different equity strategy. The strategy initially was based on standard portfolio theory, implemented entirely through exchange-listed equities and ETFs. The original mandate was moderate-risk, fundamentals-first, benchmarked to SPY, with no single security intended to exceed roughly 9% of capital and no sector above about 25%, which is a sensible retail- policy adaptation of conventional portfolio construction constraints. Given the team\u2019s size and range of viewpoints, the portfolio adopted a broad market perspective and expressed high-conviction views through technical timing, sector rotation, and macro-sensitive allocation decisions.",
+      "full_report_href": "./report.html"
+    }
+  ]
+}

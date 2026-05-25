@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Desk performance · Portfolio vs SPY</title>
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+    <style>
+        html, body { margin: 0; background: #050505; }
+        #desk-perf { width: 100%; height: 460px; }
+    </style>
+</head>
+<body>
+    <div id="desk-perf"></div>
+    <script>
+        /* Frozen Hult desk — sheet011 milestones, SPY terminal −2.29% (sheet005) */
+        const dates = [
+            '2026-02-02', '2026-02-12', '2026-02-17', '2026-02-24', '2026-03-02',
+            '2026-03-03', '2026-03-09', '2026-03-12', '2026-03-16', '2026-03-20',
+            '2026-03-23', '2026-03-30', '2026-04-02', '2026-04-07', '2026-04-08',
+            '2026-04-11'
+        ];
+        const portRet = [0, -0.18, -0.40, -1.05, -2.22, -2.88, -3.66, -4.19, -4.88, -5.52, -5.79, -5.17, -6.44, -6.08, -4.82, -4.37];
+        const spyRaw = [0, -0.88, -1.88, -3.76, -5.21, -6.22, -7.38, -8.10, -8.54, -9.12, -8.83, -8.59, -11.72, -10.27, -2.30, -2.37];
+        const spyScale = -2.29 / -2.37;
+        const spyRet = spyRaw.map((v, i) => (i === spyRaw.length - 1 ? -2.29 : v * spyScale));
+
+        const portTrace = {
+            x: dates,
+            y: portRet,
+            mode: 'lines',
+            name: 'Team 5 Portfolio',
+            line: { color: '#3b82f6', width: 2.5 },
+            hovertemplate: '%{x}<br>%{y:.2f}%<extra>Portfolio</extra>'
+        };
+        const spyTrace = {
+            x: dates,
+            y: spyRet,
+            mode: 'lines',
+            name: 'SPY Benchmark',
+            line: { color: '#ff3366', width: 2, dash: 'dash' },
+            hovertemplate: '%{x}<br>%{y:.2f}%<extra>SPY</extra>'
+        };
+
+        const phases = [
+            { label: 'Ph 1 Foundation', x0: '2026-02-02', x1: '2026-02-25' },
+            { label: 'Ph 2 Growth Pivot', x0: '2026-02-25', x1: '2026-03-23' },
+            { label: 'Ph 3 Crisis', x0: '2026-03-23', x1: '2026-04-02' },
+            { label: 'Ph 4 Ceasefire', x0: '2026-04-02', x1: '2026-04-11' }
+        ];
+        const shapes = phases.map((p) => ({
+            type: 'rect', xref: 'x', yref: 'paper', x0: p.x0, x1: p.x1, y0: 0, y1: 1,
+            fillcolor: 'rgba(59,130,246,0.06)', line: { width: 0 }
+        }));
+        const phaseLabels = phases.map((p) => ({
+            x: p.x0, y: 1, xref: 'x', yref: 'paper', text: p.label, showarrow: false,
+            xanchor: 'left', yanchor: 'top', font: { size: 9, color: '#52525b' }
+        }));
+
+        Plotly.newPlot('desk-perf', [portTrace, spyTrace], {
+            title: {
+                text: 'Performance Overview: Portfolio vs SPY | Feb 02 – Apr 11 2026  <span style="color:#52525b;font-size:12px">Final: −4.37% vs −2.29%</span>',
+                x: 0.02
+            },
+            template: 'plotly_dark',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: '#050505',
+            font: { color: '#f4f4f5', family: 'Inter, system-ui, sans-serif', size: 12 },
+            margin: { t: 60, b: 50, l: 60, r: 30 },
+            height: 460,
+            autosize: true,
+            legend: { orientation: 'h', y: 1.02, x: 0 },
+            xaxis: { title: '' },
+            yaxis: { title: 'Cumulative Return (%)', ticksuffix: '%' },
+            shapes,
+            annotations: phaseLabels.concat([
+                {
+                    x: '2026-02-02', y: 0, text: '$1,000,000 start',
+                    showarrow: true, arrowhead: 2, ay: -40,
+                    font: { size: 10, color: '#f4f4f5' }
+                },
+                {
+                    x: '2026-03-23', y: -5.79,
+                    text: 'Trough: Portfolio −5.79% vs SPY −8.50% (+2.71% protection)',
+                    showarrow: true, arrowhead: 2, ay: 30,
+                    font: { size: 9, color: '#52525b' }
+                },
+                {
+                    x: '2026-04-11', y: -4.37, text: '$956,279.80 close',
+                    showarrow: true, arrowhead: 2, ay: -35,
+                    font: { size: 10, color: '#f4f4f5' }
+                },
+                {
+                    x: '2026-04-11', y: -12, text: 'Ceasefire Apr 11: SPY +2% gap vs portfolio + re-risking too slow',
+                    showarrow: false, font: { size: 9, color: '#52525b' }
+                }
+            ])
+        }, { responsive: true, displaylogo: false });
+    </script>
+</body>
+</html>
