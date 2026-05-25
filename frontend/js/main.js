@@ -26,25 +26,44 @@
         }
     }
 
-    function populateResultsTable(data) {
-        const tableMapping = {
-            'tbl-ann-return': 'ann_return',
-            'tbl-sharpe': 'sharpe',
-            'tbl-max-dd': 'max_dd',
-            'tbl-sortino': 'sortino',
-            'tbl-cf-var': 'cf_var',
-            'tbl-calmar': 'calmar',
-            'tbl-beta': 'beta',
-            'tbl-mc-hurdle': 'mc_hurdle',
-            'tbl-win-rate': 'win_rate',
-            'tbl-profit-factor': 'profit_factor'
-        };
+    function setOverlayCell(id, value) {
+        const el = document.getElementById(id);
+        if (el && value != null && value !== '') {
+            el.textContent = value;
+        }
+    }
 
-        for (const [elemId, key] of Object.entries(tableMapping)) {
-            const el = document.getElementById(elemId);
-            if (el && data[key] != null) {
-                el.textContent = data[key];
-            }
+    function formatOverlayPct(value, digits = 1) {
+        const n = Number(value);
+        if (Number.isNaN(n)) return null;
+        const pct = Math.abs(n) <= 1 ? n * 100 : n;
+        const sign = pct >= 0 ? '+' : '';
+        return `${sign}${pct.toFixed(digits)}%`;
+    }
+
+    function populateOverlayTable(full, results) {
+        if (full) {
+            setOverlayCell('tbl-ann-return', formatOverlayPct(full.annualized_return, 1));
+            setOverlayCell('tbl-sharpe', Number(full.sharpe_ratio).toFixed(2));
+            setOverlayCell('tbl-max-dd', formatOverlayPct(full.max_drawdown, 1));
+            setOverlayCell('tbl-sortino', Number(full.sortino_ratio).toFixed(2));
+            setOverlayCell('tbl-calmar', Number(full.calmar_ratio).toFixed(2));
+            setOverlayCell('tbl-beta', Number(full.beta).toFixed(2));
+            setOverlayCell(
+                'tbl-cf-var',
+                formatOverlayPct(full.cornish_fisher_var, 2)
+            );
+            setOverlayCell('tbl-jensen', Number(full.jensens_alpha).toFixed(3));
+        }
+        if (results) {
+            if (results.sharpe != null) setOverlayCell('tbl-sharpe', results.sharpe);
+            if (results.max_dd != null) setOverlayCell('tbl-max-dd', results.max_dd);
+            if (results.sortino != null) setOverlayCell('tbl-sortino', results.sortino);
+            if (results.calmar != null) setOverlayCell('tbl-calmar', results.calmar);
+            if (results.cf_var != null) setOverlayCell('tbl-cf-var', results.cf_var);
+            if (results.beta != null) setOverlayCell('tbl-beta', results.beta);
+            if (results.ann_return != null) setOverlayCell('tbl-ann-return', results.ann_return);
+            setOverlayCell('tbl-mc-hurdle', results.mc_hurdle);
         }
     }
 
@@ -54,25 +73,39 @@
     }
 
     async function fetchAndHydrate() {
+        let full = null;
+        let results = null;
         try {
-            const res = await fetch(DATA_PATH);
-            if (!res.ok) {
-                showMetricsEmptyNote(true);
-                return;
+            const [fullRes, resultsRes] = await Promise.all([
+                fetch('./data/full-metrics.json'),
+                fetch(DATA_PATH),
+            ]);
+            if (fullRes.ok) full = await fullRes.json();
+            if (resultsRes.ok) {
+                results = await resultsRes.json();
+                populateKPIs(results);
             }
-            const data = await res.json();
-            populateKPIs(data);
-            populateResultsTable(data);
-            const hasValue = Object.values(data).some((v) => v != null && v !== '');
-            showMetricsEmptyNote(!hasValue);
+            populateOverlayTable(full, results);
+            showMetricsEmptyNote(!(full || results));
         } catch (_) {
             showMetricsEmptyNote(true);
         }
     }
 
+    const DECK_PDF =
+        './deliverables/source/Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf';
     const PPTX_SLIDE_BASE =
         './deliverables/source/Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200/';
     const PPTX_SLIDE_COUNT = 20;
+
+    function probeImageSrc(url) {
+        return new Promise((resolve) => {
+            const probe = new Image();
+            probe.onload = () => resolve(true);
+            probe.onerror = () => resolve(false);
+            probe.src = url;
+        });
+    }
 
     function renderMetricsGrid(container, items, groups, highlightKeys) {
         if (!container) return;
@@ -113,7 +146,7 @@
             if (!res.ok) return;
             const data = await res.json();
             if (prov && data.trading_start && data.trading_end) {
-                prov.textContent = `Hult simulation desk freeze (Excel sheet005 + sheet011 + sheet013). Trading window: ${data.trading_start} → ${data.trading_end}.`;
+                prov.textContent = `Hult simulation desk freeze (Excel sheet005 + sheet011 + sheet013). Trading window: ${data.trading_start} to ${data.trading_end}.`;
             }
             renderMetricsGrid(
                 deskGrid,
@@ -147,7 +180,7 @@
                 const ex = byId[el.dataset.excerptId];
                 if (!ex) return;
                 el.innerHTML = `
-                    <p class="text-mono text-accent excerpt-kicker">${ex.kicker} · FROM WRITTEN MEMO</p>
+                    <p class="text-mono text-accent excerpt-kicker">${ex.kicker} / FROM WRITTEN MEMO</p>
                     <p class="excerpt-body text-body leading-relaxed text-muted">${ex.text}</p>
                     <footer class="excerpt-footer text-mono">
                         <a href="./report.html" target="_blank" rel="noopener" class="link-underline">Full IC memo (report) ↗</a>
@@ -158,20 +191,48 @@
         }
     }
 
-    function initPptxCarousel() {
+    async function initDeckViewer() {
         const scaffold = document.getElementById('pptx-carousel-scaffold');
+        const pdfWrap = document.getElementById('deck-pdf-viewer');
+        const controls = document.getElementById('pptx-carousel-controls');
+        const note = document.getElementById('deck-viewer-note');
         const label = document.getElementById('pptx-slide-label');
         const prev = document.getElementById('pptx-prev');
         const next = document.getElementById('pptx-next');
         if (!scaffold) return;
 
+        const slideExt = 'PNG';
+
+        function showPdfMode(message) {
+            if (pdfWrap) pdfWrap.hidden = false;
+            scaffold.hidden = true;
+            if (controls) controls.hidden = true;
+            if (note) {
+                note.hidden = false;
+                note.textContent =
+                    message || 'Slide PNGs unavailable; showing PDF instead.';
+            }
+        }
+
+        function showCarouselMode() {
+            if (pdfWrap) pdfWrap.hidden = true;
+            scaffold.hidden = false;
+            if (controls) controls.hidden = false;
+            if (note) note.hidden = true;
+        }
+
+        showCarouselMode();
         const images = [];
+
         for (let i = 1; i <= PPTX_SLIDE_COUNT; i += 1) {
             const img = document.createElement('img');
-            img.src = `${PPTX_SLIDE_BASE}Slide${i}.PNG`;
-            img.alt = `Post-mortem deck slide ${i}`;
-            img.loading = i <= 2 ? 'eager' : 'lazy';
+            img.src = `${PPTX_SLIDE_BASE}Slide${i}.${slideExt}`;
+            img.alt = `Post-mortem deck slide ${i} of ${PPTX_SLIDE_COUNT}`;
+            img.loading = i <= 3 ? 'eager' : 'lazy';
             img.decoding = 'async';
+            img.addEventListener('error', () => {
+                if (i === 1) showPdfMode(`Slide ${i} could not load; showing PDF.`);
+            });
             scaffold.appendChild(img);
             images.push(img);
         }
@@ -182,8 +243,9 @@
             images.forEach((img, i) => {
                 img.style.opacity = i === current ? '1' : '0';
                 img.style.pointerEvents = i === current ? 'auto' : 'none';
+                img.setAttribute('aria-hidden', i === current ? 'false' : 'true');
             });
-            if (label) label.textContent = `Slide ${current + 1} / ${PPTX_SLIDE_COUNT}`;
+            if (label) label.textContent = `Slide ${current + 1} of ${PPTX_SLIDE_COUNT}`;
         }
 
         images.forEach((img) => {
@@ -209,6 +271,7 @@
         }
 
         document.addEventListener('keydown', (e) => {
+            if (scaffold.hidden) return;
             const evidence = document.getElementById('evidence');
             if (!evidence?.getBoundingClientRect) return;
             const r = evidence.getBoundingClientRect();
@@ -235,7 +298,7 @@
                 })
                 .join('');
         } catch (_) {
-            list.innerHTML = '<li class="text-muted text-mono">Manifest unavailable — run build_frontend_assets</li>';
+            list.innerHTML = '<li class="text-muted text-mono">Manifest unavailable - run build_frontend_assets</li>';
         }
     }
 
@@ -267,6 +330,84 @@
         );
 
         targets.forEach((el) => observer.observe(el));
+    }
+
+    function initStatAnimations() {
+        const stats = document.querySelectorAll('[data-stat-animate]');
+        if (!stats.length) return;
+
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function formatStat(value, decimals, suffix) {
+            const sign = value > 0 && suffix === '%' ? '+' : '';
+            const body = Number(value).toFixed(decimals);
+            return `${sign}${body}${suffix}`;
+        }
+
+        function animateEl(el) {
+            if (el.dataset.statDone === '1') return;
+            el.dataset.statDone = '1';
+            const target = parseFloat(el.dataset.statValue || '0', 10);
+            const decimals = parseInt(el.dataset.statDecimals || '2', 10);
+            const suffix = el.dataset.statSuffix || '';
+            if (prefersReduced || Number.isNaN(target)) {
+                el.textContent = formatStat(target, decimals, suffix);
+                el.classList.add('stat-animate-done');
+                return;
+            }
+            el.classList.add('stat-animate-ready');
+            const start = performance.now();
+            const duration = 900;
+            function tick(now) {
+                const t = Math.min(1, (now - start) / duration);
+                const eased = 1 - Math.pow(1 - t, 3);
+                const current = target * eased;
+                el.textContent = formatStat(current, decimals, suffix);
+                if (t < 1) {
+                    requestAnimationFrame(tick);
+                } else {
+                    el.classList.remove('stat-animate-ready');
+                    el.classList.add('stat-animate-done');
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        animateEl(entry.target);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.35 }
+        );
+        stats.forEach((el) => observer.observe(el));
+    }
+
+    function initDrawdownBars() {
+        const fills = document.querySelectorAll('.drawdown-fill[data-drawdown-pct]');
+        if (!fills.length) return;
+        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const fill = entry.target;
+                    if (prefersReduced) {
+                        fill.classList.add('drawdown-animated');
+                    } else {
+                        requestAnimationFrame(() => fill.classList.add('drawdown-animated'));
+                    }
+                    observer.unobserve(fill);
+                });
+            },
+            { threshold: 0.25 }
+        );
+        fills.forEach((f) => observer.observe(f));
     }
 
     function initScrollSpy() {
@@ -344,9 +485,10 @@
         renderExcelMetricsGrid();
         renderReportExcerpts();
         renderDeliverablesManifest();
-        initPptxCarousel();
+        initDeckViewer();
+        initStatAnimations();
+        initDrawdownBars();
         initCustomCursor();
-        initCarousels();
         initDisclaimer();
         hookNewScrollReveal();
         mountVideoBackground();

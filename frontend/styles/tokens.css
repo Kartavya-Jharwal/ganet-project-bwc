@@ -9,7 +9,8 @@
     
     --color-text-primary: #f4f4f5;
     --color-text-secondary: #a1a1aa;
-    --color-text-muted: #82828b; /* Adjusted for WCAG AA contrast against #050505 */
+    --color-text-muted: #9ca3af; /* Readable on #050505 (WCAG AA) */
+    --color-text-body: #d4d4d8;
     
     /* Accents */
     --color-accent-primary: #eb5e28;  /* Bold orange/rust */
@@ -61,8 +62,8 @@ body.theme-dark {
     background-color: var(--color-bg-base);
     color: var(--color-text-primary);
     font-family: var(--font-body);
-    font-size: clamp(15px, 1.2vw, 17px);
-    line-height: 1.6;
+    font-size: clamp(17px, 1.35vw, 19px);
+    line-height: 1.72;
     overflow-x: hidden;
 }
 
@@ -88,10 +89,23 @@ body.theme-dark {
     text-transform: uppercase;
 }
 
+.text-body-readable,
+.readable-prose p {
+    color: var(--color-text-body);
+    font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+    line-height: 1.75;
+    max-width: 68ch;
+}
+
+.readable-prose .text-muted {
+    color: var(--color-text-secondary);
+}
+
 .text-body-large {
     font-family: var(--font-body);
-    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
-    line-height: 1.6;
+    font-size: clamp(1.15rem, 1.55vw, 1.4rem);
+    line-height: 1.72;
+    color: var(--color-text-body);
     max-width: 65ch;
     font-weight: 400;
     letter-spacing: -0.01em;
