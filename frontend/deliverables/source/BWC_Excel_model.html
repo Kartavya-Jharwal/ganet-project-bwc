@@ -9,48 +9,42 @@ xmlns="http://www.w3.org/TR/REC-html40">
 <meta http-equiv=Content-Type content="text/html; charset=windows-1252">
 <meta name=ProgId content=Excel.Sheet>
 <meta name=Generator content="Microsoft Excel 15">
-<link rel=File-List href="Final%20Excel%20model_files/filelist.xml">
+<link rel=File-List href="BWC_Excel_model_files/filelist.xml">
 <![if !supportTabStrip]>
-<link id="shLink" href="Final%20Excel%20model_files/sheet001.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet002.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet003.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet004.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet005.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet006.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet007.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet008.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet009.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet010.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet011.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet012.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet013.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet014.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet015.htm">
-<link id="shLink" href="Final%20Excel%20model_files/sheet016.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet001.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet002.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet003.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet004.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet005.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet006.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet007.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet008.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet009.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet010.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet011.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet012.htm">
+<link id="shLink" href="BWC_Excel_model_files/sheet013.htm">
 
 <link id="shLink">
 
 <script language="JavaScript">
 <!--
- var c_lTabs=16;
+ var c_lTabs=13;
 
  var c_rgszSh=new Array(c_lTabs);
- c_rgszSh[0] = "Cover";
+ c_rgszSh[0] = "DASHBOARD";
  c_rgszSh[1] = "Trading_Log";
- c_rgszSh[2] = "Trading_Log-Past";
- c_rgszSh[3] = "Periodicï¿½Reflection";
- c_rgszSh[4] = "DASHBOARD";
- c_rgszSh[5] = "Transactionï¿½History(Stocktrak)";
- c_rgszSh[6] = "POSITIONï¿½P&amp;L";
- c_rgszSh[7] = "PHASEï¿½ANALYSIS";
- c_rgszSh[8] = "RISKï¿½METRICS";
- c_rgszSh[9] = "HOLDINGSï¿½CHART";
- c_rgszSh[10] = "PERFORMANCEï¿½TIMELINE";
- c_rgszSh[11] = "GAINï¿½ANALYSIS";
- c_rgszSh[12] = "ADVANCEDï¿½METRICS";
- c_rgszSh[13] = "TAILï¿½RISK";
- c_rgszSh[14] = "REGIMEï¿½ANALYSIS";
- c_rgszSh[15] = "REBALANCING";
+ c_rgszSh[2] = "Periodic Reflection";
+ c_rgszSh[3] = "POSITION P&amp;L";
+ c_rgszSh[4] = "PHASE ANALYSIS";
+ c_rgszSh[5] = "RISK METRICS";
+ c_rgszSh[6] = "HOLDINGS CHART";
+ c_rgszSh[7] = "PERFORMANCE TIMELINE";
+ c_rgszSh[8] = "GAIN ANALYSIS";
+ c_rgszSh[9] = "ADVANCED METRICS";
+ c_rgszSh[10] = "TAIL RISK";
+ c_rgszSh[11] = "REGIME ANALYSIS";
+ c_rgszSh[12] = "REBALANCING";
 
 
 
@@ -80,7 +74,7 @@ function fnGetIEVer()
 function fnBuildFrameset()
 {
  var szHTML="<frameset rows=\"*,18\" border=0 width=0 frameborder=no framespacing=0>"+
-  "<frame src=\""+document.all.item("shLink")[3].href+"\" name=\"frSheet\" noresize>"+
+  "<frame src=\""+document.all.item("shLink")[0].href+"\" name=\"frSheet\" noresize>"+
   "<frameset cols=\"54,*\" border=0 width=0 frameborder=no framespacing=0>"+
   "<frame src=\"\" name=\"frScroll\" marginwidth=0 marginheight=0 scrolling=no>"+
   "<frame src=\"\" name=\"frTabs\" marginwidth=0 marginheight=0 scrolling=no>"+
@@ -328,77 +322,63 @@ function fnSetActiveSheet(iSh)
  <x:ExcelWorkbook>
   <x:ExcelWorksheets>
    <x:ExcelWorksheet>
-    <x:Name>Cover</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet001.htm"/>
+    <x:Name>DASHBOARD</x:Name>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet001.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>Trading_Log</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet002.htm"/>
-   </x:ExcelWorksheet>
-   <x:ExcelWorksheet>
-    <x:Name>Trading_Log-Past</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet003.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet002.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>Periodic Reflection</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet004.htm"/>
-   </x:ExcelWorksheet>
-   <x:ExcelWorksheet>
-    <x:Name>DASHBOARD</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet005.htm"/>
-   </x:ExcelWorksheet>
-   <x:ExcelWorksheet>
-    <x:Name>Transaction History(Stocktrak)</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet006.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet003.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>POSITION P&amp;L</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet007.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet004.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>PHASE ANALYSIS</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet008.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet005.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>RISK METRICS</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet009.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet006.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>HOLDINGS CHART</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet010.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet007.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>PERFORMANCE TIMELINE</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet011.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet008.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>GAIN ANALYSIS</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet012.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet009.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>ADVANCED METRICS</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet013.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet010.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>TAIL RISK</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet014.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet011.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>REGIME ANALYSIS</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet015.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet012.htm"/>
    </x:ExcelWorksheet>
    <x:ExcelWorksheet>
     <x:Name>REBALANCING</x:Name>
-    <x:WorksheetSource HRef="Final%20Excel%20model_files/sheet016.htm"/>
+    <x:WorksheetSource HRef="BWC_Excel_model_files/sheet013.htm"/>
    </x:ExcelWorksheet>
   </x:ExcelWorksheets>
-  <x:Stylesheet HRef="Final%20Excel%20model_files/stylesheet.css"/>
+  <x:Stylesheet HRef="BWC_Excel_model_files/stylesheet.css"/>
   <x:WindowHeight>8676</x:WindowHeight>
   <x:WindowWidth>23040</x:WindowWidth>
   <x:WindowTopX>32767</x:WindowTopX>
   <x:WindowTopY>32767</x:WindowTopY>
-  <x:ActiveSheet>3</x:ActiveSheet>
-  <x:FirstVisibleSheet>8</x:FirstVisibleSheet>
   <x:ProtectStructure>False</x:ProtectStructure>
   <x:ProtectWindows>False</x:ProtectWindows>
  </x:ExcelWorkbook>
@@ -406,8 +386,8 @@ function fnSetActiveSheet(iSh)
 </head>
 
 <frameset rows="*,39" border=0 width=0 frameborder=no framespacing=0>
- <frame src="Final%20Excel%20model_files/sheet004.htm" name="frSheet">
- <frame src="Final%20Excel%20model_files/tabstrip.htm" name="frTabs" marginwidth=0 marginheight=0>
+ <frame src="BWC_Excel_model_files/sheet001.htm" name="frSheet">
+ <frame src="BWC_Excel_model_files/tabstrip.htm" name="frTabs" marginwidth=0 marginheight=0>
  <noframes>
   <body>
    <p>This page uses frames, but your browser doesn't support them.</p>
