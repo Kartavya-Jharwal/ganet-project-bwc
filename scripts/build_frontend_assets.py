@@ -151,6 +151,28 @@ def build_all(output_dir: str = "frontend") -> None:
     _sync_deliverables(root)
     _write_deliverables_manifest(data_dir)
 
+    # --- 8. Excel metrics + report excerpts (one-page case study) ---
+    logger.info("=== Extracting excel metrics and report excerpts ===")
+    try:
+        from extract_frontend_narrative_data import (  # noqa: PLC0415
+            parse_excel_metrics,
+            parse_report_excerpts,
+            parse_sheet011_timeline,
+        )
+
+        (data_dir / "excel-metrics.json").write_text(
+            json.dumps(parse_excel_metrics(), indent=2), encoding="utf-8"
+        )
+        (data_dir / "desk-timeline.json").write_text(
+            json.dumps(parse_sheet011_timeline(), indent=2), encoding="utf-8"
+        )
+        (data_dir / "report-excerpts.json").write_text(
+            json.dumps(parse_report_excerpts(), indent=2), encoding="utf-8"
+        )
+        logger.info("Narrative JSON -> %s", data_dir)
+    except Exception as e:
+        logger.warning("Narrative extract failed: %s", e)
+
     logger.info("=== Build complete ===")
 
 

@@ -1,0 +1,942 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 15">
+<link id=Main-File rel=Main-File href="../Final%20Excel%20model.htm">
+<link rel=File-List href=filelist.xml>
+<link rel=Stylesheet href=stylesheet.css>
+<style>
+<!--table
+	{mso-displayed-decimal-separator:"\.";
+	mso-displayed-thousand-separator:"\,";}
+@page
+	{margin:1.0in .75in 1.0in .75in;
+	mso-header-margin:.51in;
+	mso-footer-margin:.51in;}
+-->
+</style>
+<![if !supportTabStrip]><script language="JavaScript">
+<!--
+function fnUpdateTabs()
+ {
+  if (parent.window.g_iIEVer>=4) {
+   if (parent.document.readyState=="complete"
+    && parent.frames['frTabs'].document.readyState=="complete")
+   parent.fnSetActiveSheet(4);
+  else
+   window.setTimeout("fnUpdateTabs();",150);
+ }
+}
+
+if (window.name!="frSheet")
+ window.location.replace("../Final%20Excel%20model.htm");
+else
+ fnUpdateTabs();
+//-->
+</script>
+<![endif]>
+</head>
+
+<body link=blue vlink=purple class=xl153>
+
+<table border=0 cellpadding=0 cellspacing=0 width=1722 style='border-collapse:
+ collapse;table-layout:fixed;width:1292pt'>
+ <col class=xl153 width=62 style='width:47pt'>
+ <col class=xl153 width=58 style='mso-width-source:userset;mso-width-alt:2048;
+ width:43pt'>
+ <col class=xl153 width=125 style='mso-width-source:userset;mso-width-alt:4437;
+ width:94pt'>
+ <col class=xl153 width=413 style='mso-width-source:userset;mso-width-alt:14677;
+ width:310pt'>
+ <col class=xl153 width=69 style='mso-width-source:userset;mso-width-alt:2446;
+ width:52pt'>
+ <col class=xl153 width=154 style='mso-width-source:userset;mso-width-alt:5461;
+ width:115pt'>
+ <col class=xl153 width=119 style='mso-width-source:userset;mso-width-alt:4238;
+ width:89pt'>
+ <col class=xl153 width=72 style='mso-width-source:userset;mso-width-alt:2560;
+ width:54pt'>
+ <col class=xl153 width=218 style='mso-width-source:userset;mso-width-alt:7765;
+ width:164pt'>
+ <col class=xl153 width=72 span=6 style='mso-width-source:userset;mso-width-alt:
+ 2560;width:54pt'>
+ <tr height=66 style='mso-height-source:userset;height:49.5pt'>
+  <td height=66 class=xl153 width=62 style='height:49.5pt;width:47pt'></td>
+  <td colspan=14 class=xl476 width=1660 style='width:1245pt'>TEAM 5 — PORTFOLIO
+  POSTMORTEM<span style='mso-spacerun:yes'>  </span>|<span
+  style='mso-spacerun:yes'>  </span>StockTrak Simulation<span
+  style='mso-spacerun:yes'>  </span>|<span style='mso-spacerun:yes'> 
+  </span>Feb 02 – Apr 11 2026</td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl153 style='height:21.75pt'></td>
+  <td colspan=14 class=xl477>LON2 — Team 5<span style='mso-spacerun:yes'> 
+  </span>·<span style='mso-spacerun:yes'>  </span>$1,000,000 Initial
+  Capital<span style='mso-spacerun:yes'>  </span>·<span
+  style='mso-spacerun:yes'>  </span>68 Trades Executed<span
+  style='mso-spacerun:yes'>  </span>·<span style='mso-spacerun:yes'>  </span>4
+  Strategic Phases</td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=21 style='mso-height-source:userset;height:15.75pt'>
+  <td height=21 class=xl153 style='height:15.75pt'></td>
+  <td colspan=2 class=xl478>INITIAL CAPITAL</td>
+  <td colspan=2 class=xl478>FINAL VALUE</td>
+  <td colspan=2 class=xl478>TOTAL RETURN</td>
+  <td colspan=2 class=xl478>BENCHMARK (SPX)</td>
+  <td colspan=2 class=xl478>EXCESS RETURN</td>
+  <td colspan=2 class=xl478>SHARPE RATIO</td>
+  <td colspan=2 class=xl478>PORTFOLIO BETA</td>
+ </tr>
+ <tr height=50 style='mso-height-source:userset;height:37.5pt'>
+  <td height=50 class=xl153 style='height:37.5pt'></td>
+  <td colspan=2 class=xl484>$1,000,000</td>
+  <td colspan=2 class=xl484>$956,280</td>
+  <td colspan=2 class=xl485>-4.37%</td>
+  <td colspan=2 class=xl485>-2.29%</td>
+  <td colspan=2 class=xl485>-2.08%</td>
+  <td colspan=2 class=xl481>-2.111</td>
+  <td colspan=2 class=xl482>0.628</td>
+ </tr>
+ <tr height=21 style='mso-height-source:userset;height:15.75pt'>
+  <td height=21 class=xl153 style='height:15.75pt'></td>
+  <td colspan=2 class=xl483>&nbsp;</td>
+  <td colspan=2 class=xl483>&nbsp;</td>
+  <td colspan=2 class=xl483>&nbsp;</td>
+  <td colspan=2 class=xl483>&nbsp;</td>
+  <td colspan=2 class=xl483>&nbsp;</td>
+  <td colspan=2 class=xl483>&nbsp;</td>
+  <td colspan=2 class=xl483>&nbsp;</td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=20 style='mso-height-source:userset;height:15.0pt'>
+  <td height=20 class=xl153 style='height:15.0pt'></td>
+  <td colspan=6 class=xl469><span style='mso-spacerun:yes'> 
+  </span>&#9654;<span style='mso-spacerun:yes'>  </span>CASH &amp; INCOME
+  SUMMARY</td>
+  <td class=xl153></td>
+  <td colspan=7 class=xl469><span style='mso-spacerun:yes'> 
+  </span>&#9654;<span style='mso-spacerun:yes'>  </span>RISK ANALYTICS</td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=2 class=xl479>Cash Balance</td>
+  <td class=xl185>$1,221.28</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Portfolio Total Return</td>
+  <td colspan=3 class=xl480>-4.37%</td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td colspan=2 class=xl479>Interest Earned on Cash</td>
+  <td class=xl185 style='border-top:none'>$1,224.12</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Benchmark Return (S&amp;P 500)</td>
+  <td colspan=3 class=xl480>-2.29%</td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td colspan=2 class=xl479>Interest Charged on Loan</td>
+  <td class=xl183 style='border-top:none'>-$7.01</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Excess Return (Alpha)</td>
+  <td colspan=3 class=xl480>-2.08%</td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td colspan=2 class=xl479>Total Dividends Received</td>
+  <td class=xl185 style='border-top:none'>$2,043.95</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Sharpe Ratio</td>
+  <td colspan=3 class=xl488>-2.111</td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td colspan=2 class=xl479>Total Commissions Paid</td>
+  <td class=xl183 style='border-top:none'>-$680.00</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Jensen's Alpha</td>
+  <td colspan=3 class=xl489>-0.000443</td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td colspan=2 class=xl479>Loan Balance</td>
+  <td class=xl185 style='border-top:none'>$0.00</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Portfolio Beta</td>
+  <td colspan=3 class=xl486>0.63</td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td colspan=2 class=xl479>Net Income (Ex Capital)</td>
+  <td class=xl184 style='border-top:none'>$1,356.94</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Total Trades Made</td>
+  <td colspan=3 class=xl487>68</td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Trades Remaining</td>
+  <td colspan=3 class=xl487>9,932</td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td colspan=4 class=xl479>Total Commissions</td>
+  <td colspan=3 class=xl183>-$680.00</td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=20 style='mso-height-source:userset;height:15.0pt'>
+  <td height=20 class=xl153 style='height:15.0pt'></td>
+  <td class=xl453 colspan=3 style='mso-ignore:colspan'><span
+  style='mso-spacerun:yes'>  </span>&#9654;<span style='mso-spacerun:yes'> 
+  </span>PHASE PERFORMANCE SUMMARY</td>
+  <td class=xl453>&nbsp;</td>
+  <td class=xl453>&nbsp;</td>
+  <td class=xl453>&nbsp;</td>
+  <td class=xl453>&nbsp;</td>
+  <td class=xl453>&nbsp;</td>
+  <td colspan=6 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=24 style='mso-height-source:userset;height:18.0pt'>
+  <td height=24 class=xl153 style='height:18.0pt'></td>
+  <td class=xl182>PHASE</td>
+  <td class=xl182>PERIOD</td>
+  <td class=xl182>STRATEGY</td>
+  <td class=xl182># TRADES</td>
+  <td class=xl182>CAPITAL DEPLOYED ($)</td>
+  <td class=xl182>REALISED P&amp;L ($)</td>
+  <td class=xl182>RETURN %</td>
+  <td class=xl182>KEY RISK</td>
+  <td colspan=6 style='mso-ignore:colspan'></td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl153 style='height:21.75pt'></td>
+  <td class=xl181>Phase 1</td>
+  <td class=xl180 style='border-left:none'>02/02 – 03/02/2026</td>
+  <td class=xl175 style='border-left:none'>Defensive/Barbell: SPY Core +
+  Staples/Utilities + AI Semis</td>
+  <td class=xl179 style='border-left:none'>22</td>
+  <td class=xl178 style='border-left:none'>$836,302</td>
+  <td class=xl177 style='border-left:none'>($43,283)</td>
+  <td class=xl176 style='border-left:none'>-5.18%</td>
+  <td class=xl175 style='border-left:none'>Semis drawdown; early stop triggers</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl153 style='height:21.75pt'></td>
+  <td class=xl174 style='border-top:none'>Phase 2</td>
+  <td class=xl173 style='border-top:none;border-left:none'>03/03 – 03/15/2026</td>
+  <td class=xl168 style='border-top:none;border-left:none'>Growth Pivot: AI
+  infra (NVDA/ORCL/NBIS) + Re-entry LMT</td>
+  <td class=xl172 style='border-top:none;border-left:none'>14</td>
+  <td class=xl171 style='border-top:none;border-left:none'>$334,671</td>
+  <td class=xl170 style='border-top:none;border-left:none'>($9,293)</td>
+  <td class=xl169 style='border-top:none;border-left:none'>-2.78%</td>
+  <td class=xl168 style='border-top:none;border-left:none'>High-beta
+  concentration risk</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl153 style='height:21.75pt'></td>
+  <td class=xl167 style='border-top:none'>Phase 3</td>
+  <td class=xl166 style='border-top:none;border-left:none'>03/16 – 04/07/2026</td>
+  <td class=xl161 style='border-top:none;border-left:none'>Emergency Triage:
+  Inverse ETFs (PSQ/SH) + Metals (AA/CENX)</td>
+  <td class=xl165 style='border-top:none;border-left:none'>18</td>
+  <td class=xl164 style='border-top:none;border-left:none'>$370,653</td>
+  <td class=xl163 style='border-top:none;border-left:none'>($1,946)</td>
+  <td class=xl162 style='border-top:none;border-left:none'>-0.52%</td>
+  <td class=xl161 style='border-top:none;border-left:none'>Inverse ETFs
+  reversed on tariff rally</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=29 style='mso-height-source:userset;height:21.75pt'>
+  <td height=29 class=xl153 style='height:21.75pt'></td>
+  <td class=xl160 style='border-top:none'>Phase 4</td>
+  <td class=xl159 style='border-top:none;border-left:none'>04/08 – 04/11/2026</td>
+  <td class=xl154 style='border-top:none;border-left:none'>Reconstruction:
+  Cyclicals + Mega-Cap re-entry (SPY/AMZN/GOOGL)</td>
+  <td class=xl158 style='border-top:none;border-left:none'>14</td>
+  <td class=xl157 style='border-top:none;border-left:none'>$447,005</td>
+  <td class=xl156 style='border-top:none;border-left:none'>-</td>
+  <td class=xl155 style='border-top:none;border-left:none'>0.00%</td>
+  <td class=xl154 style='border-top:none;border-left:none'>Open positions at
+  simulation close</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=20 style='mso-height-source:userset;height:15.0pt'>
+  <td height=20 class=xl153 style='height:15.0pt'></td>
+  <td colspan=14 class=xl469><span style='mso-spacerun:yes'> 
+  </span>&#9654;<span style='mso-spacerun:yes'>  </span>POSTMORTEM VERDICT</td>
+ </tr>
+ <tr height=48 style='mso-height-source:userset;height:36.0pt'>
+  <td height=48 class=xl153 style='height:36.0pt'></td>
+  <td colspan=2 class=xl492>WHAT WORKED</td>
+  <td colspan=12 class=xl491 width=1477 style='border-left:none;width:1108pt'>GE
+  stop-loss (+$52) · AA/CENX momentum trade (+$17,169) · Gold hedge (unrealised
+  gain) · Dividend income ($2,044) · Low beta (0.63) buffered downside</td>
+ </tr>
+ <tr height=48 style='mso-height-source:userset;height:36.0pt'>
+  <td height=48 class=xl153 style='height:36.0pt'></td>
+  <td colspan=2 class=xl493>WHAT FAILED</td>
+  <td colspan=12 class=xl491 width=1477 style='border-left:none;width:1108pt'>SPY
+  Phase 1 timing (&#8722;$15,709) · MU/IONQ high-beta semis (&#8722;$9,981) ·
+  PSQ/SH inverse ETFs backfired on Apr 2 tariff rally (&#8722;$19,205) · NBIS
+  collapse (&#8722;$4,709) · JPM premature exit</td>
+ </tr>
+ <tr height=48 style='mso-height-source:userset;height:36.0pt'>
+  <td height=48 class=xl153 style='height:36.0pt'></td>
+  <td colspan=2 class=xl490>STRUCTURAL LESSONS</td>
+  <td colspan=12 class=xl491 width=1477 style='border-left:none;width:1108pt'>Emergency
+  override invoked too late · Inverse ETFs dangerous in volatile markets · Stop
+  discipline saved GE/LMT but too rigid on re-entry · Beta 0.63 was the real
+  portfolio saver · Dividend/interest provided $3,268 cushion</td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=8 class=xl469><span style='mso-spacerun:yes'> 
+  </span>&#9654;<span style='mso-spacerun:yes'>  </span>ACCOUNT OVERVIEW</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Trading Start Date</td>
+  <td colspan=4 class=xl475>02/02/2026 09:30 AM</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Trading End Date</td>
+  <td colspan=4 class=xl475>04/11/2026 04:00 PM</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Initial Capital</td>
+  <td colspan=4 class=xl470>$1,000,000.00</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Final Portfolio Value</td>
+  <td colspan=4 class=xl470>$956,279.80</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Cash Balance</td>
+  <td colspan=4 class=xl470>$1,221.28</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Loan Balance</td>
+  <td colspan=4 class=xl470>$0.00</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Market Value — Long Positions</td>
+  <td colspan=4 class=xl470>$955,867.54</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Market Value — Short Positions</td>
+  <td colspan=4 class=xl470>$0.00</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Total Market Value of All Positions</td>
+  <td colspan=4 class=xl470>$955,867.54</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=8 class=xl469><span style='mso-spacerun:yes'> 
+  </span>&#9654;<span style='mso-spacerun:yes'>  </span>RETURNS &amp; RISK
+  METRICS</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Portfolio Total Return</td>
+  <td colspan=4 class=xl474>-4.37%</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Benchmark Return (S&amp;P 500)</td>
+  <td colspan=4 class=xl474>-2.29%</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Excess Return vs Benchmark</td>
+  <td colspan=4 class=xl474>-2.08%</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Sharpe Ratio</td>
+  <td colspan=4 class=xl472>-2.110797</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Jensen's Alpha</td>
+  <td colspan=4 class=xl472>-0.000443</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Portfolio Beta</td>
+  <td colspan=4 class=xl473>0.627545</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>P&amp;L Dollar Amount</td>
+  <td colspan=4 class=xl471>($43,720.20)</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=8 class=xl469><span style='mso-spacerun:yes'> 
+  </span>&#9654;<span style='mso-spacerun:yes'>  </span>CASH &amp; INCOME</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Buying Power</td>
+  <td colspan=4 class=xl470>$958,310.10</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Interest Earned on Cash</td>
+  <td colspan=4 class=xl470>$1,224.12</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Interest Charged on Loan</td>
+  <td colspan=4 class=xl470>$7.01</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Total Dividends Received</td>
+  <td colspan=4 class=xl470>$2,043.95</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Total Commissions Paid</td>
+  <td colspan=4 class=xl470>$680.00</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Net Income (Cash Flows)</td>
+  <td colspan=4 class=xl184>$0.00</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=8 class=xl469><span style='mso-spacerun:yes'> 
+  </span>&#9654;<span style='mso-spacerun:yes'>  </span>TRADING ACTIVITY</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Total Trades Executed</td>
+  <td colspan=4 class=xl468>68</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Trades Remaining (Capacity)</td>
+  <td colspan=4 class=xl468>9,932</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Buy Transactions</td>
+  <td colspan=4 class=xl468>45</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Sell Transactions (Market)</td>
+  <td colspan=4 class=xl468>20</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Stop-Loss Triggered Sells</td>
+  <td colspan=4 class=xl468>3</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Dividend Transactions</td>
+  <td colspan=4 class=xl468>12</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <tr height=19 style='height:14.4pt'>
+  <td height=19 class=xl153 style='height:14.4pt'></td>
+  <td colspan=4 class=xl467>Average Commission per Trade</td>
+  <td colspan=4 class=xl184>$680.00</td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+  <td class=xl153></td>
+ </tr>
+ <![if supportMisalignedColumns]>
+ <tr height=0 style='display:none'>
+  <td width=62 style='width:47pt'></td>
+  <td width=58 style='width:43pt'></td>
+  <td width=125 style='width:94pt'></td>
+  <td width=413 style='width:310pt'></td>
+  <td width=69 style='width:52pt'></td>
+  <td width=154 style='width:115pt'></td>
+  <td width=119 style='width:89pt'></td>
+  <td width=72 style='width:54pt'></td>
+  <td width=218 style='width:164pt'></td>
+  <td width=72 style='width:54pt'></td>
+  <td width=72 style='width:54pt'></td>
+  <td width=72 style='width:54pt'></td>
+  <td width=72 style='width:54pt'></td>
+  <td width=72 style='width:54pt'></td>
+  <td width=72 style='width:54pt'></td>
+ </tr>
+ <![endif]>
+</table>
+
+</body>
+
+</html>
