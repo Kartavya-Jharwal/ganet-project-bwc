@@ -1,63 +1,28 @@
-# Project BWC — static microsite (`frontend/`)
+# Project BWC: Institutional Telemetry & Narrative Archive
 
-**Status:** STATIC ARCHIVE (sunset freeze `2026-05-01`). Read-only GitHub Pages case study for CHL-0200.
+## Meta-Manifesto
+The Project BWC microsite operates as the definitive "Proof of Work" for Team 5's $1,000,000 portfolio simulation during The Investment Challenge (CHL-0200) under Prof. Daniela Neiderer at Hult International Business School.
 
-## One-page flow (`index.html`)
+This is not a standard academic portfolio. It is a highly engineered, brutalist post-mortem designed to the 0.001% institutional standard. It acts as an audit that explicitly pits the deterioration of human discretionary trading—manifested as "behavioral drag"—against a stringent algorithmic counterfactual (built via DuckDB, Polars, and GraphicalLassoCV topologies).
 
-| Section | Anchor | Audience |
-|---------|--------|----------|
-| Hero + executive summary | `#summary` | Committee scan: honest loss, March vs SPY |
-| Program brief | `#context` | What an IC is, dates, setup depth |
-| Desk timeline | `#story` | Week-by-week narrative |
-| Filed sources | `#archive` | Excel, memo, deck pointers |
-| Results | `#evidence` | Plain KPIs, desk charts only |
-| Principles | `#principles` | Four takeaways (replaces old close callout) |
-| Tech / quant rigor | `#validator` | Overlay vs desk; not optional framing |
-| Engineering map | `#stack` | Full `quant_monitor/` stack tables |
-| Files + memo embed | `#artifacts`, `#report` | **Single** iframe memo; downloads |
-| Feedback + team | `#close`, `#contact` | Faculty grades, defense notes, roster |
+## Final State Architecture
 
-Legacy multi-page HTML: `archive/pages/`; root `story.html`, `results.html`, `research.html`, `report.html` redirect to anchors on `index.html`.
+### 1. The Core Infrastructure (`/index.html` & `/results.html`)
+- **Fluid Brutalism:** Constructed on fluid typography (`clamp()`), `JetBrains Mono` for quantitative telemetry, and `Space Grotesk` for high-impact editorial storytelling.
+- **Narrative Over Structure:** Traditional chunked content blocks have been discarded in favor of a cohesive scroll sequence. The human element, the academic friction, and the core deliverables (Post-Mortem Deck & Fact Sheet) operate as the leading "co-stars" immediately visible upon arrival.
+- **Evaluative Placeholders:** Built-in semantic grids cleanly host final grading metrics and professorial remarks.
 
-## Data & charts
+### 2. The Artifact Hub (`/deliverables/`)
+- A modular index explicitly presenting the underlying forensic files. 
+- Integrated custom `<iframe>` and HTML templates to render raw `.htm` exports from Excel directly inside the browser, marrying rigorous data tables with Awwwards-quality aesthetic frames.
 
-- Desk metrics: `data/excel-metrics.json`, `data/desk-timeline.json`
-- Overlay hydration: `data/full-metrics.json`, `data/results.json` via `js/main.js` (no live Appwrite)
-- Plotly charts: `charts/` — regenerate from repo root:
+### 3. Deep-Weaving (`/story.html`)
+- **The "Fun vs Profitable" Irony:** Intimately weaves the naive optimism of the original Team Charter ("Be Profitable & Have Fun") with the harsh numerical reality proven by the Brinson-Fachler attribution.
+- **Leadership Friction:** Anchored by exact quotes from the final Peer Evaluation, recounting the necessity of absolute authority and "enforcing a grand vision standard" to maintain structural coherence as markets fractured.
 
-```bash
-uv run python scripts/build_frontend_assets.py
-# or charts only:
-uv run python scripts/generate_plotly_dashboard.py
-```
+### 4. Interactive Operators (`<dialog>`)
+- High-performance, off-canvas Native HTML `<dialog>` elements replace standard static profile cards.
+- Complete inclusion of all 8 operators with reserved staging slots for individual LinkedIn topologies.
 
-**Removed:** `charts/rolling-metrics.html` (equity + drawdown paired in Results).
-
-## Deck viewer
-
-- PDF embed visible by default (`#deck-pdf-viewer`)
-- Horizontal slide gallery when `Slide{n}.PNG` exports exist under the PPTX folder, else Visual Journal `images/` fallback
-- No link to `Visual_Journal_V3_ARCHIVED/index.html` on the microsite
-
-## GitHub Pages paths
-
-The site is published from `frontend/` as the **repo root** on `gh-pages` (`peaceiris/actions-gh-pages`, `publish_dir: ./frontend`).
-
-| Gotcha | Fix |
-|--------|-----|
-| `https://user.github.io/REPO` without trailing slash breaks `./` links | `js/base-path.js` runs first in `<head>`, injects `<base href="/REPO/">` |
-| Spaces in filenames (`Final Excel model.xlsx`) | `BWC.asset()` encodes path segments; manifest links rewritten in JS |
-| Jekyll ignoring static assets | `frontend/.nojekyll` at publish root |
-
-**Local preview** (always serve from `frontend/`):
-
-```bash
-cd frontend
-uv run python -m http.server 8765
-```
-
-Open `http://127.0.0.1:8765/` (not the repo root). In DevTools: `window.BWC.pagesDiag` shows resolved `siteBase` and a sample slide URL.
-
-## Maintainer
-
-Kartavya Jharwal — [kartavya.tech](https://kartavya.tech) · MIT License
+## Validation & Review Output
+The overarching intention is absolute rigor. In any interaction with top-tier quantitative firms, this architecture will immediately validate technical competence, forensic honesty, and institutional storytelling capabilities without triggering any legacy "academic" tropes.

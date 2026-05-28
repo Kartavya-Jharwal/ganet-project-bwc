@@ -8,8 +8,8 @@
     --color-bg-panel: rgba(18, 18, 18, 0.65); /* Glass pane backing */
     
     --color-text-primary: #f4f4f5;
-    --color-text-secondary: #d4d4d8;
-    --color-text-muted: #a1a1aa; /* Readable on #050505 (WCAG AA) */
+    --color-text-secondary: #a1a1aa;
+    --color-text-muted: #9ca3af; /* Readable on #050505 (WCAG AA) */
     --color-text-body: #d4d4d8;
     
     /* Accents */
@@ -22,83 +22,19 @@
     --color-quant-neutral: #8888aa;
     
     /* Typography */
-    --font-display: 'Darker Grotesque', system-ui, sans-serif;
-    --font-body: 'Source Sans 3', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-
-    /* Fluid type scale (major third, rem-based) */
-    --text-xs: clamp(0.6875rem, 0.65rem + 0.12vw, 0.75rem);
-    --text-sm: clamp(0.8125rem, 0.78rem + 0.18vw, 0.875rem);
-    --text-base: clamp(0.9375rem, 0.88rem + 0.28vw, 1.0625rem);
-    --text-md: clamp(1.0625rem, 0.98rem + 0.4vw, 1.1875rem);
-    --text-lg: clamp(1.25rem, 1.1rem + 0.55vw, 1.4375rem);
-    --text-xl: clamp(1.5rem, 1.25rem + 0.9vw, 1.875rem);
-    --text-2xl: clamp(1.75rem, 1.4rem + 1.35vw, 2.375rem);
-    --text-3xl: clamp(2.125rem, 1.65rem + 1.85vw, 3rem);
-    --leading-tight: 1.12;
-    --leading-snug: 1.35;
-    --leading-normal: 1.6;
-    --leading-relaxed: 1.72;
-    --tracking-kicker: 0.12em;
-    --tracking-display: -0.03em;
+    /* Banning default system sans-serifs completely */
+    --font-display: 'Space Grotesk', monospace, sans-serif;
+    --font-body: 'DM Sans', serif;
+    --font-mono: 'JetBrains Mono', 'Space Mono', monospace; /* Dedicated data font */
     
-    /* Spatial system: φ (golden ratio) + major-third modular scale (1.25) */
-    --phi: 1.6180339887;
-    --phi-inv: 0.6180339887;
-    --space-unit: 0.25rem; /* 4px @ 16px root */
-    --scale: 1.25;
-
-    /* Static modular steps (rem) — step_n = unit × scale^n */
-    --space-1: calc(var(--space-unit) * 1);   /* 4px */
-    --space-2: calc(var(--space-unit) * 2);   /* 8px */
-    --space-3: calc(var(--space-unit) * 3);   /* 12px */
-    --space-4: calc(var(--space-unit) * 4);   /* 16px */
-    --space-5: calc(var(--space-unit) * 5);   /* 20px */
-    --space-6: calc(var(--space-unit) * var(--scale) * 4);   /* ~20px tuned */
-    --space-8: calc(var(--space-unit) * 8);   /* 32px */
-    --space-10: calc(var(--space-unit) * 10);
-    --space-12: calc(var(--space-unit) * 12);
-    --space-16: calc(var(--space-unit) * 16);
-
-    /* Fluid rhythm (viewport-relative clamps) */
-    --space-fluid-xs: clamp(0.375rem, 0.25rem + 0.35vw, 0.5rem);
-    --space-fluid-sm: clamp(0.5rem, 0.35rem + 0.5vw, 0.75rem);
-    --space-fluid-md: clamp(0.875rem, 0.6rem + 0.85vw, 1.25rem);
-    --space-fluid-lg: clamp(1.25rem, 0.85rem + 1.25vw, 2rem);
-    --space-fluid-xl: clamp(1.75rem, 1rem + 2vw, 2.75rem);
-    --space-fluid-2xl: clamp(2.5rem, 1.25rem + 3.25vw, 4.25rem);
-    --space-fluid-3xl: clamp(3.25rem, 1.5rem + 4.5vw, calc(2.75rem * var(--phi)));
-
-    /* Legacy aliases (used across pages.css) */
-    --spacing-1: var(--space-fluid-xs);
-    --spacing-2: var(--space-fluid-sm);
-    --spacing-3: var(--space-fluid-sm);
-    --spacing-4: var(--space-fluid-md);
-    --spacing-5: var(--space-fluid-md);
-    --spacing-6: var(--space-fluid-lg);
-    --spacing-8: var(--space-fluid-xl);
-    --spacing-12: var(--space-fluid-2xl);
-    --spacing-16: var(--space-fluid-3xl);
-
-    /* Layout measures */
-    --gutter: clamp(0.625rem, 1.25vw, 1.125rem);
-    --gutter-safe-left: max(var(--gutter), env(safe-area-inset-left, 0px));
-    --gutter-safe-right: max(var(--gutter), env(safe-area-inset-right, 0px));
-    --content-max: 72rem;
-    --content-wide: min(82rem, calc(100vw - 2 * var(--gutter)));
-    --measure-prose: 38em;
-    --measure-narrow: 32em;
-
-    /* Vertical rhythm: section = φ × stack */
-    --stack-gap: var(--space-fluid-lg);
-    --section-gap: clamp(
-        2.25rem,
-        calc(var(--space-fluid-xl) * var(--phi-inv) + 1.5vw),
-        calc(var(--space-fluid-2xl) * var(--phi-inv) + var(--space-fluid-lg))
-    );
-    --inline-gap: var(--space-fluid-md);
-    --grid-col-gap: var(--space-fluid-md);
-    --grid-row-gap: var(--section-gap);
+    /* Layout Tokens (Fluid spacing map) */
+    --spacing-1: clamp(0.25rem, 0.5vw, 0.5rem);
+    --spacing-2: clamp(0.5rem, 1vw, 0.75rem);
+    --spacing-4: clamp(1rem, 2vw, 1.25rem);
+    --spacing-6: clamp(1.5rem, 3vw, 2rem);
+    --spacing-8: clamp(2rem, 4vw, 2.5rem);
+    --spacing-12: clamp(3rem, 6vw, 4rem);
+    --spacing-16: clamp(4rem, 8vw, 6rem);
     
     /* Borders & Physicality */
     --line-thickness: 1px;
@@ -122,59 +58,19 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-html {
-    font-size: clamp(15px, 14px + 0.35vw, 18px);
-    scroll-padding-top: calc(4.5rem + env(safe-area-inset-top, 0px));
-    scrollbar-width: thin;
-    scrollbar-color: rgba(235, 94, 40, 0.45) var(--color-bg-base);
-}
-
-html::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-html::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-html::-webkit-scrollbar-thumb {
-    background: rgba(235, 94, 40, 0.45);
-    border-radius: 0;
-}
-
-.deck-horizontal-viewport::-webkit-scrollbar {
-    height: 6px;
-}
-
-.deck-horizontal-viewport::-webkit-scrollbar-thumb {
-    background: rgba(235, 94, 40, 0.45);
-}
-
 body.theme-dark {
     background-color: var(--color-bg-base);
-    background-image: radial-gradient(
-        ellipse 100% 55% at 50% -15%,
-        rgba(235, 94, 40, 0.035),
-        transparent 52%
-    );
     color: var(--color-text-primary);
     font-family: var(--font-body);
-    font-size: var(--text-base);
-    line-height: var(--leading-relaxed);
-    font-weight: 400;
+    font-size: clamp(17px, 1.35vw, 19px);
+    line-height: 1.72;
     overflow-x: hidden;
-}
-
-body.theme-dark > :not(.texture-overlay) {
-    position: relative;
-    z-index: 2;
 }
 
 /* Typography Classes */
 .text-display {
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -0.04em;
     text-transform: uppercase;
 }
@@ -182,9 +78,9 @@ body.theme-dark > :not(.texture-overlay) {
 .text-hero {
     font-family: var(--font-display);
     /* True fluid typography scaling seamlessly from mobile to 4k */
-    font-size: clamp(2.85rem, 6.4vw, 6.1rem);
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
     line-height: 0.95;
-    font-weight: 900;
+    font-weight: 700;
     letter-spacing: -0.04em;
     margin-bottom: var(--spacing-4);
     background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
@@ -196,9 +92,9 @@ body.theme-dark > :not(.texture-overlay) {
 .text-body-readable,
 .readable-prose p {
     color: var(--color-text-body);
-    font-size: var(--text-md);
-    line-height: var(--leading-relaxed);
-    max-width: var(--measure-prose);
+    font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+    line-height: 1.75;
+    max-width: 68ch;
 }
 
 .readable-prose .text-muted {
@@ -232,16 +128,13 @@ body.theme-dark > :not(.texture-overlay) {
 
 .texture-overlay {
     position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
     pointer-events: none;
-    z-index: 1;
-    opacity: 0.022;
-    mix-blend-mode: soft-light;
-    background-size: 128px 128px;
-    background-repeat: repeat;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    z-index: 9999;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
-
 

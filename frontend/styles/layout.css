@@ -19,8 +19,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-block: var(--space-fluid-md, 1rem);
-    padding-inline: var(--gutter-safe-left, 1rem) var(--gutter-safe-right, 1rem);
+    padding: var(--spacing-4) var(--spacing-8);
     border-bottom: var(--line-thickness) solid var(--border-color);
     background: rgba(5, 5, 5, 0.85); /* Darker glass pane */
     backdrop-filter: blur(16px);
@@ -28,13 +27,6 @@
     position: sticky;
     top: 0;
     z-index: 100; /* Ensure it floats above grain overlay */
-}
-
-/* index.html dock nav overrides glass sticky (see pages.css .l-navbar--dock) */
-.l-navbar--dock {
-    position: fixed;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
 }
 
 .nav-brand {
@@ -70,8 +62,11 @@
    Grid Layout Modules 
    ---------------------------------------------------- */
 .l-grid-main {
-    /* spatial.css owns rhythm; keep fallback for non-narrative pages */
-    max-width: var(--content-wide, 1920px);
+    display: grid;
+    gap: var(--spacing-8);
+    padding: var(--spacing-8) var(--spacing-8) var(--spacing-12);
+    max-width: 1920px; /* Scales up to true 4K without breaking */
+    margin: 0 auto;
 }
 
 .kpi-card {
@@ -258,11 +253,15 @@
 
 /* 1. Mobile Phone Breakpoint (< 768px) */
 @media (max-width: 767px) {
-    .l-grid-main:not(.narrative-flow) {
+    .l-navbar {
+        padding: var(--spacing-4);
+    }
+    
+    .l-grid-main {
         display: flex;
         flex-direction: column;
-        padding: var(--space-fluid-lg) var(--gutter-safe-left) var(--space-fluid-2xl) var(--gutter-safe-right);
-        gap: var(--section-gap);
+        padding: var(--spacing-6) var(--spacing-4);
+        gap: var(--spacing-6);
     }
 
     /* Horizontal Snap Scrolling for Mobile KPIs */
@@ -297,11 +296,7 @@
 @media (min-width: 768px) and (max-width: 1024px) {
     .l-grid-main {
         grid-template-columns: 1fr;
-    }
-
-    .l-grid-main.narrative-flow {
-        padding-inline: var(--gutter-safe-left) var(--gutter-safe-right);
-        padding-block: var(--space-fluid-xl) var(--space-fluid-2xl);
+        padding: var(--spacing-8) var(--spacing-6);
     }
 
     .l-kpi-grid {
