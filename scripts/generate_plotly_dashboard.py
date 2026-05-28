@@ -60,6 +60,14 @@ def _base_layout(**overrides) -> dict:
     return layout
 
 
+_CHART_SCROLLBAR_STYLE = """<style>
+html{scrollbar-width:thin;scrollbar-color:rgba(235,94,40,.45) #050505}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(235,94,40,.45)}
+</style>"""
+
+
 def _write_chart(fig: go.Figure, output_dir: Path, filename: str) -> Path:
     """Write a figure to a self-contained HTML file and return the path."""
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -75,6 +83,12 @@ def _write_chart(fig: go.Figure, output_dir: Path, filename: str) -> Path:
             responsive=True,
         ),
     )
+    html = path.read_text(encoding="utf-8")
+    if _CHART_SCROLLBAR_STYLE not in html and "</head>" in html:
+        path.write_text(
+            html.replace("</head>", f"{_CHART_SCROLLBAR_STYLE}</head>", 1),
+            encoding="utf-8",
+        )
     logger.info("Chart written → %s", path)
     return path
 
@@ -144,20 +158,6 @@ def _get_real_returns() -> pd.Series:
         except Exception as exc:
             logger.warning("Real returns failed: %s — falling back to synthetic", exc)
     return _generate_synthetic_returns()
-
-
-def _rolling_sharpe(returns: pd.Series, window: int = 63) -> pd.Series:
-    roll_mean = returns.rolling(window).mean()
-    roll_std = returns.rolling(window).std()
-    return (roll_mean / roll_std * np.sqrt(252)).rename("rolling_sharpe")
-
-
-def _rolling_sortino(returns: pd.Series, window: int = 63) -> pd.Series:
-    roll_mean = returns.rolling(window).mean()
-    downside = returns.copy()
-    downside[downside > 0] = 0
-    roll_down = downside.rolling(window).apply(lambda x: np.sqrt((x**2).mean()))
-    return (roll_mean / roll_down * np.sqrt(252)).rename("rolling_sortino")
 
 
 def _compute_drawdown(returns: pd.Series) -> pd.Series:
@@ -335,34 +335,6 @@ def generate_drawdown_profile(returns: pd.Series, output_dir: Path) -> Path:
         height=360,
     ))
     return _write_chart(fig, output_dir, "drawdown.html")
-
-
-def generate_rolling_metrics(returns: pd.Series, output_dir: Path) -> Path:
-    """Rolling Sharpe + Sortino on a single chart -> rolling-metrics.html."""
-    sharpe = _rolling_sharpe(returns)
-    sortino = _rolling_sortino(returns)
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=sharpe.index, y=sharpe.values,
-        mode="lines", name="Rolling Sharpe (63d)",
-        line=dict(color=COLORS["blue"], width=1.8),
-        hovertemplate="%{y:.2f}<extra>Sharpe</extra>",
-    ))
-    fig.add_trace(go.Scatter(
-        x=sortino.index, y=sortino.values,
-        mode="lines", name="Rolling Sortino (63d)",
-        line=dict(color=COLORS["purple"], width=1.8),
-        hovertemplate="%{y:.2f}<extra>Sortino</extra>",
-    ))
-    fig.add_hline(y=0, line_dash="dash", line_color=COLORS["muted"], line_width=1)
-    fig.update_layout(**_base_layout(
-        title=dict(text="Rolling Risk-Adjusted Metrics (63-day)", x=0.02),
-        yaxis=dict(title="Ratio"),
-        xaxis=dict(title=""),
-        height=380,
-    ))
-    return _write_chart(fig, output_dir, "rolling-metrics.html")
 
 
 def generate_monthly_heatmap(returns: pd.Series, output_dir: Path) -> Path:
@@ -913,7 +885,6 @@ def generate_all_charts(output_dir: str | Path = "frontend/charts") -> list[Path
     paths.extend([
         generate_equity_curve(returns, out),
         generate_drawdown_profile(returns, out),
-        generate_rolling_metrics(returns, out),
         generate_monthly_heatmap(returns, out),
         generate_return_distribution(returns, out),
         generate_backtest_comparison(out),

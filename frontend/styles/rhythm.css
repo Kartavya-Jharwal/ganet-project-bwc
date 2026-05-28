@@ -1,0 +1,423 @@
+/**
+ * Typography + alignment rhythm: #executive-summary through #close
+ * Uses tokens from tokens.css and spacing from spatial.css
+ */
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) {
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* ─── Section headers ─── */
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header {
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: none;
+    text-align: left;
+    gap: calc(var(--stack-gap) / var(--phi));
+    padding-bottom: var(--inline-gap);
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header h2,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header .text-display {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+    max-width: none;
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: var(--leading-snug);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-kicker);
+    line-height: var(--leading-snug);
+    text-transform: uppercase;
+    color: var(--color-accent-primary);
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-lead {
+    font-family: var(--font-body);
+    font-size: var(--text-md);
+    font-weight: 400;
+    line-height: var(--leading-relaxed);
+    color: var(--color-text-body);
+    max-width: var(--measure-prose);
+}
+
+#summary .ic-audience-line,
+#summary .ic-hero-intro .ic-lead {
+    max-width: min(58ch, 100%);
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-outcome-plain,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-plain,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-formal {
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    max-width: var(--measure-prose);
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-formal {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+}
+
+/* ─── Blocks & cards (vertical rhythm) ─── */
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-block {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: calc(var(--stack-gap) / var(--phi));
+    width: 100%;
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-memo-callout,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-desk-postmortem,
+:is(#story, #evidence) .ic-phase-card {
+    padding: var(--space-fluid-md) var(--space-fluid-lg);
+}
+
+:is(#story, #evidence) .ic-phase-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--space-fluid-sm);
+    min-height: 6.5rem;
+}
+
+:is(#story, #evidence) .ic-phase-card h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* ─── Outcome grid ─── */
+:is(#evidence) .ic-outcome-grid {
+    align-items: stretch;
+}
+
+:is(#evidence) .ic-outcome-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: var(--space-fluid-sm);
+    padding: var(--space-fluid-md) var(--space-fluid-lg);
+    min-height: 8.5rem;
+}
+
+:is(#evidence) .ic-outcome-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    line-height: var(--leading-snug);
+}
+
+:is(#evidence) .ic-outcome-value {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+}
+
+:is(#evidence) .ic-outcome-value.text-display {
+    font-size: var(--text-2xl);
+}
+
+/* ─── KPI wall ─── */
+:is(#evidence) .kpi-group {
+    margin-bottom: var(--inline-gap);
+}
+
+:is(#evidence) .kpi-group-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-kicker);
+    margin-bottom: var(--space-fluid-sm);
+    padding-bottom: var(--space-fluid-xs, 0.375rem);
+    border-bottom: 1px solid var(--border-color);
+}
+
+:is(#evidence) .kpi-group-grid {
+    gap: var(--space-fluid-sm);
+    align-items: stretch;
+}
+
+:is(#evidence) .kpi-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: var(--space-fluid-xs, 0.35rem);
+    padding: var(--space-fluid-md);
+    min-height: 5.25rem;
+}
+
+:is(#evidence) .kpi-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-snug);
+}
+
+:is(#evidence) .kpi-value {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+    letter-spacing: -0.02em;
+}
+
+:is(#evidence) .kpi-value.text-display {
+    font-size: var(--text-xl);
+}
+
+/* ─── Charts ─── */
+:is(#evidence, #validator) .chart-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+:is(#evidence, #validator) .chart-title,
+:is(#evidence, #validator) .chart-card .chart-title {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: var(--leading-snug);
+    text-transform: uppercase;
+    padding: var(--space-fluid-md) var(--space-fluid-md) var(--space-fluid-sm);
+    margin: 0;
+    text-align: left;
+}
+
+:is(#evidence) .chart-card.chart-embed iframe {
+    min-height: clamp(320px, 45vh, 480px);
+}
+
+/* ─── Desk timeline snake ─── */
+:is(#story) .snake-milestone__title {
+    font-family: var(--font-display);
+    font-weight: 600;
+}
+
+:is(#story) .snake-milestone__metrics-row {
+    max-width: none;
+}
+
+/* ─── Principles ─── */
+:is(#principles) .principle-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: var(--space-fluid-sm);
+    padding: var(--space-fluid-lg);
+    min-height: 10rem;
+}
+
+:is(#principles) .principle-card h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin: 0 0 var(--space-fluid-xs, 0.25rem);
+}
+
+:is(#principles) .principle-detail {
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    margin-top: auto;
+    padding-top: var(--space-fluid-sm);
+}
+
+/* ─── Tech / stack tables ─── */
+:is(#validator, #stack) .sub-title,
+:is(#validator, #stack) .text-display.sub-title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    letter-spacing: var(--tracking-display);
+    line-height: var(--leading-tight);
+    text-transform: uppercase;
+    margin-bottom: var(--inline-gap);
+}
+
+:is(#validator, #stack) .metrics-table {
+    font-size: var(--text-sm);
+}
+
+:is(#validator, #stack) .metrics-table th {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: var(--space-fluid-sm) var(--space-fluid-md);
+    vertical-align: middle;
+    text-align: left;
+}
+
+:is(#validator, #stack) .metrics-table td {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    padding: var(--space-fluid-sm) var(--space-fluid-md);
+    vertical-align: middle;
+    line-height: var(--leading-snug);
+}
+
+:is(#validator, #stack) .metrics-table td.text-mono {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: -0.01em;
+}
+
+:is(#validator, #stack) .stack-category-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-kicker);
+}
+
+:is(#validator, #stack) .stack-tags {
+    font-size: var(--text-xs);
+    line-height: var(--leading-normal);
+}
+
+/* ─── Filed sources supplement ─── */
+:is(#sources) .deliverable-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-fluid-sm) var(--space-fluid-md);
+    align-items: center;
+}
+
+:is(#sources) .manifest-list {
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+}
+
+:is(#sources) .manifest-list a {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+}
+
+/* ─── Close / grades / contact ─── */
+:is(#close) .grade-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: var(--space-fluid-xl) var(--space-fluid-md) var(--space-fluid-lg);
+}
+
+:is(#close) .grade-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-kicker);
+    margin-bottom: var(--space-fluid-md);
+}
+
+:is(#close) .grades-stack {
+    margin-top: var(--space-fluid-sm);
+    margin-bottom: var(--space-fluid-lg);
+}
+
+:is(#close) .grade-total {
+    margin-bottom: var(--space-fluid-xs);
+}
+
+:is(#close) .grade-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1;
+}
+
+:is(#close) #team-roster-title {
+    color: var(--color-accent-primary);
+}
+
+:is(#close) .defense-short-answers .defense-qa {
+    align-items: flex-start;
+}
+
+:is(#close) .readable-prose,
+:is(#close) .ic-outcome-plain {
+    max-width: var(--measure-prose);
+}
+
+:is(#close) .contact-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--stack-gap);
+    padding-top: var(--section-gap);
+}
+
+:is(#close) .contact-cta .section-title,
+:is(#close) .contact-cta .text-display {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    letter-spacing: var(--tracking-display);
+    text-transform: uppercase;
+}
+
+:is(#close) .contact-cta .text-body-readable {
+    margin-inline: auto;
+    text-align: center;
+}
+
+:is(#close) .cta-row {
+    justify-content: center;
+    width: 100%;
+}
+
+/* Lists: consistent vertical spacing */
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-list li {
+    margin-bottom: var(--space-fluid-sm);
+    padding-left: 0.15em;
+    line-height: var(--leading-normal);
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* CTA rows align to grid */
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .cta-row {
+    align-items: center;
+    gap: var(--inline-gap);
+}
+
+@media (max-width: 639px) {
+    :is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header h2 {
+        max-width: none;
+        font-size: var(--text-xl);
+    }
+
+    :is(#close) .cta-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

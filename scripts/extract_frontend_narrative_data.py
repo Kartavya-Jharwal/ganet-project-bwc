@@ -358,7 +358,7 @@ def parse_report_excerpts() -> dict:
                 "id": section_id,
                 "kicker": kicker,
                 "text": chunk.strip(),
-                "full_report_href": "./report.html",
+                "full_report_href": "#report",
             }
         )
 
