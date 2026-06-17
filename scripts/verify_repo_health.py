@@ -21,6 +21,8 @@ REQUIRED_PATHS = [
     "deliverables/source",
     "deliverables/README.md",
     "frontend/index.html",
+    "frontend/js/base-path.js",
+    "frontend/.nojekyll",
     "docs/backtest-results.json",
     "docs/mc-forward-results.json",
     "docs/archive/README.md",

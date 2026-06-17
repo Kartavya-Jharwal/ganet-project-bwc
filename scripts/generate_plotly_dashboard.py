@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import re
 import sys
 from pathlib import Path
 
@@ -31,7 +32,7 @@ COLORS = {
     "bg": "#050505",
     "paper": "#0a0a0a",
     "text": "#f4f4f5",
-    "accent": "#eb5e28",
+    "accent": "#a78bfa",
     "positive": "#00ff88",
     "negative": "#ff3366",
     "muted": "#52525b",
@@ -60,10 +61,33 @@ def _base_layout(**overrides) -> dict:
     return layout
 
 
+_CHART_EMBED_STYLE = """<style>
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#050505}
+body>div{display:flex;flex-direction:column;flex:1;min-height:0;height:100%}
+.plotly-graph-div{width:100%!important;height:100%!important;min-height:0!important}
+</style>"""
+
+
+def _normalize_chart_html(html: str) -> str:
+    """Make self-contained Plotly embeds fill the iframe without internal scrollbars."""
+    if _CHART_EMBED_STYLE not in html and "</head>" in html:
+        html = html.replace("</head>", f"{_CHART_EMBED_STYLE}</head>", 1)
+    elif _CHART_EMBED_STYLE not in html and "<body>" in html:
+        html = html.replace("<body>", f"<body>{_CHART_EMBED_STYLE}", 1)
+
+    html = re.sub(
+        r'(<div[^>]*class="plotly-graph-div"[^>]*style=")height:\d+px;\s*width:100%;(")',
+        r"\1height:100%;width:100%;\2",
+        html,
+    )
+    return html
+
+
 def _write_chart(fig: go.Figure, output_dir: Path, filename: str) -> Path:
     """Write a figure to a self-contained HTML file and return the path."""
     output_dir.mkdir(parents=True, exist_ok=True)
     path = output_dir / filename
+    fig.update_layout(height=None)
     fig.write_html(
         str(path),
         include_plotlyjs=_PLOTLY_CDN,
@@ -75,6 +99,7 @@ def _write_chart(fig: go.Figure, output_dir: Path, filename: str) -> Path:
             responsive=True,
         ),
     )
+    path.write_text(_normalize_chart_html(path.read_text(encoding="utf-8")), encoding="utf-8")
     logger.info("Chart written → %s", path)
     return path
 
@@ -144,20 +169,6 @@ def _get_real_returns() -> pd.Series:
         except Exception as exc:
             logger.warning("Real returns failed: %s — falling back to synthetic", exc)
     return _generate_synthetic_returns()
-
-
-def _rolling_sharpe(returns: pd.Series, window: int = 63) -> pd.Series:
-    roll_mean = returns.rolling(window).mean()
-    roll_std = returns.rolling(window).std()
-    return (roll_mean / roll_std * np.sqrt(252)).rename("rolling_sharpe")
-
-
-def _rolling_sortino(returns: pd.Series, window: int = 63) -> pd.Series:
-    roll_mean = returns.rolling(window).mean()
-    downside = returns.copy()
-    downside[downside > 0] = 0
-    roll_down = downside.rolling(window).apply(lambda x: np.sqrt((x**2).mean()))
-    return (roll_mean / roll_down * np.sqrt(252)).rename("rolling_sortino")
 
 
 def _compute_drawdown(returns: pd.Series) -> pd.Series:
@@ -335,34 +346,6 @@ def generate_drawdown_profile(returns: pd.Series, output_dir: Path) -> Path:
         height=360,
     ))
     return _write_chart(fig, output_dir, "drawdown.html")
-
-
-def generate_rolling_metrics(returns: pd.Series, output_dir: Path) -> Path:
-    """Rolling Sharpe + Sortino on a single chart -> rolling-metrics.html."""
-    sharpe = _rolling_sharpe(returns)
-    sortino = _rolling_sortino(returns)
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=sharpe.index, y=sharpe.values,
-        mode="lines", name="Rolling Sharpe (63d)",
-        line=dict(color=COLORS["blue"], width=1.8),
-        hovertemplate="%{y:.2f}<extra>Sharpe</extra>",
-    ))
-    fig.add_trace(go.Scatter(
-        x=sortino.index, y=sortino.values,
-        mode="lines", name="Rolling Sortino (63d)",
-        line=dict(color=COLORS["purple"], width=1.8),
-        hovertemplate="%{y:.2f}<extra>Sortino</extra>",
-    ))
-    fig.add_hline(y=0, line_dash="dash", line_color=COLORS["muted"], line_width=1)
-    fig.update_layout(**_base_layout(
-        title=dict(text="Rolling Risk-Adjusted Metrics (63-day)", x=0.02),
-        yaxis=dict(title="Ratio"),
-        xaxis=dict(title=""),
-        height=380,
-    ))
-    return _write_chart(fig, output_dir, "rolling-metrics.html")
 
 
 def generate_monthly_heatmap(returns: pd.Series, output_dir: Path) -> Path:
@@ -913,7 +896,6 @@ def generate_all_charts(output_dir: str | Path = "frontend/charts") -> list[Path
     paths.extend([
         generate_equity_curve(returns, out),
         generate_drawdown_profile(returns, out),
-        generate_rolling_metrics(returns, out),
         generate_monthly_heatmap(returns, out),
         generate_return_distribution(returns, out),
         generate_backtest_comparison(out),
