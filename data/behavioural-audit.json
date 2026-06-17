@@ -1,8 +1,8 @@
 {
   "timing": {
-    "avg_buy_timing_score": 0.6501,
-    "avg_sell_timing_score": 0.3582,
-    "buy_at_highs_pct": 0.3778,
+    "avg_buy_timing_score": 0.66,
+    "avg_sell_timing_score": 0.3744,
+    "buy_at_highs_pct": 0.4,
     "sell_at_lows_pct": 0.4348,
     "n_buys_analysed": 45,
     "n_sells_analysed": 23,

@@ -1,194 +1,23 @@
 {
   "source": "Final Excel model.htm (sheet005 \u2014 Hult simulation desk)",
-  "trading_start": "02/02/2026 09:30 AM",
-  "trading_end": "04/11/2026 04:00 PM",
+  "trading_start": null,
+  "trading_end": null,
+  "filed_mandate_target_return": "~10% p.a.",
+  "filed_mandate_beta_target": "~1.0 average",
+  "gain_analysis": {
+    "annualized_return": "-23.5%",
+    "benchmark_annualized_return": "-12.2%"
+  },
   "grid": [
     {
-      "key": "initial_capital",
-      "label": "Initial Capital",
-      "value": "$1,000,000.00",
-      "group": "CAPITAL"
-    },
-    {
-      "key": "final_value",
-      "label": "Final Portfolio Value",
-      "value": "$956,279.80",
-      "group": "CAPITAL"
-    },
-    {
-      "key": "total_return",
-      "label": "Portfolio Total Return",
-      "value": "-4.37%",
+      "key": "annualized_return",
+      "label": "Annualised Return (68-day sim)",
+      "value": "-23.5%",
       "group": "RETURNS"
-    },
-    {
-      "key": "benchmark_return",
-      "label": "Benchmark Return (S&P 500)",
-      "value": "-2.29%",
-      "group": "RETURNS"
-    },
-    {
-      "key": "excess_return",
-      "label": "Excess Return vs Benchmark",
-      "value": "-2.08%",
-      "group": "RETURNS"
-    },
-    {
-      "key": "pnl",
-      "label": "P&L Dollar Amount",
-      "value": "($43,720.20)",
-      "group": "RETURNS"
-    },
-    {
-      "key": "sharpe",
-      "label": "Sharpe Ratio",
-      "value": "-2.110797",
-      "group": "RISK"
-    },
-    {
-      "key": "beta",
-      "label": "Portfolio Beta",
-      "value": "0.627545",
-      "group": "RISK"
-    },
-    {
-      "key": "jensen_alpha",
-      "label": "Jensen's Alpha",
-      "value": "-0.000443",
-      "group": "RISK"
-    },
-    {
-      "key": "cash",
-      "label": "Cash Balance",
-      "value": "$1,221.28",
-      "group": "CAPITAL"
-    },
-    {
-      "key": "dividends",
-      "label": "Total Dividends Received",
-      "value": "$2,043.95",
-      "group": "INCOME"
-    },
-    {
-      "key": "commissions",
-      "label": "Total Commissions Paid",
-      "value": "$680.00",
-      "group": "INCOME"
-    },
-    {
-      "key": "buying_power",
-      "label": "Buying Power",
-      "value": "$958,310.10",
-      "group": "CAPITAL"
     }
   ],
-  "advanced_grid": [
-    {
-      "key": "sharpe",
-      "label": "Sharpe Ratio",
-      "value": "-2.110797",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "sortino",
-      "label": "Sortino Ratio",
-      "value": "-4.156",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "calmar",
-      "label": "Calmar Ratio",
-      "value": "-0.645",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "omega",
-      "label": "Omega Ratio",
-      "value": "0.166",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "information_ratio",
-      "label": "Information Ratio",
-      "value": "-2.000",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "treynor",
-      "label": "Treynor Ratio",
-      "value": "-0.138",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "m2",
-      "label": "M\u00b2 (Modigliani)",
-      "value": "-0.274",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "jensen_alpha",
-      "label": "Jensen's Alpha",
-      "value": "-0.000443",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "beta",
-      "label": "Beta",
-      "value": "0.627545",
-      "group": "RISK_ADJ"
-    },
-    {
-      "key": "profit_factor",
-      "label": "Profit Factor",
-      "value": "0.166",
-      "group": "TRADES"
-    },
-    {
-      "key": "win_rate",
-      "label": "Win Rate",
-      "value": "28.57%",
-      "group": "TRADES"
-    },
-    {
-      "key": "avg_win",
-      "label": "Avg Win ($)",
-      "value": "$3,176.75",
-      "group": "TRADES"
-    },
-    {
-      "key": "avg_loss",
-      "label": "Avg Loss ($)",
-      "value": "-$7,653.18",
-      "group": "TRADES"
-    },
-    {
-      "key": "expectancy",
-      "label": "Expectancy ($)",
-      "value": "-$4,558.91",
-      "group": "TRADES"
-    }
-  ],
+  "advanced_grid": [],
   "all": {
-    "Trading Start Date": "02/02/2026 09:30 AM",
-    "Trading End Date": "04/11/2026 04:00 PM",
-    "Initial Capital": "$1,000,000.00",
-    "Final Portfolio Value": "$956,279.80",
-    "Cash Balance": "$1,221.28",
-    "Loan Balance": "$0.00",
-    "Market Value \u2014 Long Positions": "$955,867.54",
-    "Market Value \u2014 Short Positions": "$0.00",
-    "Total Market Value of All Positions": "$955,867.54",
-    "Portfolio Total Return": "-4.37%",
-    "Benchmark Return (S&P 500)": "-2.29%",
-    "Excess Return vs Benchmark": "-2.08%",
-    "Sharpe Ratio": "-2.110797",
-    "Jensen's Alpha": "-0.000443",
-    "Portfolio Beta": "0.627545",
-    "P&L Dollar Amount": "($43,720.20)",
-    "Buying Power": "$958,310.10",
-    "Interest Earned on Cash": "$1,224.12",
-    "Interest Charged on Loan": "$7.01",
-    "Total Dividends Received": "$2,043.95",
-    "Total Commissions Paid": "$680.00"
+    "Annualised Return (68-day sim)": "-23.5%"
   }
 }
