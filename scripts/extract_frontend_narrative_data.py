@@ -13,9 +13,12 @@ import pandas as pd
 ROOT = Path(__file__).parent.parent
 FRONTEND = ROOT / "frontend"
 DATA_DIR = FRONTEND / "data"
-SHEET005 = FRONTEND / "deliverables/source/Final Excel model_files/sheet005.htm"
-SHEET011 = FRONTEND / "deliverables/source/Final Excel model_files/sheet011.htm"
-SHEET013 = FRONTEND / "deliverables/source/Final Excel model_files/sheet013.htm"
+_EXCEL_FILES = FRONTEND / "deliverables/source/BWC_Excel_model_files"
+SHEET005 = _EXCEL_FILES / "sheet005.htm"
+SHEET008 = _EXCEL_FILES / "sheet008.htm"
+SHEET009 = _EXCEL_FILES / "sheet009.htm"
+SHEET011 = _EXCEL_FILES / "sheet011.htm"
+SHEET013 = _EXCEL_FILES / "sheet013.htm"
 REPORT_HTM = FRONTEND / "deliverables/source/Investment-CHL-Team-5-BWC-1 (1).htm"
 
 _INITIAL_CAPITAL = 1_000_000.0
@@ -46,6 +49,27 @@ _ADVANCED_RATIO_SPECS = [
 ]
 
 
+def parse_sheet009_annualized() -> dict[str, str]:
+    """Annualised desk return from GAIN ANALYSIS (sheet009)."""
+    text = SHEET009.read_text(encoding="windows-1252", errors="replace")
+    out: dict[str, str] = {}
+    m = re.search(
+        r"Annualised\s+Return \(68-day sim\)</td>\s*<td[^>]*>([^<]+)</td>",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if m:
+        out["annualized_return"] = m.group(1).strip()
+    m_bmk = re.search(
+        r"Benchmark\s+Annualised \(SPX\)</td>\s*<td[^>]*>([^<]+)</td>",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if m_bmk:
+        out["benchmark_annualized_return"] = m_bmk.group(1).strip()
+    return out
+
+
 def parse_excel_metrics() -> dict:
     text = SHEET005.read_text(encoding="windows-1252", errors="replace")
     metrics: dict[str, str] = {}
@@ -62,10 +86,15 @@ def parse_excel_metrics() -> dict:
             if label and val:
                 metrics[label] = val
 
+    gain_analysis = parse_sheet009_annualized()
+    if gain_analysis.get("annualized_return"):
+        metrics["Annualised Return (68-day sim)"] = gain_analysis["annualized_return"]
+
     key_specs = [
         ("Initial Capital", "initial_capital", "CAPITAL"),
         ("Final Portfolio Value", "final_value", "CAPITAL"),
         ("Portfolio Total Return", "total_return", "RETURNS"),
+        ("Annualised Return (68-day sim)", "annualized_return", "RETURNS"),
         ("Benchmark Return (S&P 500)", "benchmark_return", "RETURNS"),
         ("Excess Return vs Benchmark", "excess_return", "RETURNS"),
         ("P&L Dollar Amount", "pnl", "RETURNS"),
@@ -113,6 +142,9 @@ def parse_excel_metrics() -> dict:
         "source": "Final Excel model.htm (sheet005 — Hult simulation desk)",
         "trading_start": metrics.get("Trading Start Date"),
         "trading_end": metrics.get("Trading End Date"),
+        "filed_mandate_target_return": "~10% p.a.",
+        "filed_mandate_beta_target": "~1.0 average",
+        "gain_analysis": gain_analysis,
         "grid": grid,
         "advanced_grid": advanced_grid,
         "all": metrics,
@@ -131,8 +163,8 @@ def _parse_money(value: str) -> float:
 
 
 def parse_sheet011_timeline() -> dict:
-    """NAV milestones from sheet011 (Feb 02 – Apr 11 2026)."""
-    text = SHEET011.read_text(encoding="windows-1252", errors="replace")
+    """NAV milestones from sheet008 PERFORMANCE TIMELINE (Feb 02 – Apr 11 2026)."""
+    text = SHEET008.read_text(encoding="windows-1252", errors="replace")
     start = text.find("NAV TIMELINE")
     chunk = text[start : start + 80_000] if start >= 0 else text
 
@@ -162,7 +194,7 @@ def parse_sheet011_timeline() -> dict:
         )
 
     if not milestones:
-        raise ValueError("No NAV milestones parsed from sheet011")
+        raise ValueError("No NAV milestones parsed from sheet008")
 
     ms = pd.DataFrame(milestones)
     ms["date"] = pd.to_datetime(ms["date"])
@@ -204,7 +236,7 @@ def parse_sheet011_timeline() -> dict:
     max_dd_pct = (trough_row["portfolio_nav"] / peak_nav - 1.0) * 100.0
 
     return {
-        "source": "Final Excel model.htm (sheet011 — performance timeline)",
+        "source": "Final Excel model.htm (sheet008 — performance timeline)",
         "trading_start": trading_start.strftime("%m/%d/%Y %I:%M %p"),
         "trading_end": trading_end.strftime("%m/%d/%Y %I:%M %p"),
         "initial_capital": _INITIAL_CAPITAL,
@@ -227,7 +259,7 @@ def parse_sheet011_timeline() -> dict:
             "trough": {
                 "date": trough_row["date"].strftime("%Y-%m-%d"),
                 "portfolio_return_pct": float(trough_row["portfolio_return_pct"]),
-                "spy_return_pct": float(trough_row["spy_return_pct"]) * spy_scale,
+                "spy_return_pct": float(trough_row["spy_return_pct"]),
                 "max_drawdown_pct": round(max_dd_pct, 2),
             },
             "close": {
@@ -328,6 +360,16 @@ def parse_report_excerpts() -> dict:
             "strategy-rationale",
             "STRATEGY RATIONALE",
             "Introduction: Strategy Choice and Rationale When the CHL-0200 Investment Challenge came along",
+        ),
+        (
+            "mandate-target",
+            "FILED MANDATE",
+            "the team established a mandate to invest with a moderate",
+        ),
+        (
+            "sharpe-caveat",
+            "SHARPE CAVEAT",
+            "The portfolio's Sharpe ratio finished at the bottom of the cohort",
         ),
         (
             "behavioral",

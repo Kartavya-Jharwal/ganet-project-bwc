@@ -37,6 +37,18 @@
       "kicker": "STRATEGY RATIONALE",
       "text": "Introduction: Strategy Choice and Rationale When the CHL-0200 Investment Challenge came along, Team 5 chose a mix of different equity strategy. The strategy initially was based on standard portfolio theory, implemented entirely through exchange-listed equities and ETFs. The original mandate was moderate-risk, fundamentals-first, benchmarked to SPY, with no single security intended to exceed roughly 9% of capital and no sector above about 25%, which is a sensible retail- policy adaptation of conventional portfolio construction constraints. Given the team\u2019s size and range of viewpoints, the portfolio adopted a broad market perspective and expressed high-conviction views through technical timing, sector rotation, and macro-sensitive allocation decisions.",
       "full_report_href": "./report.html"
+    },
+    {
+      "id": "mandate-target",
+      "kicker": "FILED MANDATE",
+      "text": "the team established a mandate to invest with a moderate risk profile, with an expected return of 10% per annum, benchmarked to SPY in USD-denominated equities and ETFs. About one-third of capital was allocated to a broad beta portfolio and very high-quality defensive stocks. Another third was divided into higher-beta investments, including AI, quality growth stocks, financials, and defence. The target was an average portfolio beta of 1. The team implemented stop losses and trailing stops on the most weakened or extended stocks to confirm the importance of following trends in portfolio management (Murphy, 1999). In late March, war headlines were used to activate a crisis overlay strategy, quickly liquidating part of the long positions in the higher- beta sleeve and going long on safe-haven assets, such as GLD, SH, PSQ, CENX, and AA, so net beta reached zero.",
+      "full_report_href": "./report.html"
+    },
+    {
+      "id": "sharpe-caveat",
+      "kicker": "SHARPE CAVEAT",
+      "text": "The portfolio's Sharpe ratio finished at the bottom of the cohort. It was the weakest of the model statistics and could have benefited from a longer challenge period. But accepting that raw number at face value ignores a fundamental mathematical mismatch between the metric itself and the reality of the market environment. It expects returns to form a neat, normal distribution with stable volatility and no structural breaks. By layering inverse ETFs, metals, and gold, the team intentionally reduced the left tail to limit their maximum drawdown during the panic. However, because this cautiousness in peeling off those risk hedges, the portfolio under-captured the violent right-tail rebound when the market snapped back, creating a severe distortion in the Sharpe calculation. Sharpe penalizes volatility in both directions equally.",
+      "full_report_href": "./report.html"
     }
   ]
 }

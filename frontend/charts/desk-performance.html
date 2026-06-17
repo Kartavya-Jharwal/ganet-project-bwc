@@ -5,8 +5,8 @@
     <title>Desk performance · Portfolio vs SPY</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
-        html, body { margin: 0; background: #050505; }
-        #desk-perf { width: 100%; height: 460px; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #050505; }
+        #desk-perf { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
@@ -65,8 +65,7 @@
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: '#050505',
             font: { color: '#f4f4f5', family: 'Inter, system-ui, sans-serif', size: 12 },
-            margin: { t: 60, b: 50, l: 60, r: 30 },
-            height: 460,
+            margin: { t: 52, b: 44, l: 56, r: 24 },
             autosize: true,
             legend: { orientation: 'h', y: 1.02, x: 0 },
             xaxis: { title: '' },
@@ -95,6 +94,7 @@
                 }
             ])
         }, { responsive: true, displaylogo: false });
+        window.addEventListener('resize', () => Plotly.Plots.resize('desk-perf'));
     </script>
 </body>
 </html>

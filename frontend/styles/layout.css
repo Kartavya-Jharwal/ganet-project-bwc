@@ -1,14 +1,19 @@
 /* Phase 29: Aesthetic Direction - Asymmetrical/Editorial Grid */
 /* Fully responsive architecture for Mobile, Tablet, Laptop, and 4K */
 
-/* Sunset freeze ribbon */
+/* Sunset freeze ribbon — static in-flow banner (scrolls with page) */
+:root {
+    --sunset-bar-height: 1.625rem;
+}
+
 .sunset-freeze-bar {
     text-align: center;
     padding: var(--spacing-2) var(--spacing-4);
     font-size: 0.65rem;
     letter-spacing: 0.14em;
     color: var(--color-text-secondary);
-    background: linear-gradient(90deg, transparent, rgba(235, 94, 40, 0.12), transparent);
+    background: var(--color-bg-base);
+    background-image: linear-gradient(90deg, transparent, var(--color-accent-a12), transparent);
     border-bottom: var(--line-thickness) solid var(--border-color);
 }
 
@@ -19,7 +24,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-4) var(--spacing-8);
+    padding-block: var(--space-fluid-md, 1rem);
+    padding-inline: var(--gutter-safe-left, 1rem) var(--gutter-safe-right, 1rem);
     border-bottom: var(--line-thickness) solid var(--border-color);
     background: rgba(5, 5, 5, 0.85); /* Darker glass pane */
     backdrop-filter: blur(16px);
@@ -62,11 +68,8 @@
    Grid Layout Modules 
    ---------------------------------------------------- */
 .l-grid-main {
-    display: grid;
-    gap: var(--spacing-8);
-    padding: var(--spacing-8) var(--spacing-8) var(--spacing-12);
-    max-width: 1920px; /* Scales up to true 4K without breaking */
-    margin: 0 auto;
+    /* spatial.css owns rhythm; keep fallback for non-narrative pages */
+    max-width: var(--content-wide, 1920px);
 }
 
 .kpi-card {
@@ -153,9 +156,9 @@
     font-family: var(--font-mono);
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
-    background: rgba(235, 94, 40, 0.05);
+    background: var(--color-accent-a05);
     color: var(--color-accent-primary);
-    border: 1px solid rgba(235, 94, 40, 0.3);
+    border: 1px solid var(--color-accent-a30);
     border-radius: var(--border-radius-sm);
     white-space: nowrap;
     text-transform: uppercase;
@@ -253,15 +256,11 @@
 
 /* 1. Mobile Phone Breakpoint (< 768px) */
 @media (max-width: 767px) {
-    .l-navbar {
-        padding: var(--spacing-4);
-    }
-    
-    .l-grid-main {
+    .l-grid-main:not(.narrative-flow) {
         display: flex;
         flex-direction: column;
-        padding: var(--spacing-6) var(--spacing-4);
-        gap: var(--spacing-6);
+        padding: var(--space-fluid-lg) var(--gutter-safe-left) var(--space-fluid-2xl) var(--gutter-safe-right);
+        gap: var(--section-gap);
     }
 
     /* Horizontal Snap Scrolling for Mobile KPIs */
@@ -296,7 +295,11 @@
 @media (min-width: 768px) and (max-width: 1024px) {
     .l-grid-main {
         grid-template-columns: 1fr;
-        padding: var(--spacing-8) var(--spacing-6);
+    }
+
+    .l-grid-main.narrative-flow {
+        padding-inline: var(--gutter-safe-left) var(--gutter-safe-right);
+        padding-block: var(--space-fluid-xl) var(--space-fluid-2xl);
     }
 
     .l-kpi-grid {

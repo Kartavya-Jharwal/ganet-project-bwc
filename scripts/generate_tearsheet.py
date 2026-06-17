@@ -45,7 +45,7 @@ except ImportError:
 # AQR / Institutional brutalist color scheme
 COLOR_BG = (5, 5, 5)  # #050505
 COLOR_TEXT = (244, 244, 245)  # #f4f4f5
-COLOR_ACCENT = (235, 94, 40)  # #eb5e28
+COLOR_ACCENT = (167, 139, 250)  # #a78bfa
 COLOR_MUTED = (161, 161, 170)  # #A1A1AA
 
 

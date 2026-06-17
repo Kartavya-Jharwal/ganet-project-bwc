@@ -1,28 +1,87 @@
-# Project BWC: Institutional Telemetry & Narrative Archive
+# Project BWC — static microsite
 
-## Meta-Manifesto
-The Project BWC microsite operates as the definitive "Proof of Work" for Team 5's $1,000,000 portfolio simulation during The Investment Challenge (CHL-0200) under Prof. Daniela Neiderer at Hult International Business School.
+**Team BWC** · Hult CHL-0200 · sunset `2026-05-01`  
+**Maintainer:** [Kartavya Jharwal](https://kartavya.tech)
 
-This is not a standard academic portfolio. It is a highly engineered, brutalist post-mortem designed to the 0.001% institutional standard. It acts as an audit that explicitly pits the deterioration of human discretionary trading—manifested as "behavioral drag"—against a stringent algorithmic counterfactual (built via DuckDB, Polars, and GraphicalLassoCV topologies).
+Public **5-minute reviewer brief**: filed investment-challenge artifacts, honest desk results, faculty score, and a reproducible Python audit layer. This is an **independent archive** — not an official Hult course publication.
 
-## Final State Architecture
+**Live:** [kartavya-jharwal.github.io/ganet-project-bwc](https://kartavya-jharwal.github.io/ganet-project-bwc/)  
+**Finish plan:** [PLAN.md](./PLAN.md)
 
-### 1. The Core Infrastructure (`/index.html` & `/results.html`)
-- **Fluid Brutalism:** Constructed on fluid typography (`clamp()`), `JetBrains Mono` for quantitative telemetry, and `Space Grotesk` for high-impact editorial storytelling.
-- **Narrative Over Structure:** Traditional chunked content blocks have been discarded in favor of a cohesive scroll sequence. The human element, the academic friction, and the core deliverables (Post-Mortem Deck & Fact Sheet) operate as the leading "co-stars" immediately visible upon arrival.
-- **Evaluative Placeholders:** Built-in semantic grids cleanly host final grading metrics and professorial remarks.
+---
 
-### 2. The Artifact Hub (`/deliverables/`)
-- A modular index explicitly presenting the underlying forensic files. 
-- Integrated custom `<iframe>` and HTML templates to render raw `.htm` exports from Excel directly inside the browser, marrying rigorous data tables with Awwwards-quality aesthetic frames.
+## What this site is for
 
-### 3. Deep-Weaving (`/story.html`)
-- **The "Fun vs Profitable" Irony:** Intimately weaves the naive optimism of the original Team Charter ("Be Profitable & Have Fun") with the harsh numerical reality proven by the Brinson-Fachler attribution.
-- **Leadership Friction:** Anchored by exact quotes from the final Peer Evaluation, recounting the necessity of absolute authority and "enforcing a grand vision standard" to maintain structural coherence as markets fractured.
+| Reviewer | Path |
+|----------|------|
+| Economist / PM | Splash disclaimer → **Sources** (Excel + memo) → **Results** → faculty **422/430** |
+| Recruiter | Hero headline + process scores + contact |
+| Code auditor | **Tech** section → `frontend/docs/` → [REVIEWERS.md](../REVIEWERS.md) |
 
-### 4. Interactive Operators (`<dialog>`)
-- High-performance, off-canvas Native HTML `<dialog>` elements replace standard static profile cards.
-- Complete inclusion of all 8 operators with reserved staging slots for individual LinkedIn topologies.
+**Brand:** named desk **BWC** (not “Team 5”), violet accent `#a78bfa`, institutional tone with transparent disclaimer (vibe-coded presentation, AI-assisted build/docs).
 
-## Validation & Review Output
-The overarching intention is absolute rigor. In any interaction with top-tier quantitative firms, this architecture will immediately validate technical competence, forensic honesty, and institutional storytelling capabilities without triggering any legacy "academic" tropes.
+---
+
+## Architecture
+
+```
+frontend/
+├── index.html          # Single-page narrative (all sections)
+├── js/main.js          # Hydration: metrics, timeline, manifest, dialogs, splash
+├── styles/
+│   ├── tokens.css      # Color, type, spacing tokens (source of truth)
+│   ├── spatial.css     # Grid, section rhythm
+│   ├── rhythm.css      # Typography per section
+│   ├── pages.css       # Components
+│   ├── layout.css      # Nav, footer
+│   └── motion.css      # Cursor, scroll, reveals
+├── data/               # Built JSON (run build_frontend_assets.py)
+├── charts/             # Plotly embeds
+├── deliverables/source/  # Committee packet mirror (HTM/XLSX/PDF)
+└── docs/               # MkDocs export (engineering depth)
+```
+
+**Redirects:** `story.html` → `#story`, `results.html` → `#evidence`, `research.html` → `#validator`, `deliverables/index.html` → `#sources`.
+
+---
+
+## UX rules (see PLAN.md)
+
+1. **Thin scroll** — optional depth opens in `<dialog>` modals (`ic-dialog`), not new sections.
+2. **Artifacts** live under `#sources` only (three pillars + manifest details).
+3. **No** team deep-dives, peer quote strips, or fabricated social proof.
+4. **Splash** = mandatory disclaimer (AI-assisted + independent archive), not a marketing hero.
+5. **Motion/cursor** retained for human reviewers.
+
+---
+
+## Build & verify
+
+From repo root (after sunset freeze):
+
+```bash
+uv run python scripts/build_frontend_assets.py
+uv run python -m mkdocs build -f docs/mkdocs.yml --strict
+uv run python scripts/verify_repo_health.py --strict-artifacts
+```
+
+Full rebuild: `scripts/sunset_freeze.ps1` (Windows) or `scripts/sunset_freeze.sh`.
+
+---
+
+## Spacing system
+
+Use tokens from `styles/tokens.css`:
+
+- `--section-gap` — between major sections
+- `--stack-gap` — within section stacks
+- `--inline-gap` — inline clusters
+- `--spacing-1` … `--spacing-8` — component padding
+
+Avoid hardcoded `rem` in narrative sections. If padding looks doubled, check for conflicts between `spatial.css` and `rhythm.css` (documented in PLAN.md §4).
+
+---
+
+## Licence
+
+MIT — same as repository root. Forks must retain copyright notice.

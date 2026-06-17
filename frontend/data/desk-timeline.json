@@ -1,5 +1,5 @@
 {
-  "source": "Final Excel model.htm (sheet011 \u2014 performance timeline)",
+  "source": "Final Excel model.htm (sheet008 \u2014 performance timeline)",
   "trading_start": "02/02/2026 12:00 AM",
   "trading_end": "04/11/2026 12:00 AM",
   "initial_capital": 1000000.0,
@@ -170,7 +170,7 @@
     "trough": {
       "date": "2026-04-02",
       "portfolio_return_pct": -6.44,
-      "spy_return_pct": -11.436988636363637,
+      "spy_return_pct": -11.72,
       "max_drawdown_pct": -6.44
     },
     "close": {

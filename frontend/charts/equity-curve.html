@@ -5,8 +5,8 @@
     <title>Desk equity curve</title>
     <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     <style>
-        html, body { margin: 0; background: #050505; }
-        #equity { width: 100%; height: 420px; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #050505; }
+        #equity { width: 100%; height: 100%; }
     </style>
 </head>
 <body>
@@ -26,6 +26,18 @@
         let peak = nav[0];
         nav.forEach((v) => { peak = Math.max(peak, v); hwm.push(peak); });
 
+        const layout = {
+            title: { text: 'Equity Curve  <span style="color:#52525b;font-size:13px">(−4.37% total · Feb 02 – Apr 11 2026)</span>', x: 0.02 },
+            template: 'plotly_dark',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: '#050505',
+            font: { color: '#f4f4f5', family: 'Inter, system-ui, sans-serif', size: 12 },
+            margin: { t: 48, b: 40, l: 64, r: 20 },
+            autosize: true,
+            yaxis: { title: 'Portfolio Value ($)', tickformat: '$,.0f' },
+            xaxis: { title: '' }
+        };
+
         Plotly.newPlot('equity', [
             {
                 x: dates, y: nav, mode: 'lines', name: 'Portfolio NAV',
@@ -35,21 +47,12 @@
             },
             {
                 x: dates, y: hwm, mode: 'lines', name: 'High-Water Mark',
-                line: { color: '#eb5e28', width: 1, dash: 'dot' },
+                line: { color: '#a78bfa', width: 1, dash: 'dot' },
                 hovertemplate: '$%{y:,.0f}<extra>HWM</extra>'
             }
-        ], {
-            title: { text: 'Equity Curve  <span style="color:#52525b;font-size:13px">(−4.37% total · Feb 02 – Apr 11 2026)</span>', x: 0.02 },
-            template: 'plotly_dark',
-            paper_bgcolor: 'rgba(0,0,0,0)',
-            plot_bgcolor: '#050505',
-            font: { color: '#f4f4f5', family: 'Inter, system-ui, sans-serif', size: 12 },
-            margin: { t: 60, b: 50, l: 70, r: 30 },
-            height: 420,
-            autosize: true,
-            yaxis: { title: 'Portfolio Value ($)', tickformat: '$,.0f' },
-            xaxis: { title: '' }
-        }, { responsive: true, displaylogo: false });
+        ], layout, { responsive: true, displaylogo: false });
+
+        window.addEventListener('resize', () => Plotly.Plots.resize('equity'));
     </script>
 </body>
 </html>
