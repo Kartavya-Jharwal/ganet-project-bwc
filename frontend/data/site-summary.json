@@ -1,0 +1,70 @@
+{
+  "schema": "https://kartavya-jharwal.github.io/ganet-project-bwc/data/site-summary.json",
+  "version": "1.0",
+  "generated_at": "2026-06-18",
+  "site": {
+    "name": "Team BWC — Hult Investment Challenge Post-Mortem",
+    "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/",
+    "type": "static_archive",
+    "course": "CHL-0200",
+    "team": "BWC",
+    "trading_window": "2026-02-02 to 2026-04-11",
+    "freeze_date": "2026-05-01",
+    "license": "MIT",
+    "maintainer": {
+      "name": "Kartavya Jharwal",
+      "url": "https://kartavya.tech",
+      "github": "https://github.com/Kartavya-Jharwal/ganet-project-bwc"
+    },
+    "disclaimer": "Not an official Hult publication. Presentation edited; site layout and quant documentation AI-assisted. Graded marks from Excel close and filed memo only."
+  },
+  "desk_graded": {
+    "source": "Excel close 2026-04-11",
+    "initial_capital_usd": 1000000,
+    "final_value_usd": 956280,
+    "total_return_pct": -4.37,
+    "vs_spy_excess_pct": -2.08,
+    "spy_return_pct": -2.29,
+    "trough_date": "2026-04-02",
+    "trough_desk_pct": -6.44,
+    "trough_spy_pct": -11.72,
+    "trough_excess_pp": 5.28,
+    "win_rate_pct": 28.57,
+    "portfolio_beta_close": 0.63,
+    "note": "Trough outperformance is scoped to Apr 2 only; does not vindicate negative Sharpe, Sortino, or expectancy on the term."
+  },
+  "faculty_score": {
+    "total": 422,
+    "max": 430,
+    "categories": {
+      "architecture_logs": "147/150",
+      "strategy_final_report": "118/120",
+      "client_presentation_post_mortem": "118/120",
+      "peer_eval_leadership": "39/40"
+    }
+  },
+  "overlay_audit": {
+    "description": "Python backtest and stress-test layer; not the graded desk book",
+    "metrics_url": "./full-metrics.json",
+    "repo_path": "quant_monitor/",
+    "warning": "Do not compare overlay returns side-by-side with desk returns without explicit context"
+  },
+  "artifacts": {
+    "manifest": "./deliverables-manifest.json",
+    "post_mortem_pdf": "../assets/post-mortem.pdf",
+    "engineering_docs": "../docs/index.html"
+  },
+  "anchors": {
+    "sources": "#sources",
+    "brief": "#context",
+    "story": "#story",
+    "desk_results": "#evidence",
+    "overlay": "#validator",
+    "stack": "#stack",
+    "faculty": "#evaluation",
+    "principles": "#principles",
+    "team": "#team-roster",
+    "contact": "#contact"
+  },
+  "agent_index": "https://kartavya-jharwal.github.io/ganet-project-bwc/llms.txt"
+}

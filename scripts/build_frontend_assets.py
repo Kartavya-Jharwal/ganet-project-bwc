@@ -173,7 +173,38 @@ def build_all(output_dir: str = "frontend") -> None:
     except Exception as e:
         logger.warning("Narrative extract failed: %s", e)
 
+    # --- 9. Open Graph social preview card ---
+    logger.info("=== Building OG card ===")
+    _build_og_card(assets_dir)
+
     logger.info("=== Build complete ===")
+
+
+def _build_og_card(assets_dir: Path) -> None:
+    """Rasterize a branded Open Graph card (1200×630) for social previews."""
+    try:
+        import matplotlib.pyplot as plt
+        from matplotlib.patches import Rectangle
+    except ImportError:
+        logger.warning("matplotlib unavailable — og-card.png skipped (og-card.svg remains)")
+        return
+
+    fig, ax = plt.subplots(figsize=(12, 6.3), dpi=100)
+    ax.set_xlim(0, 1200)
+    ax.set_ylim(0, 630)
+    ax.axis("off")
+    fig.patch.set_facecolor("#050505")
+    ax.set_facecolor("#050505")
+    ax.add_patch(Rectangle((0, 622), 1200, 8, color="#a78bfa", linewidth=0))
+    ax.text(80, 430, "Team BWC", fontsize=72, color="#fafafa", fontweight="bold", va="top")
+    ax.text(80, 360, "HULT IC POST-MORTEM · CHL-0200", fontsize=24, color="#a78bfa", va="top")
+    ax.text(80, 250, "-4.37% desk close", fontsize=48, color="#f87171", fontweight="bold", va="top")
+    ax.text(80, 180, "Apr 2 trough: -6.44% vs SPY -11.72%", fontsize=22, color="#4ade80", va="top")
+    ax.text(80, 110, "Faculty score 422/430 · Static archive", fontsize=20, color="#a1a1aa", va="top")
+    out = assets_dir / "og-card.png"
+    fig.savefig(out, facecolor="#050505", bbox_inches="tight", pad_inches=0)
+    plt.close(fig)
+    logger.info("Open Graph card -> %s", out)
 
 
 def _copy_post_mortem_pdf(assets_dir: Path) -> None:

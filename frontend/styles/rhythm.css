@@ -2,7 +2,7 @@
  * Typography rhythm only — layout/spacing lives in spatial.css + pages.css
  */
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) {
     font-family: var(--font-body);
     font-size: var(--text-base);
     line-height: var(--leading-normal);
@@ -10,8 +10,8 @@
 }
 
 /* Section headers — type scale only */
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header h2,
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header .text-display {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-section-header h2,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-section-header .text-display {
     font-family: var(--font-display);
     font-size: var(--text-2xl);
     font-weight: 600;
@@ -20,7 +20,7 @@
     text-transform: uppercase;
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header h3 {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-section-header h3 {
     font-family: var(--font-display);
     font-size: var(--text-lg);
     font-weight: 600;
@@ -29,7 +29,7 @@
     text-transform: uppercase;
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-kicker {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-kicker {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-weight: 500;
@@ -39,7 +39,7 @@
     color: var(--color-accent-primary);
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-lead {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-lead {
     font-family: var(--font-body);
     font-size: var(--text-md);
     font-weight: 400;
@@ -53,15 +53,15 @@
     max-width: min(58ch, 100%);
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-outcome-plain,
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-plain,
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-formal {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-outcome-plain,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .prose-plain,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .prose-formal {
     font-size: var(--text-base);
     line-height: var(--leading-normal);
     max-width: var(--measure-prose);
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-formal {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .prose-formal {
     color: var(--color-text-secondary);
     font-size: var(--text-sm);
 }
@@ -204,24 +204,27 @@
     line-height: 1;
 }
 
-:is(#close) #team-roster-title {
+:is(#close) #team-roster-title,
+:is(#team-roster) #team-roster-title {
     color: var(--color-accent-primary);
 }
 
 :is(#close) .contact-cta .section-title,
-:is(#close) .contact-cta .text-display {
+:is(#close) .contact-cta .text-display,
+:is(#contact) .section-title,
+:is(#contact) .text-display {
     font-family: var(--font-display);
     font-size: var(--text-2xl);
     letter-spacing: var(--tracking-display);
     text-transform: uppercase;
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .prose-list li {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .prose-list li {
     line-height: var(--leading-normal);
 }
 
 @media (max-width: 639px) {
-    :is(#summary, #executive-summary, #sources, #context, #story, #evidence, #principles, #validator, #stack, #close) .ic-section-header h2 {
+    :is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-section-header h2 {
         font-size: var(--text-xl);
     }
 }
