@@ -62,7 +62,7 @@
         return `${sign}${n.toFixed(digits)}%`;
     }
 
-    function populateOverlayTable(full, results) {
+    function populateOverlayMetrics(full, results) {
         if (full) {
             setOverlayCell('tbl-total-return', formatOverlayPct(full.total_return, 1));
             setOverlayCell('tbl-ann-return', formatOverlayPct(full.annualized_return, 1));
@@ -110,7 +110,7 @@
                 results = await resultsRes.json();
                 populateKPIs(results);
             }
-            populateOverlayTable(full, results);
+            populateOverlayMetrics(full, results);
             showMetricsEmptyNote(!(full || results));
         } catch (_) {
             showMetricsEmptyNote(true);
@@ -146,20 +146,83 @@
     }
 
     function initResolvedAssets() {
-        document.querySelectorAll('iframe[src^="./"]').forEach((frame) => {
-            if (frame.dataset.bwcResolved === '1') return;
-            const src = frame.getAttribute('src');
-            if (src) {
-                frame.src = resolveHref(src);
-                frame.dataset.bwcResolved = '1';
-            }
-        });
         document
             .querySelectorAll('.deck-action-row a[href^="./"]')
             .forEach((link) => {
                 const href = link.getAttribute('href');
                 if (href) link.setAttribute('href', resolveHref(href));
             });
+    }
+
+    function loadChartIframe(frame) {
+        if (frame.dataset.bwcResolved === '1') return;
+        const src = frame.getAttribute('data-src');
+        if (!src) return;
+        frame.src = resolveHref(src);
+        frame.dataset.bwcResolved = '1';
+    }
+
+    function initLazyChartIframes() {
+        const frames = document.querySelectorAll('iframe[data-src]');
+        if (!frames.length) return;
+        if (!('IntersectionObserver' in window)) {
+            frames.forEach(loadChartIframe);
+            return;
+        }
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    loadChartIframe(entry.target);
+                    observer.unobserve(entry.target);
+                });
+            },
+            { rootMargin: '320px 0px' }
+        );
+        frames.forEach((frame) => observer.observe(frame));
+    }
+
+    function deferWhenVisible(target, fn, rootMargin = '240px 0px') {
+        const el = typeof target === 'string' ? document.querySelector(target) : target;
+        if (!el || el.dataset.bwcDeferred === '1') return;
+        const run = () => {
+            if (el.dataset.bwcDeferred === '1') return;
+            el.dataset.bwcDeferred = '1';
+            fn();
+        };
+        if (!('IntersectionObserver' in window)) {
+            run();
+            return;
+        }
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((entry) => entry.isIntersecting)) {
+                    run();
+                    observer.disconnect();
+                }
+            },
+            { rootMargin }
+        );
+        observer.observe(el);
+    }
+
+    function runWhenIdle(fn, timeoutMs = 1800) {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => fn(), { timeout: timeoutMs });
+        } else {
+            setTimeout(fn, 120);
+        }
+    }
+
+    let deskTimelinePromise = null;
+
+    function getDeskTimeline() {
+        if (!deskTimelinePromise) {
+            deskTimelinePromise = fetch(asset('./data/desk-timeline.json'))
+                .then((res) => (res.ok ? res.json() : null))
+                .catch(() => null);
+        }
+        return deskTimelinePromise;
     }
 
     const METRIC_GROUP_LABELS = {
@@ -283,7 +346,6 @@
                 if (fromJson.length > 1) items = fromJson;
                 const annItem = (data.grid || []).find((g) => g.key === 'annualized_return');
                 if (annItem) {
-                    setOverlayCell('tbl-desk-ann-return', annItem.value);
                     setOverlayCell('kpi-desk-ann-return', annItem.value);
                     setOverlayCell('outcome-desk-ann-return', annItem.value);
                 }
@@ -300,9 +362,155 @@
     }
 
     const SPLASH_STORAGE_KEY = 'bwc-splash-dismissed';
+    const SPLASH_EXIT_MS = 600;
+
+    let splashWaveformFrameId = 0;
+    let splashWaveformTeardown = null;
+
+    function stopSplashWaveform() {
+        if (splashWaveformFrameId) {
+            cancelAnimationFrame(splashWaveformFrameId);
+            splashWaveformFrameId = 0;
+        }
+        if (typeof splashWaveformTeardown === 'function') {
+            splashWaveformTeardown();
+            splashWaveformTeardown = null;
+        }
+    }
+
+    function initSplashWaveform(splash) {
+        const canvas = splash?.querySelector('.site-splash__waveform');
+        if (!canvas) return;
+
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        let width = 0;
+        let height = 0;
+        let timeline = 0;
+
+        const waveColors = ['191, 176, 248', '199, 16, 204', '109, 28, 242'];
+        const waveCount = 9;
+        const matrixWaves = Array.from({ length: waveCount }, (_, idx) => ({
+            speed: 0.01 + Math.random() * 0.055,
+            amp: 45 + Math.random() * 65,
+            offset: Math.random() * Math.PI * 2,
+            volatility: 0.1 + Math.random() * 0.45,
+            driftPhase: Math.random() * Math.PI * 2,
+            driftSpeed: 0.003 + Math.random() * 0.015,
+            lineW: 1 + Math.random() * 1.2,
+            colorIdx: idx % waveColors.length,
+        }));
+
+        let travelingPulses = [];
+
+        function handleResize() {
+            if (!canvas.parentElement) return;
+            width = canvas.parentElement.clientWidth;
+            height = canvas.parentElement.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        function renderEngineLoop() {
+            if (!canvas.parentElement) return;
+            ctx.clearRect(0, 0, width, height);
+
+            const cy = height / 2;
+            const cx = width / 2;
+            timeline += 1.5;
+
+            matrixWaves.forEach((wave, idx) => {
+                ctx.beginPath();
+                ctx.lineWidth = wave.lineW;
+                const colorAlpha = 0.35 + Math.sin(timeline * 0.05 + idx) * 0.15;
+                ctx.strokeStyle = `rgba(${waveColors[wave.colorIdx]}, ${colorAlpha})`;
+
+                wave.driftPhase += wave.driftSpeed;
+                const ampWobble = 1 + Math.sin(wave.driftPhase) * wave.volatility;
+
+                for (let x = 0; x <= cx; x += 3) {
+                    const horizontalProgress = x / cx;
+                    const dampening = 1 - horizontalProgress ** 4;
+                    const cyclicSine = Math.sin(x * wave.speed - timeline * wave.speed + wave.offset) * wave.amp * ampWobble;
+                    const yPosition = cy + cyclicSine * dampening;
+
+                    if (x === 0) ctx.moveTo(x, yPosition);
+                    else ctx.lineTo(x, yPosition);
+                }
+                ctx.lineTo(cx, cy);
+                ctx.stroke();
+            });
+
+            ctx.beginPath();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(255, 107, 53, 0.7)';
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(width, cy);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#ff6b35';
+            ctx.fillStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            if (Math.random() < 0.02) {
+                travelingPulses.push({ x: cx, alive: true });
+            }
+
+            travelingPulses.forEach((pulse, index) => {
+                if (!pulse.alive) return;
+                pulse.x += 8.5;
+
+                if (pulse.x > cx) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = '#ff6b35';
+                    ctx.lineWidth = 3;
+
+                    const envelopeBounds = 40;
+                    for (let px = pulse.x - envelopeBounds; px < pulse.x + envelopeBounds; px += 2) {
+                        if (px < cx || px > width) continue;
+                        const normalizedDist = (px - pulse.x) / (envelopeBounds / 2.5);
+                        const highFreqSpike = -75 * Math.exp(-(normalizedDist * normalizedDist));
+
+                        if (px === Math.max(cx, pulse.x - envelopeBounds)) ctx.moveTo(px, cy);
+                        ctx.lineTo(px, cy + highFreqSpike);
+                    }
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.strokeStyle = 'rgba(255, 107, 53, 0.3)';
+                    ctx.moveTo(pulse.x, cy);
+                    ctx.lineTo(pulse.x, cy + 50);
+                    ctx.stroke();
+                }
+
+                if (pulse.x > width) {
+                    pulse.alive = false;
+                    travelingPulses.splice(index, 1);
+                }
+            });
+
+            splashWaveformFrameId = requestAnimationFrame(renderEngineLoop);
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+        splashWaveformTeardown = () => {
+            window.removeEventListener('resize', handleResize);
+        };
+        renderEngineLoop();
+    }
 
     function dismissSplash(splash) {
         if (!splash) return;
+        stopSplashWaveform();
         splash.classList.add('site-splash--out');
         splash.setAttribute('aria-hidden', 'true');
         try {
@@ -325,7 +533,14 @@
             } catch (_) {
                 /* ignore */
             }
-        }, 480);
+            const main = document.getElementById('main-content');
+            if (main && typeof main.focus === 'function') {
+                if (!main.hasAttribute('tabindex')) {
+                    main.setAttribute('tabindex', '-1');
+                }
+                main.focus({ preventScroll: true });
+            }
+        }, SPLASH_EXIT_MS);
     }
 
     function initSplash() {
@@ -353,6 +568,7 @@
 
         document.body.classList.add('splash-active');
         splash.removeAttribute('aria-hidden');
+        initSplashWaveform(splash);
 
         function onEnter() {
             dismissSplash(splash);
@@ -676,57 +892,53 @@
         path.setAttribute('d', d);
     }
 
-    async function hydrateTroughMetrics() {
+    function applyTroughMetrics(data) {
         const slots = document.querySelectorAll('[data-metric]');
-        if (!slots.length) return;
-        try {
-            const res = await fetch(asset('./data/desk-timeline.json'));
-            if (!res.ok) return;
-            const data = await res.json();
-            const troughDate = data.annotations?.trough?.date;
-            const ms = (data.milestones || []).find((m) => m.date === troughDate);
-            const deskPct = ms?.portfolio_return_pct ?? data.annotations?.trough?.max_drawdown_pct;
-            const spyPct = ms?.spy_return_pct ?? data.annotations?.trough?.spy_return_pct;
-            if (deskPct == null || spyPct == null) return;
+        if (!slots.length || !data) return;
+        const troughDate = data.annotations?.trough?.date;
+        const ms = (data.milestones || []).find((m) => m.date === troughDate);
+        const deskPct = ms?.portfolio_return_pct ?? data.annotations?.trough?.max_drawdown_pct;
+        const spyPct = ms?.spy_return_pct ?? data.annotations?.trough?.spy_return_pct;
+        if (deskPct == null || spyPct == null) return;
 
-            const deskStr = formatDeskPct(deskPct);
-            const spyStr = formatDeskPct(spyPct);
-            const excessPp = `${(deskPct - spyPct >= 0 ? '+' : '')}${(deskPct - spyPct).toFixed(2)}pp`;
+        const deskStr = formatDeskPct(deskPct);
+        const spyStr = formatDeskPct(spyPct);
+        const excessPp = `${deskPct - spyPct >= 0 ? '+' : ''}${(deskPct - spyPct).toFixed(2)}pp`;
 
-            document.querySelectorAll('[data-metric="trough-desk"]').forEach((el) => {
-                el.textContent = deskStr;
-            });
-            document.querySelectorAll('[data-metric="trough-spy"]').forEach((el) => {
-                el.textContent = spyStr;
-            });
-            document.querySelectorAll('[data-metric="trough-excess"]').forEach((el) => {
-                el.textContent = excessPp;
-            });
-        } catch (_) {
-            /* static HTML fallbacks remain */
+        document.querySelectorAll('[data-metric="trough-desk"]').forEach((el) => {
+            el.textContent = deskStr;
+        });
+        document.querySelectorAll('[data-metric="trough-spy"]').forEach((el) => {
+            el.textContent = spyStr;
+        });
+        document.querySelectorAll('[data-metric="trough-excess"]').forEach((el) => {
+            el.textContent = excessPp;
+        });
+    }
+
+    function renderDeskTimelineFromData(data) {
+        const root = document.getElementById('desk-timeline');
+        if (!root || !data) return;
+        const milestones = data.milestones || [];
+        const phases = data.phases || [];
+        if (!milestones.length) {
+            root.innerHTML =
+                '<p class="text-mono text-muted">Timeline unavailable. Run build_frontend_assets.</p>';
+            return;
         }
+        root.innerHTML = buildSnakeTimelineHtml(milestones, phases, 4);
+        const paintStroke = () => renderSnakeStroke(root);
+        requestAnimationFrame(() => requestAnimationFrame(paintStroke));
+        bindSnakeStrokeRepaint(root, paintStroke);
     }
 
     async function renderDeskTimeline() {
         const root = document.getElementById('desk-timeline');
         if (!root) return;
         try {
-            const res = await fetch(asset('./data/desk-timeline.json'));
-            if (!res.ok) throw new Error('desk-timeline.json missing');
-            const data = await res.json();
-            const milestones = data.milestones || [];
-            const phases = data.phases || [];
-
-            if (!milestones.length) {
-                root.innerHTML =
-                    '<p class="text-mono text-muted">Timeline unavailable. Run build_frontend_assets.</p>';
-                return;
-            }
-
-            root.innerHTML = buildSnakeTimelineHtml(milestones, phases, 4);
-            const paintStroke = () => renderSnakeStroke(root);
-            requestAnimationFrame(() => requestAnimationFrame(paintStroke));
-            bindSnakeStrokeRepaint(root, paintStroke);
+            const data = await getDeskTimeline();
+            if (!data) throw new Error('desk-timeline.json missing');
+            renderDeskTimelineFromData(data);
         } catch (_) {
             root.innerHTML =
                 '<p class="text-mono text-muted">Timeline unavailable. Run scripts/extract_frontend_narrative_data.py.</p>';
@@ -753,14 +965,24 @@
         }
     }
 
-    function initKaTeX() {
-        if (typeof renderMathInElement !== 'function') return;
-        renderMathInElement(document.body, {
-            delimiters: [
-                { left: '$$', right: '$$', display: true },
-                { left: '$', right: '$', display: false },
-            ],
-            throwOnError: false,
+    function initDeferredHydration() {
+        const manifestDetails = document.querySelector('.sources-supplement');
+        if (manifestDetails) {
+            const loadManifest = () => {
+                if (manifestDetails.dataset.bwcManifestLoaded === '1') return;
+                manifestDetails.dataset.bwcManifestLoaded = '1';
+                renderDeliverablesManifest();
+            };
+            manifestDetails.addEventListener('toggle', () => {
+                if (manifestDetails.open) loadManifest();
+            });
+            deferWhenVisible(manifestDetails, loadManifest);
+        }
+
+        deferWhenVisible('#desk-timeline', async () => {
+            const data = await getDeskTimeline();
+            applyTroughMetrics(data);
+            renderDeskTimelineFromData(data);
         });
     }
 
@@ -978,6 +1200,11 @@
         const triggers = document.querySelectorAll('[data-dialog-target]');
         if (!triggers.length) return;
 
+        const lazyDialogHydrators = {
+            'behavioural-audit-dialog': hydrateBehaviouralAudit,
+            'memo-excerpts-dialog': hydrateMemoExcerpts,
+        };
+
         document.addEventListener('click', (e) => {
             const closeEl = e.target.closest('[data-dialog-close]');
             if (!closeEl) return;
@@ -995,6 +1222,11 @@
             closeBtn?.addEventListener('click', () => dialog.close());
 
             trigger.addEventListener('click', () => {
+                const hydrate = lazyDialogHydrators[dialogId];
+                if (hydrate && dialog.dataset.bwcHydrated !== '1') {
+                    dialog.dataset.bwcHydrated = '1';
+                    hydrate();
+                }
                 if (typeof dialog.showModal === 'function') dialog.showModal();
                 else dialog.setAttribute('open', '');
                 attachCursorToTopLayer(dialog);
@@ -1170,30 +1402,24 @@
         if (window.BWC && typeof window.BWC.rewriteRelativeUrls === 'function') {
             window.BWC.rewriteRelativeUrls(document.body);
         }
+        initSplash();
         initResolvedAssets();
+        initLazyChartIframes();
         initPagesDiagnostics();
         initSiteDock();
         initScrollSpy();
         initScrollReveal();
         initStatusBadge();
         initDialogs();
-        hydrateBehaviouralAudit();
-        hydrateMemoExcerpts();
+        initDeferredHydration();
         fetchAndHydrate();
         renderExcelMetricsGrid();
-        hydrateTroughMetrics();
-        renderDeskTimeline();
-        renderDeliverablesManifest();
         initStatAnimations();
-        initSplash();
         initFooterYear();
-        initCustomCursor();
-        hookNewScrollReveal();
-        if (typeof renderMathInElement === 'function') {
-            initKaTeX();
-        } else {
-            window.addEventListener('load', initKaTeX);
-        }
+        runWhenIdle(() => {
+            initCustomCursor();
+            hookNewScrollReveal();
+        });
     });
 })();
 

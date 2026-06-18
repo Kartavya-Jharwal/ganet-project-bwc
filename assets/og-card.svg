@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Team BWC post-mortem: -4.37% desk close, Apr 2 trough vs SPY, 422/430 faculty score">
+  <rect width="1200" height="630" fill="#050505"/>
+  <rect width="1200" height="8" fill="#a78bfa"/>
+  <text x="80" y="200" fill="#fafafa" font-family="system-ui, sans-serif" font-size="88" font-weight="700">Team BWC</text>
+  <text x="80" y="270" fill="#a78bfa" font-family="system-ui, sans-serif" font-size="32" letter-spacing="0.04em">HULT IC POST-MORTEM · CHL-0200</text>
+  <text x="80" y="380" fill="#f87171" font-family="ui-monospace, monospace" font-size="56" font-weight="600">-4.37% desk close</text>
+  <text x="80" y="450" fill="#4ade80" font-family="ui-monospace, monospace" font-size="28">Apr 2 trough: -6.44% vs SPY -11.72%</text>
+  <text x="80" y="520" fill="#a1a1aa" font-family="ui-monospace, monospace" font-size="26">Faculty score 422/430 · Static archive</text>
+</svg>
