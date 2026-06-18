@@ -437,10 +437,6 @@
         margin-inline: calc(var(--gutter-safe-left) * -0.5);
         padding-inline: calc(var(--gutter-safe-left) * 0.5);
     }
-
-    .overlay-compare-table th.overlay-col-python {
-        min-width: 7.5rem;
-    }
 }
 
 /* ─── Footer ─── */

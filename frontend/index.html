@@ -9,46 +9,168 @@
             if (dismissed) document.documentElement.classList.add('splash-seen');
             else document.documentElement.classList.add('splash-pending');
         } catch (_) {}
+        if (document.documentElement.classList.contains('splash-pending')) {
+            const splashFonts = document.createElement('link');
+            splashFonts.rel = 'stylesheet';
+            splashFonts.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;1,400&family=Space+Mono:wght@400;700&display=swap';
+            document.head.appendChild(splashFonts);
+        }
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Team BWC | Investment Challenge Post-Mortem</title>
-    <meta name="description" content="Team BWC CHL-0200 archive: -4.37% desk close, March vs SPY drawdown, 422/430 faculty score, committee memo, deck, and Python audit layer. Static sign-off publication.">
+    <title>Team BWC | Hult Investment Challenge Post-Mortem · CHL-0200</title>
+    <meta name="description" content="Honest $1M paper desk archive: Team BWC CHL-0200, -4.37% Excel close, Apr 2 drawdown vs SPY, 422/430 faculty score, filed memo + Python audit layer. Static sign-off publication.">
+    <meta name="author" content="Kartavya Jharwal">
+    <meta name="keywords" content="Team BWC, Hult Investment Challenge, CHL-0200, investment challenge post-mortem, paper trading desk, quant audit, adaptive markets, faculty score 422/430">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#050505">
     <link rel="canonical" href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
+    <link rel="alternate" type="application/json" href="./data/site-summary.json" title="Site summary (machine-readable)">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="./sitemap.xml">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Team BWC">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:title" content="Team BWC | Hult Investment Challenge Post-Mortem">
+    <meta property="og:description" content="Honest $1M paper desk archive: -4.37% close, Apr 2 drawdown vs SPY, 422/430 faculty score, filed memo + Excel + Python audit layer.">
+    <meta property="og:url" content="https://kartavya-jharwal.github.io/ganet-project-bwc/">
+    <meta property="og:image" content="https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Team BWC post-mortem: -4.37% desk close, Apr 2 trough vs SPY, 422/430 faculty score">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Team BWC | Hult Investment Challenge Post-Mortem">
+    <meta name="twitter:description" content="Honest $1M paper desk archive: -4.37% close, Apr 2 drawdown vs SPY, 422/430 faculty score, filed memo + Python audit layer.">
+    <meta name="twitter:image" content="https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png">
+    <meta name="twitter:image:alt" content="Team BWC post-mortem key metrics">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#website",
+                "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/",
+                "name": "Team BWC — Hult Investment Challenge Post-Mortem",
+                "description": "Static archive of Team BWC (CHL-0200): filed Excel close, committee memo, faculty marks, and Python audit overlay.",
+                "inLanguage": "en-US",
+                "publisher": { "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#person" }
+            },
+            {
+                "@type": "CreativeWork",
+                "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#case-study",
+                "name": "Team BWC Investment Challenge Post-Mortem",
+                "headline": "We lost money. We still beat SPY on the March drawdown.",
+                "description": "Ten-week $1M paper desk (Feb–Apr 2026): -4.37% total return vs SPY -2.29%, Apr 2 trough -6.44% vs SPY -11.72%, faculty score 422/430.",
+                "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/",
+                "datePublished": "2026-05-01",
+                "dateModified": "2026-06-18",
+                "author": { "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#person" },
+                "keywords": ["Team BWC", "Hult CHL-0200", "investment challenge", "post-mortem", "quant audit", "paper trading"],
+                "genre": "Case study",
+                "isAccessibleForFree": true,
+                "license": "https://opensource.org/licenses/MIT"
+            },
+            {
+                "@type": "Person",
+                "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#person",
+                "name": "Kartavya Jharwal",
+                "url": "https://kartavya.tech",
+                "sameAs": [
+                    "https://github.com/Kartavya-Jharwal/ganet-project-bwc",
+                    "https://www.linkedin.com/in/kartavyajharwal/"
+                ]
+            },
+            {
+                "@type": "FAQPage",
+                "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#faq",
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "What was Team BWC's desk return?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "The graded Excel close on 11 Apr 2026 was -4.37% total return on a $1M paper book, about $43.7k below start. Versus SPY full term: -2.08% excess underperformance."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Where did Team BWC outperform SPY?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "At the Apr 2 trough only: desk -6.44% vs SPY -11.72% (+5.28pp relative preservation). This does not vindicate negative Sharpe, Sortino, or expectancy on the full term."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What was the faculty score?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "422/430 total: Architecture & logs 147/150, Strategy & final report 118/120, Client presentation & post-mortem 118/120, Peer eval & leadership 39/40."
+                        }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What is the Python overlay?",
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": "A separate audit backtest and stress-test layer (quant_monitor/) on the closed trading universe — confidence signals, not trade signals. Overlay metrics are not the graded desk book."
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⬛</text></svg>">
+    <link rel="alternate" type="text/plain" href="./llms.txt" title="LLM / agent index">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300..900&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles/tokens.css">
     <link rel="stylesheet" href="./styles/layout.css">
     <link rel="stylesheet" href="./styles/nav.css">
     <link rel="stylesheet" href="./styles/spatial.css">
     <link rel="stylesheet" href="./styles/rhythm.css">
     <link rel="stylesheet" href="./styles/pages.css">
-    <link rel="stylesheet" href="./styles/motion.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="./styles/motion.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="./styles/motion.css"></noscript>
 </head>
 <body id="top" class="theme-dark noise-bg smooth-scroll">
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <div id="site-splash" class="site-splash" role="dialog" aria-modal="true" aria-labelledby="splash-title" aria-describedby="splash-desc">
-        <div class="site-splash__panel">
-            <p class="site-splash__eyebrow text-mono">Spring 2026 · Hult CHL-0200 · Feb 2 → Apr 11, 2026</p>
-            <h1 id="splash-title" class="site-splash__title text-display">Team BWC</h1>
-            <p id="splash-desc" class="site-splash__lead">Independent post-sunset archive of Team BWC (CHL-0200): filed memo, marks book, and engineering post-mortem.</p>
+        <div class="site-splash__gradient" aria-hidden="true"></div>
+        <div class="site-splash__grain" aria-hidden="true"></div>
+        <div class="site-splash__vignette" aria-hidden="true"></div>
+        <canvas class="site-splash__waveform" aria-hidden="true"></canvas>
 
-            <aside class="site-splash__disclaimer" aria-label="Disclaimer">
-                <p class="ic-kicker">Disclaimer</p>
-                <p class="ic-outcome-plain mb-0">
-                    Not an official Hult publication; not coordinated with Professor Daniela Neiderer or teammates for this microsite.
-                    Presentation is heavily edited; site layout and quant documentation were AI-assisted.
-                    Graded marks remain the Excel close and filed memo only.
+        <div class="site-splash__ui">
+            <header class="site-splash__reveal site-splash__reveal--1">
+                <p class="site-splash__eyebrow">HULT CHL-0200 &bull; FEB 2 &rarr; APR 11, 2026</p>
+            </header>
+
+            <main class="site-splash__reveal site-splash__reveal--2">
+                <h1 id="splash-title" class="site-splash__title">
+                    <span>Adaptive</span>
+                    <span>Efficiency</span>
+                </h1>
+                <p id="splash-desc" class="site-splash__lead">
+                    Extracting deterministic signals from systemic chaos. An exploration of quantitative asset velocity and algorithmic volatility thresholds.
                 </p>
-            </aside>
+            </main>
 
-            <button type="button" id="splash-enter" class="cta-btn cta-primary cta-large site-splash__cta" autofocus>Enter microsite</button>
-            <p class="site-splash__hint text-mono">Enter · Space · or skip to <a href="#main-content" class="link-underline site-splash__skip">main content</a></p>
+            <footer class="site-splash__reveal site-splash__reveal--3">
+                <aside class="site-splash__disclaimer" aria-label="Disclaimer">
+                    <p class="site-splash__disclaimer-label">Disclaimer</p>
+                    <p class="site-splash__disclaimer-body">
+                        Not an official Hult publication; not coordinated with Professor Daniela Neiderer or teammates for this microsite.
+                        Presentation is heavily edited; site layout and quant documentation were AI-assisted.
+                        Graded marks remain the Excel close and filed memo only.
+                    </p>
+                </aside>
+
+                <button type="button" id="splash-enter" class="site-splash__cta" autofocus>Enter microsite</button>
+                <p class="site-splash__hint">Enter &middot; Space &middot; or skip to <a href="#main-content" class="site-splash__skip">main content</a></p>
+            </footer>
         </div>
     </div>
 
@@ -67,12 +189,13 @@
             <div id="site-nav-panel" class="site-dock__panel">
                 <ul class="site-dock__list">
                     <li><a href="#sources" class="site-dock__link" data-section="sources">Sources</a></li>
-                    <li><a href="#context" class="site-dock__link" data-section="context">Start</a></li>
-                    <li><a href="#evidence" class="site-dock__link" data-section="evidence">Results</a></li>
-                    <li><a href="#principles" class="site-dock__link" data-section="principles">Principles</a></li>
-                    <li><a href="#validator" class="site-dock__link" data-section="validator">Tech</a></li>
+                    <li><a href="#context" class="site-dock__link" data-section="context">Brief</a></li>
+                    <li><a href="#story" class="site-dock__link" data-section="story">Story</a></li>
+                    <li><a href="#evidence" class="site-dock__link" data-section="evidence">Desk</a></li>
+                    <li><a href="#validator" class="site-dock__link" data-section="validator">Overlay</a></li>
                     <li><a href="#stack" class="site-dock__link" data-section="stack">Stack</a></li>
-                    <li><a href="#close" class="site-dock__link" data-section="close">Close</a></li>
+                    <li><a href="#evaluation" class="site-dock__link" data-section="evaluation">Faculty</a></li>
+                    <li><a href="#principles" class="site-dock__link" data-section="principles">Principles</a></li>
                     <li><a href="#contact" class="site-dock__link site-dock__link--cta" data-section="contact">Contact</a></li>
                 </ul>
                 <p class="site-dock__meta text-mono">
@@ -87,7 +210,7 @@
         <header id="summary" class="hero-case-study ic-hero section-anchor reveal-step-2">
             <div class="hero-masthead" aria-label="Hero header">
                 <a href="#top" class="hero-masthead__brand text-display">BWC</a>
-                <p class="hero-masthead__tag text-mono">CHL-0200 · static archive · read-only</p>
+                <p class="hero-masthead__tag text-mono">Adaptive Efficiency · CHL-0200 · static archive</p>
             </div>
             <div class="ic-section-header ic-hero-intro">
                 <h1 class="text-hero headline-fluid">
@@ -130,7 +253,7 @@
 
             <div class="cta-row hero-cta-row">
                 <a href="#sources" class="cta-btn cta-primary cta-large">Filed sources</a>
-                <a href="#evidence" class="cta-btn cta-secondary cta-large">View results</a>
+                <a href="#evidence" class="cta-btn cta-secondary cta-large">Desk results</a>
             </div>
         </header>
 
@@ -142,6 +265,7 @@
             <div class="prose-columns">
                 <div class="prose-column">
                     <p class="prose-plain ic-outcome-plain">Ten-week paper desk: smaller trough drawdown than SPY at the Apr 2 low, slower April re-risk after the ceasefire. Filed memo is the narrative authority; this page is the scan path.</p>
+                    <p class="prose-formal ic-outcome-plain">Thesis frame: <em>Adaptive Efficiency</em> in the spirit of Andrew Lo&rsquo;s adaptive markets hypothesis (2004, 2017) — efficiency as an evolutionary process, not a static binary. In a three-month simulation, noise can win a round; over longer horizons, re-evaluation and discipline compound. We tried; the regime labels, charter override, and audit layer record where we adapted and where we did not.</p>
                     <ul class="ic-exec-bullets prose-list">
                         <li><strong>Act I (Feb):</strong> Foundation book deployed: beta target ~1.0, sector sleeves, diary discipline from day one.</li>
                         <li><strong>Act II (Mar):</strong> Section 5 charter override — portfolio last in class with twelve days left — then emergency triage, hedges, and lower exposure; desk trough <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> on Apr 2.</li>
@@ -157,7 +281,7 @@
 
 <section id="sources" class="section-anchor ic-section ic-sources fade-up" aria-labelledby="sources-title">
             <header class="ic-section-header">
-                <p class="ic-kicker">Start here</p>
+                <p class="ic-kicker">Sources</p>
                 <h2 id="sources-title">Three filed sources</h2>
                 <p class="ic-lead">Marks book + log, committee memo, and client deck. Everything else on this page points back to these.</p>
             </header>
@@ -201,7 +325,7 @@
                 <ul id="deliverables-manifest-list" class="manifest-list" aria-live="polite"></ul>
             </details>
             <p class="ic-outcome-plain sources-footnote">
-                Python audit layer: <code>quant_monitor/</code> — see <a href="#validator" class="link-underline">Tech</a>. Phase dates on this page follow the Excel PERFORMANCE TIMELINE, not the committee memo&apos;s phase table.
+                Python audit overlay: <code>quant_monitor/</code> — see <a href="#validator" class="link-underline">Overlay</a>. Phase dates on this page follow the Excel PERFORMANCE TIMELINE, not the committee memo&apos;s phase table.
             </p>
         </section>
 
@@ -209,8 +333,9 @@
 
 <section id="context" class="section-anchor context-intro ic-section fade-up">
             <header class="ic-section-header ic-context-header">
-                <p class="ic-kicker">Program brief</p>
-                <h2>Problem statement</h2>
+                <p class="ic-kicker">Brief</p>
+                <h2>The mandate we signed up for</h2>
+                <p class="ic-lead">CHL-0200 program rules, grading frame, and desk window — before the narrative and marks.</p>
             </header>
 
             <div class="ic-context-layout">
@@ -258,9 +383,9 @@
 <!-- STORY / DESK TIMELINE -->
 <section id="story" class="section-anchor narrative-flow-story ic-section fade-up">
             <header class="ic-section-header">
-                <p class="ic-kicker">Desk narrative</p>
-                <h2>Charter said fun. The log shows the stress.</h2>
-                <p class="ic-lead">One crash window, one recovery we chased too slowly. Timeline below is from the Excel PERFORMANCE TIMELINE (sheet008), not narrative guesswork.</p>
+                <p class="ic-kicker">Story</p>
+                <h2>What happened on the desk</h2>
+                <p class="ic-lead">One crash window, one recovery we chased too slowly. Timeline from the Excel PERFORMANCE TIMELINE (sheet008), not narrative guesswork.</p>
             </header>
             <div id="desk-timeline" class="desk-timeline-snake" aria-live="polite" aria-label="Desk milestones from Excel log"></div>
             <article class="ic-block ic-memo-callout">
@@ -272,12 +397,12 @@
             </article>
         </section>
 
-<!-- 2  /  CURATED EVIDENCE -->
+<!-- DESK RESULTS (graded Excel only) -->
 <section id="evidence" class="section-anchor case-study-block ic-section fade-up">
             <header class="ic-section-header">
-                <p class="ic-kicker">Results</p>
-                <h2>Excel close in plain language</h2>
-                <p class="ic-lead">Headline cards first, ratio wall scrolls below, then charts. Overlay charts live under Tech.</p>
+                <p class="ic-kicker">Desk</p>
+                <h2>Graded Excel close</h2>
+                <p class="ic-lead">Headline cards, ratio wall, and desk-only charts — faculty-scored marks from the 11 Apr 2026 close. Overlay audit lives in the next section.</p>
             </header>
             <div class="ic-section-actions">
                 <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="behavioural-audit-dialog">Behavioural audit</button>
@@ -316,6 +441,7 @@
             <section class="excel-metrics-marquee" id="excel-metrics-marquee" aria-labelledby="excel-marquee-title">
                 <header class="excel-marquee-header">
                     <p class="ic-kicker" id="excel-marquee-title">Full Excel export (extra rigor we added)</p>
+                    <p class="ic-outcome-plain mb-tight"><strong>Desk (graded):</strong> Excel close, 11 Apr 2026 — the numbers faculty scored. Headline <span class="text-mono">-4.37%</span> total; trough drawdown <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span>.</p>
                     <p class="ic-outcome-plain mb-tight"><strong>Be profitable and have fun</strong>: the course never asked for Calmar, M2, or a full ratio wall; we built it anyway.</p>
                     <p class="ic-outcome-plain mb-0">Labels match the grading sheet; read the cards above first.</p>
                 </header>
@@ -326,32 +452,32 @@
                 <h3 id="results-charts-title" class="ic-kicker">Marked book charts (Excel / desk only)</h3>
             <div class="chart-card chart-embed desk-performance-embed fade-up">
                 <div class="chart-title text-display">Performance vs SPY</div>
-                <iframe src="./charts/desk-performance.html" title="Hult desk performance overview" loading="lazy"></iframe>
+                <iframe data-src="./charts/desk-performance.html" title="Hult desk performance overview" loading="lazy"></iframe>
             </div>
 
             <div class="chart-grid-2 fade-up">
                 <div class="chart-card chart-embed">
                     <div class="chart-title text-display">Equity curve</div>
-                    <iframe src="./charts/equity-curve.html" title="Equity curve" loading="lazy"></iframe>
+                    <iframe data-src="./charts/equity-curve.html" title="Equity curve" loading="lazy"></iframe>
                 </div>
                 <div class="chart-card chart-embed">
                     <div class="chart-title text-display">Drawdown / desk NAV</div>
-                    <iframe src="./charts/drawdown.html" title="Drawdown" loading="lazy"></iframe>
+                    <iframe data-src="./charts/drawdown.html" title="Drawdown" loading="lazy"></iframe>
                 </div>
             </div>
             </section>
 
         </section>
 
-<!-- 3  /  CONFIDENCE VALIDATOR (Python overlay) -->
+<!-- OVERLAY + VALIDATOR (Python audit layer) -->
 <section id="validator" class="section-anchor ic-section fade-up tech-layout">
         <header class="ic-section-header tech-layout-header reveal-step-2">
-            <p class="ic-kicker">Tech</p>
-            <h2>Quant rigor layer</h2>
-            <p class="ic-lead">We built a separate Python validator as a pro-grade application: a reproducible way to sanity-check risk, attribution, and “are we telling the truth?” against the desk’s own logs.</p>
+            <p class="ic-kicker">Overlay</p>
+            <h2>Python audit layer</h2>
+            <p class="ic-lead">Backtest and stress-test on the closed trading universe — not the graded desk book. Metrics and charts first; validator architecture and software map follow below.</p>
             <aside class="ic-tech-tldr ic-block" aria-label="Non-technical TLDR">
                 <p class="ic-kicker">Non-technical TL;DR</p>
-                <p class="prose-plain ic-outcome-plain mb-0">Confidence signals, not trade signals — audit overlay on the closed trading universe.</p>
+                <p class="prose-plain ic-outcome-plain mb-0">Confidence signals, not trade signals — audit overlay only; never pair these returns with desk marks row-by-row.</p>
             </aside>
             <div class="json-payloads">
                 <a href="./docs/index.html" target="_blank" rel="noopener" class="link-underline text-mono">Engineering docs</a>
@@ -365,8 +491,88 @@
             <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="tech-depth-dialog">How the validator works</button>
         </div>
 
+        <section class="ic-block overlay-metrics-block fade-up" aria-labelledby="overlay-metrics-title">
+            <h3 id="overlay-metrics-title" class="ic-kicker">Overlay audit metrics</h3>
+            <p class="ic-outcome-plain">Python backtest and forward-cast stress test on the closed trading universe — not the graded Excel book.</p>
+            <dl class="overlay-metrics-grid" aria-label="Overlay audit metrics">
+                <div class="overlay-metric">
+                    <dt>Total return</dt>
+                    <dd class="text-mono" id="tbl-total-return">+7.1%</dd>
+                </div>
+                <div class="overlay-metric">
+                    <dt>Annualized return</dt>
+                    <dd class="text-mono" id="tbl-ann-return">+67.5%</dd>
+                </div>
+                <div class="overlay-metric">
+                    <dt title="Memo §3: static Sharpe penalizes crisis-hedge volatility the same as crash volatility">Sharpe ratio</dt>
+                    <dd class="text-mono" id="tbl-sharpe">1.30</dd>
+                </div>
+                <div class="overlay-metric">
+                    <dt>Max drawdown</dt>
+                    <dd class="text-mono text-danger" id="tbl-max-dd">-9.1%</dd>
+                </div>
+                <div class="overlay-metric">
+                    <dt>Sortino ratio</dt>
+                    <dd class="text-mono" id="tbl-sortino">3.44</dd>
+                </div>
+                <div class="overlay-metric overlay-metric--note">
+                    <dt>Portfolio beta</dt>
+                    <dd class="text-mono" id="tbl-beta">1.56</dd>
+                    <p class="overlay-metric-note ic-outcome-plain">Model-weighted backtest exposure; not comparable to desk terminal beta at crisis de-risk.</p>
+                </div>
+                <div class="overlay-metric">
+                    <dt>Cornish-Fisher VaR (5%)</dt>
+                    <dd class="text-mono" id="tbl-cf-var">-2.55%</dd>
+                </div>
+                <div class="overlay-metric">
+                    <dt>Calmar ratio</dt>
+                    <dd class="text-mono" id="tbl-calmar">6.19</dd>
+                </div>
+                <div class="overlay-metric">
+                    <dt>Jensen&apos;s alpha</dt>
+                    <dd class="text-mono" id="tbl-jensen">0.677</dd>
+                </div>
+                <div class="overlay-metric">
+                    <dt title="Share of Monte Carlo paths that cleared our hurdle rate">MC hurdle (pass %)</dt>
+                    <dd class="text-mono text-accent" id="tbl-mc-hurdle">37.9%</dd>
+                </div>
+            </dl>
+            <p id="metrics-empty-note" class="metrics-empty-note" hidden>Overlay cells refresh from <code>data/full-metrics.json</code> when fetch succeeds.</p>
+        </section>
+
+        <section class="ic-block fade-up" aria-labelledby="overlay-charts-title">
+            <h3 id="overlay-charts-title" class="ic-kicker">Overlay charts</h3>
+            <p class="ic-outcome-plain">Desk NAV charts are in Desk above. These plots are overlay-only.</p>
+            <div class="overlay-charts-grid">
+                <div class="chart-card chart-embed chart-span-full fade-up">
+                    <div class="chart-title text-display">Backtest comparison</div>
+                    <iframe data-src="./charts/backtest-compare.html" title="Backtest" loading="lazy"></iframe>
+                </div>
+                <div class="chart-card chart-embed fade-up">
+                    <div class="chart-title text-display">Monte Carlo simulation</div>
+                    <iframe data-src="./charts/monte-carlo.html" title="Monte Carlo" loading="lazy"></iframe>
+                </div>
+                <div class="chart-card chart-embed fade-up">
+                    <div class="chart-title text-display">Factor loadings</div>
+                    <iframe data-src="./charts/factor-loadings.html" title="Factors" loading="lazy"></iframe>
+                </div>
+                <div class="chart-card chart-embed fade-up">
+                    <div class="chart-title text-display">Correlation heatmap</div>
+                    <iframe data-src="./charts/heatmap.html" title="Heatmap" loading="lazy"></iframe>
+                </div>
+                <div class="chart-card chart-embed fade-up">
+                    <div class="chart-title text-display">Return distribution</div>
+                    <iframe data-src="./charts/return-dist.html" title="Returns" loading="lazy"></iframe>
+                </div>
+                <div class="chart-card chart-embed chart-span-full fade-up">
+                    <div class="chart-title text-display">Attribution</div>
+                    <iframe data-src="./charts/attribution.html" title="Attribution" loading="lazy"></iframe>
+                </div>
+            </div>
+        </section>
+
         <section class="ic-tech-fold" aria-labelledby="tech-fold-title">
-            <h3 id="tech-fold-title" class="ic-fold-title">How the validator is built (technical)</h3>
+            <h3 id="tech-fold-title" class="ic-fold-title">How the validator is built</h3>
             <div class="ic-block">
                 <p class="ic-outcome-plain">Three layers: what the desk did, tail risk on the overlay path, then what weights a regime model would have held.</p>
                 <div class="architecture-diagram">
@@ -422,12 +628,12 @@
         </section>
 </section>
 
-<!-- 4  /  FULL STACK (technical audience) -->
+<!-- STACK (engineering map) -->
 <section id="stack" class="section-anchor ic-section fade-up">
             <header class="ic-section-header">
-                <p class="ic-kicker">Builders only</p>
+                <p class="ic-kicker">Stack</p>
                 <h2>Software map</h2>
-                <p class="ic-lead">Reproducible Python stack in <code>quant_monitor/</code>: ingest → validate → attribute → chart. This is the engineering “map” behind the confidence layer.</p>
+                <p class="ic-lead">Reproducible Python stack in <code>quant_monitor/</code>: ingest → validate → attribute → chart. Maintainer tables for auditors who want package-level detail.</p>
             </header>
 
             <aside class="stack-disclaimer ic-memo-callout">
@@ -532,86 +738,11 @@
             </section>
         </section>
 
-<!-- 5  /  AUDIT OUTPUTS (after software map) -->
-<section id="audit-outputs" class="section-anchor ic-section fade-up">
-            <header class="ic-section-header">
-                <p class="ic-kicker">Audit outputs</p>
-                <h2>Two books + overlay charts</h2>
-                <p class="ic-lead">Desk marks from Excel; overlay is a Python audit backtest and forward-cast stress test.</p>
-            </header>
-
-            <div class="tech-layout-split">
-            <section class="ic-block fade-up tech-layout-books">
-                <h3 class="ic-kicker">Desk vs overlay</h3>
-                <div class="readable-prose">
-                    <div class="metrics-table-wrap mt-tight">
-                        <table class="metrics-table overlay-compare-table">
-                            <caption class="text-body-readable">Side-by-side metrics. Desk annualized per Excel GAIN ANALYSIS (TWR^(365/68)−1); 68-day window — context only, not investable.</caption>
-                            <thead>
-                                <tr>
-                                    <th scope="col">Metric</th>
-                                    <th scope="col" class="overlay-col-desk"><strong>Desk (Excel)</strong></th>
-                                    <th scope="col" class="overlay-col-python">
-                                        <strong>Overlay (Python)</strong>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>Total return</td><td class="text-mono">-4.37%</td><td class="text-mono" id="tbl-total-return">+7.1%</td></tr>
-                                <tr><td>Annualized return</td><td class="text-mono" id="tbl-desk-ann-return">-23.5%</td><td class="text-mono" id="tbl-ann-return">+67.5%</td></tr>
-                                <tr><td title="Memo §3: static Sharpe penalizes crisis-hedge volatility the same as crash volatility">Sharpe ratio</td><td class="text-mono">-2.11</td><td class="text-mono" id="tbl-sharpe">1.30</td></tr>
-                                <tr><td>Max drawdown (Apr 2)</td><td class="text-mono text-success" data-metric="trough-desk">-6.44%</td><td class="text-mono text-danger" id="tbl-max-dd">-9.1%</td></tr>
-                                <tr><td>Sortino ratio</td><td class="text-mono">-4.16</td><td class="text-mono" id="tbl-sortino">3.44</td></tr>
-                                <tr><td title="Desk 0.63 is terminal close; beta swung near zero in Crisis">Portfolio beta</td><td class="text-mono">0.63</td><td class="text-mono" id="tbl-beta">1.56</td></tr>
-                                <tr><td>Cornish-Fisher VaR (5%)</td><td class="text-mono">n/a</td><td class="text-mono" id="tbl-cf-var">-2.55%</td></tr>
-                                <tr><td>Calmar ratio</td><td class="text-mono">-0.65</td><td class="text-mono" id="tbl-calmar">6.19</td></tr>
-                                <tr><td>Jensen&apos;s alpha</td><td class="text-mono">-0.00044</td><td class="text-mono" id="tbl-jensen">0.677</td></tr>
-                                <tr><td title="Share of Monte Carlo paths that cleared our hurdle rate">MC hurdle (pass %)</td><td class="text-mono">n/a</td><td class="text-mono text-accent" id="tbl-mc-hurdle">37.9%</td></tr>
-                            </tbody>
-                        </table>
-                        <p id="metrics-empty-note" class="metrics-empty-note" hidden>Overlay cells refresh from <code>data/full-metrics.json</code> when fetch succeeds.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="ic-block fade-up tech-layout-charts">
-                <h3 class="ic-kicker">Overlay charts</h3>
-                <p class="ic-outcome-plain">Desk NAV charts stay in Results. These are overlay-only.</p>
-                <div class="overlay-charts-grid">
-                    <div class="chart-card chart-embed chart-span-full fade-up">
-                        <div class="chart-title text-display">Backtest comparison</div>
-                        <iframe src="./charts/backtest-compare.html" title="Backtest" loading="lazy"></iframe>
-                    </div>
-                    <div class="chart-card chart-embed fade-up">
-                        <div class="chart-title text-display">Monte Carlo simulation</div>
-                        <iframe src="./charts/monte-carlo.html" title="Monte Carlo" loading="lazy"></iframe>
-                    </div>
-                    <div class="chart-card chart-embed fade-up">
-                        <div class="chart-title text-display">Factor loadings</div>
-                        <iframe src="./charts/factor-loadings.html" title="Factors" loading="lazy"></iframe>
-                    </div>
-                    <div class="chart-card chart-embed fade-up">
-                        <div class="chart-title text-display">Correlation heatmap</div>
-                        <iframe src="./charts/heatmap.html" title="Heatmap" loading="lazy"></iframe>
-                    </div>
-                    <div class="chart-card chart-embed fade-up">
-                        <div class="chart-title text-display">Return distribution</div>
-                        <iframe src="./charts/return-dist.html" title="Returns" loading="lazy"></iframe>
-                    </div>
-                    <div class="chart-card chart-embed chart-span-full fade-up">
-                        <div class="chart-title text-display">Attribution</div>
-                        <iframe src="./charts/attribution.html" title="Attribution" loading="lazy"></iframe>
-                    </div>
-                </div>
-            </section>
-            </div>
-</section>
-
-<!-- 6  /  CLOSE: feedback, team, contact -->
+<!-- CLOSE: faculty, principles, team, contact -->
 <section id="close" class="section-anchor ic-section fade-up">
-            <div id="evaluation" class="closing-block">
+            <div id="evaluation" class="closing-block section-anchor">
                 <header class="ic-section-header">
-                    <p class="ic-kicker">Faculty feedback</p>
+                    <p class="ic-kicker">Faculty</p>
                     <h2>What the chair already scored</h2>
                     <p class="ic-lead">Professor <a href="https://www.linkedin.com/in/daniela-neiderer/" target="_blank" rel="noopener" class="link-underline">Daniela Neiderer</a>, Hult. We are not re-litigating grades here. Process and logs scored high; headline return did not.</p>
                 </header>
@@ -651,8 +782,8 @@
                             <dd class="defense-qa-answer ic-outcome-plain">We were slow to match the April rally after the ceasefire headline and Brent move.</dd>
                         </div>
                         <div class="defense-qa">
-                            <dt class="defense-qa-term text-mono">Process win</dt>
-                            <dd class="defense-qa-answer ic-outcome-plain">At the Apr 2 trough the desk was <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> (<span class="text-mono" data-metric="trough-excess">+5.28pp</span>). That is the preservation story worth showing an investor.</dd>
+                            <dt class="defense-qa-term text-mono">Drawdown win</dt>
+                            <dd class="defense-qa-answer ic-outcome-plain">At the Apr 2 trough only — desk <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> (<span class="text-mono" data-metric="trough-excess">+5.28pp</span>). That is the preservation story; it does not vindicate negative Sharpe, Sortino, or expectancy on the term.</dd>
                         </div>
                         <div class="defense-qa">
                             <dt class="defense-qa-term text-mono">Team friction</dt>
@@ -679,9 +810,9 @@
 
                 <section id="principles" class="section-anchor ic-section ic-principles fade-up">
                     <header class="ic-section-header">
-                        <p class="ic-kicker">Takeaway</p>
+                        <p class="ic-kicker">Principles</p>
                         <h2>What we would repeat</h2>
-                        <p class="ic-lead">Four lines we would defend in a PM review or faculty debrief: honest marks without hiding behind jargon.</p>
+                        <p class="ic-lead">Four lines we would defend in a PM review or faculty debrief.</p>
                     </header>
                     <div class="principles-grid">
                         <article class="principle-card">
@@ -691,7 +822,7 @@
                         </article>
                         <article class="principle-card">
                             <h3>Process under fire</h3>
-                            <p class="ic-outcome-plain">Logs, IPS <span class="text-muted">(our written risk limits)</span>, and diary mattered more than one lucky trade.</p>
+                            <p class="ic-outcome-plain">Logs, diary, and filed limits (e.g. 25% max single name) mattered more than one lucky trade.</p>
                             <p class="principle-detail">The 147/150 architecture score reflects reproducible records, not P&amp;L: the discipline we took into compliance and risk internships.</p>
                         </article>
                         <article class="principle-card">
@@ -708,10 +839,11 @@
                 </section>
             </div>
 
-            <section id="team-roster" class="closing-block team-roster-section" aria-labelledby="team-roster-title">
-                <header class="team-roster-header">
-                    <h2 id="team-roster-title" class="text-display sub-title text-accent">Team of eight</h2>
-                    <p class="text-body-readable">Team BWC operators. LinkedIn profile where listed.</p>
+            <section id="team-roster" class="closing-block team-roster-section section-anchor" aria-labelledby="team-roster-title">
+                <header class="team-roster-header ic-section-header">
+                    <p class="ic-kicker">Team</p>
+                    <h2 id="team-roster-title" class="text-display">Team of eight</h2>
+                    <p class="ic-lead">Team BWC operators. LinkedIn profile where listed.</p>
                 </header>
                 <ul class="team-roster-grid">
                     <li>
@@ -782,9 +914,9 @@
                 </ul>
             </section>
 
-            <div id="contact" class="closing-block contact-cta">
-                <header class="contact-cta__header">
-                    <p class="ic-kicker">Get in touch</p>
+            <div id="contact" class="closing-block contact-cta section-anchor">
+                <header class="contact-cta__header ic-section-header">
+                    <p class="ic-kicker">Contact</p>
                     <h2 class="text-display section-title">Continue the conversation</h2>
                 </header>
                 <p class="text-body-readable contact-cta__copy">
@@ -807,7 +939,8 @@
 
             <div class="footer-simple">
                 <div class="footer-simple__left">
-                    <p class="footer-simple__brand text-display">Project BWC</p>
+                    <p class="footer-simple__brand text-display">Adaptive Efficiency</p>
+                    <p class="footer-simple__team text-mono">Team BWC · Project BWC</p>
                     <p class="footer-simple__institute text-mono">
                         Spring 2026 CHL-0200 Investment Challenge in London at
                         <a href="https://www.hult.edu/" target="_blank" rel="noopener" class="link-underline">Hult International Business School</a>
@@ -819,10 +952,12 @@
                 </div>
                 <div class="footer-simple__right">
                     <nav aria-label="Footer links" class="footer-simple__links text-mono">
-                        <a href="#sources" class="link-underline">Filed sources</a>
-                        <a href="#executive-summary" class="link-underline">Summary</a>
-                        <a href="#evidence" class="link-underline">Results</a>
-                        <a href="#validator" class="link-underline">Tech</a>
+                        <a href="#sources" class="link-underline">Sources</a>
+                        <a href="#context" class="link-underline">Brief</a>
+                        <a href="#story" class="link-underline">Story</a>
+                        <a href="#evidence" class="link-underline">Desk</a>
+                        <a href="#validator" class="link-underline">Overlay</a>
+                        <a href="#evaluation" class="link-underline">Faculty</a>
                         <a href="#contact" class="link-underline">Contact</a>
                         <a href="#top" class="link-underline">Top</a>
                     </nav>
@@ -835,6 +970,9 @@
             </div>
 
             <div class="footer-meta">
+                <p class="footer-thesis-note text-body-readable">
+                    &ldquo;Adaptive efficiency&rdquo; also names a concept in institutional economics (Douglass North): how institutions change over time. On this site it denotes Team BWC&rsquo;s desk thesis under Lo&rsquo;s adaptive markets hypothesis (AMH), not North&rsquo;s development-economics usage.
+                </p>
                 <p class="footer-copy text-mono footer-copy--center">
                     <span class="footer-copy-symbol" aria-hidden="true">©</span>
                     <span class="sr-only">Copyright </span>
@@ -934,7 +1072,7 @@
 
                     <section class="program-brief-section program-brief-section--last">
                         <h4 class="ic-kicker">Why it was structured this way</h4>
-                        <p class="ic-outcome-plain mb-0">The client was not buying speculation or headline-chasing. They wanted evidence that disciplined process, applied consistently and explained honestly, could grow capital while managing risk. Grading measured process as closely as outcome — Sharpe mattered more than dollar return.</p>
+                        <p class="ic-outcome-plain mb-0">The client was not buying speculation or headline-chasing. They wanted evidence that disciplined process, applied consistently and explained clearly, could grow capital while managing risk. Grading weighted process and logs heavily; headline return still missed.</p>
                     </section>
                 </div>
             </div>

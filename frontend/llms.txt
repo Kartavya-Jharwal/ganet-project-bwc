@@ -1,0 +1,57 @@
+# Team BWC — Hult Investment Challenge Post-Mortem
+
+> Static archive of Team BWC (CHL-0200): a ten-week $1M paper trading desk at Hult International Business School, Feb–Apr 2026. Not an official Hult publication. Numbers frozen from the 11 Apr 2026 Excel close and 2026-05-01 engineering snapshot.
+
+## What this site is
+
+- A case study and proof-of-work archive for recruiters, faculty, and quant reviewers
+- Filed committee artifacts (Excel marks book, memo, deck, charter) plus a Python audit overlay
+- Honest headline: desk lost money (-4.37% total); relative win at Apr 2 trough vs SPY only
+
+## Key facts (desk / graded)
+
+- Total return: -4.37% ($956,280 on $1M start)
+- vs SPY (full term): -2.08% excess underperformance (SPY -2.29%)
+- Max drawdown (Apr 2): desk -6.44% vs SPY -11.72% (+5.28pp) — trough only, not full-term vindication
+- Win rate: 28.57%; negative expectancy
+- Portfolio beta (close): 0.63
+- Faculty score: 422/430 (Architecture 147/150, Strategy 118/120, Presentation 118/120, Peer 39/40)
+
+## Overlay (audit engine — not graded book)
+
+- Separate Python backtest / stress-test on closed universe (`quant_monitor/`)
+- Do not pair overlay returns with desk returns; they answer different questions
+- Overlay metrics: see `data/full-metrics.json` and Tech section on the microsite
+
+## Primary pages
+
+- [Microsite home](https://kartavya-jharwal.github.io/ganet-project-bwc/): narrative, results, faculty score, contact
+- [Engineering docs](https://kartavya-jharwal.github.io/ganet-project-bwc/docs/): MkDocs technical archive
+- [GitHub repository](https://github.com/Kartavya-Jharwal/ganet-project-bwc): source code (MIT)
+- [Maintainer](https://kartavya.tech): Kartavya Jharwal
+
+## Machine-readable data
+
+- [site-summary.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/site-summary.json): structured facts for agents
+- [full-metrics.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/full-metrics.json): overlay audit metrics
+- [excel-metrics.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/excel-metrics.json): desk ratio wall
+- [deliverables-manifest.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/deliverables-manifest.json): filed artifact index
+- [behavioural-audit.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/behavioural-audit.json): timing / disposition metrics
+
+## Section anchors (on-page)
+
+- `#sources` — filed Excel, memo, deck, charter
+- `#context` — program brief / mandate
+- `#story` — desk timeline narrative
+- `#evidence` — desk results (graded Excel only)
+- `#validator` — overlay audit metrics, charts, and validator architecture
+- `#stack` — software map (maintainers)
+- `#evaluation` — faculty score 422/430 and defense Q&A
+- `#principles` — what we would repeat
+- `#team-roster` — team of eight
+- `#contact` — maintainer contact
+
+## Optional depth
+
+- Post-mortem PDF: `assets/post-mortem.pdf`
+- Committee deliverables: `deliverables/source/`

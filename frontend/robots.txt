@@ -1,0 +1,10 @@
+# Team BWC microsite — static archive (GitHub Pages)
+User-agent: *
+Allow: /
+
+# Agent / LLM discovery
+# https://llmstxt.org/
+# Summary: https://kartavya-jharwal.github.io/ganet-project-bwc/llms.txt
+# Machine-readable facts: https://kartavya-jharwal.github.io/ganet-project-bwc/data/site-summary.json
+
+Sitemap: https://kartavya-jharwal.github.io/ganet-project-bwc/sitemap.xml
