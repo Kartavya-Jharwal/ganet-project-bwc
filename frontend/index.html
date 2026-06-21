@@ -5,7 +5,20 @@
     <script src="./js/base-path.js"></script>
     <script>
         try {
-            const dismissed = sessionStorage.getItem('bwc-splash-dismissed') === '1';
+            const dismissedKey = 'bwc-splash-dismissed';
+            const refreshKey = 'bwc-splash-refresh-count';
+            const refreshLimit = 8;
+            let dismissed = sessionStorage.getItem(dismissedKey) === '1';
+            if (dismissed) {
+                const count = (parseInt(sessionStorage.getItem(refreshKey) || '0', 10) || 0) + 1;
+                if (count > refreshLimit) {
+                    sessionStorage.removeItem(dismissedKey);
+                    sessionStorage.setItem(refreshKey, '0');
+                    dismissed = false;
+                } else {
+                    sessionStorage.setItem(refreshKey, String(count));
+                }
+            }
             if (dismissed) document.documentElement.classList.add('splash-seen');
             else document.documentElement.classList.add('splash-pending');
         } catch (_) {}
@@ -17,28 +30,33 @@
         }
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Team BWC | Hult Investment Challenge Post-Mortem · CHL-0200</title>
-    <meta name="description" content="Honest $1M paper desk archive: Team BWC CHL-0200, -4.37% Excel close, Apr 2 drawdown vs SPY, 422/430 faculty score, filed memo + Python audit layer. Static sign-off publication.">
+    <title>Team BWC | Adaptive Efficiency · Hult Investment Challenge Post-Mortem</title>
+    <meta name="description" content="Team BWC CHL-0200 static archive: -4.37% graded desk close, Apr 2 trough vs SPY, 422/430 faculty score. Filed Excel, committee memo, deck, and Python audit overlay.">
     <meta name="author" content="Kartavya Jharwal">
-    <meta name="keywords" content="Team BWC, Hult Investment Challenge, CHL-0200, investment challenge post-mortem, paper trading desk, quant audit, adaptive markets, faculty score 422/430">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="keywords" content="Team BWC, Adaptive Efficiency, Hult Investment Challenge, CHL-0200, investment desk post-mortem, paper trading case study, quant audit overlay, faculty score 422/430">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
     <meta name="theme-color" content="#050505">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="canonical" href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
+    <link rel="author" href="https://kartavya.tech">
+    <link rel="home" href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
     <link rel="alternate" type="application/json" href="./data/site-summary.json" title="Site summary (machine-readable)">
     <link rel="sitemap" type="application/xml" title="Sitemap" href="./sitemap.xml">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Team BWC">
     <meta property="og:locale" content="en_US">
-    <meta property="og:title" content="Team BWC | Hult Investment Challenge Post-Mortem">
-    <meta property="og:description" content="Honest $1M paper desk archive: -4.37% close, Apr 2 drawdown vs SPY, 422/430 faculty score, filed memo + Excel + Python audit layer.">
+    <meta property="og:title" content="Team BWC | Adaptive Efficiency · Hult IC Post-Mortem">
+    <meta property="og:description" content="Static CHL-0200 archive: -4.37% desk close, Apr 2 trough vs SPY, 422/430 faculty score. Filed memo, Excel marks, and Python audit layer.">
     <meta property="og:url" content="https://kartavya-jharwal.github.io/ganet-project-bwc/">
     <meta property="og:image" content="https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png">
+    <meta property="og:image:secure_url" content="https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png">
+    <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="Team BWC post-mortem: -4.37% desk close, Apr 2 trough vs SPY, 422/430 faculty score">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Team BWC | Hult Investment Challenge Post-Mortem">
-    <meta name="twitter:description" content="Honest $1M paper desk archive: -4.37% close, Apr 2 drawdown vs SPY, 422/430 faculty score, filed memo + Python audit layer.">
+    <meta name="twitter:title" content="Team BWC | Adaptive Efficiency · Hult IC Post-Mortem">
+    <meta name="twitter:description" content="Static CHL-0200 archive: -4.37% desk close, Apr 2 trough vs SPY, 422/430 faculty score. Filed memo, Excel marks, and Python audit layer.">
     <meta name="twitter:image" content="https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png">
     <meta name="twitter:image:alt" content="Team BWC post-mortem key metrics">
     <script type="application/ld+json">
@@ -49,25 +67,57 @@
                 "@type": "WebSite",
                 "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#website",
                 "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/",
-                "name": "Team BWC — Hult Investment Challenge Post-Mortem",
-                "description": "Static archive of Team BWC (CHL-0200): filed Excel close, committee memo, faculty marks, and Python audit overlay.",
+                "name": "Team BWC: Adaptive Efficiency Post-Mortem",
+                "description": "Static archive of Team BWC (CHL-0200): filed Excel close, committee memo, faculty marks, desk results, and Python audit overlay.",
                 "inLanguage": "en-US",
                 "publisher": { "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#person" }
+            },
+            {
+                "@type": "WebPage",
+                "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#webpage",
+                "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/",
+                "name": "Team BWC | Adaptive Efficiency · Hult Investment Challenge Post-Mortem",
+                "description": "Single-page reviewer brief for the Team BWC CHL-0200 paper desk: sources, results, research overlay, faculty score, and contact.",
+                "isPartOf": { "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#website" },
+                "about": { "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#case-study" },
+                "inLanguage": "en-US",
+                "datePublished": "2026-05-01",
+                "dateModified": "2026-05-28"
             },
             {
                 "@type": "CreativeWork",
                 "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#case-study",
                 "name": "Team BWC Investment Challenge Post-Mortem",
+                "alternateName": "Adaptive Efficiency",
                 "headline": "We lost money. We still beat SPY on the March drawdown.",
-                "description": "Ten-week $1M paper desk (Feb–Apr 2026): -4.37% total return vs SPY -2.29%, Apr 2 trough -6.44% vs SPY -11.72%, faculty score 422/430.",
+                "description": "Ten-week $1M paper desk (Feb to Apr 2026): -4.37% total return vs SPY -2.29%, Apr 2 trough -6.44% vs SPY -11.72%, faculty score 422/430.",
                 "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/",
                 "datePublished": "2026-05-01",
-                "dateModified": "2026-06-18",
+                "dateModified": "2026-05-28",
                 "author": { "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#person" },
-                "keywords": ["Team BWC", "Hult CHL-0200", "investment challenge", "post-mortem", "quant audit", "paper trading"],
+                "keywords": ["Team BWC", "Adaptive Efficiency", "Hult CHL-0200", "investment challenge", "post-mortem", "quant audit", "paper trading"],
                 "genre": "Case study",
                 "isAccessibleForFree": true,
                 "license": "https://opensource.org/licenses/MIT"
+            },
+            {
+                "@type": "ItemList",
+                "@id": "https://kartavya-jharwal.github.io/ganet-project-bwc/#sections",
+                "name": "Microsite sections",
+                "itemListOrder": "https://schema.org/ItemListOrderAscending",
+                "numberOfItems": 10,
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Filed sources", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#sources" },
+                    { "@type": "ListItem", "position": 2, "name": "Program brief", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#context" },
+                    { "@type": "ListItem", "position": 3, "name": "Desk story", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#story" },
+                    { "@type": "ListItem", "position": 4, "name": "Desk results", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#evidence" },
+                    { "@type": "ListItem", "position": 5, "name": "Research and audit overlay", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#research" },
+                    { "@type": "ListItem", "position": 6, "name": "Engineering map", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#stack" },
+                    { "@type": "ListItem", "position": 7, "name": "Faculty evaluation", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#evaluation" },
+                    { "@type": "ListItem", "position": 8, "name": "Principles", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#principles" },
+                    { "@type": "ListItem", "position": 9, "name": "Team roster", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#team-roster" },
+                    { "@type": "ListItem", "position": 10, "name": "Contact", "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/#contact" }
+                ]
             },
             {
                 "@type": "Person",
@@ -112,7 +162,7 @@
                         "name": "What is the Python overlay?",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "A separate audit backtest and stress-test layer (quant_monitor/) on the closed trading universe — confidence signals, not trade signals. Overlay metrics are not the graded desk book."
+                            "text": "A separate audit backtest and stress-test layer (quant_monitor/) on the closed trading universe. Confidence signals, not trade signals. Overlay metrics are not the graded desk book."
                         }
                     }
                 ]
@@ -125,7 +175,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="preload" href="./data/results.json" as="fetch" crossorigin>
+    <link rel="preload" href="./data/excel-metrics.json" as="fetch" crossorigin>
     <link rel="stylesheet" href="./styles/tokens.css">
+    <link rel="stylesheet" href="./styles/body-background.css">
     <link rel="stylesheet" href="./styles/layout.css">
     <link rel="stylesheet" href="./styles/nav.css">
     <link rel="stylesheet" href="./styles/spatial.css">
@@ -138,39 +191,52 @@
     <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <div id="site-splash" class="site-splash" role="dialog" aria-modal="true" aria-labelledby="splash-title" aria-describedby="splash-desc">
-        <div class="site-splash__gradient" aria-hidden="true"></div>
+        <div class="site-splash__focus" aria-hidden="true"></div>
+        <div class="site-splash__gradient" aria-hidden="true">
+            <div class="site-splash__liquid" aria-hidden="true"></div>
+        </div>
+        <div class="site-splash__noise-screen" aria-hidden="true"></div>
         <div class="site-splash__grain" aria-hidden="true"></div>
         <div class="site-splash__vignette" aria-hidden="true"></div>
         <canvas class="site-splash__waveform" aria-hidden="true"></canvas>
 
         <div class="site-splash__ui">
             <header class="site-splash__reveal site-splash__reveal--1">
-                <p class="site-splash__eyebrow">HULT CHL-0200 &bull; FEB 2 &rarr; APR 11, 2026</p>
+                <p class="site-splash__eyebrow">HULT CHL-0200 &bull; 20 JAN &rarr; 1 MAY 2026</p>
             </header>
 
-            <main class="site-splash__reveal site-splash__reveal--2">
-                <h1 id="splash-title" class="site-splash__title">
-                    <span>Adaptive</span>
-                    <span>Efficiency</span>
-                </h1>
-                <p id="splash-desc" class="site-splash__lead">
-                    Extracting deterministic signals from systemic chaos. An exploration of quantitative asset velocity and algorithmic volatility thresholds.
-                </p>
-            </main>
+            <div class="site-splash__hero site-splash__reveal site-splash__reveal--2">
+                <main>
+                    <p id="splash-title" class="site-splash__title">
+                        <span>Adaptive</span>
+                        <span>Efficiency</span>
+                    </p>
+                    <p id="splash-desc" class="site-splash__lead">
+                        An Opinionated Post-Mortem on Implementing Investment Fundamentals, Qualitative Book Management, and Strict Risk Discipline Under Q1 2026 Stress
+                    </p>
+                </main>
+            </div>
 
-            <footer class="site-splash__reveal site-splash__reveal--3">
+            <div class="site-splash__lower site-splash__reveal site-splash__reveal--3">
                 <aside class="site-splash__disclaimer" aria-label="Disclaimer">
                     <p class="site-splash__disclaimer-label">Disclaimer</p>
                     <p class="site-splash__disclaimer-body">
-                        Not an official Hult publication; not coordinated with Professor Daniela Neiderer or teammates for this microsite.
-                        Presentation is heavily edited; site layout and quant documentation were AI-assisted.
-                        Graded marks remain the Excel close and filed memo only.
+                        This microsite is an independent, official archive of Team BWC&rsquo;s investment simulation. It is not affiliated with Hult, the Professor, or former teammates. While the layout and development were AI-assisted, official graded marks remain strictly bound to the submitted deliverables. All narrative reflections and interpretations are entirely my own.
                     </p>
                 </aside>
 
                 <button type="button" id="splash-enter" class="site-splash__cta" autofocus>Enter microsite</button>
-                <p class="site-splash__hint">Enter &middot; Space &middot; or skip to <a href="#main-content" class="site-splash__skip">main content</a></p>
-            </footer>
+            </div>
+
+            <p class="site-splash__hint site-splash__reveal site-splash__reveal--4">Enter &middot; Space &middot; or skip to <a href="#main-content" class="site-splash__skip">main content</a></p>
+        </div>
+    </div>
+
+    <div class="body-glow" aria-hidden="true">
+        <div class="body-glow__waves">
+            <div class="body-glow__wave body-glow__wave--1"></div>
+            <div class="body-glow__wave body-glow__wave--2"></div>
+            <div class="body-glow__wave body-glow__wave--3"></div>
         </div>
     </div>
 
@@ -192,7 +258,7 @@
                     <li><a href="#context" class="site-dock__link" data-section="context">Brief</a></li>
                     <li><a href="#story" class="site-dock__link" data-section="story">Story</a></li>
                     <li><a href="#evidence" class="site-dock__link" data-section="evidence">Desk</a></li>
-                    <li><a href="#validator" class="site-dock__link" data-section="validator">Overlay</a></li>
+                    <li><a href="#research" class="site-dock__link" data-section="research">Research</a></li>
                     <li><a href="#stack" class="site-dock__link" data-section="stack">Stack</a></li>
                     <li><a href="#evaluation" class="site-dock__link" data-section="evaluation">Faculty</a></li>
                     <li><a href="#principles" class="site-dock__link" data-section="principles">Principles</a></li>
@@ -210,12 +276,12 @@
         <header id="summary" class="hero-case-study ic-hero section-anchor reveal-step-2">
             <div class="hero-masthead" aria-label="Hero header">
                 <a href="#top" class="hero-masthead__brand text-display">BWC</a>
-                <p class="hero-masthead__tag text-mono">Adaptive Efficiency · CHL-0200 · static archive</p>
+                <p class="hero-masthead__tag text-mono">adaptive efficiency · chl-0200 · static archive</p>
             </div>
             <div class="ic-section-header ic-hero-intro">
                 <h1 class="text-hero headline-fluid">
-                    <span class="ic-hero-headline-primary">We lost money.</span><br>
-                    <span class="ic-hero-headline-sub">We Still Beat SPY on the March Drawdown.</span>
+                    <span class="ic-hero-headline-primary">We lost money.</span>
+                    <span class="ic-hero-headline-sub">We still beat SPY on the March drawdown.</span>
                 </h1>
             </div>
 
@@ -240,7 +306,7 @@
                         <dd class="text-success"><span data-metric="trough-desk">-6.44%</span> <span class="ic-outcome-hint">vs SPY <span data-metric="trough-spy">-11.72%</span> (<span data-metric="trough-excess">+5.28pp</span>)</span></dd>
                     </div>
                     <div class="ic-snapshot-cell">
-                        <dt title="End-of-simulation snapshot; filed memo targeted ~1.0 average portfolio beta">Portfolio beta (close)</dt>
+                        <dt title="End-of-simulation snapshot. Filed memo targeted ~1.0 average portfolio beta">Portfolio beta (close)</dt>
                         <dd data-stat-animate data-stat-value="0.63" data-stat-suffix="" data-stat-decimals="2">0.63</dd>
                     </div>
                 </dl>
@@ -248,7 +314,7 @@
 
             <aside class="ic-so-what">
                 <p class="ic-so-what-label text-mono">So what for you</p>
-                <p class="ic-outcome-plain">Half the desk has already graduated; what lasted was tighter process discipline, cleaner logs, and a shared risk vocabulary we still use in compliance and risk roles.</p>
+                <p class="ic-outcome-plain">Half the desk has already graduated. What lasted was tighter process discipline, cleaner logs, and a shared risk vocabulary we still use in compliance and risk roles.</p>
             </aside>
 
             <div class="cta-row hero-cta-row">
@@ -262,20 +328,15 @@
                 <p class="ic-kicker">At a glance</p>
                 <h2 id="exec-summary-title" class="text-display">Executive summary</h2>
             </header>
-            <div class="prose-columns">
-                <div class="prose-column">
-                    <p class="prose-plain ic-outcome-plain">Ten-week paper desk: smaller trough drawdown than SPY at the Apr 2 low, slower April re-risk after the ceasefire. Filed memo is the narrative authority; this page is the scan path.</p>
-                    <p class="prose-formal ic-outcome-plain">Thesis frame: <em>Adaptive Efficiency</em> in the spirit of Andrew Lo&rsquo;s adaptive markets hypothesis (2004, 2017) — efficiency as an evolutionary process, not a static binary. In a three-month simulation, noise can win a round; over longer horizons, re-evaluation and discipline compound. We tried; the regime labels, charter override, and audit layer record where we adapted and where we did not.</p>
-                    <ul class="ic-exec-bullets prose-list">
-                        <li><strong>Act I (Feb):</strong> Foundation book deployed: beta target ~1.0, sector sleeves, diary discipline from day one.</li>
-                        <li><strong>Act II (Mar):</strong> Section 5 charter override — portfolio last in class with twelve days left — then emergency triage, hedges, and lower exposure; desk trough <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> on Apr 2.</li>
-                        <li><strong>Act III (Apr):</strong> Ceasefire window: SPY snapped back; we rebuilt equity exposure too carefully and gave back relative performance.</li>
-                    </ul>
-                </div>
-                <aside class="ic-publication-note ic-block" role="note">
-                    <p class="ic-kicker">Archive intent</p>
-                    <p class="ic-outcome-plain mb-0">Static publication for faculty sign-off, recruiting, and audit. Numbers are frozen from the 11 Apr 2026 Excel close and 2026-05-01 engineering snapshot; no live trading, no Appwrite sync. Committee memo phase calendar differs from marks-book NAV dates; this site follows the Excel PERFORMANCE TIMELINE (sheet008).</p>
-                </aside>
+            <div class="ic-exec-body">
+                <p class="ic-exec-thesis"><strong>Adaptive Efficiency</strong> — why this site is named that: a personal frame for the run, borrowing Andrew Lo&rsquo;s adaptive-markets idea that desks and regimes adjust over time; not a claim that we beat the simulation.</p>
+                <p class="ic-exec-lead ic-outcome-plain">Ten-week paper desk: smaller trough drawdown than SPY at the Apr 2 low, slower April re-risk after the ceasefire. Filed memo is the narrative authority for grades; this page is my scan path.</p>
+                <ul class="ic-exec-bullets prose-list">
+                    <li><strong>Act I (Feb):</strong> Foundation book deployed: beta target ~1.0, sector sleeves, diary discipline from day one.</li>
+                    <li><strong>Act II (Mar):</strong> Section 5 charter override (portfolio last in class with twelve days left), then emergency triage, hedges, and lower exposure. Desk trough <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> on Apr 2.</li>
+                    <li><strong>Act III (Apr):</strong> Ceasefire window: SPY snapped back. We rebuilt equity exposure too carefully and gave back relative performance.</li>
+                </ul>
+                <p class="ic-exec-footnote ic-outcome-plain mb-0">Faculty sign-off already happened (<span class="text-mono">422 / 430</span>). This microsite is an independent, unofficial archive — not Hult, the professor, or teammates. What follows is my personal take and presentation on the same filed data; if this page disagrees with the Excel close or memo, the filed artifacts win.</p>
             </div>
         </section>
 
@@ -309,7 +370,7 @@
                 <article id="sources-deck" class="pillar-card">
                     <p class="ic-kicker">03 · Oral</p>
                     <h3 class="text-display sub-title">Client deck</h3>
-                    <p class="ic-outcome-plain mb-0">20-slide defense narrative. PDF for review; PPTX if you need to edit slides.</p>
+                    <p class="ic-outcome-plain mb-0">20-slide defense narrative. PDF for review. PPTX if you need to edit slides.</p>
                     <div class="pillar-actions">
                         <a href="./deliverables/source/Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf" target="_blank" rel="noopener" class="cta-btn cta-primary">Deck (PDF)</a>
                         <a href="./deliverables/source/Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pptx" download class="cta-btn cta-secondary">Deck (PPTX)</a>
@@ -324,9 +385,6 @@
                 </div>
                 <ul id="deliverables-manifest-list" class="manifest-list" aria-live="polite"></ul>
             </details>
-            <p class="ic-outcome-plain sources-footnote">
-                Python audit overlay: <code>quant_monitor/</code> — see <a href="#validator" class="link-underline">Overlay</a>. Phase dates on this page follow the Excel PERFORMANCE TIMELINE, not the committee memo&apos;s phase table.
-            </p>
         </section>
 
         <div id="nav-reveal-sentinel" class="nav-reveal-sentinel" aria-hidden="true"></div>
@@ -335,15 +393,15 @@
             <header class="ic-section-header ic-context-header">
                 <p class="ic-kicker">Brief</p>
                 <h2>The mandate we signed up for</h2>
-                <p class="ic-lead">CHL-0200 program rules, grading frame, and desk window — before the narrative and marks.</p>
+                <p class="ic-lead">CHL-0200 program rules, grading frame, and desk window, before the narrative and marks.</p>
             </header>
 
             <div class="ic-context-layout">
                 <div class="ic-context-intro">
                     <div class="ic-context-statement">
                         <p class="ic-context-subtitle">Eight student teams. One simulated capital mandate.</p>
-                        <p class="ic-outcome-plain">Manage <span class="text-mono">$1,000,000</span> in paper capital across US equities and ETFs — deployed in real time through a simulated brokerage, with the same order, margin, and short mechanics as a live desk.</p>
-                        <p class="ic-outcome-plain">Performance is graded on Sharpe ratio and risk-adjusted return, not headline P&amp;L. The test is whether process discipline holds under constraint — not whether conviction does.</p>
+                        <p class="ic-outcome-plain">Manage <span class="text-mono">$1,000,000</span> in paper capital across US equities and ETFs, deployed in real time through a simulated brokerage, with the same order, margin, and short mechanics as a live desk.</p>
+                        <p class="ic-outcome-plain">Performance is graded on Sharpe ratio and risk-adjusted return, not headline P&amp;L. The test is whether process discipline holds under constraint, not whether conviction does.</p>
                         <p class="ic-outcome-plain mb-0">This archive is Team BWC&apos;s post-mortem on how that mandate was actually run.</p>
                     </div>
 
@@ -363,20 +421,14 @@
                     <div class="ic-context-date-card">
                         <dt class="text-mono">Live desk window</dt>
                         <dd>2 Feb – 11 Apr 2026</dd>
-                        <p class="ic-context-date-note">StockTrak trading period; headline marks frozen at close</p>
+                        <p class="ic-context-date-note">StockTrak trading period. Headline marks frozen at close</p>
                     </div>
                     <div class="ic-context-date-card">
                         <dt class="text-mono">This archive</dt>
                         <dd>Sunset 1 May 2026</dd>
-                        <p class="ic-context-date-note">Static engineering snapshot; no live sync</p>
+                        <p class="ic-context-date-note">Static engineering snapshot. No live sync</p>
                     </div>
                 </dl>
-
-                <footer class="ic-context-meta">
-                    <span>CHL-0200</span>
-                    <span>Professor <a href="https://www.linkedin.com/in/daniela-neiderer/" target="_blank" rel="noopener">Daniela Neiderer</a></span>
-                    <span>Archive <a href="https://www.linkedin.com/in/kartavyajharwal/" target="_blank" rel="noopener">Kartavya Jharwal</a></span>
-                </footer>
             </div>
         </section>
 
@@ -388,6 +440,26 @@
                 <p class="ic-lead">One crash window, one recovery we chased too slowly. Timeline from the Excel PERFORMANCE TIMELINE (sheet008), not narrative guesswork.</p>
             </header>
             <div id="desk-timeline" class="desk-timeline-snake" aria-live="polite" aria-label="Desk milestones from Excel log"></div>
+
+            <div class="ic-desk-voice" aria-label="Memo themes on the desk record">
+                <article class="ic-desk-voice__card">
+                    <p class="ic-kicker">Architecture vs P&amp;L</p>
+                    <p class="ic-outcome-plain mb-0">Filed memo line: the risk architecture was defensible, but converting macro views into realized P&amp;L lagged at regime shifts, hedge roll-off, and post-shock re-risk.</p>
+                </article>
+                <article class="ic-desk-voice__card">
+                    <p class="ic-kicker">March trough</p>
+                    <p class="ic-outcome-plain mb-0">Low-beta book plus crisis hedge: peak desk drawdown about <span class="text-mono">-6.5%</span> vs SPY <span class="text-mono">-8.5%</span> in late March. Not headline alpha, but relative protection when beta was near zero.</p>
+                </article>
+                <article class="ic-desk-voice__card">
+                    <p class="ic-kicker">April re-risk</p>
+                    <p class="ic-outcome-plain mb-0">After the 8 Apr ceasefire, slow re-entry into equities meant we under-captured the snap-back. Discipline on the way down, hesitation when speed mattered on the way up.</p>
+                </article>
+                <article class="ic-desk-voice__card">
+                    <p class="ic-kicker">Honest frame</p>
+                    <p class="ic-outcome-plain mb-0">Above-average regime awareness, below-average execution precision in fast windows. The log shows losers held roughly twice as long as winners.</p>
+                </article>
+            </div>
+
             <article class="ic-block ic-memo-callout">
                 <h3 class="ic-kicker">Charter vs close</h3>
                 <div class="prose-columns">
@@ -395,6 +467,17 @@
                     <p class="ic-outcome-plain mb-0">Phase 3 was not a calm risk dial-down: with twelve trading days left and the book last in class, we invoked Section 5 of the charter. The narrower win at the Apr 2 trough: desk <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> (<span class="text-mono" data-metric="trough-excess">+5.28pp</span>).</p>
                 </div>
             </article>
+
+            <section class="ic-behavioural-audit" aria-labelledby="desk-behavioural-audit-title">
+                <header class="ic-section-header ic-section-header--compact">
+                    <p class="ic-kicker">Trade log audit</p>
+                    <h3 id="desk-behavioural-audit-title">Behavioural audit</h3>
+                    <p class="ic-outcome-plain mb-0">Timing, disposition, conviction, and turnover on the closed StockTrak book. Same post-hoc check the validator runs on diary claims.</p>
+                </header>
+                <div id="desk-behavioural-audit" class="ic-behavioural-audit__body" aria-live="polite">
+                    <p class="ic-outcome-plain text-muted">Loading audit…</p>
+                </div>
+            </section>
         </section>
 
 <!-- DESK RESULTS (graded Excel only) -->
@@ -402,10 +485,9 @@
             <header class="ic-section-header">
                 <p class="ic-kicker">Desk</p>
                 <h2>Graded Excel close</h2>
-                <p class="ic-lead">Headline cards, ratio wall, and desk-only charts — faculty-scored marks from the 11 Apr 2026 close. Overlay audit lives in the next section.</p>
+                <p class="ic-lead">Headline cards, ratio wall, and desk-only charts. Faculty-scored marks from the 11 Apr 2026 close.</p>
             </header>
             <div class="ic-section-actions">
-                <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="behavioural-audit-dialog">Behavioural audit</button>
                 <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="desk-postmortem-dialog">Desk post-mortem</button>
                 <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="memo-excerpts-dialog">Memo excerpts</button>
             </div>
@@ -424,26 +506,26 @@
                 <article class="ic-outcome-card is-loss">
                     <p class="ic-outcome-label">Vs filed target</p>
                     <p class="ic-outcome-value text-danger">-4.37%</p>
-                    <p class="ic-outcome-plain">Memo target ~10% p.a.; ann. <span class="text-mono" id="outcome-desk-ann-return">-23.5%</span> (68-day, Excel caveat).</p>
+                    <p class="ic-outcome-plain">Memo target ~10% p.a. Ann. <span class="text-mono" id="outcome-desk-ann-return">-23.5%</span> (68-day, Excel caveat).</p>
                 </article>
                 <article class="ic-outcome-card is-win">
                     <p class="ic-outcome-label">Max drawdown (Apr 2)</p>
                     <p class="ic-outcome-value text-success" data-metric="trough-desk">-6.44%</p>
-                    <p class="ic-outcome-plain">SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> — <span class="text-mono" data-metric="trough-excess">+5.28pp</span> relative preservation.</p>
+                    <p class="ic-outcome-plain">SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span>, <span class="text-mono" data-metric="trough-excess">+5.28pp</span> relative preservation.</p>
                 </article>
                 <article class="ic-outcome-card is-mixed">
                     <p class="ic-outcome-label">Closed trades</p>
                     <p class="ic-outcome-value">28.6% wins</p>
-                    <p class="ic-outcome-plain">Negative expectancy; detail in post-mortem modal.</p>
+                    <p class="ic-outcome-plain">Negative expectancy. Detail in post-mortem modal.</p>
                 </article>
             </div>
 
             <section class="excel-metrics-marquee" id="excel-metrics-marquee" aria-labelledby="excel-marquee-title">
                 <header class="excel-marquee-header">
                     <p class="ic-kicker" id="excel-marquee-title">Full Excel export (extra rigor we added)</p>
-                    <p class="ic-outcome-plain mb-tight"><strong>Desk (graded):</strong> Excel close, 11 Apr 2026 — the numbers faculty scored. Headline <span class="text-mono">-4.37%</span> total; trough drawdown <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span>.</p>
-                    <p class="ic-outcome-plain mb-tight"><strong>Be profitable and have fun</strong>: the course never asked for Calmar, M2, or a full ratio wall; we built it anyway.</p>
-                    <p class="ic-outcome-plain mb-0">Labels match the grading sheet; read the cards above first.</p>
+                    <p class="ic-outcome-plain mb-tight"><strong>Desk (graded):</strong> Excel close, 11 Apr 2026, the numbers faculty scored. Headline <span class="text-mono">-4.37%</span> total. Trough drawdown <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span>.</p>
+                    <p class="ic-outcome-plain mb-tight"><strong>Be profitable and have fun</strong>: the course never asked for Calmar, M2, or a full ratio wall. We built it anyway.</p>
+                    <p class="ic-outcome-plain mb-0">Labels match the grading sheet. Read the cards above first.</p>
                 </header>
                 <div class="excel-marquee-lanes" aria-live="polite"></div>
             </section>
@@ -469,137 +551,325 @@
 
         </section>
 
-<!-- OVERLAY + VALIDATOR (Python audit layer) -->
-<section id="validator" class="section-anchor ic-section fade-up tech-layout">
-        <header class="ic-section-header tech-layout-header reveal-step-2">
-            <p class="ic-kicker">Overlay</p>
-            <h2>Python audit layer</h2>
-            <p class="ic-lead">Backtest and stress-test on the closed trading universe — not the graded desk book. Metrics and charts first; validator architecture and software map follow below.</p>
-            <aside class="ic-tech-tldr ic-block" aria-label="Non-technical TLDR">
-                <p class="ic-kicker">Non-technical TL;DR</p>
-                <p class="prose-plain ic-outcome-plain mb-0">Confidence signals, not trade signals — audit overlay only; never pair these returns with desk marks row-by-row.</p>
-            </aside>
-            <div class="json-payloads">
-                <a href="./docs/index.html" target="_blank" rel="noopener" class="link-underline text-mono">Engineering docs</a>
-                <a href="https://github.com/Kartavya-Jharwal/ganet-project-bwc" target="_blank" rel="noopener" class="link-underline text-mono">GitHub repo</a>
-                <a href="./data/full-metrics.json" class="link-underline text-mono">full-metrics.json</a>
-                <a href="#stack" class="link-underline text-mono">Full engineering map</a>
-            </div>
+<!-- RESEARCH -->
+<section id="research" class="section-anchor ic-section research-layout bwc-no-reveal bwc-media-zone">
+        <header class="ic-section-header research-header">
+            <p class="ic-kicker">Research</p>
+            <h2>How we researched, logged, and stress-tested decisions</h2>
+            <p class="research-lead">The brief asked for process evidence, not headline chasing. Eight operators split execution, IPS compliance, and journal discipline, with a Python overlay as a confidence check in the diary, not a trade signal.</p>
         </header>
 
-        <div class="ic-section-actions">
-            <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="tech-depth-dialog">How the validator works</button>
+        <div class="research-layout__body">
+            <section class="research-band" aria-labelledby="research-ops-title">
+                <div class="research-band__head">
+                    <span class="research-band__num text-mono" aria-hidden="true">01</span>
+                    <div>
+                        <h3 id="research-ops-title" class="research-band__title">Operating model</h3>
+                        <p class="research-band__deck ic-outcome-plain">Three parallel lanes on one book. The brief did not ask us to invent the mandate. It asked us to run inside it and prove we did.</p>
+                    </div>
+                </div>
+                <div class="research-lane-grid research-lane-grid--ops">
+                    <article class="research-lane-card">
+                        <p class="research-lane-card__label text-mono">Execution lane</p>
+                        <p class="ic-outcome-plain mb-0">StockTrak fills, sizing, stops, and crisis-overlay trades. One operator carried primary execution while the desk debated macro in parallel.</p>
+                    </article>
+                    <article class="research-lane-card">
+                        <p class="research-lane-card__label text-mono">IPS / compliance lane</p>
+                        <p class="ic-outcome-plain mb-0">Position limits, beta targets, and mandate checks against the filed IPS. A sub-team tracked drift before trades cleared committee chat.</p>
+                    </article>
+                    <article class="research-lane-card">
+                        <p class="research-lane-card__label text-mono">Journal lane</p>
+                        <p class="ic-outcome-plain mb-0">Rationale for every open and close, win or loss, plus bi-weekly logs translating diary entries into trade-level justification.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="research-band" aria-labelledby="research-desk-title">
+                <div class="research-band__head">
+                    <span class="research-band__num text-mono" aria-hidden="true">02</span>
+                    <div>
+                        <h3 id="research-desk-title" class="research-band__title">Desk research lanes</h3>
+                        <p class="research-band__deck ic-outcome-plain">What the deliverables list required, expressed through sleeves, screens, and memo sections, not a single quant model.</p>
+                    </div>
+                </div>
+                <div class="research-lane-grid research-lane-grid--desk">
+                    <article class="research-lane-card research-lane-card--link">
+                        <p class="research-lane-card__label text-mono">Macro / top-down</p>
+                        <p class="ic-outcome-plain">War headlines, rates, and ceasefire windows drove hedge and re-risk timing.</p>
+                        <button type="button" class="research-lane-card__cta text-mono ic-dialog-trigger" data-dialog-target="memo-excerpts-dialog">Memo pull</button>
+                    </article>
+                    <article class="research-lane-card research-lane-card--link">
+                        <p class="research-lane-card__label text-mono">Sector sleeves</p>
+                        <p class="ic-outcome-plain">AI, defence, financials, and defensive retail expressed as ETF and single-name sleeves.</p>
+                        <button type="button" class="research-lane-card__cta text-mono ic-dialog-trigger" data-dialog-target="memo-excerpts-dialog">Memo pull</button>
+                    </article>
+                    <article class="research-lane-card">
+                        <p class="research-lane-card__label text-mono">Technical timing</p>
+                        <p class="ic-outcome-plain">Stops and trailing stops on extended names, with trend confirmation before adds.</p>
+                    </article>
+                    <article class="research-lane-card">
+                        <p class="research-lane-card__label text-mono">Fundamentals / 10-K</p>
+                        <p class="ic-outcome-plain">Quality and balance-sheet screens on high-conviction singles alongside ETF beta.</p>
+                    </article>
+                    <article class="research-lane-card">
+                        <p class="research-lane-card__label text-mono">ESG review</p>
+                        <p class="ic-outcome-plain">Committee-facing lens on contested names: narrative risk, not a separate book.</p>
+                    </article>
+                    <article class="research-lane-card">
+                        <p class="research-lane-card__label text-mono">Quant / AI pitches</p>
+                        <p class="ic-outcome-plain">Screens and pitches informed debate. Execution still ran through StockTrak and IPS.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="research-band research-band--confidence" aria-labelledby="research-confidence-title">
+                <div class="research-band__head">
+                    <span class="research-band__num text-mono" aria-hidden="true">03</span>
+                    <div>
+                        <h3 id="research-confidence-title" class="research-band__title">Confidence layer</h3>
+                        <p class="research-band__deck ic-outcome-plain">Beyond the brief: a Python overlay on the closed trading universe. It answered &ldquo;did we break our own rules?&rdquo; after volatile weeks. Cited in diaries, never wired to live execution.</p>
+                    </div>
+                </div>
+                <ul class="research-confidence-points prose-list ic-outcome-plain">
+                    <li><strong>Confidence, not alpha:</strong> a structured check on diary claims when macro moved faster than committee chat.</li>
+                    <li><strong>Closed universe:</strong> only names we actually held or traded. Behaviour audit, not a fresh research universe.</li>
+                    <li><strong>Policy mirror:</strong> flag beta and sector drift vs IPS before the next defense meeting.</li>
+                </ul>
+                <div class="research-confidence-actions">
+                    <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="methodology-dossier-dialog">Methodology dossier</button>
+                    <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="validator-depth-dialog">Validator technical map</button>
+                    <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="behavioural-audit-dialog">Behavioural audit</button>
+                    <a href="#stack" class="cta-btn cta-secondary cta-compact">Software map</a>
+                </div>
+            </section>
+
+            <section class="research-band research-band--metrics" aria-labelledby="overlay-metrics-title">
+                <div class="research-band__head">
+                    <span class="research-band__num text-mono" aria-hidden="true">04</span>
+                    <div>
+                        <h3 id="overlay-metrics-title" class="research-band__title">Overlay audit metrics</h3>
+                        <p class="research-band__deck ic-outcome-plain">Python backtest and forward-cast stress test on the closed universe. Desk marks stay in <a href="#evidence" class="link-underline">Desk</a>.</p>
+                    </div>
+                </div>
+                <dl class="overlay-metrics-grid" aria-label="Overlay audit metrics">
+                    <div class="overlay-metric">
+                        <dt>Total return</dt>
+                        <dd class="text-mono" id="tbl-total-return">+7.1%</dd>
+                    </div>
+                    <div class="overlay-metric">
+                        <dt>Annualized return</dt>
+                        <dd class="text-mono" id="tbl-ann-return">+67.5%</dd>
+                    </div>
+                    <div class="overlay-metric">
+                        <dt title="Memo §3: static Sharpe penalizes crisis-hedge volatility the same as crash volatility">Sharpe ratio</dt>
+                        <dd class="text-mono" id="tbl-sharpe">1.30</dd>
+                    </div>
+                    <div class="overlay-metric">
+                        <dt>Max drawdown</dt>
+                        <dd class="text-mono text-danger" id="tbl-max-dd">-9.1%</dd>
+                    </div>
+                    <div class="overlay-metric">
+                        <dt>Sortino ratio</dt>
+                        <dd class="text-mono" id="tbl-sortino">3.44</dd>
+                    </div>
+                    <div class="overlay-metric overlay-metric--note">
+                        <dt>Portfolio beta</dt>
+                        <dd class="text-mono" id="tbl-beta">1.56</dd>
+                        <p class="overlay-metric-note ic-outcome-plain">Model-weighted backtest exposure. Not comparable to desk terminal beta at crisis de-risk.</p>
+                    </div>
+                    <div class="overlay-metric">
+                        <dt>Cornish-Fisher VaR (5%)</dt>
+                        <dd class="text-mono" id="tbl-cf-var">-2.55%</dd>
+                    </div>
+                    <div class="overlay-metric">
+                        <dt>Calmar ratio</dt>
+                        <dd class="text-mono" id="tbl-calmar">6.19</dd>
+                    </div>
+                    <div class="overlay-metric">
+                        <dt>Jensen&apos;s alpha</dt>
+                        <dd class="text-mono" id="tbl-jensen">0.677</dd>
+                    </div>
+                    <div class="overlay-metric">
+                        <dt title="Share of Monte Carlo paths that cleared our hurdle rate">MC hurdle (pass %)</dt>
+                        <dd class="text-mono text-accent" id="tbl-mc-hurdle">37.9%</dd>
+                    </div>
+                </dl>
+                <p id="metrics-empty-note" class="metrics-empty-note" hidden>Overlay cells refresh from <code>data/full-metrics.json</code> when fetch succeeds.</p>
+            </section>
+
+            <section class="research-band research-band--gallery" aria-labelledby="research-gallery-title">
+                <div class="research-band__head">
+                    <span class="research-band__num text-mono" aria-hidden="true">05</span>
+                    <div>
+                        <h3 id="research-gallery-title" class="research-band__title">Visual appendix</h3>
+                        <p class="research-band__deck ic-outcome-plain">Motion loops, desk-vs-overlay charts, and Plotly exports from the engineering freeze. Grouped for scan. Full depth in <a href="./docs/index.html" target="_blank" rel="noopener" class="link-underline">engineering docs</a>.</p>
+                    </div>
+                </div>
+
+                <div class="research-gallery-band">
+                    <h4 class="research-gallery-band__title ic-kicker">Motion loops</h4>
+                    <div class="overlay-motion-strip" aria-label="Overlay model loops">
+                        <article class="overlay-viz-card overlay-motion-card">
+                            <div class="bwc-media-frame bwc-media-frame--video">
+                            <video class="overlay-viz-video bwc-media-video" data-src="./viz_output/Vis_StressTesting.mp4" muted loop playsinline preload="metadata" aria-label="Monte Carlo stress fan"></video>
+                            </div>
+                        </article>
+                        <article class="overlay-viz-card overlay-motion-card">
+                            <div class="bwc-media-frame bwc-media-frame--video">
+                            <video class="overlay-viz-video bwc-media-video" data-src="./viz_output/Vis_TheOptimalEdge.mp4" muted loop playsinline preload="metadata" aria-label="Efficient frontier and sizing intuition"></video>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="research-gallery-band">
+                    <h4 class="research-gallery-band__title ic-kicker">Desk vs overlay charts</h4>
+                    <div class="overlay-charts-grid">
+                        <div class="chart-card chart-embed chart-span-full bwc-media-card">
+                            <div class="chart-title text-display">Backtest comparison</div>
+                            <div class="bwc-media-frame">
+                            <iframe data-src="./charts/backtest-compare.html" title="Backtest" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                        <div class="chart-card chart-embed bwc-media-card">
+                            <div class="chart-title text-display">Factor loadings</div>
+                            <div class="bwc-media-frame">
+                            <iframe data-src="./charts/factor-loadings.html" title="Factors" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                        <div class="chart-card chart-embed bwc-media-card">
+                            <div class="chart-title text-display">Return distribution</div>
+                            <div class="bwc-media-frame">
+                            <iframe data-src="./charts/return-dist.html" title="Returns" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="research-gallery-band">
+                    <h4 class="research-gallery-band__title ic-kicker">Risk &amp; simulation exports</h4>
+                    <div class="viz-gallery-grid" aria-label="Risk and simulation Plotly exports">
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Stress paths</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/11_stress_testing.html" title="Scenario stress test paths" loading="lazy"></iframe></div>
+                        </div>
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Quadratic variation</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/14_quadratic_variation.html" title="Realized quadratic variation" loading="lazy"></iframe></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="research-gallery-band">
+                    <h4 class="research-gallery-band__title ic-kicker">Allocation &amp; factors</h4>
+                    <div class="viz-gallery-grid" aria-label="Allocation and factor Plotly exports">
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Efficient frontier</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/02_efficient_frontier.html" title="Mean-variance efficient frontier" loading="lazy"></iframe></div>
+                        </div>
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Black-Litterman</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/06_black_litterman.html" title="Black-Litterman posterior weights" loading="lazy"></iframe></div>
+                        </div>
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Overlay equity</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/08_backtest_equity.html" title="Overlay backtest equity curve" loading="lazy"></iframe></div>
+                        </div>
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Fama-French</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/09_fama_french.html" title="Fama-French factor regression" loading="lazy"></iframe></div>
+                        </div>
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Kelly criterion</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/12_kelly_criterion.html" title="Kelly fraction vs win rate" loading="lazy"></iframe></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="research-gallery-band">
+                    <h4 class="research-gallery-band__title ic-kicker">Regimes &amp; macro</h4>
+                    <div class="viz-gallery-grid" aria-label="Regime and macro Plotly exports">
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Vol surface</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/04_vol_surface_3d.html" title="Implied volatility surface" loading="lazy"></iframe></div>
+                        </div>
+                        <div class="chart-card chart-embed viz-embed bwc-media-card">
+                            <div class="chart-title text-display">Yield curve</div>
+                            <div class="bwc-media-frame"><iframe data-src="./viz_output/13_yield_curve.html" title="Treasury yield curve dynamics" loading="lazy"></iframe></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
+</section>
 
-        <section class="ic-block overlay-metrics-block fade-up" aria-labelledby="overlay-metrics-title">
-            <h3 id="overlay-metrics-title" class="ic-kicker">Overlay audit metrics</h3>
-            <p class="ic-outcome-plain">Python backtest and forward-cast stress test on the closed trading universe — not the graded Excel book.</p>
-            <dl class="overlay-metrics-grid" aria-label="Overlay audit metrics">
-                <div class="overlay-metric">
-                    <dt>Total return</dt>
-                    <dd class="text-mono" id="tbl-total-return">+7.1%</dd>
-                </div>
-                <div class="overlay-metric">
-                    <dt>Annualized return</dt>
-                    <dd class="text-mono" id="tbl-ann-return">+67.5%</dd>
-                </div>
-                <div class="overlay-metric">
-                    <dt title="Memo §3: static Sharpe penalizes crisis-hedge volatility the same as crash volatility">Sharpe ratio</dt>
-                    <dd class="text-mono" id="tbl-sharpe">1.30</dd>
-                </div>
-                <div class="overlay-metric">
-                    <dt>Max drawdown</dt>
-                    <dd class="text-mono text-danger" id="tbl-max-dd">-9.1%</dd>
-                </div>
-                <div class="overlay-metric">
-                    <dt>Sortino ratio</dt>
-                    <dd class="text-mono" id="tbl-sortino">3.44</dd>
-                </div>
-                <div class="overlay-metric overlay-metric--note">
-                    <dt>Portfolio beta</dt>
-                    <dd class="text-mono" id="tbl-beta">1.56</dd>
-                    <p class="overlay-metric-note ic-outcome-plain">Model-weighted backtest exposure; not comparable to desk terminal beta at crisis de-risk.</p>
-                </div>
-                <div class="overlay-metric">
-                    <dt>Cornish-Fisher VaR (5%)</dt>
-                    <dd class="text-mono" id="tbl-cf-var">-2.55%</dd>
-                </div>
-                <div class="overlay-metric">
-                    <dt>Calmar ratio</dt>
-                    <dd class="text-mono" id="tbl-calmar">6.19</dd>
-                </div>
-                <div class="overlay-metric">
-                    <dt>Jensen&apos;s alpha</dt>
-                    <dd class="text-mono" id="tbl-jensen">0.677</dd>
-                </div>
-                <div class="overlay-metric">
-                    <dt title="Share of Monte Carlo paths that cleared our hurdle rate">MC hurdle (pass %)</dt>
-                    <dd class="text-mono text-accent" id="tbl-mc-hurdle">37.9%</dd>
-                </div>
-            </dl>
-            <p id="metrics-empty-note" class="metrics-empty-note" hidden>Overlay cells refresh from <code>data/full-metrics.json</code> when fetch succeeds.</p>
-        </section>
+<!-- STACK (engineering map) -->
+<section id="stack" class="section-anchor ic-section fade-up">
+            <header class="ic-section-header">
+                <p class="ic-kicker">Stack</p>
+                <h2>Software map</h2>
+                <p class="ic-lead">Python audit engine under <code>quant_monitor/</code>. See <a href="#research" class="link-underline">Research</a> for how outputs fed desk journals and IPS checks.</p>
+            </header>
 
-        <section class="ic-block fade-up" aria-labelledby="overlay-charts-title">
-            <h3 id="overlay-charts-title" class="ic-kicker">Overlay charts</h3>
-            <p class="ic-outcome-plain">Desk NAV charts are in Desk above. These plots are overlay-only.</p>
-            <div class="overlay-charts-grid">
-                <div class="chart-card chart-embed chart-span-full fade-up">
-                    <div class="chart-title text-display">Backtest comparison</div>
-                    <iframe data-src="./charts/backtest-compare.html" title="Backtest" loading="lazy"></iframe>
-                </div>
-                <div class="chart-card chart-embed fade-up">
-                    <div class="chart-title text-display">Monte Carlo simulation</div>
-                    <iframe data-src="./charts/monte-carlo.html" title="Monte Carlo" loading="lazy"></iframe>
-                </div>
-                <div class="chart-card chart-embed fade-up">
-                    <div class="chart-title text-display">Factor loadings</div>
-                    <iframe data-src="./charts/factor-loadings.html" title="Factors" loading="lazy"></iframe>
-                </div>
-                <div class="chart-card chart-embed fade-up">
-                    <div class="chart-title text-display">Correlation heatmap</div>
-                    <iframe data-src="./charts/heatmap.html" title="Heatmap" loading="lazy"></iframe>
-                </div>
-                <div class="chart-card chart-embed fade-up">
-                    <div class="chart-title text-display">Return distribution</div>
-                    <iframe data-src="./charts/return-dist.html" title="Returns" loading="lazy"></iframe>
-                </div>
-                <div class="chart-card chart-embed chart-span-full fade-up">
-                    <div class="chart-title text-display">Attribution</div>
-                    <iframe data-src="./charts/attribution.html" title="Attribution" loading="lazy"></iframe>
-                </div>
-            </div>
-        </section>
-
-        <section class="ic-tech-fold" aria-labelledby="tech-fold-title">
-            <h3 id="tech-fold-title" class="ic-fold-title">How the validator is built</h3>
-            <div class="ic-block">
-                <p class="ic-outcome-plain">Three layers: what the desk did, tail risk on the overlay path, then what weights a regime model would have held.</p>
-                <div class="architecture-diagram">
-                    <div class="arch-layer">
-                        <span class="arch-num text-mono">01</span>
-                        <span class="arch-name">Attribution</span>
-                        <span class="arch-desc text-muted">Desk vs policy book</span>
+            <div class="stack-primer bwc-no-reveal bwc-media-zone">
+                <div class="stack-primer__panel stack-table-media">
+                    <div class="stack-primer__copy">
+                        <p class="ic-kicker">Audit-first engineering</p>
+                        <p class="ic-outcome-plain mb-0">This is not an alpha research platform. It is a reliability-first build: auditability, repeatable runs, and explainable outputs.</p>
                     </div>
-                    <div class="arch-connector">then</div>
-                    <div class="arch-layer">
-                        <span class="arch-num text-mono">02</span>
-                        <span class="arch-name">Tail risk</span>
-                        <span class="arch-desc text-muted">Stress paths and VaR-style checks</span>
-                    </div>
-                    <div class="arch-connector">then</div>
-                    <div class="arch-layer">
-                        <span class="arch-num text-mono">03</span>
-                        <span class="arch-name">Regime weights</span>
-                        <span class="arch-desc text-muted">Model sleeves vs human trades</span>
-                    </div>
+                    <aside class="stack-table-media__viz" aria-label="Module topology animation">
+                        <div class="stack-viz-card stack-viz-card--compact">
+                            <div class="bwc-media-frame bwc-media-frame--video">
+                            <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_MatrixArchitecture.mp4" muted loop playsinline preload="metadata" aria-label="quant_monitor module topology"></video>
+                            </div>
+                        </div>
+                    </aside>
                 </div>
             </div>
 
-        <section class="ic-block fade-up">
-            <h3 class="ic-kicker">Regime map</h3>
-            <div class="narrative-split">
-                <p class="ic-outcome-plain">Labels for macro mood. Used to flag when our trades did not match the labeled environment. Not a sector rotation switch.</p>
+            <section class="stack-validator-section" aria-labelledby="stack-validator-title">
+                <header class="stack-validator-section__header">
+                    <p class="ic-kicker">Python audit engine</p>
+                    <h3 id="stack-validator-title" class="text-display sub-title">Technical map</h3>
+                    <p class="ic-outcome-plain">Ingest → validate → attribute → chart. Terminal-first CLI surfaces. No live signal feed to StockTrak.</p>
+                    <div class="json-payloads">
+                        <a href="./docs/index.html" target="_blank" rel="noopener" class="link-underline text-mono">Engineering docs</a>
+                        <a href="https://github.com/Kartavya-Jharwal/ganet-project-bwc" target="_blank" rel="noopener" class="link-underline text-mono">GitHub repo</a>
+                        <a href="./data/full-metrics.json" class="link-underline text-mono">full-metrics.json</a>
+                    </div>
+                </header>
+
+                <div class="stack-validator-grid">
+                    <article class="stack-validator-card">
+                        <h4 class="ic-kicker">Inputs</h4>
+                        <ul class="prose-list ic-outcome-plain">
+                            <li><strong>Desk truth:</strong> Excel close marks + trading log</li>
+                            <li><strong>Market prices:</strong> vendor pulls + fallbacks</li>
+                            <li><strong>Macro context:</strong> rates series for regime labeling</li>
+                            <li><strong>News + filings:</strong> tagging and post-hoc explanation only</li>
+                        </ul>
+                    </article>
+                    <article class="stack-validator-card">
+                        <h4 class="ic-kicker">Data prep</h4>
+                        <ul class="prose-list ic-outcome-plain">
+                            <li>Sanitize, de-duplicate, time-align sources</li>
+                            <li>Pivot into matrices for ML/statistics</li>
+                            <li>Cache wide views so expensive reshapes don&apos;t repeat</li>
+                        </ul>
+                    </article>
+                    <article class="stack-validator-card stack-validator-card--wide">
+                        <h4 class="ic-kicker">What it computes</h4>
+                        <ul class="prose-list stack-methods-list text-body-readable">
+                            <li><span class="text-mono text-accent">Fama-French / Carhart / q-factor</span> OLS on portfolio returns.</li>
+                            <li><span class="text-mono text-accent">Black-Litterman + MVO</span> (<code>optimizer.py</code>) policy vs desk weights.</li>
+                        </ul>
+                    </article>
+                </div>
+
+                <div class="research-band__head stack-regime-head">
+                    <h4 class="ic-kicker">Regime map</h4>
+                    <p class="ic-outcome-plain mb-0">Macro mood labels, used to flag when trades did not match the labeled environment. Not a live rotation switch.</p>
+                </div>
                 <div class="regime-grid">
                     <div class="regime-card">
                         <span class="regime-label text-mono text-success">EXPANSION</span>
@@ -619,34 +889,14 @@
                     </div>
                     <div class="regime-card">
                         <span class="regime-label text-mono is-crisis">CRISIS</span>
-                        <p class="text-muted">Signals suppressed; min-variance + cash buffer</p>
+                        <p class="text-muted">Signals suppressed. Min-variance + cash buffer</p>
                     </div>
                 </div>
-            </div>
-        </section>
 
-        </section>
-</section>
-
-<!-- STACK (engineering map) -->
-<section id="stack" class="section-anchor ic-section fade-up">
-            <header class="ic-section-header">
-                <p class="ic-kicker">Stack</p>
-                <h2>Software map</h2>
-                <p class="ic-lead">Reproducible Python stack in <code>quant_monitor/</code>: ingest → validate → attribute → chart. Maintainer tables for auditors who want package-level detail.</p>
-            </header>
-
-            <aside class="stack-disclaimer ic-memo-callout">
-                <p class="ic-kicker">Note</p>
-                <p class="ic-outcome-plain mb-0">This is not an alpha research platform. It is a reliability-first build: auditability, repeatable runs, and explainable outputs.</p>
-            </aside>
-
-            <section class="ic-block fade-up" aria-labelledby="stack-choices-title">
-                <h3 id="stack-choices-title" class="ic-kicker">Why Git and uv</h3>
-                <ul class="prose-list ic-outcome-plain">
-                    <li><strong>Git:</strong> an audit trail for changes to assumptions, configs, and outputs — so “why did the score change?” has a concrete diff.</li>
-                    <li><strong>uv + lockfile:</strong> faster installs + deterministic environments. If the validator reruns on another machine, the results shouldn’t change because a dependency did.</li>
-                </ul>
+                <div class="stack-validator-actions">
+                    <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="methodology-dossier-dialog">Methodology dossier</button>
+                    <button type="button" class="cta-btn cta-secondary cta-compact ic-dialog-trigger" data-dialog-target="validator-depth-dialog">Validator depth</button>
+                </div>
             </section>
 
             <section class="ic-stack-details" style="grid-column:1/-1;" aria-labelledby="stack-details-title">
@@ -671,6 +921,65 @@
                 </div>
             </div>
 
+            <div class="stack-table-media bwc-no-reveal bwc-media-zone">
+                <div class="stack-table-block stack-table-media__table">
+                <h3 class="text-display sub-title">Data and persistence</h3>
+                <div class="metrics-table-wrap">
+                    <table class="metrics-table stack-table">
+                        <thead><tr><th>Layer</th><th>Technology</th><th>Role</th></tr></thead>
+                        <tbody>
+                            <tr><td>Analytics DB</td><td class="text-mono">DuckDB</td><td><code>portfolio.duckdb</code> (gitignored): EOD price matrix, fast SQL/pivot</td></tr>
+                            <tr><td>Fast transforms</td><td class="text-mono">Polars</td><td>Pivot in <code>topological_run.py</code>: DuckDB to wide matrix</td></tr>
+                            <tr><td>Classic stack</td><td class="text-mono">pandas, NumPy, SciPy, PyArrow</td><td>Time series, stats, optimization</td></tr>
+                            <tr><td>Cloud sync</td><td class="text-mono">Appwrite SDK</td><td>Snapshots, signals, alerts, scraped data (historical, frozen at archive)</td></tr>
+                            <tr><td>Calendar</td><td class="text-mono">pandas-market-calendars</td><td>Trading-day logic</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                <aside class="stack-table-media__viz" aria-label="Ingest pipeline animation">
+                    <div class="stack-viz-card stack-viz-card--compact">
+                        <div class="bwc-media-frame bwc-media-frame--video">
+                        <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_StructuralDataFlow.mp4" muted loop playsinline preload="metadata" aria-label="Ingest pipeline to DuckDB"></video>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="stack-table-media stack-table-media--reverse bwc-no-reveal bwc-media-zone">
+                <div class="stack-table-block stack-table-media__table">
+                <h3 class="text-display sub-title">Market data and scraping</h3>
+                <div class="metrics-table-wrap">
+                    <table class="metrics-table stack-table">
+                        <thead><tr><th>Source</th><th>Client / fallback</th></tr></thead>
+                        <tbody>
+                            <tr><td>Prices (primary)</td><td class="text-mono">Polygon (<code>massive_feed.py</code>) · yfinance</td></tr>
+                            <tr><td>Prices / fundamentals</td><td class="text-mono">yfinance, Alpaca · Scrapy spiders</td></tr>
+                            <tr><td>Macro</td><td class="text-mono">FRED (<code>fred_feed.py</code>)</td></tr>
+                            <tr><td>News</td><td class="text-mono">feedparser, Google RSS spider · Alpaca news</td></tr>
+                            <tr><td>Filings</td><td class="text-mono">SEC EDGAR spider + <code>sec_feed.py</code></td></tr>
+                            <tr><td>Scraping infra</td><td class="text-mono">Scrapy on Zyte Scrapy Cloud · Appwrite</td></tr>
+                            <tr><td>HTTP</td><td class="text-mono">requests, httpx · rate-limited pulls</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                <aside class="stack-table-media__viz stack-table-media__viz--stack" aria-label="Scraping and rate-limit animations">
+                    <div class="stack-viz-stack">
+                        <div class="stack-viz-card stack-viz-card--compact">
+                            <div class="bwc-media-frame bwc-media-frame--video">
+                            <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_WebSpiders.mp4" muted loop playsinline preload="metadata" aria-label="Scrapy spider crawl into Appwrite"></video>
+                            </div>
+                        </div>
+                        <div class="stack-viz-card stack-viz-card--compact">
+                            <div class="bwc-media-frame bwc-media-frame--video">
+                            <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_RateLimiter.mp4" muted loop playsinline preload="metadata" aria-label="Token-bucket API governance"></video>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
             <div class="stack-table-block">
                 <h3 class="text-display sub-title">Runtime and packaging</h3>
                 <div class="metrics-table-wrap">
@@ -680,7 +989,7 @@
                             <tr><td>Language</td><td class="text-mono">Python 3.11-3.13</td><td>Core quant engine</td></tr>
                             <tr><td>Package manager</td><td class="text-mono">uv + uv.lock</td><td>Reproducible installs (<code>uv sync --frozen</code>)</td></tr>
                             <tr><td>Packaging</td><td class="text-mono">pyproject.toml (PEP 517)</td><td>Build metadata for <code>quant_monitor</code></td></tr>
-                            <tr><td>CLI</td><td class="text-mono">Typer</td><td><code>project</code>, <code>project-dashboard</code>, <code>project-bootstrap</code>; doctor, backtest, dashboard entrypoints</td></tr>
+                            <tr><td>CLI</td><td class="text-mono">Typer</td><td><code>project</code>, <code>project-dashboard</code>, <code>project-bootstrap</code>, plus doctor, backtest, and dashboard entrypoints</td></tr>
                             <tr><td>Config</td><td class="text-mono">TOML + Pydantic</td><td><code>config.toml</code>, <code>config.py</code>: holdings, MA periods, regime weights, thresholds</td></tr>
                             <tr><td>Secrets</td><td class="text-mono">Doppler</td><td>API keys at runtime (never committed)</td></tr>
                         </tbody>
@@ -688,41 +997,7 @@
                 </div>
             </div>
 
-            <div class="stack-table-block" style="grid-column:1/-1;">
-                <h3 class="text-display sub-title">Data and persistence</h3>
-                <div class="metrics-table-wrap">
-                    <table class="metrics-table stack-table">
-                        <thead><tr><th>Layer</th><th>Technology</th><th>Role</th></tr></thead>
-                        <tbody>
-                            <tr><td>Analytics DB</td><td class="text-mono">DuckDB</td><td><code>portfolio.duckdb</code> (gitignored): EOD price matrix, fast SQL/pivot</td></tr>
-                            <tr><td>Fast transforms</td><td class="text-mono">Polars</td><td>Pivot in <code>topological_run.py</code>: DuckDB to wide matrix</td></tr>
-                            <tr><td>Classic stack</td><td class="text-mono">pandas, NumPy, SciPy, PyArrow</td><td>Time series, stats, optimization</td></tr>
-                            <tr><td>Cloud sync</td><td class="text-mono">Appwrite SDK</td><td>Snapshots, signals, alerts, scraped data (historical; frozen at archive)</td></tr>
-                            <tr><td>Calendar</td><td class="text-mono">pandas-market-calendars</td><td>Trading-day logic</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="stack-table-block" style="grid-column:1/-1;">
-                <h3 class="text-display sub-title">Market data and scraping</h3>
-                <div class="metrics-table-wrap">
-                    <table class="metrics-table stack-table">
-                        <thead><tr><th>Source</th><th>Client / tool</th><th>Fallback</th></tr></thead>
-                        <tbody>
-                            <tr><td>Prices (primary)</td><td class="text-mono">Polygon (<code>massive_feed.py</code>)</td><td>yfinance</td></tr>
-                            <tr><td>Prices / fundamentals</td><td class="text-mono">yfinance, Alpaca</td><td>Scrapy spiders</td></tr>
-                            <tr><td>Macro</td><td class="text-mono">FRED (<code>fred_feed.py</code>)</td><td>n/a</td></tr>
-                            <tr><td>News</td><td class="text-mono">feedparser, Google RSS spider</td><td>Alpaca news</td></tr>
-                            <tr><td>Filings</td><td class="text-mono">SEC EDGAR spider + <code>sec_feed.py</code></td><td>n/a</td></tr>
-                            <tr><td>Scraping infra</td><td class="text-mono">Scrapy on Zyte Scrapy Cloud</td><td>Pushes to Appwrite</td></tr>
-                            <tr><td>HTTP</td><td class="text-mono">requests, httpx</td><td>Rate-limited pulls</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="stack-table-block" style="grid-column:1/-1;">
+            <div class="stack-table-block">
                 <h3 class="text-display sub-title">Surfaces (where output is consumed)</h3>
                 <div class="metrics-table-wrap">
                     <table class="metrics-table stack-table">
@@ -736,7 +1011,7 @@
                 </div>
             </div>
             </section>
-        </section>
+</section>
 
 <!-- CLOSE: faculty, principles, team, contact -->
 <section id="close" class="section-anchor ic-section fade-up">
@@ -744,32 +1019,32 @@
                 <header class="ic-section-header">
                     <p class="ic-kicker">Faculty</p>
                     <h2>What the chair already scored</h2>
-                    <p class="ic-lead">Professor <a href="https://www.linkedin.com/in/daniela-neiderer/" target="_blank" rel="noopener" class="link-underline">Daniela Neiderer</a>, Hult. We are not re-litigating grades here. Process and logs scored high; headline return did not.</p>
+                    <p class="ic-lead">Professor <a href="https://www.linkedin.com/in/daniela-neiderer/" target="_blank" rel="noopener" class="link-underline">Daniela Neiderer</a>, Hult. We are not re-litigating grades here. Process and logs scored high. Headline return did not.</p>
                 </header>
 
                 <div class="grades-stack" aria-label="Faculty score breakdown">
-                <p class="grade-total text-display" aria-label="Total faculty score"><span class="grade-num grade-odometer" data-odometer-to="422">422</span> <span class="grade-total-denom">/ <span class="grade-denom-num">430</span></span></p>
+                <p class="grade-total text-display" aria-label="Total faculty score"><span class="grade-num grade-odometer" data-odometer-from="350" data-odometer-to="422">422</span> <span class="grade-total-denom">/ <span class="grade-denom-num">430</span></span></p>
 
                 <div class="grade-hero-grid" aria-label="Faculty scores by category">
                     <article class="grade-card" style="--grade-pct: 98;">
                         <div class="grade-score-bar" aria-hidden="true"><span></span></div>
                         <p class="grade-label">Architecture &amp; logs</p>
-                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-to="147">147</span><span class="grade-denom">/ <span class="grade-denom-num">150</span></span></p>
+                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-from="100" data-odometer-to="147">147</span><span class="grade-denom">/ <span class="grade-denom-num">150</span></span></p>
                     </article>
                     <article class="grade-card" style="--grade-pct: 98.3;">
                         <div class="grade-score-bar" aria-hidden="true"><span></span></div>
                         <p class="grade-label">Strategy &amp; final report</p>
-                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-to="118">118</span><span class="grade-denom">/ <span class="grade-denom-num">120</span></span></p>
+                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-from="100" data-odometer-to="118">118</span><span class="grade-denom">/ <span class="grade-denom-num">120</span></span></p>
                     </article>
                     <article class="grade-card" style="--grade-pct: 98.3;">
                         <div class="grade-score-bar" aria-hidden="true"><span></span></div>
                         <p class="grade-label">Client presentation &amp; post-mortem</p>
-                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-to="118">118</span><span class="grade-denom">/ <span class="grade-denom-num">120</span></span></p>
+                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-from="100" data-odometer-to="118">118</span><span class="grade-denom">/ <span class="grade-denom-num">120</span></span></p>
                     </article>
                     <article class="grade-card" style="--grade-pct: 97.5;">
                         <div class="grade-score-bar" aria-hidden="true"><span></span></div>
                         <p class="grade-label">Peer eval &amp; leadership</p>
-                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-to="39">39</span><span class="grade-denom">/ <span class="grade-denom-num">40</span></span></p>
+                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-from="20" data-odometer-to="39">39</span><span class="grade-denom">/ <span class="grade-denom-num">40</span></span></p>
                     </article>
                 </div>
                 </div>
@@ -783,7 +1058,7 @@
                         </div>
                         <div class="defense-qa">
                             <dt class="defense-qa-term text-mono">Drawdown win</dt>
-                            <dd class="defense-qa-answer ic-outcome-plain">At the Apr 2 trough only — desk <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> (<span class="text-mono" data-metric="trough-excess">+5.28pp</span>). That is the preservation story; it does not vindicate negative Sharpe, Sortino, or expectancy on the term.</dd>
+                            <dd class="defense-qa-answer ic-outcome-plain">At the Apr 2 trough only: desk <span class="text-mono" data-metric="trough-desk">-6.44%</span> vs SPY <span class="text-mono" data-metric="trough-spy">-11.72%</span> (<span class="text-mono" data-metric="trough-excess">+5.28pp</span>). That is the preservation story. It does not vindicate negative Sharpe, Sortino, or expectancy on the term.</dd>
                         </div>
                         <div class="defense-qa">
                             <dt class="defense-qa-term text-mono">Team friction</dt>
@@ -791,11 +1066,11 @@
                         </div>
                         <div class="defense-qa">
                             <dt class="defense-qa-term text-mono">Prep / rehearsal</dt>
-                            <dd class="defense-qa-answer ic-outcome-plain">Eight-person schedules clashed; full desk dry-runs were rare; some oral defense answers reflected that gap.</dd>
+                            <dd class="defense-qa-answer ic-outcome-plain">Eight-person schedules clashed. Full desk dry-runs were rare. Some oral defense answers reflected that gap.</dd>
                         </div>
                         <div class="defense-qa">
                             <dt class="defense-qa-term text-mono">Tech depth across team</dt>
-                            <dd class="defense-qa-answer ic-outcome-plain">Not every member carried the same quant load; the lead owned validator design and integration.</dd>
+                            <dd class="defense-qa-answer ic-outcome-plain">Not every member carried the same quant load. The lead owned validator design and integration.</dd>
                         </div>
                         <div class="defense-qa">
                             <dt class="defense-qa-term text-mono">Breadth vs depth</dt>
@@ -823,16 +1098,16 @@
                         <article class="principle-card">
                             <h3>Process under fire</h3>
                             <p class="ic-outcome-plain">Logs, diary, and filed limits (e.g. 25% max single name) mattered more than one lucky trade.</p>
-                            <p class="principle-detail">The 147/150 architecture score reflects reproducible records, not P&amp;L: the discipline we took into compliance and risk internships.</p>
+                            <p class="principle-detail">The 147/150 architecture score reflects reproducible records, not P&amp;L. The discipline we took into compliance and risk internships.</p>
                         </article>
                         <article class="principle-card">
                             <h3>Inverse hedge lost money outright</h3>
-                            <p class="ic-outcome-plain">PSQ/SH cost <span class="text-mono">-$19,205</span> on the Apr 2 tariff rally; AA/CENX (+$17,169) and lower exposure at the trough did more protecting than inverse ETFs.</p>
-                            <p class="principle-detail">SH/PSQ behave like short futures, not convex puts — next desk would size 1–2% NAV in OTM SPY puts instead, and still pre-write a ceasefire re-risk playbook.</p>
+                            <p class="ic-outcome-plain">PSQ/SH cost <span class="text-mono">-$19,205</span> on the Apr 2 tariff rally. AA/CENX (+$17,169) and lower exposure at the trough did more protecting than inverse ETFs.</p>
+                            <p class="principle-detail">SH/PSQ behave like short futures, not convex puts. Next desk would size 1–2% NAV in OTM SPY puts instead, and still pre-write a ceasefire re-risk playbook.</p>
                         </article>
                         <article class="principle-card">
                             <h3>Quant as mirror</h3>
-                            <p class="ic-outcome-plain">Python checked our story; it did not trade the book.</p>
+                            <p class="ic-outcome-plain">Python checked our story. It did not trade the book.</p>
                             <p class="principle-detail">It exists so we could ask &ldquo;did we break our own rules?&rdquo; after each week.</p>
                         </article>
                     </div>
@@ -920,7 +1195,7 @@
                     <h2 class="text-display section-title">Continue the conversation</h2>
                 </header>
                 <p class="text-body-readable contact-cta__copy">
-                    PM, recruiter, or faculty reviewing this archive: questions on the validator, reproducible data sandbox, or a 15-minute walkthrough of what we filed vs what we built — email <a href="mailto:kartavya@kartavya.tech" class="link-underline">kartavya@kartavya.tech</a>. Kartavya Jharwal, Team BWC lead.
+                    PM, recruiter, or faculty reviewing this archive: questions on the validator, reproducible data sandbox, or a 15-minute walkthrough of what we filed vs what we built. Email <a href="mailto:kartavya@kartavya.tech" class="link-underline">kartavya@kartavya.tech</a>. Kartavya Jharwal, Team BWC lead.
                 </p>
                 <div class="cta-row">
                     <a href="https://kartavya.tech" target="_blank" rel="noopener" class="cta-btn cta-primary cta-large">kartavya.tech</a>
@@ -956,7 +1231,8 @@
                         <a href="#context" class="link-underline">Brief</a>
                         <a href="#story" class="link-underline">Story</a>
                         <a href="#evidence" class="link-underline">Desk</a>
-                        <a href="#validator" class="link-underline">Overlay</a>
+                        <a href="#research" class="link-underline">Research</a>
+                        <a href="#stack" class="link-underline">Stack</a>
                         <a href="#evaluation" class="link-underline">Faculty</a>
                         <a href="#contact" class="link-underline">Contact</a>
                         <a href="#top" class="link-underline">Top</a>
@@ -970,9 +1246,6 @@
             </div>
 
             <div class="footer-meta">
-                <p class="footer-thesis-note text-body-readable">
-                    &ldquo;Adaptive efficiency&rdquo; also names a concept in institutional economics (Douglass North): how institutions change over time. On this site it denotes Team BWC&rsquo;s desk thesis under Lo&rsquo;s adaptive markets hypothesis (AMH), not North&rsquo;s development-economics usage.
-                </p>
                 <p class="footer-copy text-mono footer-copy--center">
                     <span class="footer-copy-symbol" aria-hidden="true">©</span>
                     <span class="sr-only">Copyright </span>
@@ -1024,20 +1297,20 @@
 
                     <section class="program-brief-section">
                         <h4 class="ic-kicker">The brief</h4>
-                        <p class="ic-outcome-plain">Manage <span class="text-mono">$1,000,000</span> in simulated capital as if it were real. Operate inside constraints set in advance — not negotiated after the fact.</p>
+                        <p class="ic-outcome-plain">Manage <span class="text-mono">$1,000,000</span> in simulated capital as if it were real. Operate inside constraints set in advance, not negotiated after the fact.</p>
                         <p class="ic-outcome-plain mb-0">Report performance the way a professional fund reports to investors: in risk-adjusted terms, not raw returns.</p>
                     </section>
 
                     <section class="program-brief-section">
                         <h4 class="ic-kicker">The operating environment</h4>
-                        <p class="ic-outcome-plain">StockTrak mirrors a live brokerage: real-time pricing, executed orders, margin, and shorts — settled in paper capital, not real currency.</p>
+                        <p class="ic-outcome-plain">StockTrak mirrors a live brokerage: real-time pricing, executed orders, margin, and shorts, settled in paper capital, not real currency.</p>
                         <p class="ic-outcome-plain">Each team&apos;s account functioned as a mock investment book: positions, cash, and realized / unrealized P&amp;L tracked like an institutional ledger. The mechanics were real. The capital was not.</p>
-                        <p class="ic-outcome-plain mb-0">The Investment Policy Statement — risk tolerance, eligible instruments, operating limits — was issued by the instructor before trading opened. The task was to operate inside a mandate already set, and justify every decision within it.</p>
+                        <p class="ic-outcome-plain mb-0">The Investment Policy Statement (risk tolerance, eligible instruments, operating limits) was issued by the instructor before trading opened. The task was to operate inside a mandate already set, and justify every decision within it.</p>
                     </section>
 
                     <section class="program-brief-section">
                         <h4 class="ic-kicker">Who the brief was written for</h4>
-                        <p class="ic-outcome-plain mb-0">Deliberately open-ended. No prior finance background assumed. Legible to someone who reads a stock chart as green-up / red-down — yet rigorous enough to grade on Sharpe and risk-adjusted return by semester end.</p>
+                        <p class="ic-outcome-plain mb-0">Deliberately open-ended. No prior finance background assumed. Legible to someone who reads a stock chart as green-up / red-down, yet rigorous enough to grade on Sharpe and risk-adjusted return by semester end.</p>
                     </section>
 
                     <div class="program-brief-columns">
@@ -1045,11 +1318,11 @@
                             <h4 class="ic-kicker">The constraints</h4>
                             <ul class="prose-list ic-outcome-plain">
                                 <li><span class="text-mono">$1,000,000</span> simulated starting capital</li>
-                                <li>US equities and ETFs in practice; Treasuries, margin, and shorts permitted under the IPS</li>
+                                <li>US equities and ETFs in practice. Treasuries, margin, and shorts permitted under the IPS</li>
                                 <li>No single security above 25% of portfolio value</li>
-                                <li><span class="text-mono">$10</span> commission per trade; 300-trade semester ceiling</li>
+                                <li><span class="text-mono">$10</span> commission per trade. 300-trade semester ceiling</li>
                                 <li>3% annualized interest on uninvested cash</li>
-                                <li>Eight teams, identical rules; five-person team cap removed this run</li>
+                                <li>Eight teams, identical rules. Five-person team cap removed this run</li>
                             </ul>
                         </section>
 
@@ -1060,7 +1333,7 @@
                                 <li>Trading diary: rationale for every open and close, win or loss</li>
                                 <li>Bi-weekly logs translating diary into trade-level justification</li>
                                 <li>Analysis spanning technicals, quant screens, AI pitches, top-down / bottom-up work, ESG, 10-K review, and forward book construction</li>
-                                <li>Final report and client presentation in plain language — not finance jargon</li>
+                                <li>Final report and client presentation in plain language, not finance jargon</li>
                             </ul>
                         </section>
                     </div>
@@ -1072,7 +1345,7 @@
 
                     <section class="program-brief-section program-brief-section--last">
                         <h4 class="ic-kicker">Why it was structured this way</h4>
-                        <p class="ic-outcome-plain mb-0">The client was not buying speculation or headline-chasing. They wanted evidence that disciplined process, applied consistently and explained clearly, could grow capital while managing risk. Grading weighted process and logs heavily; headline return still missed.</p>
+                        <p class="ic-outcome-plain mb-0">The client was not buying speculation or headline-chasing. They wanted evidence that disciplined process, applied consistently and explained clearly, could grow capital while managing risk. Grading weighted process and logs heavily. Headline return still missed.</p>
                     </section>
                 </div>
             </div>
@@ -1109,68 +1382,76 @@
                     <button type="button" class="ic-dialog__close" data-dialog-close aria-label="Close dialog">×</button>
                 </header>
                 <div class="ic-dialog__body">
-                    <p class="ic-outcome-plain">Seven closed round-trips in the Excel export; only two were winners. Losses were concentrated: a handful of stop-outs and crisis-phase names (semis, inverse hedges during the Apr 2 tariff rally) drove most of the negative expectancy, not a long tail of tiny scratches.</p>
+                    <p class="ic-outcome-plain">Seven closed round-trips in the Excel export. Only two were winners. Losses were concentrated: a handful of stop-outs and crisis-phase names (semis, inverse hedges during the Apr 2 tariff rally) drove most of the negative expectancy, not a long tail of tiny scratches.</p>
                     <ul class="prose-list ic-outcome-plain">
-                        <li><strong>Structural (would repeat):</strong> Terminal beta 0.63 after a Crisis swing from ~1.0 target; AA/CENX metals (+$17,169) buffered trough downside vs SPY; inverse ETFs were a net drag, not protection.</li>
-                        <li><strong>Charter override:</strong> With twelve days left and the book last in class, we invoked Section 5 — emergency triage, not a calm risk dial-down.</li>
+                        <li><strong>Structural (would repeat):</strong> Terminal beta 0.63 after a Crisis swing from ~1.0 target. AA/CENX metals (+$17,169) buffered trough downside vs SPY. Inverse ETFs were a net drag, not protection.</li>
+                        <li><strong>Charter override:</strong> With twelve days left and the book last in class, we invoked Section 5: emergency triage, not a calm risk dial-down.</li>
                         <li><strong>Incidental (bad luck):</strong> PSQ/SH reversed on the Apr 2 tariff rally (Inverse ETF Reversal sub-event, <span class="text-mono">-1.34%</span>): policy surprise on a short-futures sleeve, not a slow unwind.</li>
-                        <li><strong>Execution (would fix):</strong> After the 8 Apr ceasefire, SPY was nearly flat to start while we were still <span class="text-mono">-4.8%</span>; we added equity slowly and finished <span class="text-mono">-4.37%</span> vs SPY <span class="text-mono">-2.29%</span>.</li>
+                        <li><strong>Execution (would fix):</strong> After the 8 Apr ceasefire, SPY was nearly flat to start while we were still <span class="text-mono">-4.8%</span>. We added equity slowly and finished <span class="text-mono">-4.37%</span> vs SPY <span class="text-mono">-2.29%</span>.</li>
                     </ul>
                     <p class="ic-outcome-plain ic-human-aside mb-0">Commissions and dividends were immaterial (<span class="text-mono">$680</span> fees, <span class="text-mono">$2,044</span> dividends): sizing and timing book, not an income book.</p>
-                    <p class="ic-outcome-plain mb-0">We trailed SPY by about 208 basis points on the term and missed our filed ~10% p.a. target. Trough outperformance vs SPY came from metals and lower exposure, not inverse hedges; we re-risked too slowly after the bounce.</p>
+                    <p class="ic-outcome-plain mb-0">We trailed SPY by about 208 basis points on the term and missed our filed ~10% p.a. target. Trough outperformance vs SPY came from metals and lower exposure, not inverse hedges. We re-risked too slowly after the bounce.</p>
                 </div>
             </div>
         </dialog>
 
-        <dialog id="tech-depth-dialog" class="ic-dialog" aria-labelledby="tech-depth-title">
+        <dialog id="methodology-dossier-dialog" class="ic-dialog" aria-labelledby="methodology-dossier-title">
             <div class="ic-dialog__panel">
                 <header class="ic-dialog__header">
-                    <h3 id="tech-depth-title" class="text-display sub-title">How the validator works</h3>
+                    <h3 id="methodology-dossier-title" class="text-display sub-title">Methodology dossier</h3>
                     <button type="button" class="ic-dialog__close" data-dialog-close aria-label="Close dialog">×</button>
                 </header>
-                <div class="ic-dialog__body">
-                    <section class="ic-block">
-                        <h4 class="ic-kicker">Why we built a quant layer</h4>
-                        <ul class="prose-list prose-plain ic-outcome-plain">
-                            <li><strong>Confidence, not alpha:</strong> objective “how sure are we?” meter so diary claims weren’t vibes.</li>
-                            <li><strong>Closed universe realism:</strong> tickers we actually held/traded — audits behavior, not a new research universe.</li>
-                            <li><strong>Backtest + forward-cast:</strong> replays trades, then stress-tests paths (Monte Carlo).</li>
-                            <li><strong>Policy discipline:</strong> catch accidental beta/sector drift vs IPS and committee intent.</li>
+                <div class="ic-dialog__body program-brief-body">
+                    <section class="program-brief-section program-brief-section--last">
+                        <h4 class="ic-kicker">Modern metrics</h4>
+                        <ul class="prose-list ic-outcome-plain">
+                            <li><strong>PSR:</strong> probability the observed Sharpe exceeds a benchmark, adjusted for skew and kurtosis.</li>
+                            <li><strong>DSR:</strong> deflated Sharpe penalizing multiple strategy trials.</li>
+                            <li><strong>PBO:</strong> probability of backtest overfitting across parameter sweeps.</li>
                         </ul>
                     </section>
-                    <section class="ic-block" aria-labelledby="validator-sources-title">
-                        <h4 id="validator-sources-title" class="ic-kicker">Data → math → signals</h4>
-                        <p class="ic-outcome-plain">Ingest many sources, normalize, compute risk/structure metrics, publish a compact confidence signal to CLI surfaces. No Streamlit app drove decisions.</p>
-                        <h5 class="text-display sub-title">Inputs</h5>
-                        <ul class="prose-list ic-outcome-plain">
-                            <li><strong>Desk truth:</strong> Excel close marks + trading log</li>
-                            <li><strong>Market prices:</strong> vendor pulls + fallbacks</li>
-                            <li><strong>Macro context:</strong> rates series for regime labeling</li>
-                            <li><strong>News + filings:</strong> tagging and post-hoc explanation only</li>
-                        </ul>
-                        <h5 class="text-display sub-title">Data prep</h5>
-                        <ul class="prose-list ic-outcome-plain">
-                            <li>Sanitize, de-duplicate, time-align sources</li>
-                            <li>Pivot into matrices for ML/statistics</li>
-                            <li>Cache wide views so expensive reshapes don’t repeat</li>
-                        </ul>
+                </div>
+            </div>
+        </dialog>
+
+        <dialog id="validator-depth-dialog" class="ic-dialog" aria-labelledby="validator-depth-title">
+            <div class="ic-dialog__panel">
+                <header class="ic-dialog__header">
+                    <h3 id="validator-depth-title" class="text-display sub-title">Validator technical map</h3>
+                    <button type="button" class="ic-dialog__close" data-dialog-close aria-label="Close dialog">×</button>
+                </header>
+                <div class="ic-dialog__body program-brief-body">
+                    <aside class="ic-dialog__interpret">
+                        <strong class="text-mono">Scope.</strong> Closed trading universe only. Outputs are confidence signals for diaries and committee review, not live trade instructions.
+                    </aside>
+                    <section class="program-brief-section">
+                        <h4 class="ic-kicker">Pipeline</h4>
+                        <p class="ic-outcome-plain">Ingest many sources → normalize → compute risk and structure metrics → publish compact confidence signals to CLI surfaces. No Streamlit app drove StockTrak decisions.</p>
                     </section>
-                    <section class="ic-block" aria-labelledby="validator-methods-title">
-                        <h4 id="validator-methods-title" class="ic-kicker">What it computes</h4>
+                    <div class="program-brief-columns">
+                        <section class="program-brief-section">
+                            <h4 class="ic-kicker">Inputs</h4>
+                            <ul class="prose-list ic-outcome-plain">
+                                <li>Excel close marks + trading log</li>
+                                <li>Vendor price pulls + fallbacks</li>
+                                <li>Rates series for regime labels</li>
+                                <li>News + filings for post-hoc tags</li>
+                            </ul>
+                        </section>
+                        <section class="program-brief-section">
+                            <h4 class="ic-kicker">Outputs</h4>
+                            <ul class="prose-list ic-outcome-plain">
+                                <li>Combined confidence score</li>
+                                <li>Rich CLI dashboard review</li>
+                                <li>Diary references for accountability</li>
+                            </ul>
+                        </section>
+                    </div>
+                    <section class="program-brief-section program-brief-section--last">
+                        <h4 class="ic-kicker">Methods</h4>
                         <ul class="prose-list stack-methods-list text-body-readable">
                             <li><span class="text-mono text-accent">Fama-French / Carhart / q-factor</span> OLS on portfolio returns.</li>
-                            <li><span class="text-mono text-accent">HRP</span> (<code>hrp_sizer.py</code>) weights from the covariance graph.</li>
                             <li><span class="text-mono text-accent">Black-Litterman + MVO</span> (<code>optimizer.py</code>) policy vs desk weights.</li>
-                            <li><span class="text-mono text-accent">Brinson-Fachler</span> attribution vs the trading log.</li>
-                            <li><span class="text-mono text-accent">Cornish-Fisher VaR</span> and jump-augmented Monte Carlo on the overlay path.</li>
-                        </ul>
-                    </section>
-                    <section class="ic-block" aria-labelledby="validator-outputs-title">
-                        <h4 id="validator-outputs-title" class="ic-kicker">Confidence signals out</h4>
-                        <ul class="prose-list ic-outcome-plain mb-0">
-                            <li><strong>Confidence score:</strong> structure, factor exposure, tail-risk flags combined.</li>
-                            <li><strong>Operator surfaces:</strong> terminal-first CLI dashboard — fast review, not a flashy web UI.</li>
-                            <li><strong>Human accountability:</strong> referenced in diaries so the team could align on measurement vs guessing.</li>
                         </ul>
                     </section>
                 </div>
