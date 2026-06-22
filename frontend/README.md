@@ -1,4 +1,4 @@
-# Adaptive Efficiency — Project BWC microsite
+# Adaptive Efficiency · Project BWC microsite
 
 **Team BWC** · Hult CHL-0200 · engineering sunset `2026-05-01` · publication seal pending
 
@@ -50,14 +50,14 @@ frontend/
 
 **Anchor redirects:** `story.html` → `#story`, `results.html` → `#evidence`, `research.html` → `#research`.
 
-**Section anchors:** `#summary`, `#executive-summary`, `#sources`, `#context`, `#story`, `#evidence`, `#research`, `#stack`, `#evaluation`, `#principles`, `#team-roster`, `#contact` — see [llms.txt](./llms.txt) for machine-readable detail.
+**Section anchors:** `#summary`, `#executive-summary`, `#sources`, `#context`, `#story`, `#evidence`, `#research`, `#stack`, `#evaluation`, `#principles`, `#team-roster`, `#contact`. See [llms.txt](./llms.txt) for machine-readable detail.
 
 ---
 
 ## UX patterns
 
 1. **Splash:** mandatory disclaimer overlay, liquid gradient, data-load gate, `sessionStorage` dismiss key `bwc-splash-dismissed`.
-2. **Optional depth in dialogs:** program brief, memo excerpts (`report-excerpts.json`), desk post-mortem, video popout — via `ic-dialog` + `data-dialog-target`.
+2. **Optional depth in dialogs:** program brief, memo excerpts (`report-excerpts.json`), desk post-mortem, video popout via `ic-dialog` + `data-dialog-target`.
 3. **Behavioural audit:** inline under `#story`, hydrated from `behavioural-audit.json`.
 4. **Filed artifacts** under `#sources` (three pillars + manifest `<details>`). Full file list also at `deliverables/index.html`.
 5. **Motion and cursor** retained for human reviewers.
@@ -81,10 +81,13 @@ uv run python scripts/build_frontend_assets.py
 uv run python scripts/verify_repo_health.py --strict-artifacts
 ```
 
-- **Minify:** concat CSS → `bundle.min.css`, minify `main.js`, `base-path.js`, `splash-liquid-gradient.js`.
-- **Sync:** `build_frontend_assets.py` copies committee files to `frontend/deliverables/source/` and updates `deliverables-manifest.json` / `commit-log.json`. Re-run is safe when charts/data are already current.
+- **Sync:** `uv run python scripts/sync_deliverables_manual.py` mirrors committee files, manifest, and download table rows. Keeps hand-edited `deliverables/index.html` chrome.
 
-Full quant + docs rebuild (only when DuckDB or memo/Excel sources change): `scripts/sunset_freeze.ps1` (Windows) or `scripts/sunset_freeze.sh`.
+```bash
+bun run minify:frontend
+uv run python scripts/sync_deliverables_manual.py
+uv run python scripts/verify_repo_health.py --strict-artifacts
+```
 
 Before the publication seal: add `--require-clean-git` to the health script and run CI parity per [REVIEWERS.md](../REVIEWERS.md#publication-checklist-archive-seal).
 

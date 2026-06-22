@@ -59,7 +59,7 @@ Behavioural audit is an **on-page** block under `#story` (hydrated from `data/be
 
 - **Production entrypoints:** `styles/bundle.min.css`, `js/main.min.js`, `js/base-path.min.js`, `js/splash-liquid-gradient.min.js`.
 - **Sources:** edit `styles/*.css` and `js/*.js` (not min files), then `bun run minify:frontend` (repo root `package.json`).
-- **Sync step:** `uv run python scripts/build_frontend_assets.py` copies `deliverables/source/` → `frontend/deliverables/source/`, refreshes `deliverables-manifest.json` and `commit-log.json`. Safe to re-run when data/charts are already current (idempotent copies).
+- **Sync step:** `uv run python scripts/sync_deliverables_manual.py` copies `deliverables/source/` into `frontend/deliverables/source/`, refreshes `deliverables-manifest.json`, and updates the download table in `deliverables/index.html` (preserves hand-edited page chrome). Does not run chart/data rebuild.
 - **Full rebuild** only when quant outputs or Excel/memo sources change (re-runs chart generation and narrative extract).
 - **SEO:** OG/Twitter meta, JSON-LD, `assets/og-card.png`, `llms.txt`, `sitemap.xml`.
 
@@ -83,7 +83,7 @@ Use [REVIEWERS.md § archive seal](../REVIEWERS.md#publication-checklist-archive
 
 ```bash
 bun run minify:frontend
-uv run python scripts/build_frontend_assets.py
+uv run python scripts/sync_deliverables_manual.py
 ```
 
 Then:
@@ -94,7 +94,7 @@ Then:
 
 Skip `sunset_freeze` unless DuckDB, tests, or MkDocs exports need a refresh.
 
-Optional tidy (not blocking seal): prune dead CSS (`.landing-proof-placeholder`, `.team-dialog`, `.carousel-scaffold`), redirect `deliverables/index.html` to `#sources` if the standalone table is no longer wanted.
+Optional tidy (not blocking seal): redirect `deliverables/index.html` to `#sources` if the standalone table is no longer wanted.
 
 ---
 

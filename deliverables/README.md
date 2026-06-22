@@ -14,7 +14,6 @@ Faculty grades and peer feedback are **already incorporated** into these deliver
 | `Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pptx` | Editable deck source |
 | `Investment-CHL-Team-5-BWC-1 (1).docx` | Written investment deliverable |
 | `Investment_Team_Charter_Team_5 (1).docx` | Team charter |
-| `CHL0200_InvestmentChallenge_PeerEvaluationForm.docx` | Peer evaluation |
 | `Final Excel model.xlsx` | Committee Excel model |
 | `Trading_Log-5_Team_5 (4).2.csv` | Trading log export |
 | `Different format-transaction history.csv` | Alternate journal export |

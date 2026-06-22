@@ -2295,7 +2295,7 @@
             { passive: true }
         );
 
-        const interactables = document.querySelectorAll('a, button, .team-trigger, canvas');
+        const interactables = document.querySelectorAll('a, button, canvas');
         interactables.forEach((el) => {
             el.addEventListener('mouseenter', () => {
                 hoverScale = 2.5;
@@ -2369,61 +2369,5 @@
                 return;
             }
             observer.observe(el);
-        });
-    }
-
-    /* =========================================================
-       AWWWARDS CAROUSEL EXTENSION (JS)
-       ========================================================= */
-       
-    function initCarousels() {
-        const scaffolds = document.querySelectorAll('.carousel-scaffold');
-        
-        scaffolds.forEach(scaffold => {
-            const container = scaffold.parentElement;
-            const prevBtn = container.querySelector('.carousel-btn:first-of-type');
-            const nextBtn = container.querySelector('.carousel-btn:last-of-type');
-            const images = Array.from(scaffold.querySelectorAll('img'));
-            
-            if (images.length === 0) return; // No images yet
-
-            let currentIndex = 0;
-
-            // Initialize display
-            images.forEach((img, i) => {
-                img.style.position = 'absolute';
-                img.style.top = '0';
-                img.style.left = '0';
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.objectFit = 'contain';
-                img.style.transition = 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-                img.style.opacity = i === 0 ? '1' : '0';
-                img.style.pointerEvents = i === 0 ? 'auto' : 'none';
-            });
-            
-            // Hide the placeholder text if images exist
-            const placeholder = scaffold.querySelector('.carousel-placeholder-copy');
-            if (placeholder) placeholder.style.display = 'none';
-
-            function updateCarousel() {
-                images.forEach((img, i) => {
-                    img.style.opacity = i === currentIndex ? '1' : '0';
-                    img.style.pointerEvents = i === currentIndex ? 'auto' : 'none';
-                });
-            }
-
-            if (prevBtn) {
-                prevBtn.addEventListener('click', () => {
-                    currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
-                    updateCarousel();
-                });
-            }
-            if (nextBtn) {
-                nextBtn.addEventListener('click', () => {
-                    currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
-                    updateCarousel();
-                });
-            }
         });
     }

@@ -5,13 +5,16 @@
 !!! success "Post-mortem framing"
     **Deliverables** ([committee packet](deliverables-index.md)) describe the full investment program. **`quant_monitor/`** documents the systematic audit layer—topology, walk-forward tests, and behavioural metrics—not the entire BWC capability surface.
 
+!!! info "Archive status (June 2026)"
+    Engineering sunset is **complete**. Live Appwrite ingestion and schedulers are **retired**. The public microsite (*Adaptive Efficiency*) is a static GitHub Pages archive. Publication seal commit is still open.
+
 ## What this site contains
 
 - **Implementation phases 0–21:** [phase index](phases/README.md)
 - **Advanced analytics (22+):** [phase-22-onwards-advanced-analytics.md](phase-22-onwards-advanced-analytics.md)
 - **Sunset / endgame:** [phase-finale-endgame.md](phase-finale-endgame.md)
 - **Results:** [performance](performance.md), [backtest](backtest-results.md), [Monte Carlo forward](monte-carlo-forward.md)
-- **Microsite:** [telemetry & charts](https://kartavya-jharwal.github.io/ganet-project-bwc/results.html)
+- **Microsite:** [Adaptive Efficiency](https://kartavya-jharwal.github.io/ganet-project-bwc/)
 
 Faculty grades and peer feedback are reflected in the client deliverables; this docs tree is the **final engineering freeze**.
 
@@ -21,11 +24,13 @@ Sparse inverse covariance graphs (`GraphicalLassoCV`), HRP sizing, regime-weight
 
 ## Rebuild
 
+Charts and narrative JSON: `uv run python scripts/build_frontend_assets.py` (optional; data may already be built).
+
 ```bash
-uv run python scripts/build_frontend_assets.py
+bun run minify:frontend
 uv run python -m mkdocs build -f docs/mkdocs.yml --strict
 ```
 
 ---
 
-_Deployed via GitHub Pages · optional Appwrite · secrets via Doppler · Team BWC 2026._
+_Static archive · GitHub Pages · secrets via Doppler for local audits only · Team BWC 2026._

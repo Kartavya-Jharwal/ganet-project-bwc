@@ -95,9 +95,9 @@ Use this checklist when closing the repo, not when re-running the original sunse
 2. **Minify + sync (lean):** data and charts are already built. Run:
    ```bash
    bun run minify:frontend
-   uv run python scripts/build_frontend_assets.py
+   uv run python scripts/sync_deliverables_manual.py
    ```
-   The asset builder syncs `deliverables/source/` → `frontend/deliverables/source/` and refreshes manifests. Skip a full `sunset_freeze` unless quant artifacts changed.
+   Deliverables sync copies `deliverables/source/` files, refreshes manifest, and updates download table rows in the hand-edited `deliverables/index.html`. Skip `build_frontend_assets.py` unless charts/data need rebuild.
 3. **Health gate:** `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git`
 4. **CI parity:** `uv run pytest tests/ -m "not integration"`, `uv run ruff check quant_monitor scripts tests`, `uv run ty check quant_monitor`, `uv run bandit -r quant_monitor/ -c pyproject.toml`, `uv run deptry .`
 5. **Microsite checks:** open `frontend/index.html` — splash disclaimer, static archive status (no Appwrite LIVE), KPIs from `frontend/data/results.json` after build.
