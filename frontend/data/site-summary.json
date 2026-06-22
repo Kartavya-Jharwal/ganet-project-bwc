@@ -1,9 +1,10 @@
 {
   "schema": "https://kartavya-jharwal.github.io/ganet-project-bwc/data/site-summary.json",
-  "version": "1.0",
-  "generated_at": "2026-06-18",
+  "version": "1.1",
+  "generated_at": "2026-05-28",
   "site": {
-    "name": "Team BWC — Hult Investment Challenge Post-Mortem",
+    "name": "Team BWC: Adaptive Efficiency Post-Mortem",
+    "tagline": "Adaptive Efficiency",
     "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/",
     "type": "static_archive",
     "course": "CHL-0200",
@@ -16,7 +17,7 @@
       "url": "https://kartavya.tech",
       "github": "https://github.com/Kartavya-Jharwal/ganet-project-bwc"
     },
-    "disclaimer": "Not an official Hult publication. Presentation edited; site layout and quant documentation AI-assisted. Graded marks from Excel close and filed memo only."
+    "disclaimer": "Not an official Hult publication. Presentation edited. Site layout and quant documentation AI-assisted. Graded marks from Excel close and filed memo only."
   },
   "desk_graded": {
     "source": "Excel close 2026-04-11",
@@ -31,7 +32,7 @@
     "trough_excess_pp": 5.28,
     "win_rate_pct": 28.57,
     "portfolio_beta_close": 0.63,
-    "note": "Trough outperformance is scoped to Apr 2 only; does not vindicate negative Sharpe, Sortino, or expectancy on the term."
+    "note": "Trough outperformance is scoped to Apr 2 only. It does not vindicate negative Sharpe, Sortino, or expectancy on the term."
   },
   "faculty_score": {
     "total": 422,
@@ -44,7 +45,7 @@
     }
   },
   "overlay_audit": {
-    "description": "Python backtest and stress-test layer; not the graded desk book",
+    "description": "Python backtest and stress-test layer. Not the graded desk book",
     "metrics_url": "./full-metrics.json",
     "repo_path": "quant_monitor/",
     "warning": "Do not compare overlay returns side-by-side with desk returns without explicit context"
@@ -55,11 +56,13 @@
     "engineering_docs": "../docs/index.html"
   },
   "anchors": {
+    "summary": "#summary",
+    "executive_summary": "#executive-summary",
     "sources": "#sources",
     "brief": "#context",
     "story": "#story",
     "desk_results": "#evidence",
-    "overlay": "#validator",
+    "research": "#research",
     "stack": "#stack",
     "faculty": "#evaluation",
     "principles": "#principles",

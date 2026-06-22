@@ -225,7 +225,10 @@
                     </p>
                 </aside>
 
-                <button type="button" id="splash-enter" class="site-splash__cta" autofocus>Enter microsite</button>
+                <button type="button" id="splash-enter" class="site-splash__cta" disabled aria-busy="true">
+                    <span class="site-splash__cta-fill" aria-hidden="true"></span>
+                    <span class="site-splash__cta-label">Loading data&hellip; (0%)</span>
+                </button>
             </div>
 
             <p class="site-splash__hint site-splash__reveal site-splash__reveal--4">Enter &middot; Space &middot; or skip to <a href="#main-content" class="site-splash__skip">main content</a></p>
@@ -276,7 +279,7 @@
         <header id="summary" class="hero-case-study ic-hero section-anchor reveal-step-2">
             <div class="hero-masthead" aria-label="Hero header">
                 <a href="#top" class="hero-masthead__brand text-display">BWC</a>
-                <p class="hero-masthead__tag text-mono">adaptive efficiency · chl-0200 · static archive</p>
+                <p class="hero-masthead__tag text-mono">adaptive efficiency chl-0200 static archive</p>
             </div>
             <div class="ic-section-header ic-hero-intro">
                 <h1 class="text-hero headline-fluid">
@@ -533,17 +536,14 @@
             <section class="ic-block" aria-labelledby="results-charts-title">
                 <h3 id="results-charts-title" class="ic-kicker">Marked book charts (Excel / desk only)</h3>
             <div class="chart-card chart-embed desk-performance-embed fade-up">
-                <div class="chart-title text-display">Performance vs SPY</div>
                 <iframe data-src="./charts/desk-performance.html" title="Hult desk performance overview" loading="lazy"></iframe>
             </div>
 
             <div class="chart-grid-2 fade-up">
                 <div class="chart-card chart-embed">
-                    <div class="chart-title text-display">Equity curve</div>
                     <iframe data-src="./charts/equity-curve.html" title="Equity curve" loading="lazy"></iframe>
                 </div>
                 <div class="chart-card chart-embed">
-                    <div class="chart-title text-display">Drawdown / desk NAV</div>
                     <iframe data-src="./charts/drawdown.html" title="Drawdown" loading="lazy"></iframe>
                 </div>
             </div>
@@ -726,19 +726,16 @@
                     <h4 class="research-gallery-band__title ic-kicker">Desk vs overlay charts</h4>
                     <div class="overlay-charts-grid">
                         <div class="chart-card chart-embed chart-span-full bwc-media-card">
-                            <div class="chart-title text-display">Backtest comparison</div>
                             <div class="bwc-media-frame">
                             <iframe data-src="./charts/backtest-compare.html" title="Backtest" loading="lazy"></iframe>
                             </div>
                         </div>
                         <div class="chart-card chart-embed bwc-media-card">
-                            <div class="chart-title text-display">Factor loadings</div>
                             <div class="bwc-media-frame">
                             <iframe data-src="./charts/factor-loadings.html" title="Factors" loading="lazy"></iframe>
                             </div>
                         </div>
                         <div class="chart-card chart-embed bwc-media-card">
-                            <div class="chart-title text-display">Return distribution</div>
                             <div class="bwc-media-frame">
                             <iframe data-src="./charts/return-dist.html" title="Returns" loading="lazy"></iframe>
                             </div>
@@ -750,11 +747,9 @@
                     <h4 class="research-gallery-band__title ic-kicker">Risk &amp; simulation exports</h4>
                     <div class="viz-gallery-grid" aria-label="Risk and simulation Plotly exports">
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Stress paths</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/11_stress_testing.html" title="Scenario stress test paths" loading="lazy"></iframe></div>
                         </div>
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Quadratic variation</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/14_quadratic_variation.html" title="Realized quadratic variation" loading="lazy"></iframe></div>
                         </div>
                     </div>
@@ -764,23 +759,18 @@
                     <h4 class="research-gallery-band__title ic-kicker">Allocation &amp; factors</h4>
                     <div class="viz-gallery-grid" aria-label="Allocation and factor Plotly exports">
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Efficient frontier</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/02_efficient_frontier.html" title="Mean-variance efficient frontier" loading="lazy"></iframe></div>
                         </div>
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Black-Litterman</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/06_black_litterman.html" title="Black-Litterman posterior weights" loading="lazy"></iframe></div>
                         </div>
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Overlay equity</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/08_backtest_equity.html" title="Overlay backtest equity curve" loading="lazy"></iframe></div>
                         </div>
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Fama-French</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/09_fama_french.html" title="Fama-French factor regression" loading="lazy"></iframe></div>
                         </div>
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Kelly criterion</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/12_kelly_criterion.html" title="Kelly fraction vs win rate" loading="lazy"></iframe></div>
                         </div>
                     </div>
@@ -790,11 +780,9 @@
                     <h4 class="research-gallery-band__title ic-kicker">Regimes &amp; macro</h4>
                     <div class="viz-gallery-grid" aria-label="Regime and macro Plotly exports">
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Vol surface</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/04_vol_surface_3d.html" title="Implied volatility surface" loading="lazy"></iframe></div>
                         </div>
                         <div class="chart-card chart-embed viz-embed bwc-media-card">
-                            <div class="chart-title text-display">Yield curve</div>
                             <div class="bwc-media-frame"><iframe data-src="./viz_output/13_yield_curve.html" title="Treasury yield curve dynamics" loading="lazy"></iframe></div>
                         </div>
                     </div>
@@ -937,10 +925,10 @@
                     </table>
                 </div>
                 </div>
-                <aside class="stack-table-media__viz" aria-label="Ingest pipeline animation">
+                <aside class="stack-table-media__viz" aria-label="Scrapy spider crawl animation">
                     <div class="stack-viz-card stack-viz-card--compact">
                         <div class="bwc-media-frame bwc-media-frame--video">
-                        <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_StructuralDataFlow.mp4" muted loop playsinline preload="metadata" aria-label="Ingest pipeline to DuckDB"></video>
+                        <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_WebSpiders.mp4" muted loop playsinline preload="metadata" aria-label="Scrapy spider crawl into Appwrite"></video>
                         </div>
                     </div>
                 </aside>
@@ -964,17 +952,10 @@
                     </table>
                 </div>
                 </div>
-                <aside class="stack-table-media__viz stack-table-media__viz--stack" aria-label="Scraping and rate-limit animations">
-                    <div class="stack-viz-stack">
-                        <div class="stack-viz-card stack-viz-card--compact">
-                            <div class="bwc-media-frame bwc-media-frame--video">
-                            <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_WebSpiders.mp4" muted loop playsinline preload="metadata" aria-label="Scrapy spider crawl into Appwrite"></video>
-                            </div>
-                        </div>
-                        <div class="stack-viz-card stack-viz-card--compact">
-                            <div class="bwc-media-frame bwc-media-frame--video">
-                            <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_RateLimiter.mp4" muted loop playsinline preload="metadata" aria-label="Token-bucket API governance"></video>
-                            </div>
+                <aside class="stack-table-media__viz" aria-label="Rate-limit animation">
+                    <div class="stack-viz-card stack-viz-card--compact">
+                        <div class="bwc-media-frame bwc-media-frame--video">
+                        <video class="stack-viz-video bwc-media-video" data-src="./viz_output/Vis_RateLimiter.mp4" muted loop playsinline preload="metadata" aria-label="Token-bucket API governance"></video>
                         </div>
                     </div>
                 </aside>
@@ -1023,28 +1004,28 @@
                 </header>
 
                 <div class="grades-stack" aria-label="Faculty score breakdown">
-                <p class="grade-total text-display" aria-label="Total faculty score"><span class="grade-num grade-odometer" data-odometer-from="350" data-odometer-to="422">422</span> <span class="grade-total-denom">/ <span class="grade-denom-num">430</span></span></p>
+                <p class="grade-total text-display" aria-label="Total faculty score"><span class="grade-num" data-stat-animate data-stat-value="422" data-stat-decimals="0">422</span> <span class="grade-total-denom">/ <span class="grade-denom-num">430</span></span></p>
 
                 <div class="grade-hero-grid" aria-label="Faculty scores by category">
                     <article class="grade-card" style="--grade-pct: 98;">
                         <div class="grade-score-bar" aria-hidden="true"><span></span></div>
                         <p class="grade-label">Architecture &amp; logs</p>
-                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-from="100" data-odometer-to="147">147</span><span class="grade-denom">/ <span class="grade-denom-num">150</span></span></p>
+                        <p class="grade-value"><span class="grade-num" data-stat-animate data-stat-value="147" data-stat-decimals="0">147</span><span class="grade-denom">/ <span class="grade-denom-num">150</span></span></p>
                     </article>
                     <article class="grade-card" style="--grade-pct: 98.3;">
                         <div class="grade-score-bar" aria-hidden="true"><span></span></div>
                         <p class="grade-label">Strategy &amp; final report</p>
-                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-from="100" data-odometer-to="118">118</span><span class="grade-denom">/ <span class="grade-denom-num">120</span></span></p>
+                        <p class="grade-value"><span class="grade-num" data-stat-animate data-stat-value="118" data-stat-decimals="0">118</span><span class="grade-denom">/ <span class="grade-denom-num">120</span></span></p>
                     </article>
                     <article class="grade-card" style="--grade-pct: 98.3;">
                         <div class="grade-score-bar" aria-hidden="true"><span></span></div>
                         <p class="grade-label">Client presentation &amp; post-mortem</p>
-                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-from="100" data-odometer-to="118">118</span><span class="grade-denom">/ <span class="grade-denom-num">120</span></span></p>
+                        <p class="grade-value"><span class="grade-num" data-stat-animate data-stat-value="118" data-stat-decimals="0">118</span><span class="grade-denom">/ <span class="grade-denom-num">120</span></span></p>
                     </article>
                     <article class="grade-card" style="--grade-pct: 97.5;">
                         <div class="grade-score-bar" aria-hidden="true"><span></span></div>
                         <p class="grade-label">Peer eval &amp; leadership</p>
-                        <p class="grade-value"><span class="grade-num grade-odometer" data-odometer-from="20" data-odometer-to="39">39</span><span class="grade-denom">/ <span class="grade-denom-num">40</span></span></p>
+                        <p class="grade-value"><span class="grade-num" data-stat-animate data-stat-value="39" data-stat-decimals="0">39</span><span class="grade-denom">/ <span class="grade-denom-num">40</span></span></p>
                     </article>
                 </div>
                 </div>

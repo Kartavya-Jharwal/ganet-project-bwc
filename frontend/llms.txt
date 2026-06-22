@@ -1,27 +1,28 @@
-# Team BWC — Hult Investment Challenge Post-Mortem
+# Team BWC: Adaptive Efficiency · Hult Investment Challenge Post-Mortem
 
-> Static archive of Team BWC (CHL-0200): a ten-week $1M paper trading desk at Hult International Business School, Feb–Apr 2026. Not an official Hult publication. Numbers frozen from the 11 Apr 2026 Excel close and 2026-05-01 engineering snapshot.
+> Static archive of Team BWC (CHL-0200): a ten-week $1M paper trading desk at Hult International Business School, Feb to Apr 2026. Not an official Hult publication. Numbers frozen from the 11 Apr 2026 Excel close and 2026-05-01 engineering snapshot.
 
 ## What this site is
 
-- A case study and proof-of-work archive for recruiters, faculty, and quant reviewers
+- A single-page reviewer brief for recruiters, faculty, and quant auditors
+- Thesis frame: Adaptive Efficiency (adaptive markets lens on a short simulation)
 - Filed committee artifacts (Excel marks book, memo, deck, charter) plus a Python audit overlay
-- Honest headline: desk lost money (-4.37% total); relative win at Apr 2 trough vs SPY only
+- Honest headline: desk lost money (-4.37% total). Relative win at Apr 2 trough vs SPY only
 
 ## Key facts (desk / graded)
 
 - Total return: -4.37% ($956,280 on $1M start)
 - vs SPY (full term): -2.08% excess underperformance (SPY -2.29%)
-- Max drawdown (Apr 2): desk -6.44% vs SPY -11.72% (+5.28pp) — trough only, not full-term vindication
-- Win rate: 28.57%; negative expectancy
+- Max drawdown (Apr 2): desk -6.44% vs SPY -11.72% (+5.28pp). Trough only, not full-term vindication
+- Win rate: 28.57%. Negative expectancy
 - Portfolio beta (close): 0.63
 - Faculty score: 422/430 (Architecture 147/150, Strategy 118/120, Presentation 118/120, Peer 39/40)
 
-## Overlay (audit engine — not graded book)
+## Overlay (audit engine, not graded book)
 
-- Separate Python backtest / stress-test on closed universe (`quant_monitor/`)
-- Do not pair overlay returns with desk returns; they answer different questions
-- Overlay metrics: see `data/full-metrics.json` and Tech section on the microsite
+- Separate Python backtest and stress-test on closed universe (`quant_monitor/`)
+- Do not pair overlay returns with desk returns. They answer different questions
+- Overlay metrics: see `data/full-metrics.json` and Research section on the microsite
 
 ## Primary pages
 
@@ -36,20 +37,22 @@
 - [full-metrics.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/full-metrics.json): overlay audit metrics
 - [excel-metrics.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/excel-metrics.json): desk ratio wall
 - [deliverables-manifest.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/deliverables-manifest.json): filed artifact index
-- [behavioural-audit.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/behavioural-audit.json): timing / disposition metrics
+- [behavioural-audit.json](https://kartavya-jharwal.github.io/ganet-project-bwc/data/behavioural-audit.json): timing and disposition metrics
 
 ## Section anchors (on-page)
 
-- `#sources` — filed Excel, memo, deck, charter
-- `#context` — program brief / mandate
-- `#story` — desk timeline narrative
-- `#evidence` — desk results (graded Excel only)
-- `#validator` — overlay audit metrics, charts, and validator architecture
-- `#stack` — software map (maintainers)
-- `#evaluation` — faculty score 422/430 and defense Q&A
-- `#principles` — what we would repeat
-- `#team-roster` — team of eight
-- `#contact` — maintainer contact
+- `#summary`: hero metrics and bottom line
+- `#executive-summary`: at-a-glance narrative and archive intent
+- `#sources`: filed Excel, memo, deck, charter
+- `#context`: program brief and mandate
+- `#story`: desk timeline narrative and behavioural audit
+- `#evidence`: desk results (graded Excel only)
+- `#research`: Python audit metrics, overlay charts, and viz exports (not filed)
+- `#stack`: software map (maintainers)
+- `#evaluation`: faculty score 422/430 and defense Q&A
+- `#principles`: what we would repeat
+- `#team-roster`: team of eight
+- `#contact`: maintainer contact
 
 ## Optional depth
 

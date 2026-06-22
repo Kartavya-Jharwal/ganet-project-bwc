@@ -15,6 +15,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from verify_frontend_copy import verify_frontend_copy
+
 ROOT = Path(__file__).resolve().parent.parent
 
 REQUIRED_PATHS = [
@@ -167,6 +169,13 @@ def check_main_js() -> bool:
     return ok
 
 
+def check_frontend_copy() -> bool:
+    if verify_frontend_copy():
+        return True
+    _fail("frontend copy contains em dashes or semicolons in user-facing prose")
+    return False
+
+
 def check_deliverables_manifest() -> bool:
     manifest_path = ROOT / "frontend" / "data" / "deliverables-manifest.json"
     if not manifest_path.is_file():
@@ -226,6 +235,7 @@ def main() -> int:
         ("paths", check_paths),
         ("optional-artifacts", lambda: check_optional_artifacts(strict=args.strict_artifacts)),
         ("main.js", check_main_js),
+        ("frontend-copy", check_frontend_copy),
         ("deliverables-manifest", check_deliverables_manifest),
         ("forbidden-paths", check_forbidden_paths),
     ]

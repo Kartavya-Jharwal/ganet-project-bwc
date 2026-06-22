@@ -113,12 +113,8 @@
     --measure-narrow: 32em;
 
     /* Vertical rhythm: section = φ × stack */
-    --stack-gap: var(--space-fluid-lg);
-    --section-gap: clamp(
-        2.25rem,
-        calc(var(--space-fluid-xl) * var(--phi-inv) + 1.5vw),
-        calc(var(--space-fluid-2xl) * var(--phi-inv) + var(--space-fluid-lg))
-    );
+    --stack-gap: clamp(1rem, 0.7rem + 1vw, 1.65rem);
+    --section-gap: clamp(2.25rem, 1.2rem + 2.65vw, 3.75rem);
     --inline-gap: var(--space-fluid-md);
     --grid-col-gap: var(--space-fluid-md);
     --grid-row-gap: var(--section-gap);
@@ -267,6 +263,12 @@ body.theme-dark > footer {
     background-size: 128px 128px;
     background-repeat: repeat;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 1023px) {
+    .texture-overlay {
+        display: none;
+    }
 }
 
 
