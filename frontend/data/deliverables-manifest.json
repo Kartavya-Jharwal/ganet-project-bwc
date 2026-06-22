@@ -1,20 +1,35 @@
 {
-  "generated_at": "2026-06-21T11:12:15.927113+00:00",
+  "generated_at": "2026-06-22T18:36:11.061439+00:00",
   "team": "BWC",
   "project": "BWC",
   "source_dir": "deliverables/source",
   "post_mortem_pdf": "Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf",
-  "file_count": 9,
+  "file_count": 20,
   "files": [
+    {
+      "name": "(Case Study) Apple Annual Reports.docx",
+      "size_bytes": 291982,
+      "href": "./deliverables/source/(Case Study) Apple Annual Reports.docx"
+    },
+    {
+      "name": "(Case Study) Apple Anuual StockPitch.pptx",
+      "size_bytes": 59506,
+      "href": "./deliverables/source/(Case Study) Apple Anuual StockPitch.pptx"
+    },
+    {
+      "name": "(Case) BlackRock Top Down Analysis.pdf",
+      "size_bytes": 3322173,
+      "href": "./deliverables/source/(Case) BlackRock Top Down Analysis.pdf"
+    },
+    {
+      "name": "AI Advice strategies.docx",
+      "size_bytes": 582253,
+      "href": "./deliverables/source/AI Advice strategies.docx"
+    },
     {
       "name": "BWC_Institutional_Tearsheet.pdf",
       "size_bytes": 6913,
       "href": "./deliverables/source/BWC_Institutional_Tearsheet.pdf"
-    },
-    {
-      "name": "CHL0200_InvestmentChallenge_PeerEvaluationForm.docx",
-      "size_bytes": 33345,
-      "href": "./deliverables/source/CHL0200_InvestmentChallenge_PeerEvaluationForm.docx"
     },
     {
       "name": "Client_Post_Mortem_Investment_Challenge-Team-5-BWC_CH200.pdf",
@@ -32,14 +47,24 @@
       "href": "./deliverables/source/Different format-transaction history.csv"
     },
     {
+      "name": "ESG X RAY Mid Simulation.pdf",
+      "size_bytes": 59863862,
+      "href": "./deliverables/source/ESG X RAY Mid Simulation.pdf"
+    },
+    {
       "name": "Final Excel model.xlsx",
       "size_bytes": 258150,
       "href": "./deliverables/source/Final Excel model.xlsx"
     },
     {
-      "name": "Investment-CHL-Team-5-BWC-1 (1).docx",
+      "name": "Initial Portfolio Depoyment.docx",
+      "size_bytes": 8167,
+      "href": "./deliverables/source/Initial Portfolio Depoyment.docx"
+    },
+    {
+      "name": "Investment-CHL-Team-5-BWC-1-memo.docx",
       "size_bytes": 149308,
-      "href": "./deliverables/source/Investment-CHL-Team-5-BWC-1 (1).docx"
+      "href": "./deliverables/source/Investment-CHL-Team-5-BWC-1-memo.docx"
     },
     {
       "name": "Investment_Team_Charter_Team_5 (1).docx",
@@ -47,9 +72,39 @@
       "href": "./deliverables/source/Investment_Team_Charter_Team_5 (1).docx"
     },
     {
-      "name": "Trading_Log-5_Team_5 (4).2.csv",
+      "name": "Strategy Synopsis.docx",
+      "size_bytes": 290960,
+      "href": "./deliverables/source/Strategy Synopsis.docx"
+    },
+    {
+      "name": "Trading_Log-1_Team_5.xlsx",
+      "size_bytes": 147025,
+      "href": "./deliverables/source/Trading_Log-1_Team_5.xlsx"
+    },
+    {
+      "name": "Trading_Log-2_Team_5.xlsx",
+      "size_bytes": 142543,
+      "href": "./deliverables/source/Trading_Log-2_Team_5.xlsx"
+    },
+    {
+      "name": "Trading_Log-3_Team_5.xlsx",
+      "size_bytes": 116998,
+      "href": "./deliverables/source/Trading_Log-3_Team_5.xlsx"
+    },
+    {
+      "name": "Trading_Log-4_Team_5.xlsx",
+      "size_bytes": 127436,
+      "href": "./deliverables/source/Trading_Log-4_Team_5.xlsx"
+    },
+    {
+      "name": "Trading_Log-5_Team_5.csv",
       "size_bytes": 13411,
-      "href": "./deliverables/source/Trading_Log-5_Team_5 (4).2.csv"
+      "href": "./deliverables/source/Trading_Log-5_Team_5.csv"
+    },
+    {
+      "name": "Trading_Log-5_Team_5.xlsx",
+      "size_bytes": 256011,
+      "href": "./deliverables/source/Trading_Log-5_Team_5.xlsx"
     }
   ]
 }

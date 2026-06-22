@@ -1,5 +1,5 @@
 {
-  "source": "Final Excel model.htm (sheet008 \u2014 performance timeline)",
+  "source": "Final Excel model.htm (sheet008, performance timeline)",
   "trading_start": "02/02/2026 12:00 AM",
   "trading_end": "04/11/2026 12:00 AM",
   "initial_capital": 1000000.0,
@@ -25,7 +25,7 @@
     },
     {
       "date": "2026-02-17",
-      "event": "Phase 1 complete \u2014 13 positions",
+      "event": "Phase 1 complete: 13 positions",
       "portfolio_nav": 996000.0,
       "spy_nav": 989940.0,
       "portfolio_return_pct": -0.4,
@@ -33,7 +33,7 @@
     },
     {
       "date": "2026-02-24",
-      "event": "JNJ dividend; market softening",
+      "event": "JNJ dividend, market softening",
       "portfolio_nav": 989500.0,
       "spy_nav": 970959.0,
       "portfolio_return_pct": -1.05,
@@ -57,7 +57,7 @@
     },
     {
       "date": "2026-03-09",
-      "event": "GOOGL dividend; semis drag",
+      "event": "GOOGL dividend, semis drag",
       "portfolio_nav": 963400.0,
       "spy_nav": 934457.0,
       "portfolio_return_pct": -3.66,
@@ -65,7 +65,7 @@
     },
     {
       "date": "2026-03-12",
-      "event": "WMT/JPM exits; capital recycled",
+      "event": "WMT/JPM exits, capital recycled",
       "portfolio_nav": 958100.0,
       "spy_nav": 927156.0,
       "portfolio_return_pct": -4.19,
@@ -81,7 +81,7 @@
     },
     {
       "date": "2026-03-20",
-      "event": "SPY dividend; NBIS collapse",
+      "event": "SPY dividend, NBIS collapse",
       "portfolio_nav": 944800.0,
       "spy_nav": 916936.0,
       "portfolio_return_pct": -5.52,
@@ -97,7 +97,7 @@
     },
     {
       "date": "2026-03-30",
-      "event": "EMERGENCY TRIAGE \u2014 Phase 3",
+      "event": "EMERGENCY TRIAGE, Phase 3",
       "portfolio_nav": 948300.0,
       "spy_nav": 922250.0,
       "portfolio_return_pct": -5.17,
@@ -113,7 +113,7 @@
     },
     {
       "date": "2026-04-07",
-      "event": "AA+CENX profitable; inverse still drag",
+      "event": "AA+CENX profitable, inverse still drag",
       "portfolio_nav": 939200.0,
       "spy_nav": 905255.0,
       "portfolio_return_pct": -6.08,
@@ -121,7 +121,7 @@
     },
     {
       "date": "2026-04-08",
-      "event": "Phase 4 reconstruction; tariff pause",
+      "event": "Phase 4 reconstruction, tariff pause",
       "portfolio_nav": 951800.0,
       "spy_nav": 985750.0,
       "portfolio_return_pct": -4.82,

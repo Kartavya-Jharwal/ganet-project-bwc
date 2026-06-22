@@ -14,6 +14,7 @@ import argparse
 import json
 import logging
 import shutil
+import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -150,6 +151,7 @@ def build_all(output_dir: str = "frontend") -> None:
     logger.info("=== Syncing deliverables to frontend ===")
     _sync_deliverables(root)
     _write_deliverables_manifest(data_dir)
+    _write_commit_log(data_dir)
 
     # --- 8. Excel metrics + report excerpts (one-page case study) ---
     logger.info("=== Extracting excel metrics and report excerpts ===")
@@ -182,6 +184,11 @@ def build_all(output_dir: str = "frontend") -> None:
 
 def _build_og_card(assets_dir: Path) -> None:
     """Rasterize a branded Open Graph card (1200×630) for social previews."""
+    out = assets_dir / "og-card.png"
+    if out.is_file():
+        logger.info("Open Graph card already present — keeping %s", out)
+        return
+
     try:
         import matplotlib.pyplot as plt
         from matplotlib.patches import Rectangle
@@ -201,7 +208,6 @@ def _build_og_card(assets_dir: Path) -> None:
     ax.text(80, 250, "-4.37% desk close", fontsize=48, color="#f87171", fontweight="bold", va="top")
     ax.text(80, 180, "Apr 2 trough: -6.44% vs SPY -11.72%", fontsize=22, color="#4ade80", va="top")
     ax.text(80, 110, "Faculty score 422/430 · Static archive", fontsize=20, color="#a1a1aa", va="top")
-    out = assets_dir / "og-card.png"
     fig.savefig(out, facecolor="#050505", bbox_inches="tight", pad_inches=0)
     plt.close(fig)
     logger.info("Open Graph card -> %s", out)
@@ -220,6 +226,48 @@ def _copy_post_mortem_pdf(assets_dir: Path) -> None:
             logger.info("Post-mortem PDF -> %s", dest)
             return
     logger.warning("Client post-mortem PDF not found under deliverables/")
+
+
+def _write_commit_log(data_dir: Path, *, limit: int = 40) -> None:
+    """Write recent git commits for static footer / crawler discovery."""
+    repo = "https://github.com/Kartavya-Jharwal/ganet-project-bwc"
+    payload: dict[str, object] = {
+        "repository": repo,
+        "branch": "main",
+        "commits_url": f"{repo}/commits/main",
+        "index_source_url": f"{repo}/blob/main/frontend/index.html",
+        "generated_at": datetime.now(UTC).isoformat(),
+        "commit_count": 0,
+        "commits": [],
+    }
+    try:
+        proc = subprocess.run(
+            ["git", "log", f"-n{limit}", "--format=%h|%cI|%s"],
+            capture_output=True,
+            text=True,
+            check=True,
+            cwd=Path(__file__).resolve().parents[1],
+        )
+        commits: list[dict[str, str]] = []
+        for line in proc.stdout.splitlines():
+            if not line.strip():
+                continue
+            short_hash, iso_date, subject = line.split("|", 2)
+            commits.append(
+                {
+                    "hash": short_hash,
+                    "date": iso_date[:10],
+                    "subject": subject.strip(),
+                }
+            )
+        payload["commits"] = commits
+        payload["commit_count"] = len(commits)
+    except (subprocess.CalledProcessError, FileNotFoundError, ValueError) as exc:
+        logger.warning("Commit log export failed: %s", exc)
+
+    out = data_dir / "commit-log.json"
+    out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    logger.info("Commit log -> %s (%d commits)", out, payload["commit_count"])
 
 
 def _write_deliverables_manifest(data_dir: Path) -> None:
