@@ -40,6 +40,16 @@
     box-shadow: 0 0 0 2px var(--color-accent-primary);
 }
 
+/* Skip-to-main target: no browser default box after splash handoff */
+#main-content:focus:not(:focus-visible) {
+    outline: none;
+}
+
+#main-content:focus-visible {
+    outline: 2px solid var(--color-accent-primary);
+    outline-offset: 4px;
+}
+
 /* ─── Dock shell ─── */
 .site-dock {
     position: fixed;

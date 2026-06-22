@@ -62,9 +62,13 @@ def _base_layout(**overrides) -> dict:
 
 
 _CHART_EMBED_STYLE = """<style>
-html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#050505}
+:root{color-scheme:dark}
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#050505;scrollbar-width:thin;scrollbar-color:rgba(167,139,250,.45) #050505}
 body>div{display:flex;flex-direction:column;flex:1;min-height:0;height:100%}
 .plotly-graph-div{width:100%!important;height:100%!important;min-height:0!important}
+html::-webkit-scrollbar{width:8px;height:8px}
+html::-webkit-scrollbar-track{background:transparent}
+html::-webkit-scrollbar-thumb{background:rgba(167,139,250,.45);border-radius:0}
 </style>"""
 
 
@@ -457,198 +461,6 @@ def generate_backtest_comparison(output_dir: Path) -> Path:
     return _write_chart(fig, output_dir, "backtest-compare.html")
 
 
-def generate_monte_carlo_fan(output_dir: Path) -> Path:
-    """Monte Carlo simulation fan chart -> monte-carlo.html."""
-    cum_paths = None
-    terminal = None
-
-    try:
-        engine = _get_engine()
-        if engine is None:
-            raise RuntimeError("engine unavailable")
-        paths, term = engine.run_monte_carlo(
-            days_forward=_MC_DAYS, num_simulations=5000
-        )
-        if paths is not None and len(paths) > 0:
-            cum_paths = np.cumprod(1 + paths, axis=1)
-            terminal = term
-            logger.info("Monte Carlo fan using REAL simulation (%d paths)", len(paths))
-        else:
-            raise ValueError("empty MC paths")
-    except Exception as exc:
-        logger.warning("Real Monte Carlo failed: %s — trying simulation module", exc)
-
-    if cum_paths is None:
-        try:
-            from quant_monitor.backtest.simulation import run_monte_carlo_simulation
-            rng = np.random.default_rng(42)
-            hist = pd.DataFrame(rng.normal(0.0004, 0.012, (252, 3)), columns=["A", "B", "C"])
-            _, terminal = run_monte_carlo_simulation(
-                hist, days_forward=_MC_DAYS, num_simulations=5000
-            )
-            hist_series = pd.DataFrame(
-                rng.normal(0.0004, 0.012, (252, 3)), columns=["A", "B", "C"]
-            )
-            paths, _ = run_monte_carlo_simulation(
-                hist_series, days_forward=_MC_DAYS, num_simulations=5000
-            )
-            cum_paths = np.cumprod(1 + paths, axis=1)
-        except Exception:
-            rng = np.random.default_rng(42)
-            n_sims, n_days = 5000, _MC_DAYS
-            daily = rng.normal(0.0004, 0.012, (n_sims, n_days))
-            cum_paths = np.cumprod(1 + daily, axis=1)
-            terminal = cum_paths[:, -1] - 1
-
-    days = np.arange(1, cum_paths.shape[1] + 1)
-    percentiles = [5, 25, 50, 75, 95]
-    pct_values = {p: np.percentile(cum_paths, p, axis=0) for p in percentiles}
-
-    hurdle_pct = float(np.mean(terminal >= 0.03) * 100)
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(
-        x=days, y=pct_values[95], mode="lines", name="95th pctl",
-        line=dict(width=0), showlegend=False, hoverinfo="skip",
-    ))
-    fig.add_trace(go.Scatter(
-        x=days, y=pct_values[5], mode="lines", name="5th-95th",
-        line=dict(width=0), fill="tonexty",
-        fillcolor="rgba(59,130,246,0.12)",
-        hoverinfo="skip",
-    ))
-    fig.add_trace(go.Scatter(
-        x=days, y=pct_values[75], mode="lines", name="75th pctl",
-        line=dict(width=0), showlegend=False, hoverinfo="skip",
-    ))
-    fig.add_trace(go.Scatter(
-        x=days, y=pct_values[25], mode="lines", name="25th-75th",
-        line=dict(width=0), fill="tonexty",
-        fillcolor="rgba(59,130,246,0.25)",
-        hoverinfo="skip",
-    ))
-    fig.add_trace(go.Scatter(
-        x=days, y=pct_values[50], mode="lines", name="Median Path",
-        line=dict(color=COLORS["blue"], width=2.5),
-        hovertemplate="Day %{x}: %{y:.4f}x<extra>Median</extra>",
-    ))
-    fig.add_hline(y=1.03, line_dash="dash", line_color=COLORS["accent"], line_width=1.5,
-                  annotation=dict(text=f"+3% hurdle ({hurdle_pct:.1f}% prob)",
-                                  font=dict(color=COLORS["accent"], size=11)))
-    fig.add_hline(y=1.0, line_dash="dot", line_color=COLORS["muted"], line_width=1)
-
-    fig.update_layout(**_base_layout(
-        title=dict(
-            text=f"Monte Carlo Forward Simulation ({_MC_DAYS}-day, valuation → sunset)",
-            x=0.02,
-        ),
-        yaxis=dict(title="Wealth Multiplier", tickformat=".2f"),
-        xaxis=dict(title="Trading Days Forward"),
-        height=420,
-    ))
-    return _write_chart(fig, output_dir, "monte-carlo.html")
-
-
-def _synthetic_correlation_data():
-    """Generate synthetic correlation data as fallback."""
-    rng = np.random.default_rng(42)
-    assets = ["SPY", "TLT", "GLD", "VIX", "DXY", "BTC", "AAPL", "MSFT"]
-    n = len(assets)
-    raw = rng.normal(0, 0.01, (252, n))
-    raw[:, 1] = -0.3 * raw[:, 0] + rng.normal(0, 0.008, 252)
-    raw[:, 3] = -0.5 * raw[:, 0] + rng.normal(0, 0.015, 252)
-    raw[:, 5] = 0.4 * raw[:, 0] + rng.normal(0, 0.02, 252)
-    raw[:, 6] = 0.7 * raw[:, 0] + rng.normal(0, 0.008, 252)
-    raw[:, 7] = 0.65 * raw[:, 0] + rng.normal(0, 0.008, 252)
-    corr = np.corrcoef(raw.T)
-    return assets, corr
-
-
-def _real_correlation_data():
-    """Fetch real correlation matrix from portfolio tickers via yfinance."""
-    import yfinance as yf
-
-    from quant_monitor.config import cfg
-
-    tickers = cfg.tickers
-    if not tickers:
-        raise ValueError("No tickers in config")
-    data = yf.download(tickers, period="1y", auto_adjust=True, progress=False)
-    closes = data["Close"] if isinstance(data.columns, pd.MultiIndex) else data
-    closes = closes.dropna(axis=1, how="all").dropna()
-    if closes.shape[1] < 2 or len(closes) < 20:
-        raise ValueError("Insufficient price data for correlation")
-    assets = list(closes.columns)
-    corr = closes.pct_change().dropna().corr().values
-    return assets, corr
-
-
-def generate_correlation_network(output_dir: Path) -> Path:
-    """3D correlation network graph -> correlation-graph.html."""
-    try:
-        assets, corr = _real_correlation_data()
-        logger.info("Correlation network using REAL data (%d assets)", len(assets))
-    except Exception as exc:
-        logger.warning("Real correlation data failed: %s — using synthetic", exc)
-        assets, corr = _synthetic_correlation_data()
-
-    rng = np.random.default_rng(42)
-    n = len(assets)
-
-    theta = np.linspace(0, 2 * np.pi, n, endpoint=False)
-    radius = 2.0
-    x_pos = radius * np.cos(theta)
-    y_pos = radius * np.sin(theta)
-    z_pos = rng.uniform(-0.5, 0.5, n)
-
-    edge_x, edge_y, edge_z = [], [], []
-    threshold = 0.25
-    for i in range(n):
-        for j in range(i + 1, n):
-            if abs(corr[i, j]) > threshold:
-                edge_x += [x_pos[i], x_pos[j], None]
-                edge_y += [y_pos[i], y_pos[j], None]
-                edge_z += [z_pos[i], z_pos[j], None]
-
-    fig = go.Figure()
-    fig.add_trace(go.Scatter3d(
-        x=edge_x, y=edge_y, z=edge_z,
-        mode="lines",
-        line=dict(color=COLORS["muted"], width=2),
-        hoverinfo="skip", showlegend=False,
-    ))
-
-    node_colors = [corr[i].mean() for i in range(n)]
-    fig.add_trace(go.Scatter3d(
-        x=x_pos, y=y_pos, z=z_pos,
-        mode="markers+text",
-        marker=dict(
-            size=12, color=node_colors,
-            colorscale=[[0, COLORS["negative"]], [0.5, COLORS["muted"]], [1, COLORS["positive"]]],
-            colorbar=dict(title="Avg rho", len=0.6),
-            line=dict(width=1, color=COLORS["text"]),
-        ),
-        text=assets,
-        textposition="top center",
-        textfont=dict(size=11, color=COLORS["text"]),
-        hovertemplate="%{text}<br>Avg rho: %{marker.color:.2f}<extra></extra>",
-        showlegend=False,
-    ))
-
-    fig.update_layout(**_base_layout(
-        title=dict(text="3D Asset Correlation Network", x=0.02),
-        height=520,
-        scene=dict(
-            xaxis=dict(visible=False),
-            yaxis=dict(visible=False),
-            zaxis=dict(visible=False),
-            bgcolor=COLORS["bg"],
-            camera=dict(eye=dict(x=1.6, y=1.6, z=1.0)),
-        ),
-    ))
-    return _write_chart(fig, output_dir, "correlation-graph.html")
-
-
 def generate_factor_loadings(output_dir: Path) -> Path:
     """Factor beta bar chart -> factor-loadings.html."""
     rng = np.random.default_rng(42)
@@ -692,56 +504,6 @@ def generate_factor_loadings(output_dir: Path) -> Path:
         height=380,
     ))
     return _write_chart(fig, output_dir, "factor-loadings.html")
-
-
-def _synthetic_brinson_data():
-    """Generate synthetic Brinson attribution data as fallback."""
-    rng = np.random.default_rng(42)
-    periods = ["Q1 2025", "Q2 2025", "Q3 2025", "Q4 2025", "Q1 2026"]
-    allocation = rng.normal(0.005, 0.003, len(periods))
-    selection = rng.normal(0.008, 0.004, len(periods))
-    interaction = rng.normal(0.001, 0.002, len(periods))
-    return periods, allocation, selection, interaction
-
-
-def generate_brinson_attribution(output_dir: Path) -> Path:
-    """Brinson attribution stacked bar -> attribution.html."""
-    try:
-        engine = _get_engine()
-        if engine is None:
-            raise RuntimeError("engine unavailable")
-        attr_df = engine.run_brinson_attribution()
-        if attr_df.empty:
-            raise ValueError("empty attribution result")
-        periods = list(attr_df.index)
-        allocation = attr_df["Allocation"].values
-        selection = attr_df["Selection"].values
-        interaction = attr_df["Interaction"].values
-        logger.info("Brinson attribution using REAL data (%d sectors)", len(periods))
-    except Exception as exc:
-        logger.warning("Real Brinson attribution failed: %s — using synthetic", exc)
-        periods, allocation, selection, interaction = _synthetic_brinson_data()
-
-    fig = go.Figure()
-    for vals, name, color in [
-        (allocation, "Allocation", COLORS["blue"]),
-        (selection, "Selection", COLORS["positive"]),
-        (interaction, "Interaction", COLORS["purple"]),
-    ]:
-        fig.add_trace(go.Bar(
-            x=periods, y=vals * 100,
-            name=name, marker_color=color, opacity=0.85,
-            hovertemplate="%{x}: %{y:.2f}%<extra>" + name + "</extra>",
-        ))
-    fig.add_hline(y=0, line_color=COLORS["muted"], line_width=1)
-    fig.update_layout(**_base_layout(
-        title=dict(text="Brinson Performance Attribution", x=0.02),
-        barmode="relative",
-        yaxis=dict(title="Contribution (%)", ticksuffix="%"),
-        xaxis=dict(title=""),
-        height=400,
-    ))
-    return _write_chart(fig, output_dir, "attribution.html")
 
 
 # ---------------------------------------------------------------------------
@@ -899,10 +661,7 @@ def generate_all_charts(output_dir: str | Path = "frontend/charts") -> list[Path
         generate_monthly_heatmap(returns, out),
         generate_return_distribution(returns, out),
         generate_backtest_comparison(out),
-        generate_monte_carlo_fan(out),
-        generate_correlation_network(out),
         generate_factor_loadings(out),
-        generate_brinson_attribution(out),
         generate_results_json(returns, out),
     ])
 

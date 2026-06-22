@@ -742,14 +742,32 @@
         }
     }
 
-    async function runSiteBootstrap() {
+    async function runSiteBootstrap(onProgress) {
+        let completed = 0;
+        const total = 5;
+
+        const reportProgress = () => {
+            if (typeof onProgress !== 'function') return;
+            const pct = Math.min(100, Math.round((completed / total) * 100));
+            onProgress(pct);
+        };
+
+        const track = (promise) =>
+            Promise.resolve(promise).then((value) => {
+                completed += 1;
+                reportProgress();
+                return value;
+            });
+
+        reportProgress();
+
         try {
             const [timeline, results, full, excel] = await Promise.all([
-                preloadJson('./data/desk-timeline.json'),
-                preloadJson('./data/results.json'),
-                preloadJson('./data/full-metrics.json'),
-                preloadJson('./data/excel-metrics.json'),
-                waitForFonts(),
+                track(preloadJson('./data/desk-timeline.json')),
+                track(preloadJson('./data/results.json')),
+                track(preloadJson('./data/full-metrics.json')),
+                track(preloadJson('./data/excel-metrics.json')),
+                track(waitForFonts()),
             ]);
 
             deskTimelinePromise = Promise.resolve(timeline);
@@ -759,7 +777,36 @@
         } catch (_) {
             showMetricsEmptyNote(true);
         }
+
+        completed = total;
+        reportProgress();
         return true;
+    }
+
+    function updateSplashCtaProgress(enterBtn, pct) {
+        if (!enterBtn || enterBtn.classList.contains('site-splash__cta--ready')) return;
+        const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+        enterBtn.style.setProperty('--splash-cta-progress', `${clamped}%`);
+        const label = enterBtn.querySelector('.site-splash__cta-label');
+        if (label) {
+            label.textContent = `Loading data\u2026 (${clamped}%)`;
+        }
+    }
+
+    function markSplashEnterReady(enterBtn) {
+        if (!enterBtn || enterBtn.classList.contains('site-splash__cta--ready')) return;
+        enterBtn.style.setProperty('--splash-cta-progress', '100%');
+        const label = enterBtn.querySelector('.site-splash__cta-label');
+        if (label) {
+            label.textContent = 'Enter microsite';
+        }
+        enterBtn.classList.add('site-splash__cta--ready');
+        enterBtn.disabled = false;
+        enterBtn.removeAttribute('aria-busy');
+        enterBtn.setAttribute('aria-live', 'polite');
+        if (typeof enterBtn.focus === 'function') {
+            enterBtn.focus({ preventScroll: true });
+        }
     }
 
     function stopSplashWaveform() {
@@ -1057,7 +1104,7 @@
         }, SPLASH_EXIT_MS);
     }
 
-    function initSplash() {
+    function initSplash(bootstrapPromise) {
         const splash = document.getElementById('site-splash');
         const enterBtn = document.getElementById('splash-enter');
         if (!splash) return;
@@ -1086,7 +1133,29 @@
         initSplashWaveform(splash);
         initSplashLiquidGradient(splash);
 
-        function onEnter({ focusMain = false } = {}) {
+        let splashEnterReady = false;
+
+        if (enterBtn) {
+            if (bootstrapPromise && typeof bootstrapPromise.then === 'function') {
+                bootstrapPromise
+                    .then(() => {
+                        markSplashEnterReady(enterBtn);
+                        splashEnterReady = true;
+                    })
+                    .catch(() => {
+                        markSplashEnterReady(enterBtn);
+                        splashEnterReady = true;
+                    });
+            } else {
+                markSplashEnterReady(enterBtn);
+                splashEnterReady = true;
+            }
+        } else {
+            splashEnterReady = true;
+        }
+
+        function onEnter({ focusMain = false, force = false } = {}) {
+            if (!splashEnterReady && !force) return;
             dismissSplash(splash, { focusMain });
         }
 
@@ -1096,6 +1165,7 @@
             if (splash.classList.contains('site-splash--out')) return;
             if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
                 if (e.target === enterBtn || !/input|textarea|select/i.test(e.target?.tagName || '')) {
+                    if (!splashEnterReady) return;
                     e.preventDefault();
                     onEnter();
                 }
@@ -1103,7 +1173,7 @@
         });
 
         splash.querySelector('.site-splash__skip')?.addEventListener('click', () => {
-            requestAnimationFrame(() => onEnter({ focusMain: true }));
+            requestAnimationFrame(() => onEnter({ focusMain: true, force: true }));
         });
     }
 
@@ -1578,153 +1648,6 @@
         stats.forEach((el) => observer.observe(el));
     }
 
-    function initGradeOdometers() {
-        const stack = document.querySelector('.grades-stack');
-        if (!stack) return;
-
-        const odometers = stack.querySelectorAll('.grade-odometer');
-        if (!odometers.length) return;
-
-        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        function parseScore(el, attr) {
-            const raw = el.getAttribute(attr);
-            if (raw != null && raw !== '') {
-                const n = parseInt(raw, 10);
-                if (!Number.isNaN(n)) return n;
-            }
-            return null;
-        }
-
-        const items = Array.from(odometers).map((el) => {
-            const to = parseScore(el, 'data-odometer-to') ?? parseInt(el.textContent.trim(), 10);
-            let from = parseScore(el, 'data-odometer-from');
-            if (from == null || Number.isNaN(from)) {
-                if (to >= 400) from = 350;
-                else if (to >= 100) from = 100;
-                else if (to < 50) from = 20;
-                else from = Math.max(0, to - 30);
-            }
-            from = Math.min(from, to);
-            return {
-                el,
-                from,
-                to,
-                isTotal: Boolean(el.closest('.grade-total')),
-            };
-        });
-
-        if (prefersReduced) return;
-
-        items.forEach(({ el, from }) => {
-            el.textContent = String(from);
-            el.classList.add('grade-odometer-pending');
-        });
-
-        function clamp01(n) {
-            return Math.min(1, Math.max(0, n));
-        }
-
-        function easeInOutCubic(t) {
-            const x = clamp01(t);
-            return x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2;
-        }
-
-        /**
-         * Map scroll to 0→1 while the grades block is on screen.
-         * 0 = stack entering view; 1 = stack centered in the reading band (or scrolled past).
-         */
-        function getScrollProgress() {
-            const rect = stack.getBoundingClientRect();
-            const vh = window.innerHeight || 1;
-
-            if (rect.bottom <= vh * 0.15 || rect.top <= vh * 0.06) {
-                return 1;
-            }
-            if (rect.top >= vh * 0.92 || rect.bottom <= vh * 0.08) {
-                return 0;
-            }
-
-            const focal = rect.top + rect.height * 0.38;
-            const enterAt = vh * 0.86;
-            const settleAt = vh * 0.48;
-
-            return clamp01((enterAt - focal) / (enterAt - settleAt));
-        }
-
-        function progressForItem(raw, cardIndex, isTotal) {
-            const delay = isTotal ? 0.08 : cardIndex * 0.02;
-            return easeInOutCubic(clamp01((raw - delay) / (1 - delay)));
-        }
-
-        function renderFromProgress(raw) {
-            const active = raw > 0 && raw < 1;
-            let cardIndex = 0;
-
-            items.forEach((item) => {
-                const idx = item.isTotal ? 0 : cardIndex++;
-                const p = progressForItem(raw, idx, item.isTotal);
-                const value = Math.round(item.from + (item.to - item.from) * p);
-                item.el.textContent = String(Math.min(item.to, Math.max(item.from, value)));
-                item.el.classList.toggle('grade-odometer-active', active);
-                item.el.classList.toggle('grade-odometer-pending', raw < 1);
-                item.el.classList.toggle('grade-odometer-done', raw >= 1);
-            });
-        }
-
-        let scrollTicking = false;
-
-        function onScrollFrame() {
-            scrollTicking = false;
-            renderFromProgress(getScrollProgress());
-        }
-
-        function requestScrollUpdate() {
-            if (scrollTicking) return;
-            scrollTicking = true;
-            requestAnimationFrame(onScrollFrame);
-        }
-
-        renderFromProgress(getScrollProgress());
-
-        let scrollBound = false;
-
-        function bindScroll() {
-            if (scrollBound) return;
-            scrollBound = true;
-            window.addEventListener('scroll', requestScrollUpdate, { passive: true });
-            requestScrollUpdate();
-        }
-
-        function unbindScroll() {
-            if (!scrollBound) return;
-            scrollBound = false;
-            window.removeEventListener('scroll', requestScrollUpdate);
-            const rect = stack.getBoundingClientRect();
-            renderFromProgress(rect.bottom < 0 ? 1 : 0);
-        }
-
-        if ('IntersectionObserver' in window) {
-            const proximity = new IntersectionObserver(
-                ([entry]) => {
-                    if (entry.isIntersecting) bindScroll();
-                    else unbindScroll();
-                },
-                { rootMargin: '80% 0px' }
-            );
-            proximity.observe(stack);
-        } else {
-            bindScroll();
-        }
-
-        window.addEventListener('resize', () => {
-            if (scrollBound) requestScrollUpdate();
-        }, { passive: true });
-        window.addEventListener('pageshow', () => {
-            if (scrollBound) requestScrollUpdate();
-        });
-    }
-
     function initMarqueePause() {
         const marquee = document.getElementById('excel-metrics-marquee');
         if (!marquee || !('IntersectionObserver' in window)) return;
@@ -2126,9 +2049,11 @@
         eagerLoadDeskCharts();
         hookNewScrollReveal();
 
-        const bootstrapPromise = runSiteBootstrap();
+        const bootstrapPromise = runSiteBootstrap((pct) => {
+            updateSplashCtaProgress(document.getElementById('splash-enter'), pct);
+        });
 
-        initSplash();
+        initSplash(bootstrapPromise);
         initResolvedAssets();
         initPagesDiagnostics();
         initSiteDock();
@@ -2137,7 +2062,6 @@
         initStatusBadge();
         initDialogs();
         initStatAnimations();
-        initGradeOdometers();
         initMarqueePause();
         initFooterYear();
 

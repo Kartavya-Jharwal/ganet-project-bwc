@@ -3,18 +3,23 @@
 
 /* Sunset freeze ribbon — static in-flow banner (scrolls with page) */
 :root {
-    --sunset-bar-height: 1.625rem;
+    --sunset-bar-height: 2rem;
+    --hero-masthead-height: calc(var(--sunset-bar-height) * 2);
 }
 
 .sunset-freeze-bar {
-    text-align: center;
-    padding: var(--spacing-2) var(--spacing-4);
-    font-size: 0.65rem;
-    letter-spacing: 0.14em;
-    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--sunset-bar-height);
+    padding: 0 var(--spacing-4);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--color-accent-bright);
     background: var(--color-bg-base);
     background-image: linear-gradient(90deg, transparent, var(--color-accent-a12), transparent);
-    border-bottom: var(--line-thickness) solid var(--border-color);
+    border-bottom: 2px solid var(--border-highlight);
 }
 
 /* ----------------------------------------------------
@@ -259,7 +264,8 @@
     .l-grid-main:not(.narrative-flow) {
         display: flex;
         flex-direction: column;
-        padding: var(--space-fluid-lg) var(--gutter-safe-left) var(--space-fluid-2xl) var(--gutter-safe-right);
+        padding-block: var(--space-fluid-lg) var(--space-fluid-2xl);
+        padding-inline: var(--gutter-safe-left) var(--gutter-safe-right);
         gap: var(--section-gap);
     }
 

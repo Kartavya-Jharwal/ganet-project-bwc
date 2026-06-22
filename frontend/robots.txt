@@ -1,4 +1,4 @@
-# Team BWC microsite — static archive (GitHub Pages)
+# Team BWC microsite: static archive (GitHub Pages)
 User-agent: *
 Allow: /
 

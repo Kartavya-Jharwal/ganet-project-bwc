@@ -84,8 +84,8 @@
 
     function rewriteRelativeUrls(root) {
         const scope = root || document;
-        scope.querySelectorAll('[href^="./"], [src^="./"]').forEach((el) => {
-            const attr = el.hasAttribute('href') ? 'href' : 'src';
+        scope.querySelectorAll('[href^="./"], [src^="./"], [data-src^="./"]').forEach((el) => {
+            const attr = el.hasAttribute('href') ? 'href' : el.hasAttribute('src') ? 'src' : 'data-src';
             const raw = el.getAttribute(attr);
             if (raw) el.setAttribute(attr, resolveHref(raw));
         });

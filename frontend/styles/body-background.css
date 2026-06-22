@@ -1,0 +1,81 @@
+/* Subtle ambient body glow — fixed viewport, bottom layer (prototype: body-background.html) */
+
+.body-glow {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+    contain: strict;
+}
+
+.body-glow__waves {
+    position: absolute;
+    inset: 0;
+    filter: blur(72px);
+    transform: translate3d(0, 0, 0);
+    opacity: 0.62;
+}
+
+.body-glow__wave {
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 300%;
+    height: 300%;
+    transform-origin: center center;
+}
+
+.body-glow__wave--1 {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 7, 100, 0.55) 10%,
+        rgba(30, 27, 75, 0.38) 40%,
+        transparent 60%
+    );
+    animation: body-glow-sweep 28s linear infinite;
+}
+
+.body-glow__wave--2 {
+    background: linear-gradient(
+        225deg,
+        transparent 30%,
+        rgba(15, 23, 42, 0.6) 50%,
+        transparent 70%
+    );
+    animation: body-glow-sweep 35s linear infinite reverse;
+}
+
+.body-glow__wave--3 {
+    background: linear-gradient(
+        0deg,
+        #000000 30%,
+        rgba(10, 10, 15, 0.85) 60%,
+        transparent 80%
+    );
+    animation: body-glow-breathe 18s ease-in-out infinite alternate;
+}
+
+@keyframes body-glow-sweep {
+    0% { transform: rotate(0deg) translate(0%, 0%); }
+    50% { transform: rotate(180deg) translate(3%, 3%); }
+    100% { transform: rotate(360deg) translate(0%, 0%); }
+}
+
+@keyframes body-glow-breathe {
+    0% { transform: translateY(8%) scale(1); }
+    100% { transform: translateY(-2%) scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .body-glow__wave {
+        animation: none;
+    }
+}
+
+html.is-scroll-active .body-glow__wave,
+html:not(.is-page-visible) .body-glow__wave {
+    animation-play-state: paused;
+}
