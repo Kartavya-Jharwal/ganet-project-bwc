@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://kartavya-jharwal.github.io/ganet-project-bwc/</loc>
-        <lastmod>2026-06-18</lastmod>
+        <lastmod>2026-05-28</lastmod>
         <changefreq>yearly</changefreq>
         <priority>1.0</priority>
     </url>
@@ -19,14 +19,32 @@
         <priority>0.7</priority>
     </url>
     <url>
+        <loc>https://kartavya-jharwal.github.io/ganet-project-bwc/story.html</loc>
+        <lastmod>2026-05-28</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.4</priority>
+    </url>
+    <url>
+        <loc>https://kartavya-jharwal.github.io/ganet-project-bwc/results.html</loc>
+        <lastmod>2026-05-28</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.4</priority>
+    </url>
+    <url>
+        <loc>https://kartavya-jharwal.github.io/ganet-project-bwc/research.html</loc>
+        <lastmod>2026-05-28</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.4</priority>
+    </url>
+    <url>
         <loc>https://kartavya-jharwal.github.io/ganet-project-bwc/llms.txt</loc>
-        <lastmod>2026-06-18</lastmod>
+        <lastmod>2026-05-28</lastmod>
         <changefreq>yearly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://kartavya-jharwal.github.io/ganet-project-bwc/data/site-summary.json</loc>
-        <lastmod>2026-06-18</lastmod>
+        <lastmod>2026-05-28</lastmod>
         <changefreq>yearly</changefreq>
         <priority>0.5</priority>
     </url>

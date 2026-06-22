@@ -20,7 +20,11 @@
         return href;
     }
 
-    const DATA_PATH = './data/results.json';
+    const jsonCache = new Map();
+    const IFRAME_LOAD_CONCURRENCY = 2;
+    const iframeLoadQueue = [];
+    let iframeLoadsActive = 0;
+    let cachedExcelMetrics = null;
 
     function populateKPIs(data) {
         const mapping = {
@@ -97,24 +101,10 @@
         if (note) note.hidden = !show;
     }
 
-    async function fetchAndHydrate() {
-        let full = null;
-        let results = null;
-        try {
-            const [fullRes, resultsRes] = await Promise.all([
-                fetch(asset('./data/full-metrics.json')),
-                fetch(asset(DATA_PATH)),
-            ]);
-            if (fullRes.ok) full = await fullRes.json();
-            if (resultsRes.ok) {
-                results = await resultsRes.json();
-                populateKPIs(results);
-            }
-            populateOverlayMetrics(full, results);
-            showMetricsEmptyNote(!(full || results));
-        } catch (_) {
-            showMetricsEmptyNote(true);
-        }
+    function hydrateFromBootstrapData(full, results) {
+        if (results) populateKPIs(results);
+        populateOverlayMetrics(full, results);
+        showMetricsEmptyNote(!(full || results));
     }
 
     const DECK_PDF_REL =
@@ -140,7 +130,7 @@
             const res = await fetch(url, { method: 'HEAD', cache: 'force-cache' });
             if (res.ok) return true;
         } catch (_) {
-            /* file:// or HEAD blocked — fall through */
+            /* file:// or HEAD blocked: fall through */
         }
         return isImage ? false : probeImageUrl(url);
     }
@@ -154,35 +144,304 @@
             });
     }
 
-    function loadChartIframe(frame) {
-        if (frame.dataset.bwcResolved === '1') return;
-        const src = frame.getAttribute('data-src');
-        if (!src) return;
-        frame.src = resolveHref(src);
-        frame.dataset.bwcResolved = '1';
+    function isPriorityIframe(frame) {
+        return Boolean(frame?.closest('.desk-performance-embed, #evidence'));
+    }
+
+    function isDeskChartIframe(frame) {
+        return Boolean(frame?.closest('#evidence'));
+    }
+
+    function drainIframeQueue() {
+        while (iframeLoadsActive < IFRAME_LOAD_CONCURRENCY && iframeLoadQueue.length) {
+            const frame = iframeLoadQueue.shift();
+            if (!frame || frame.dataset.bwcResolved === '1') continue;
+
+            const src = frame.getAttribute('data-src');
+            if (!src) continue;
+
+            iframeLoadsActive += 1;
+            const onDone = () => {
+                iframeLoadsActive -= 1;
+                drainIframeQueue();
+            };
+            frame.addEventListener('load', onDone, { once: true });
+            frame.addEventListener('error', onDone, { once: true });
+            if (!isDeskChartIframe(frame)) {
+                frame.loading = 'lazy';
+            }
+            frame.src = resolveHref(src);
+            frame.dataset.bwcResolved = '1';
+            delete frame.dataset.bwcQueued;
+        }
+    }
+
+    function loadChartIframe(frame, { priority = false } = {}) {
+        if (!frame || frame.dataset.bwcResolved === '1' || frame.dataset.bwcQueued === '1') return;
+        frame.dataset.bwcQueued = '1';
+        if (priority || isPriorityIframe(frame)) {
+            iframeLoadQueue.unshift(frame);
+        } else {
+            iframeLoadQueue.push(frame);
+        }
+        drainIframeQueue();
+    }
+
+    function preloadJson(relativePath) {
+        if (!jsonCache.has(relativePath)) {
+            jsonCache.set(
+                relativePath,
+                fetch(asset(relativePath), { cache: 'force-cache' })
+                    .then((res) => (res.ok ? res.json() : null))
+                    .catch(() => null)
+            );
+        }
+        return jsonCache.get(relativePath);
+    }
+
+    function waitForFonts() {
+        if (document.fonts && typeof document.fonts.ready?.then === 'function') {
+            return document.fonts.ready.catch(() => {});
+        }
+        return Promise.resolve();
+    }
+
+    function chartLookaheadPx() {
+        return Math.max(560, Math.round((window.innerHeight || 800) * 1.15));
+    }
+
+    function revealNearbyFadeUps(marginPx) {
+        document.querySelectorAll('.fade-up:not(.revealed):not(.ic-section)').forEach((el) => {
+            if (isElementInViewport(el, marginPx)) el.classList.add('revealed');
+        });
+    }
+
+    function prefetchNearbyCharts() {
+        const margin = chartLookaheadPx();
+        document.querySelectorAll('iframe[data-src]').forEach((frame) => {
+            if (frame.dataset.bwcResolved === '1' || frame.dataset.bwcQueued === '1') return;
+            if (!isElementInViewport(frame, margin)) return;
+            loadChartIframe(frame, { priority: isPriorityIframe(frame) });
+        });
+    }
+
+    function eagerLoadDeskCharts() {
+        document.querySelectorAll('#evidence iframe[data-src]').forEach((frame) => {
+            loadChartIframe(frame, { priority: true });
+        });
+    }
+
+    function resumeVisibleVideos() {
+        if (document.documentElement.classList.contains('is-scroll-active')) return;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) return;
+
+        document.querySelectorAll('video[data-src]').forEach((video) => {
+            const rect = video.getBoundingClientRect();
+            const inView =
+                rect.top < window.innerHeight * 0.9 && rect.bottom > window.innerHeight * 0.1;
+            if (!inView) {
+                syncLazyVideoPlayback(video, false);
+                return;
+            }
+            loadLazyVideo(video, { play: true });
+        });
+    }
+
+    function initMediaCoordinator() {
+        let scrolling = false;
+        let scrollEndTimer = 0;
+        let chartThrottleTimer = 0;
+
+        function setScrolling(active) {
+            if (scrolling === active) return;
+            scrolling = active;
+            document.documentElement.classList.toggle('is-scroll-active', active);
+            if (active) {
+                pauseAllLazyVideos();
+                return;
+            }
+            prefetchNearbyCharts();
+            resumeVisibleVideos();
+        }
+
+        function syncPageVisible() {
+            document.documentElement.classList.toggle('is-page-visible', !document.hidden);
+            if (document.hidden) pauseAllLazyVideos();
+            else resumeVisibleVideos();
+        }
+
+        syncPageVisible();
+        document.addEventListener('visibilitychange', syncPageVisible);
+
+        prefetchNearbyCharts();
+        revealNearbyFadeUps(chartLookaheadPx());
+
+        window.addEventListener(
+            'scroll',
+            () => {
+                setScrolling(true);
+                clearTimeout(scrollEndTimer);
+                scrollEndTimer = window.setTimeout(() => setScrolling(false), 140);
+
+                revealNearbyFadeUps(chartLookaheadPx());
+                if (!chartThrottleTimer) {
+                    chartThrottleTimer = window.setTimeout(() => {
+                        chartThrottleTimer = 0;
+                        prefetchNearbyCharts();
+                    }, 120);
+                }
+            },
+            { passive: true }
+        );
+
+        window.addEventListener('resize', () => {
+            prefetchNearbyCharts();
+            resumeVisibleVideos();
+        }, { passive: true });
+        window.addEventListener('pageshow', () => {
+            prefetchNearbyCharts();
+            resumeVisibleVideos();
+        }, { passive: true });
+    }
+
+    function pauseAllLazyVideos() {
+        document.querySelectorAll('video[data-src]').forEach((video) => {
+            if (video.dataset.bwcVideoLoaded === '1') video.pause();
+        });
     }
 
     function initLazyChartIframes() {
         const frames = document.querySelectorAll('iframe[data-src]');
         if (!frames.length) return;
+        const marginPx = chartLookaheadPx();
         if (!('IntersectionObserver' in window)) {
-            frames.forEach(loadChartIframe);
+            frames.forEach((frame) => loadChartIframe(frame, { priority: isPriorityIframe(frame) }));
             return;
         }
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (!entry.isIntersecting) return;
-                    loadChartIframe(entry.target);
+                    loadChartIframe(entry.target, { priority: isPriorityIframe(entry.target) });
                     observer.unobserve(entry.target);
                 });
             },
-            { rootMargin: '320px 0px' }
+            { rootMargin: `${marginPx}px 0px`, threshold: 0.01 }
         );
         frames.forEach((frame) => observer.observe(frame));
     }
 
-    function deferWhenVisible(target, fn, rootMargin = '240px 0px') {
+    function isElementInViewport(el, marginPx = 320) {
+        if (!el || typeof el.getBoundingClientRect !== 'function') return false;
+        const rect = el.getBoundingClientRect();
+        return rect.bottom >= -marginPx && rect.top <= window.innerHeight + marginPx;
+    }
+
+    function hydrateMediaRoot(root) {
+        if (!root) return;
+        const margin = chartLookaheadPx();
+        root.querySelectorAll('iframe[data-src]').forEach((frame) => {
+            if (!isElementInViewport(frame, margin)) return;
+            loadChartIframe(frame, { priority: isPriorityIframe(frame) });
+        });
+    }
+
+    function initBwcMediaZones() {
+        const zones = document.querySelectorAll('#validator, #stack .stack-table-media, #stack .stack-primer');
+        if (!zones.length) return;
+
+        const flushVisible = () => {
+            const margin = chartLookaheadPx();
+            zones.forEach((zone) => {
+                if (isElementInViewport(zone, margin)) hydrateMediaRoot(zone);
+            });
+        };
+
+        flushVisible();
+
+        if (!('IntersectionObserver' in window)) {
+            zones.forEach((zone) => hydrateMediaRoot(zone));
+            return;
+        }
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    hydrateMediaRoot(entry.target);
+                });
+            },
+            { rootMargin: `${chartLookaheadPx()}px 0px`, threshold: 0.01 }
+        );
+
+        zones.forEach((zone) => observer.observe(zone));
+        window.addEventListener('hashchange', flushVisible, { passive: true });
+        window.addEventListener('pageshow', flushVisible, { passive: true });
+    }
+
+    function primeLazyVideo(video) {
+        if (video.dataset.bwcVideoLoaded === '1') return;
+        const src = video.getAttribute('data-src');
+        if (!src) return;
+        video.src = resolveHref(src);
+        video.dataset.bwcVideoLoaded = '1';
+        video.preload = 'metadata';
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) {
+            video.removeAttribute('autoplay');
+            video.controls = true;
+        }
+        if (typeof video.load === 'function') {
+            video.load();
+        }
+    }
+
+    function loadLazyVideo(video, { play = true } = {}) {
+        primeLazyVideo(video);
+        if (play) syncLazyVideoPlayback(video, true);
+    }
+
+    function syncLazyVideoPlayback(video, inView) {
+        if (video.dataset.bwcVideoLoaded !== '1') return;
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduceMotion) return;
+        if (inView) {
+            const playPromise = video.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+            }
+        } else {
+            video.pause();
+        }
+    }
+
+    function initLazyVideos() {
+        const videos = document.querySelectorAll('video[data-src]');
+        if (!videos.length) return;
+        if (!('IntersectionObserver' in window)) {
+            videos.forEach(loadLazyVideo);
+            return;
+        }
+        const marginPx = 120;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    const video = entry.target;
+                    if (!entry.isIntersecting || entry.intersectionRatio < 0.2) {
+                        syncLazyVideoPlayback(video, false);
+                        return;
+                    }
+                    if (document.documentElement.classList.contains('is-scroll-active')) return;
+                    loadLazyVideo(video, { play: true });
+                });
+            },
+            { rootMargin: `${marginPx}px 0px`, threshold: [0, 0.2, 0.45] }
+        );
+        videos.forEach((video) => observer.observe(video));
+    }
+
+    function deferWhenVisible(target, fn, rootMargin = '100% 0px') {
         const el = typeof target === 'string' ? document.querySelector(target) : target;
         if (!el || el.dataset.bwcDeferred === '1') return;
         const run = () => {
@@ -246,7 +505,7 @@
         { key: 'treynor', label: 'Treynor', value: '-0.138', group: 'RISK_ADJ' },
         { key: 'm2', label: 'M2 (Modigliani)', value: '-0.274', group: 'RISK_ADJ', title: 'Risk-adjusted return scaled to match benchmark volatility' },
         { key: 'jensen_alpha', label: 'Alpha vs CAPM', value: '-0.000443', group: 'RISK_ADJ', title: 'Excess return vs CAPM expectation given our beta' },
-        { key: 'beta', label: 'Beta (close)', value: '0.628', group: 'RISK_ADJ', title: 'End-of-simulation snapshot; filed memo targeted ~1.0 average portfolio beta' },
+        { key: 'beta', label: 'Beta (close)', value: '0.628', group: 'RISK_ADJ', title: 'End-of-simulation snapshot. Filed memo targeted ~1.0 average portfolio beta' },
         { key: 'profit_factor', label: 'Profit Factor', value: '0.166', group: 'TRADES' },
         { key: 'win_rate', label: 'Win Rate', value: '28.57%', group: 'TRADES' },
         { key: 'avg_win', label: 'Avg Win ($)', value: '$3,176.75', group: 'TRADES' },
@@ -260,7 +519,7 @@
         { key: 'market_short', label: 'Market value short', value: '$0.00', group: 'CAPITAL' },
         { key: 'buying_power', label: 'Buying Power', value: '$958,310.10', group: 'CAPITAL' },
         { key: 'total_return', label: 'Portfolio Total Return', value: '-4.37%', group: 'RETURNS' },
-        { key: 'annualized_return', label: 'Annualized return (68-day)', value: '-23.5%', group: 'RETURNS', title: 'TWR^(365/68)−1; 68-day window — context only, not investable' },
+        { key: 'annualized_return', label: 'Annualized return (68-day)', value: '-23.5%', group: 'RETURNS', title: 'TWR^(365/68)−1 on a 68-day window. Context only, not investable' },
         { key: 'benchmark_return', label: 'Benchmark Return (S&P 500)', value: '-2.29%', group: 'RETURNS' },
         { key: 'excess_return', label: 'Excess Return vs Benchmark', value: '-2.08%', group: 'RETURNS' },
         { key: 'pnl', label: 'P&L Dollar Amount', value: '($43,720.20)', group: 'RETURNS' },
@@ -330,30 +589,49 @@
             </div>`;
     }
 
-    async function renderExcelMetricsGrid() {
-        const marquee = document.getElementById('excel-metrics-marquee');
+    function hydrateExcelMetricsFromData(data) {
         const prov = document.getElementById('excel-metrics-provenance');
-        if (!marquee) return;
-        let items = EXCEL_MARQUEE_FALLBACK;
-        try {
-            const res = await fetch(asset('./data/excel-metrics.json'));
-            if (res.ok) {
-                const data = await res.json();
-                if (prov && data.trading_start && data.trading_end) {
-                    prov.textContent = `Hult simulation desk freeze (Excel sheet005 + sheet011 + sheet013). Trading window: ${data.trading_start} to ${data.trading_end}.`;
-                }
-                const fromJson = [...(data.advanced_grid || []), ...(data.grid || [])];
-                if (fromJson.length > 1) items = fromJson;
-                const annItem = (data.grid || []).find((g) => g.key === 'annualized_return');
-                if (annItem) {
-                    setOverlayCell('kpi-desk-ann-return', annItem.value);
-                    setOverlayCell('outcome-desk-ann-return', annItem.value);
-                }
-            }
-        } catch (_) {
-            /* fallback tags below */
+        if (prov && data?.trading_start && data?.trading_end) {
+            prov.textContent = `Hult simulation desk freeze (Excel sheet005 + sheet011 + sheet013). Trading window: ${data.trading_start} to ${data.trading_end}.`;
         }
-        renderMetricsMarquee(marquee, items, MARQUEE_HIGHLIGHT_KEYS);
+        const annItem = (data?.grid || []).find((g) => g.key === 'annualized_return');
+        if (annItem) {
+            setOverlayCell('kpi-desk-ann-return', annItem.value);
+            setOverlayCell('outcome-desk-ann-return', annItem.value);
+        }
+    }
+
+    function marqueeItemsFromExcelData(data) {
+        let items = EXCEL_MARQUEE_FALLBACK;
+        if (data) {
+            const fromJson = [...(data.advanced_grid || []), ...(data.grid || [])];
+            if (fromJson.length > 1) items = fromJson;
+        }
+        return items;
+    }
+
+    function renderMetricsMarqueeFromCache() {
+        const marquee = document.getElementById('excel-metrics-marquee');
+        if (!marquee || marquee.dataset.bwcMarqueeRendered === '1') return;
+        marquee.dataset.bwcMarqueeRendered = '1';
+        renderMetricsMarquee(
+            marquee,
+            marqueeItemsFromExcelData(cachedExcelMetrics),
+            MARQUEE_HIGHLIGHT_KEYS
+        );
+    }
+
+    function initDeferredMarquee() {
+        const marquee = document.getElementById('excel-metrics-marquee');
+        if (!marquee) return;
+
+        const render = () => runWhenIdle(renderMetricsMarqueeFromCache, 120);
+
+        if (isElementInViewport(marquee, 320)) {
+            render();
+            return;
+        }
+        deferWhenVisible(marquee, render, '120% 0px');
     }
 
     function initFooterYear() {
@@ -362,10 +640,174 @@
     }
 
     const SPLASH_STORAGE_KEY = 'bwc-splash-dismissed';
+    const SPLASH_REFRESH_COUNT_KEY = 'bwc-splash-refresh-count';
     const SPLASH_EXIT_MS = 600;
+    const THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
     let splashWaveformFrameId = 0;
     let splashWaveformTeardown = null;
+    let splashLiquidTeardown = null;
+    let splashFocalResizeHandler = null;
+    let splashFocalObserver = null;
+    let splashWaveformFocalUpdate = null;
+    const externalScriptPromises = new Map();
+
+    const SPLASH_FOCAL_X = 0.5;
+    const SPLASH_FOCAL_Y = 0.5;
+
+    function readSplashFocal(splash, width, height) {
+        const w = width || splash?.clientWidth || 0;
+        const h = height || splash?.clientHeight || 0;
+        return {
+            cx: w * SPLASH_FOCAL_X,
+            cy: h * SPLASH_FOCAL_Y,
+            nx: SPLASH_FOCAL_X,
+            ny: SPLASH_FOCAL_Y,
+        };
+    }
+
+    function syncSplashFocal(splash) {
+        if (!splash) return;
+        const width = splash.clientWidth;
+        const height = splash.clientHeight;
+        if (!width || !height) return;
+        const focal = readSplashFocal(splash, width, height);
+        if (typeof splashWaveformFocalUpdate === 'function') {
+            splashWaveformFocalUpdate(focal);
+        }
+        if (window.BWC?.SplashLiquidGradient?.setFocal) {
+            window.BWC.SplashLiquidGradient.setFocal(focal.nx, 1 - focal.ny);
+        }
+    }
+
+    function loadExternalScript(url) {
+        if (externalScriptPromises.has(url)) {
+            return externalScriptPromises.get(url);
+        }
+        const promise = new Promise((resolve, reject) => {
+            const existing = document.querySelector(`script[data-bwc-src="${url}"]`);
+            if (existing) {
+                if (existing.dataset.bwcLoaded === '1') {
+                    resolve();
+                    return;
+                }
+                existing.addEventListener('load', () => resolve(), { once: true });
+                existing.addEventListener('error', () => reject(new Error(url)), { once: true });
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+            script.dataset.bwcSrc = url;
+            script.onload = () => {
+                script.dataset.bwcLoaded = '1';
+                resolve();
+            };
+            script.onerror = () => reject(new Error(url));
+            document.head.appendChild(script);
+        });
+        externalScriptPromises.set(url, promise);
+        return promise;
+    }
+
+    function stopSplashLiquidGradient() {
+        if (typeof splashLiquidTeardown === 'function') {
+            splashLiquidTeardown();
+            splashLiquidTeardown = null;
+        } else if (window.BWC?.SplashLiquidGradient) {
+            window.BWC.SplashLiquidGradient.destroy();
+        }
+    }
+
+    async function initSplashLiquidGradient(splash) {
+        const host = splash?.querySelector('.site-splash__liquid');
+        if (!host) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        try {
+            if (!window.THREE) {
+                await loadExternalScript(THREE_CDN);
+            }
+            if (!window.BWC?.SplashLiquidGradient) {
+                await loadExternalScript(asset('./js/splash-liquid-gradient.js'));
+            }
+            const instance = window.BWC.SplashLiquidGradient.init(host);
+            if (!instance) return;
+            splash.classList.add('site-splash--liquid');
+            splashLiquidTeardown = () => window.BWC.SplashLiquidGradient.destroy();
+            syncSplashFocal(splash);
+            requestAnimationFrame(() => syncSplashFocal(splash));
+        } catch (_) {
+            /* CSS gradient fallback */
+        }
+    }
+
+    async function runSiteBootstrap(onProgress) {
+        let completed = 0;
+        const total = 5;
+
+        const reportProgress = () => {
+            if (typeof onProgress !== 'function') return;
+            const pct = Math.min(100, Math.round((completed / total) * 100));
+            onProgress(pct);
+        };
+
+        const track = (promise) =>
+            Promise.resolve(promise).then((value) => {
+                completed += 1;
+                reportProgress();
+                return value;
+            });
+
+        reportProgress();
+
+        try {
+            const [timeline, results, full, excel] = await Promise.all([
+                track(preloadJson('./data/desk-timeline.json')),
+                track(preloadJson('./data/results.json')),
+                track(preloadJson('./data/full-metrics.json')),
+                track(preloadJson('./data/excel-metrics.json')),
+                track(waitForFonts()),
+            ]);
+
+            deskTimelinePromise = Promise.resolve(timeline);
+            cachedExcelMetrics = excel;
+            hydrateFromBootstrapData(full, results);
+            hydrateExcelMetricsFromData(excel);
+        } catch (_) {
+            showMetricsEmptyNote(true);
+        }
+
+        completed = total;
+        reportProgress();
+        return true;
+    }
+
+    function updateSplashCtaProgress(enterBtn, pct) {
+        if (!enterBtn || enterBtn.classList.contains('site-splash__cta--ready')) return;
+        const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+        enterBtn.style.setProperty('--splash-cta-progress', `${clamped}%`);
+        const label = enterBtn.querySelector('.site-splash__cta-label');
+        if (label) {
+            label.textContent = `Loading data\u2026 (${clamped}%)`;
+        }
+    }
+
+    function markSplashEnterReady(enterBtn) {
+        if (!enterBtn || enterBtn.classList.contains('site-splash__cta--ready')) return;
+        enterBtn.style.setProperty('--splash-cta-progress', '100%');
+        const label = enterBtn.querySelector('.site-splash__cta-label');
+        if (label) {
+            label.textContent = 'Enter microsite';
+        }
+        enterBtn.classList.add('site-splash__cta--ready');
+        enterBtn.disabled = false;
+        enterBtn.removeAttribute('aria-busy');
+        enterBtn.setAttribute('aria-live', 'polite');
+        if (typeof enterBtn.focus === 'function') {
+            enterBtn.focus({ preventScroll: true });
+        }
+    }
 
     function stopSplashWaveform() {
         if (splashWaveformFrameId) {
@@ -391,8 +833,21 @@
         let width = 0;
         let height = 0;
         let timeline = 0;
+        let focalCx = 0;
+        let focalCy = 0;
+
+        splashWaveformFocalUpdate = ({ cx, cy }) => {
+            focalCx = cx;
+            focalCy = cy;
+        };
+
+        const bootFocal = readSplashFocal(splash, splash.clientWidth, splash.clientHeight);
+        focalCx = bootFocal.cx;
+        focalCy = bootFocal.cy;
 
         const waveColors = ['191, 176, 248', '199, 16, 204', '109, 28, 242'];
+        const accentRgb = '167, 139, 250';
+        const accentHex = '#a78bfa';
         const waveCount = 9;
         const matrixWaves = Array.from({ length: waveCount }, (_, idx) => ({
             speed: 0.01 + Math.random() * 0.055,
@@ -413,27 +868,95 @@
             height = canvas.parentElement.clientHeight;
             canvas.width = width;
             canvas.height = height;
+            const focal = readSplashFocal(splash, width, height);
+            focalCx = focal.cx;
+            focalCy = focal.cy;
+            syncSplashFocal(splash);
+        }
+
+        function drawFluidBase() {
+            if (splash.classList.contains('site-splash--liquid')) return;
+
+            const t = timeline * 0.0065;
+            const cxBase = focalCx;
+            const cyBase = focalCy;
+
+            const blobs = [
+                {
+                    x: cxBase + Math.sin(t) * width * 0.11,
+                    y: cyBase + Math.cos(t * 0.73) * height * 0.07,
+                    r: Math.max(width, height) * (0.34 + Math.sin(t * 0.4) * 0.04),
+                    inner: 'rgba(109, 28, 242, 0.07)',
+                },
+                {
+                    x: cxBase + Math.cos(t * 0.58 + 1.2) * width * 0.14,
+                    y: cyBase + Math.sin(t * 0.51 + 0.8) * height * 0.09,
+                    r: Math.max(width, height) * (0.28 + Math.cos(t * 0.33) * 0.03),
+                    inner: 'rgba(191, 176, 248, 0.06)',
+                },
+                {
+                    x: cxBase + Math.sin(t * 0.37 + 2.1) * width * 0.08,
+                    y: cyBase + Math.cos(t * 0.62 + 1.6) * height * 0.05,
+                    r: Math.max(width, height) * 0.22,
+                    inner: 'rgba(167, 139, 250, 0.05)',
+                },
+            ];
+
+            blobs.forEach((blob) => {
+                const gradient = ctx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, blob.r);
+                gradient.addColorStop(0, blob.inner);
+                gradient.addColorStop(0.55, 'rgba(10, 0, 26, 0.02)');
+                gradient.addColorStop(1, 'transparent');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+            });
         }
 
         function renderEngineLoop() {
-            if (!canvas.parentElement) return;
+            if (!canvas.parentElement || !width || !height || focalCy <= 0) {
+                splashWaveformFrameId = requestAnimationFrame(renderEngineLoop);
+                return;
+            }
             ctx.clearRect(0, 0, width, height);
 
-            const cy = height / 2;
-            const cx = width / 2;
             timeline += 1.5;
+            drawFluidBase();
+
+            const cy = focalCy;
+            const cx = focalCx;
+
+            const glowRadius = Math.max(width, height) * 0.62;
+            const focalGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowRadius);
+            focalGlow.addColorStop(0, 'rgba(167, 139, 250, 0.11)');
+            focalGlow.addColorStop(0.22, 'rgba(109, 28, 242, 0.06)');
+            focalGlow.addColorStop(0.55, 'rgba(109, 28, 242, 0.025)');
+            focalGlow.addColorStop(1, 'transparent');
+            ctx.fillStyle = focalGlow;
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.scale(1.75, 0.9);
+            ctx.translate(-cx, -cy);
+            const sideGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, width * 0.55);
+            sideGlow.addColorStop(0, 'rgba(191, 176, 248, 0.04)');
+            sideGlow.addColorStop(0.45, 'rgba(109, 28, 242, 0.02)');
+            sideGlow.addColorStop(1, 'transparent');
+            ctx.fillStyle = sideGlow;
+            ctx.fillRect(0, 0, width, height);
+            ctx.restore();
 
             matrixWaves.forEach((wave, idx) => {
                 ctx.beginPath();
-                ctx.lineWidth = wave.lineW;
-                const colorAlpha = 0.35 + Math.sin(timeline * 0.05 + idx) * 0.15;
+                ctx.lineWidth = wave.lineW + 0.25;
+                const colorAlpha = 0.4 + Math.sin(timeline * 0.05 + idx) * 0.14;
                 ctx.strokeStyle = `rgba(${waveColors[wave.colorIdx]}, ${colorAlpha})`;
 
                 wave.driftPhase += wave.driftSpeed;
                 const ampWobble = 1 + Math.sin(wave.driftPhase) * wave.volatility;
 
                 for (let x = 0; x <= cx; x += 3) {
-                    const horizontalProgress = x / cx;
+                    const horizontalProgress = x / Math.max(cx, 1);
                     const dampening = 1 - horizontalProgress ** 4;
                     const cyclicSine = Math.sin(x * wave.speed - timeline * wave.speed + wave.offset) * wave.amp * ampWobble;
                     const yPosition = cy + cyclicSine * dampening;
@@ -446,19 +969,23 @@
             });
 
             ctx.beginPath();
-            ctx.lineWidth = 1.5;
-            ctx.strokeStyle = 'rgba(255, 107, 53, 0.7)';
+            ctx.lineWidth = 1.75;
+            ctx.strokeStyle = `rgba(${accentRgb}, 0.78)`;
             ctx.moveTo(cx, cy);
             ctx.lineTo(width, cy);
             ctx.stroke();
 
+            ctx.save();
+            ctx.shadowColor = 'rgba(167, 139, 250, 0.55)';
+            ctx.shadowBlur = 10;
             ctx.beginPath();
-            ctx.strokeStyle = '#ff6b35';
+            ctx.strokeStyle = accentHex;
             ctx.fillStyle = '#ffffff';
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 3.5;
             ctx.arc(cx, cy, 5, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
+            ctx.restore();
 
             if (Math.random() < 0.02) {
                 travelingPulses.push({ x: cx, alive: true });
@@ -470,14 +997,14 @@
 
                 if (pulse.x > cx) {
                     ctx.beginPath();
-                    ctx.strokeStyle = '#ff6b35';
+                    ctx.strokeStyle = accentHex;
                     ctx.lineWidth = 3;
 
                     const envelopeBounds = 40;
                     for (let px = pulse.x - envelopeBounds; px < pulse.x + envelopeBounds; px += 2) {
                         if (px < cx || px > width) continue;
                         const normalizedDist = (px - pulse.x) / (envelopeBounds / 2.5);
-                        const highFreqSpike = -75 * Math.exp(-(normalizedDist * normalizedDist));
+                        const highFreqSpike = -58 * Math.exp(-(normalizedDist * normalizedDist));
 
                         if (px === Math.max(cx, pulse.x - envelopeBounds)) ctx.moveTo(px, cy);
                         ctx.lineTo(px, cy + highFreqSpike);
@@ -485,9 +1012,9 @@
                     ctx.stroke();
 
                     ctx.beginPath();
-                    ctx.strokeStyle = 'rgba(255, 107, 53, 0.3)';
+                    ctx.strokeStyle = `rgba(${accentRgb}, 0.3)`;
                     ctx.moveTo(pulse.x, cy);
-                    ctx.lineTo(pulse.x, cy + 50);
+                        ctx.lineTo(pulse.x, cy + 38);
                     ctx.stroke();
                 }
 
@@ -504,17 +1031,55 @@
         handleResize();
         splashWaveformTeardown = () => {
             window.removeEventListener('resize', handleResize);
+            splashWaveformFocalUpdate = null;
         };
+        handleResize();
         renderEngineLoop();
     }
 
-    function dismissSplash(splash) {
+    function bindSplashFocalSync(splash) {
+        if (!splash || splashFocalResizeHandler) return;
+        splashFocalResizeHandler = () => syncSplashFocal(splash);
+        window.addEventListener('resize', splashFocalResizeHandler, { passive: true });
+        if ('ResizeObserver' in window) {
+            splashFocalObserver = new ResizeObserver(splashFocalResizeHandler);
+            splashFocalObserver.observe(splash);
+        }
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => syncSplashFocal(splash));
+        });
+    }
+
+    function unbindSplashFocalSync() {
+        if (splashFocalResizeHandler) {
+            window.removeEventListener('resize', splashFocalResizeHandler);
+            splashFocalResizeHandler = null;
+        }
+        if (splashFocalObserver) {
+            splashFocalObserver.disconnect();
+            splashFocalObserver = null;
+        }
+    }
+
+    function focusMainLandmark() {
+        const main = document.getElementById('main-content');
+        if (!main || typeof main.focus !== 'function') return;
+        if (!main.hasAttribute('tabindex')) {
+            main.setAttribute('tabindex', '-1');
+        }
+        main.focus({ preventScroll: true });
+    }
+
+    function dismissSplash(splash, { focusMain = false } = {}) {
         if (!splash) return;
         stopSplashWaveform();
+        stopSplashLiquidGradient();
+        unbindSplashFocalSync();
         splash.classList.add('site-splash--out');
         splash.setAttribute('aria-hidden', 'true');
         try {
             sessionStorage.setItem(SPLASH_STORAGE_KEY, '1');
+            sessionStorage.setItem(SPLASH_REFRESH_COUNT_KEY, '0');
             document.documentElement.classList.add('splash-seen');
             document.documentElement.classList.remove('splash-pending');
         } catch (_) {
@@ -533,17 +1098,13 @@
             } catch (_) {
                 /* ignore */
             }
-            const main = document.getElementById('main-content');
-            if (main && typeof main.focus === 'function') {
-                if (!main.hasAttribute('tabindex')) {
-                    main.setAttribute('tabindex', '-1');
-                }
-                main.focus({ preventScroll: true });
+            if (focusMain) {
+                focusMainLandmark();
             }
         }, SPLASH_EXIT_MS);
     }
 
-    function initSplash() {
+    function initSplash(bootstrapPromise) {
         const splash = document.getElementById('site-splash');
         const enterBtn = document.getElementById('splash-enter');
         if (!splash) return;
@@ -568,18 +1129,43 @@
 
         document.body.classList.add('splash-active');
         splash.removeAttribute('aria-hidden');
+        bindSplashFocalSync(splash);
         initSplashWaveform(splash);
+        initSplashLiquidGradient(splash);
 
-        function onEnter() {
-            dismissSplash(splash);
+        let splashEnterReady = false;
+
+        if (enterBtn) {
+            if (bootstrapPromise && typeof bootstrapPromise.then === 'function') {
+                bootstrapPromise
+                    .then(() => {
+                        markSplashEnterReady(enterBtn);
+                        splashEnterReady = true;
+                    })
+                    .catch(() => {
+                        markSplashEnterReady(enterBtn);
+                        splashEnterReady = true;
+                    });
+            } else {
+                markSplashEnterReady(enterBtn);
+                splashEnterReady = true;
+            }
+        } else {
+            splashEnterReady = true;
         }
 
-        enterBtn?.addEventListener('click', onEnter);
+        function onEnter({ focusMain = false, force = false } = {}) {
+            if (!splashEnterReady && !force) return;
+            dismissSplash(splash, { focusMain });
+        }
+
+        enterBtn?.addEventListener('click', () => onEnter());
 
         document.addEventListener('keydown', (e) => {
             if (splash.classList.contains('site-splash--out')) return;
             if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
                 if (e.target === enterBtn || !/input|textarea|select/i.test(e.target?.tagName || '')) {
+                    if (!splashEnterReady) return;
                     e.preventDefault();
                     onEnter();
                 }
@@ -587,7 +1173,7 @@
         });
 
         splash.querySelector('.site-splash__skip')?.addEventListener('click', () => {
-            requestAnimationFrame(onEnter);
+            requestAnimationFrame(() => onEnter({ focusMain: true, force: true }));
         });
     }
 
@@ -632,7 +1218,7 @@
 
     function formatSignedPct(value) {
         const num = Number(value);
-        if (Number.isNaN(num)) return '—';
+        if (Number.isNaN(num)) return 'n/a';
         const sign = num > 0 ? '+' : '';
         return `${sign}${num.toFixed(2)}%`;
     }
@@ -983,7 +1569,9 @@
             const data = await getDeskTimeline();
             applyTroughMetrics(data);
             renderDeskTimelineFromData(data);
-        });
+        }, '150% 0px');
+
+        deferWhenVisible('#desk-behavioural-audit', () => hydrateBehaviouralAudit(), '100% 0px');
     }
 
     function initScrollReveal() {
@@ -999,7 +1587,7 @@
                     }
                 });
             },
-            { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+            { threshold: 0.05, rootMargin: '0px 0px 20% 0px' }
         );
 
         targets.forEach((el) => observer.observe(el));
@@ -1058,6 +1646,19 @@
             { threshold: 0.35 }
         );
         stats.forEach((el) => observer.observe(el));
+    }
+
+    function initMarqueePause() {
+        const marquee = document.getElementById('excel-metrics-marquee');
+        if (!marquee || !('IntersectionObserver' in window)) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                marquee.classList.toggle('is-offscreen', !entry.isIntersecting);
+            },
+            { rootMargin: '120px 0px' }
+        );
+        observer.observe(marquee);
     }
 
     function initSiteDock() {
@@ -1122,9 +1723,20 @@
             updateDockState();
         });
 
+        let dockTicking = false;
+
+        function requestDockUpdate() {
+            if (dockTicking) return;
+            dockTicking = true;
+            requestAnimationFrame(() => {
+                dockTicking = false;
+                updateDockState();
+            });
+        }
+
         updateDockState();
-        window.addEventListener('scroll', updateDockState, { passive: true });
-        window.addEventListener('resize', updateDockState, { passive: true });
+        window.addEventListener('scroll', requestDockUpdate, { passive: true });
+        window.addEventListener('resize', requestDockUpdate, { passive: true });
     }
 
     function initScrollSpy() {
@@ -1259,7 +1871,7 @@
     }
 
     function formatAuditValue(value) {
-        if (value == null) return '—';
+        if (value == null) return 'n/a';
         if (typeof value === 'number') {
             if (Math.abs(value) >= 10) return value.toFixed(1);
             if (Math.abs(value) >= 1) return value.toFixed(2);
@@ -1268,9 +1880,8 @@
         return String(value);
     }
 
-    function renderBehaviouralAudit(data) {
-        const body = document.getElementById('behavioural-audit-body');
-        if (!body || !data) return;
+    function buildBehaviouralAuditHtml(data) {
+        if (!data) return '';
 
         const sections = [
             {
@@ -1311,7 +1922,7 @@
             },
         ];
 
-        body.innerHTML = sections
+        return sections
             .map((section) => {
                 const metrics = section.metrics
                     .map(([label, val, isPct]) => {
@@ -1326,7 +1937,7 @@
                     ? `<p class="ic-dialog__interpret">${section.note}</p>`
                     : '';
                 return `
-                    <section>
+                    <section class="ic-behavioural-audit__block">
                         <h4 class="ic-kicker">${section.title}</h4>
                         <div class="ic-dialog__metric-grid">${metrics}</div>
                         ${note}
@@ -1335,17 +1946,46 @@
             .join('');
     }
 
-    async function hydrateBehaviouralAudit() {
-        const body = document.getElementById('behavioural-audit-body');
-        if (!body) return;
-        try {
-            const res = await fetch(asset('./data/behavioural-audit.json'));
-            if (!res.ok) throw new Error('fetch failed');
-            renderBehaviouralAudit(await res.json());
-        } catch (_) {
-            body.innerHTML =
-                '<p class="ic-outcome-plain text-muted">Behavioural audit data unavailable in this snapshot.</p>';
+    function renderBehaviouralAudit(data, container) {
+        if (!container || !data) return;
+        container.innerHTML = buildBehaviouralAuditHtml(data);
+        container.dataset.bwcAuditLoaded = '1';
+    }
+
+    let behaviouralAuditDataPromise = null;
+
+    function fetchBehaviouralAuditData() {
+        if (!behaviouralAuditDataPromise) {
+            behaviouralAuditDataPromise = fetch(asset('./data/behavioural-audit.json'))
+                .then((res) => {
+                    if (!res.ok) throw new Error('fetch failed');
+                    return res.json();
+                })
+                .catch(() => null);
         }
+        return behaviouralAuditDataPromise;
+    }
+
+    async function hydrateBehaviouralAudit() {
+        const targets = [
+            document.getElementById('behavioural-audit-body'),
+            document.getElementById('desk-behavioural-audit'),
+        ].filter((el) => el && el.dataset.bwcAuditLoaded !== '1');
+
+        if (!targets.length) return;
+
+        const data = await fetchBehaviouralAuditData();
+        if (!data) {
+            const fallback =
+                '<p class="ic-outcome-plain text-muted">Behavioural audit data unavailable in this snapshot.</p>';
+            targets.forEach((el) => {
+                el.innerHTML = fallback;
+                el.dataset.bwcAuditLoaded = '1';
+            });
+            return;
+        }
+
+        targets.forEach((el) => renderBehaviouralAudit(data, el));
     }
 
     function renderMemoExcerpts(data) {
@@ -1359,7 +1999,7 @@
         );
 
         body.innerHTML = `
-            <p class="ic-outcome-plain text-muted">${data.word_count ? `${data.word_count.toLocaleString()} words filed` : 'Committee memo'} — pull quotes below; full HTM is authoritative.</p>
+            <p class="ic-outcome-plain text-muted">${data.word_count ? `${data.word_count.toLocaleString()} words filed` : 'Committee memo'}. Pull quotes below. Full HTM is authoritative.</p>
             ${picks
                 .map(
                     (ex) => `
@@ -1402,23 +2042,37 @@
         if (window.BWC && typeof window.BWC.rewriteRelativeUrls === 'function') {
             window.BWC.rewriteRelativeUrls(document.body);
         }
-        initSplash();
-        initResolvedAssets();
+
         initLazyChartIframes();
+        initLazyVideos();
+        initMediaCoordinator();
+        eagerLoadDeskCharts();
+        hookNewScrollReveal();
+
+        const bootstrapPromise = runSiteBootstrap((pct) => {
+            updateSplashCtaProgress(document.getElementById('splash-enter'), pct);
+        });
+
+        initSplash(bootstrapPromise);
+        initResolvedAssets();
         initPagesDiagnostics();
         initSiteDock();
         initScrollSpy();
         initScrollReveal();
         initStatusBadge();
         initDialogs();
-        initDeferredHydration();
-        fetchAndHydrate();
-        renderExcelMetricsGrid();
         initStatAnimations();
+        initMarqueePause();
         initFooterYear();
+
+        initBwcMediaZones();
+        bootstrapPromise.then(() => {
+            initDeferredHydration();
+            initDeferredMarquee();
+        });
+
         runWhenIdle(() => {
             initCustomCursor();
-            hookNewScrollReveal();
         });
     });
 })();
@@ -1433,18 +2087,47 @@
 
         const finePointer = window.matchMedia('(pointer: fine)').matches;
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (!finePointer) return;
+        if (!finePointer || reduceMotion) return;
 
         let mouseX = window.innerWidth / 2;
         let mouseY = window.innerHeight / 2;
         let cursorX = mouseX;
         let cursorY = mouseY;
         let hoverScale = 1;
+        let rafId = 0;
+        let paintActive = !document.hidden;
+        let scrolling = false;
+        let scrollEndTimer = 0;
+        let cursorStarted = false;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
+        window.addEventListener(
+            'scroll',
+            () => {
+                scrolling = true;
+                clearTimeout(scrollEndTimer);
+                scrollEndTimer = window.setTimeout(() => {
+                    scrolling = false;
+                    if (cursorStarted) startPaint();
+                }, 120);
+            },
+            { passive: true }
+        );
+
+        document.addEventListener(
+            'mousemove',
+            (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                document.body.classList.add('is-cursor-active');
+                if (!cursorStarted) {
+                    cursorStarted = true;
+                    cursorX = mouseX;
+                    cursorY = mouseY;
+                }
+                if (!rafId && paintActive && !scrolling) startPaint();
+            },
+            { passive: true }
+        );
 
         const interactables = document.querySelectorAll('a, button, .team-trigger, canvas');
         interactables.forEach((el) => {
@@ -1461,40 +2144,66 @@
         });
 
         function paintCursor() {
-            const lerp = reduceMotion ? 1 : 0.45;
-            cursorX += (mouseX - cursorX) * lerp;
-            cursorY += (mouseY - cursorY) * lerp;
+            if (!paintActive) {
+                rafId = 0;
+                return;
+            }
+            if (scrolling) {
+                rafId = 0;
+                return;
+            }
+            cursorX += (mouseX - cursorX) * 0.45;
+            cursorY += (mouseY - cursorY) * 0.45;
             cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%) scale(${hoverScale})`;
-            requestAnimationFrame(paintCursor);
+            rafId = requestAnimationFrame(paintCursor);
         }
 
-        paintCursor();
+        function startPaint() {
+            if (!rafId && paintActive) {
+                rafId = requestAnimationFrame(paintCursor);
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            paintActive = !document.hidden;
+            if (paintActive && cursorStarted) startPaint();
+        });
     }
 
     function hookNewScrollReveal() {
-        const targets = document.querySelectorAll('.fade-up:not(.site-footer)');
+        const targets = document.querySelectorAll(
+            '.fade-up:not(.site-footer):not(.hero-case-study):not(.bwc-no-reveal):not(#research):not(#research *)'
+        );
         if (!targets.length) return;
+
+        const reveal = (el) => {
+            el.classList.add('revealed');
+        };
+
+        const inView = (el) => {
+            const rect = el.getBoundingClientRect();
+            return rect.bottom >= 0 && rect.top <= window.innerHeight;
+        };
 
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
-                        entry.target.classList.add('revealed');
+                        reveal(entry.target);
+                        observer.unobserve(entry.target);
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.04, rootMargin: '0px 0px 40% 0px' }
         );
 
         targets.forEach((el) => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+            if (inView(el)) {
+                reveal(el);
+                return;
+            }
             observer.observe(el);
         });
-
-        // Add a global css class when revealed
-        document.head.insertAdjacentHTML('beforeend', '<style>.fade-up.revealed { opacity: 1 !important; transform: translateY(0) !important; }</style>');
     }
 
     /* =========================================================

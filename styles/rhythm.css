@@ -2,34 +2,44 @@
  * Typography rhythm only — layout/spacing lives in spatial.css + pages.css
  */
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) {
     font-family: var(--font-body);
     font-size: var(--text-base);
     line-height: var(--leading-normal);
     font-feature-settings: "kern" 1, "liga" 1;
 }
 
-/* Section headers — type scale only */
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-section-header h2,
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-section-header .text-display {
+/* Section headers — type scale: kicker < title (lead) < header (h2) */
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .ic-section-header h2,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .ic-section-header .text-display {
     font-family: var(--font-display);
-    font-size: var(--text-2xl);
-    font-weight: 600;
+    font-size: var(--text-3xl);
+    font-weight: 700;
     line-height: var(--leading-tight);
     letter-spacing: var(--tracking-display);
     text-transform: uppercase;
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-section-header h3 {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .ic-section-header h3 {
     font-family: var(--font-display);
-    font-size: var(--text-lg);
+    font-size: var(--text-xl);
     font-weight: 600;
     line-height: var(--leading-snug);
     letter-spacing: 0.02em;
     text-transform: uppercase;
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-kicker {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .ic-section-header .ic-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: var(--tracking-kicker);
+    line-height: var(--leading-snug);
+    text-transform: uppercase;
+    color: var(--color-accent-primary);
+}
+
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .ic-kicker {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-weight: 500;
@@ -39,7 +49,7 @@
     color: var(--color-accent-primary);
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-lead {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .ic-lead {
     font-family: var(--font-body);
     font-size: var(--text-md);
     font-weight: 400;
@@ -53,15 +63,15 @@
     max-width: min(58ch, 100%);
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-outcome-plain,
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .prose-plain,
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .prose-formal {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .ic-outcome-plain,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .prose-plain,
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .prose-formal {
     font-size: var(--text-base);
     line-height: var(--leading-normal);
     max-width: var(--measure-prose);
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .prose-formal {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .prose-formal {
     color: var(--color-text-secondary);
     font-size: var(--text-sm);
 }
@@ -109,16 +119,6 @@
     font-size: var(--text-xl);
 }
 
-:is(#evidence, #validator) .chart-title,
-:is(#evidence, #validator) .chart-card .chart-title {
-    font-family: var(--font-display);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    line-height: var(--leading-snug);
-    text-transform: uppercase;
-}
-
 :is(#story) .snake-milestone__title {
     font-family: var(--font-display);
     font-weight: 600;
@@ -137,8 +137,8 @@
     line-height: var(--leading-normal);
 }
 
-:is(#validator, #stack) .sub-title,
-:is(#validator, #stack) .text-display.sub-title {
+:is(#research, #stack) .sub-title,
+:is(#research, #stack) .text-display.sub-title {
     font-family: var(--font-display);
     font-size: var(--text-xl);
     font-weight: 600;
@@ -147,11 +147,11 @@
     text-transform: uppercase;
 }
 
-:is(#validator, #stack) .metrics-table {
+:is(#research, #stack) .metrics-table {
     font-size: var(--text-sm);
 }
 
-:is(#validator, #stack) .metrics-table th {
+:is(#research, #stack) .metrics-table th {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-weight: 500;
@@ -159,25 +159,25 @@
     text-transform: uppercase;
 }
 
-:is(#validator, #stack) .metrics-table td {
+:is(#research, #stack) .metrics-table td {
     font-family: var(--font-body);
     font-size: var(--text-sm);
     line-height: var(--leading-snug);
 }
 
-:is(#validator, #stack) .metrics-table td.text-mono {
+:is(#research, #stack) .metrics-table td.text-mono {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: -0.01em;
 }
 
-:is(#validator, #stack) .stack-category-label {
+:is(#research, #stack) .stack-category-label {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: var(--tracking-kicker);
 }
 
-:is(#validator, #stack) .stack-tags {
+:is(#research, #stack) .stack-tags {
     font-size: var(--text-xs);
     line-height: var(--leading-normal);
 }
@@ -194,7 +194,7 @@
 
 :is(#close) .grade-label {
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     letter-spacing: var(--tracking-kicker);
 }
 
@@ -219,12 +219,12 @@
     text-transform: uppercase;
 }
 
-:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .prose-list li {
+:is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .prose-list li {
     line-height: var(--leading-normal);
 }
 
 @media (max-width: 639px) {
-    :is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #validator, #stack, #close) .ic-section-header h2 {
-        font-size: var(--text-xl);
+    :is(#summary, #executive-summary, #sources, #context, #story, #evidence, #evaluation, #principles, #team-roster, #contact, #research, #stack, #close) .ic-section-header h2 {
+        font-size: var(--text-2xl);
     }
 }
