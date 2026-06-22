@@ -162,6 +162,7 @@
 
             iframeLoadsActive += 1;
             const onDone = () => {
+                frame.dataset.bwcLoaded = '1';
                 iframeLoadsActive -= 1;
                 drainIframeQueue();
             };
@@ -185,6 +186,29 @@
             iframeLoadQueue.push(frame);
         }
         drainIframeQueue();
+    }
+
+    function waitForPriorityCharts({ timeoutMs = 4500 } = {}) {
+        const frames = Array.from(document.querySelectorAll('#evidence iframe[data-src]'));
+        if (!frames.length) return Promise.resolve(true);
+
+        frames.forEach((frame) => loadChartIframe(frame, { priority: true }));
+
+        const waits = frames.map(
+            (frame) =>
+                new Promise((resolve) => {
+                    if (frame.dataset.bwcLoaded === '1') {
+                        resolve(true);
+                        return;
+                    }
+                    const done = () => resolve(true);
+                    frame.addEventListener('load', done, { once: true });
+                    frame.addEventListener('error', done, { once: true });
+                })
+        );
+
+        const timeout = new Promise((resolve) => window.setTimeout(() => resolve(true), timeoutMs));
+        return Promise.race([Promise.all(waits).then(() => true), timeout]);
     }
 
     function preloadJson(relativePath) {
@@ -216,12 +240,24 @@
         });
     }
 
+    function isGalleryChartRegion(frame) {
+        return Boolean(frame?.closest('.research-band--gallery, .viz-gallery-grid'));
+    }
+
+    function isGalleryRegionInView(frame) {
+        const region = frame?.closest('.research-band--gallery, .viz-gallery-grid');
+        if (!region) return true;
+        return isElementInViewport(region, chartLookaheadPx());
+    }
+
     function prefetchNearbyCharts() {
         const margin = chartLookaheadPx();
         document.querySelectorAll('iframe[data-src]').forEach((frame) => {
             if (frame.dataset.bwcResolved === '1' || frame.dataset.bwcQueued === '1') return;
+            const priority = isPriorityIframe(frame);
+            if (!priority && isGalleryChartRegion(frame) && !isGalleryRegionInView(frame)) return;
             if (!isElementInViewport(frame, margin)) return;
-            loadChartIframe(frame, { priority: isPriorityIframe(frame) });
+            loadChartIframe(frame, { priority });
         });
     }
 
@@ -395,6 +431,29 @@
         if (typeof video.load === 'function') {
             video.load();
         }
+    }
+
+    function warmupLazyVideoMetadata({ limit = 3, timeoutMs = 3500 } = {}) {
+        const videos = Array.from(document.querySelectorAll('video[data-src]')).slice(0, limit);
+        if (!videos.length) return Promise.resolve(true);
+
+        videos.forEach((video) => primeLazyVideo(video));
+
+        const waits = videos.map(
+            (video) =>
+                new Promise((resolve) => {
+                    if (video.readyState >= 1) {
+                        resolve(true);
+                        return;
+                    }
+                    const done = () => resolve(true);
+                    video.addEventListener('loadedmetadata', done, { once: true });
+                    video.addEventListener('error', done, { once: true });
+                })
+        );
+
+        const timeout = new Promise((resolve) => window.setTimeout(() => resolve(true), timeoutMs));
+        return Promise.race([Promise.all(waits).then(() => true), timeout]);
     }
 
     function loadLazyVideo(video, { play = true } = {}) {
@@ -639,6 +698,29 @@
         if (el) el.textContent = String(new Date().getFullYear());
     }
 
+    async function initFooterCommitLog() {
+        const list = document.getElementById('footer-commit-log');
+        if (!list) return;
+        try {
+            const res = await fetch(asset('./data/commit-log.json'));
+            if (!res.ok) throw new Error('fetch failed');
+            const data = await res.json();
+            const commits = Array.isArray(data?.commits) ? data.commits.slice(0, 24) : [];
+            if (!commits.length) return;
+            list.innerHTML = commits
+                .map((row) => {
+                    const hash = row.hash || '';
+                    const date = row.date || '';
+                    const subject = row.subject || '';
+                    const href = `${data.repository || 'https://github.com/Kartavya-Jharwal/ganet-project-bwc'}/commit/${hash}`;
+                    return `<li><a href="${href}" rel="noopener noreferrer">${date} ${hash}</a> ${subject}</li>`;
+                })
+                .join('');
+        } catch (_) {
+            list.innerHTML = '<li><a href="https://github.com/Kartavya-Jharwal/ganet-project-bwc/commits/main" rel="noopener noreferrer">View commit history on GitHub</a></li>';
+        }
+    }
+
     const SPLASH_STORAGE_KEY = 'bwc-splash-dismissed';
     const SPLASH_REFRESH_COUNT_KEY = 'bwc-splash-refresh-count';
     const SPLASH_EXIT_MS = 600;
@@ -729,7 +811,7 @@
                 await loadExternalScript(THREE_CDN);
             }
             if (!window.BWC?.SplashLiquidGradient) {
-                await loadExternalScript(asset('./js/splash-liquid-gradient.js'));
+                await loadExternalScript(asset('./js/splash-liquid-gradient.min.js'));
             }
             const instance = window.BWC.SplashLiquidGradient.init(host);
             if (!instance) return;
@@ -744,7 +826,7 @@
 
     async function runSiteBootstrap(onProgress) {
         let completed = 0;
-        const total = 5;
+        const total = 7;
 
         const reportProgress = () => {
             if (typeof onProgress !== 'function') return;
@@ -768,6 +850,8 @@
                 track(preloadJson('./data/full-metrics.json')),
                 track(preloadJson('./data/excel-metrics.json')),
                 track(waitForFonts()),
+                track(waitForPriorityCharts()),
+                track(warmupLazyVideoMetadata()),
             ]);
 
             deskTimelinePromise = Promise.resolve(timeline);
@@ -803,7 +887,6 @@
         enterBtn.classList.add('site-splash__cta--ready');
         enterBtn.disabled = false;
         enterBtn.removeAttribute('aria-busy');
-        enterBtn.setAttribute('aria-live', 'polite');
         if (typeof enterBtn.focus === 'function') {
             enterBtn.focus({ preventScroll: true });
         }
@@ -1813,7 +1896,6 @@
         if (!triggers.length) return;
 
         const lazyDialogHydrators = {
-            'behavioural-audit-dialog': hydrateBehaviouralAudit,
             'memo-excerpts-dialog': hydrateMemoExcerpts,
         };
 
@@ -1870,6 +1952,97 @@
         });
     }
 
+    function initVideoPopout() {
+        const dialog = document.getElementById('video-popout-dialog');
+        const player = document.getElementById('video-popout-player');
+        if (!(dialog instanceof HTMLDialogElement)) return;
+        if (!(player instanceof HTMLVideoElement)) return;
+
+        const closeBtn = dialog.querySelector('[data-dialog-close]');
+
+        const openWith = (sourceVideo) => {
+            if (!(sourceVideo instanceof HTMLVideoElement)) return;
+            const src = sourceVideo.getAttribute('data-src') || sourceVideo.currentSrc || sourceVideo.src;
+            if (!src) return;
+
+            // Freeze background motion and pause any playing loops.
+            document.body.classList.add('is-video-popout-open');
+            document.documentElement.classList.add('is-modal-open');
+            pauseAllLazyVideos();
+
+            player.pause();
+            player.replaceChildren();
+            const sourceTrack = sourceVideo.querySelector('track[kind="captions"]');
+            if (sourceTrack) {
+                const track = sourceTrack.cloneNode(true);
+                player.appendChild(track);
+            } else {
+                const track = document.createElement('track');
+                track.kind = 'captions';
+                track.srclang = 'en';
+                track.label = 'English';
+                track.src = asset('./assets/captions/video-popout.vtt');
+                track.default = true;
+                player.appendChild(track);
+            }
+
+            player.removeAttribute('src');
+            player.load();
+
+            player.src = resolveHref(src);
+            player.currentTime = Math.max(0, sourceVideo.currentTime || 0);
+
+            if (typeof dialog.showModal === 'function') dialog.showModal();
+            else dialog.setAttribute('open', '');
+
+            attachCursorToTopLayer(dialog);
+            if (closeBtn instanceof HTMLElement) closeBtn.focus();
+
+            const playPromise = player.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+            }
+        };
+
+        document.addEventListener(
+            'click',
+            (e) => {
+                const target = e.target;
+                if (!(target instanceof HTMLElement)) return;
+                const video = target.closest('.bwc-media-frame--video video');
+                if (!(video instanceof HTMLVideoElement)) return;
+                e.preventDefault();
+                openWith(video);
+            },
+            { passive: false }
+        );
+
+        dialog.addEventListener('close', () => {
+            document.body.classList.remove('is-video-popout-open');
+            document.documentElement.classList.remove('is-modal-open');
+            player.pause();
+            player.removeAttribute('src');
+            player.load();
+            attachCursorToBody();
+            resumeVisibleVideos();
+        });
+
+        dialog.addEventListener('cancel', (e) => {
+            e.preventDefault();
+            dialog.close();
+        });
+
+        dialog.addEventListener('click', (e) => {
+            const rect = dialog.getBoundingClientRect();
+            const isInDialog =
+                rect.top <= e.clientY &&
+                e.clientY <= rect.bottom &&
+                rect.left <= e.clientX &&
+                e.clientX <= rect.right;
+            if (!isInDialog) dialog.close();
+        });
+    }
+
     function formatAuditValue(value) {
         if (value == null) return 'n/a';
         if (typeof value === 'number') {
@@ -1904,14 +2077,6 @@
                 note: data.disposition?.interpretation,
             },
             {
-                title: 'Conviction',
-                metrics: [
-                    ['Avg position size', data.conviction?.avg_position_size_pct, true],
-                    ['Top-3 concentration', data.conviction?.concentration_top3_pct, true],
-                ],
-                note: data.conviction?.interpretation,
-            },
-            {
                 title: 'Turnover',
                 metrics: [
                     ['Total trades', data.turnover?.total_trades],
@@ -1930,7 +2095,7 @@
                             isPct && typeof val === 'number'
                                 ? `${(val * 100).toFixed(1)}%`
                                 : formatAuditValue(val);
-                        return `<dl class="ic-dialog__metric"><dt>${label}</dt><dd>${display}</dd></dl>`;
+                        return `<div class="ic-dialog__metric"><dt>${label}</dt><dd>${display}</dd></div>`;
                     })
                     .join('');
                 const note = section.note
@@ -1939,7 +2104,7 @@
                 return `
                     <section class="ic-behavioural-audit__block">
                         <h4 class="ic-kicker">${section.title}</h4>
-                        <div class="ic-dialog__metric-grid">${metrics}</div>
+                        <dl class="ic-dialog__metric-grid">${metrics}</dl>
                         ${note}
                     </section>`;
             })
@@ -1968,7 +2133,6 @@
 
     async function hydrateBehaviouralAudit() {
         const targets = [
-            document.getElementById('behavioural-audit-body'),
             document.getElementById('desk-behavioural-audit'),
         ].filter((el) => el && el.dataset.bwcAuditLoaded !== '1');
 
@@ -1995,11 +2159,11 @@
         const picks = data.excerpts.slice(0, 4);
         const href = resolveHref(
             picks[0]?.full_report_href ||
-                './deliverables/source/Investment-CHL-Team-5-BWC-1%20(1).htm'
+                './deliverables/source/Investment-CHL-Team-5-BWC-1-memo.docx'
         );
 
         body.innerHTML = `
-            <p class="ic-outcome-plain text-muted">${data.word_count ? `${data.word_count.toLocaleString()} words filed` : 'Committee memo'}. Pull quotes below. Full HTM is authoritative.</p>
+            <p class="ic-outcome-plain text-muted">${data.word_count ? `${data.word_count.toLocaleString()} words filed` : 'Committee memo'}. Pull quotes below. Full memo download is authoritative.</p>
             ${picks
                 .map(
                     (ex) => `
@@ -2010,7 +2174,7 @@
                 )
                 .join('')}
             <footer class="ic-dialog__footer">
-                <a href="${href}" target="_blank" rel="noopener" class="cta-btn cta-primary cta-compact">Full memo (HTM)</a>
+                <a href="${href}" download class="cta-btn cta-primary cta-compact">Full memo</a>
                 <a href="#sources-memo" class="cta-btn cta-secondary cta-compact" data-dialog-close>Pillar links</a>
             </footer>`;
     }
@@ -2061,9 +2225,11 @@
         initScrollReveal();
         initStatusBadge();
         initDialogs();
+        initVideoPopout();
         initStatAnimations();
         initMarqueePause();
         initFooterYear();
+        initFooterCommitLog();
 
         initBwcMediaZones();
         bootstrapPromise.then(() => {

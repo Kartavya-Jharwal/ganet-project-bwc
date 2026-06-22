@@ -85,14 +85,22 @@ Trade ledger fixture: `tests/test_data/journal_transaction_history.csv` (mirrors
 | Live metrics | `frontend/data/full-metrics.json` |
 | Deliverables manifest | `frontend/data/deliverables-manifest.json` |
 
-## Publication checklist (sunset seal)
+## Publication checklist (archive seal)
 
-Use this before tagging the archive or pushing to `main` for GitHub Pages.
+**Engineering sunset** ran on `2026-05-01` (frozen quant data, static microsite, retired live ingestion). The **publication seal** (one clean commit, read-only archive) is still open. Pre-seal work is mostly **minify + deliverables sync**, not a full asset rebuild.
 
-1. **Rebuild static site:** `.\scripts\sunset_freeze.ps1` (or `scripts/sunset_freeze.sh`) — DuckDB prep, tests, `build_frontend_assets`, MkDocs `--strict`, optional `export_for_archive`.
-2. **Health gate:** `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git`
-3. **CI parity:** `uv run pytest tests/ -m "not integration"`, `uv run ruff check quant_monitor scripts tests`, `uv run ty check quant_monitor`, `uv run bandit -r quant_monitor/ -c pyproject.toml`, `uv run deptry .`
-4. **Microsite checks:** open `frontend/index.html` — status badge reads **STATIC ARCHIVE** (no Appwrite LIVE); KPIs load from `frontend/data/results.json` after build.
-5. **Deliverables:** `deliverables/source/` contains committee packet; `frontend/assets/post-mortem.pdf` mirrors client PDF.
-6. **Hygiene:** no `quant_monitor/cli_old.py`, no root `BWC/` working copy, no secrets in git.
-7. **Commit:** single sunset seal commit; push `main` to trigger Pages deploy job.
+Use this checklist when closing the repo, not when re-running the original sunset freeze for the first time.
+
+1. **Land microsite WIP:** commit `frontend/` HTML/CSS/JS sources, copy, and any manual asset edits. See [frontend/PLAN.md](frontend/PLAN.md).
+2. **Minify + sync (lean):** data and charts are already built. Run:
+   ```bash
+   bun run minify:frontend
+   uv run python scripts/build_frontend_assets.py
+   ```
+   The asset builder syncs `deliverables/source/` → `frontend/deliverables/source/` and refreshes manifests. Skip a full `sunset_freeze` unless quant artifacts changed.
+3. **Health gate:** `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git`
+4. **CI parity:** `uv run pytest tests/ -m "not integration"`, `uv run ruff check quant_monitor scripts tests`, `uv run ty check quant_monitor`, `uv run bandit -r quant_monitor/ -c pyproject.toml`, `uv run deptry .`
+5. **Microsite checks:** open `frontend/index.html` — splash disclaimer, static archive status (no Appwrite LIVE), KPIs from `frontend/data/results.json` after build.
+6. **Deliverables:** `deliverables/source/` contains committee packet; `frontend/assets/post-mortem.pdf` mirrors client PDF.
+7. **Hygiene:** no `quant_monitor/cli_old.py`, no root `BWC/` working copy, no secrets in git.
+8. **Seal commit:** single archive seal commit on `main`; push to trigger Pages deploy; optionally mark repo read-only on GitHub.

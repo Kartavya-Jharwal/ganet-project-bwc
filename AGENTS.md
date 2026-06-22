@@ -1,6 +1,6 @@
 # Agent guide — Project BWC (archived)
 
-**Status:** Engineering sunset complete (`2026-05-01`). This repo is a **read-mostly static archive**. Live Appwrite ingestion and schedulers are retired; the public microsite is **STATIC ARCHIVE** on GitHub Pages.
+**Status:** Engineering sunset complete (`2026-05-01`). Live Appwrite ingestion and schedulers are retired; the public microsite is **STATIC ARCHIVE** on GitHub Pages. **Publication seal** (one clean archive commit) is still open while `frontend/` microsite work lands — see [frontend/PLAN.md](frontend/PLAN.md) and [REVIEWERS.md § archive seal](REVIEWERS.md#publication-checklist-archive-seal).
 
 **Maintainer:** [Kartavya Jharwal](https://kartavya.tech) · MIT License — retain copyright notice when forking.
 

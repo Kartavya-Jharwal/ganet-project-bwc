@@ -11,7 +11,8 @@
 | Microsite | [frontend/index.html](frontend/index.html) |
 | Technical docs | `uv run python -m mkdocs build -f docs/mkdocs.yml` → [frontend/docs/](frontend/docs/) |
 | Committee packet | [deliverables/](deliverables/README.md) |
-| Code review | [REVIEWERS.md](REVIEWERS.md) (includes [publication checklist](REVIEWERS.md#publication-checklist-sunset-seal)) |
+| Code review | [REVIEWERS.md](REVIEWERS.md) (includes [archive seal checklist](REVIEWERS.md#publication-checklist-archive-seal)) |
+| Microsite status | [frontend/PLAN.md](frontend/PLAN.md) |
 | Agent / fork guide | [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) |
 
 ---

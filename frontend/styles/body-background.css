@@ -75,6 +75,10 @@
     }
 }
 
+html.is-modal-open .body-glow__wave {
+    animation-play-state: paused;
+}
+
 html.is-scroll-active .body-glow__wave,
 html:not(.is-page-visible) .body-glow__wave {
     animation-play-state: paused;

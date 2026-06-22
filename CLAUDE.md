@@ -9,14 +9,15 @@ Archived Hult Investment Challenge repo (**Team BWC**). Treat as **static public
 
 ## What “done” means here
 
-- Sunset seal committed; CI runs pytest, ruff, ty, bandit, deptry, `verify_repo_health`.
+- **Engineering sunset** (`2026-05-01`): quant data frozen, live Appwrite retired, `verify_repo_health` passes on built artifacts.
+- **Publication seal** (still open): one clean commit on `main`, `--require-clean-git` health gate, Pages deploy — blocked on landing `frontend/` microsite WIP. See [frontend/PLAN.md](frontend/PLAN.md).
 - Microsite: `frontend/` — **STATIC ARCHIVE** (no `FALLBACK_DATA`, no Appwrite LIVE in `frontend/js/main.js`).
 - Committee story: `deliverables/source/` → mirrored under `frontend/deliverables/` and `frontend/assets/post-mortem.pdf`.
 
 ## Typical human follow-ups (post-sunset)
 
-1. **Beautify `frontend/`** — design-only; rebuild with `build_frontend_assets.py` when charts/data change.
-2. **Docs polish** — edit `docs/*.md`, then `mkdocs build --strict`.
+1. **Finish microsite** — design and copy in `frontend/`; before seal run `bun run minify:frontend` and `build_frontend_assets.py` for deliverables sync (data/charts already built).
+2. **Publication seal** — checklist in [REVIEWERS.md#publication-checklist-archive-seal](REVIEWERS.md#publication-checklist-archive-seal).
 3. **Archive repo** on GitHub (mark read-only, pin Pages URL) and start new projects separately.
 
 ## Do not
@@ -31,4 +32,4 @@ Archived Hult Investment Challenge repo (**Team BWC**). Treat as **static public
 uv run python scripts/verify_repo_health.py --strict-artifacts
 ```
 
-Publication checklist: [REVIEWERS.md#publication-checklist-sunset-seal](REVIEWERS.md#publication-checklist-sunset-seal).
+Publication checklist: [REVIEWERS.md#publication-checklist-archive-seal](REVIEWERS.md#publication-checklist-archive-seal).
