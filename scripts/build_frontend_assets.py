@@ -321,6 +321,16 @@ def _sync_deliverables(frontend_root: Path) -> None:
         shutil.rmtree(dst_source)
     shutil.copytree(source_src, dst_source)
 
+    index_path = dst_root / "index.html"
+    if index_path.is_file():
+        logger.info(
+            "Deliverables source synced -> %s (%d files); kept hand-edited %s",
+            dst_source,
+            len(list(dst_source.iterdir())),
+            index_path.name,
+        )
+        return
+
     files = sorted(f.name for f in dst_source.iterdir() if f.is_file())
     rows = "\n".join(
         f'                <tr><td><a href="./source/{name}" download>{name}</a></td></tr>'
