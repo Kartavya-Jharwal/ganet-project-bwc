@@ -1,4 +1,4 @@
-# Phase FINALE (The Endgame): Ganet sunset — Adaptive Efficiency case study freeze
+# Phase FINALE (The Endgame): Ganet sunset: Adaptive Efficiency case study freeze
 
 > ⚠️ CRITICAL INSTRUCTION: UNDER NO CIRCUMSTANCES SHALL THE DATA FREEZE OR SUNSET OCCUR BEFORE MAY 1ST, 2026. ⚠️
 > The backtest timeframe and exact project conditions mathematically require the final 29-day forward projection to expire. Running the export script or spinning down architectures before May 1st invalidates the forward testing.
@@ -6,7 +6,7 @@
 This document outlines the final steps to wind down the live computational engines on May 1, 2026, while preserving the ecosystem perpetually as a static, interactive academic case study.
 
 ## The Strategy
-The portfolio simulation has a hard cutoff, but the epistemic value of the built analytics (Monte Carlo simulations, Fama-French regressions, Brinson attribution, and bespoke Manim-animated aesthetics) must live on. We transform the live Heroku/Appwrite tracking repo into a 100% free, static historical architecture hosted via GitHub Pages.
+The portfolio simulation has a hard cutoff, but the built analytics (Monte Carlo simulations, Fama-French regressions, Brinson attribution, and bespoke Manim-animated aesthetics) remain in the static archive. We transform the live Heroku/Appwrite tracking repo into a 100% free, static historical architecture hosted via GitHub Pages.
 
 ### Endgame Implementations (scripts/export_for_archive.py)
 
@@ -24,4 +24,4 @@ The portfolio simulation has a hard cutoff, but the epistemic value of the built
    - Spin down the Heroku APScheduler worker dynos.
    - Lock down the main branch.
 
-**Conclusion:** The live telemetry ends, but the architectural proof remains perfectly preserved.
+**Conclusion:** Live telemetry stops on May 1; the static site preserves the May 1 snapshot.

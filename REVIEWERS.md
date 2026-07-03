@@ -1,12 +1,12 @@
 # External code review guide
 
-**Project Ganet** · **Adaptive Efficiency** (Team BWC desk · Hult CHL-0200) — archived `2026-05-01`. This guide is for **software auditors** and fork maintainers.
+**Project Ganet** · **Adaptive Efficiency** (Team BWC desk · Hult CHL-0200), archived `2026-05-01`. This guide is for **software auditors** and fork maintainers.
 
 **Framework context:** This repo is a localized Ganet case study. The parent **Project Ganet** framework maps financial literacy through first-principles design; Adaptive Efficiency stress-tests that lens against a live simulation desk archive.
 
 **Disclaimer:** Independent, unofficial archive. Not affiliated with Hult, the professor, or former teammates. AI-assisted layout and development. Graded marks bound to filed deliverables only. Maintainer interpretations are personal. If code or site copy disagrees with the Excel close or memo, **filed artifacts win**.
 
-**Author:** [Kartavya Jharwal](https://kartavya.tech) · MIT — preserve copyright when forking. The primary public narrative (client post-mortem, charter, Excel model) lives in [`deliverables/`](../deliverables/README.md); faculty feedback is already incorporated there.
+**Author:** [Kartavya Jharwal](https://kartavya.tech) · MIT. Preserve copyright when forking. The primary public narrative (client post-mortem, charter, Excel model) lives in [`deliverables/`](../deliverables/README.md); faculty feedback is already incorporated there.
 
 This document orients code reviewers who do not have Doppler secrets or live Appwrite access.
 
@@ -73,7 +73,7 @@ doppler run -- uv run python scripts/export_for_archive.py
 
 Trade ledger fixture: `tests/test_data/journal_transaction_history.csv` (mirrors the discretionary export; no dividends).
 
-## Known limitations (documented honestly)
+## Known limitations
 
 - **Plotly charts are hand-frozen, not reproducible from the builder.** Files under `frontend/charts/` were generated once, then **manually edited** (presentation, annotations, desk-specific framing). `scripts/build_frontend_assets.py` still exists for JSON/tearsheet paths, but **re-running chart generation will clobber those edits**. Treat committed chart HTML as sealed artifacts; refresh `frontend/data/*.json` only when you intend to re-hydrate the static site without touching chart embeds. This is why the publication seal runs minify + deliverables sync, not a full `build_frontend_assets.py` pass.
 - **Walk-forward naive vs HRP**: On thin or mixed-scale matrices, Graphical Lasso may fail; backtest falls back to equal weight for that window.
@@ -102,10 +102,10 @@ Use this checklist when closing the repo, not when re-running the original sunse
    bun run minify:frontend
    uv run python scripts/sync_deliverables_manual.py
    ```
-   Deliverables sync copies `deliverables/source/` files, refreshes manifest, and updates download table rows in the hand-edited `deliverables/index.html`. **Skip `build_frontend_assets.py`** — chart HTML under `frontend/charts/` is hand-edited and must not be regenerated (see [Known limitations](#known-limitations-documented-honestly)).
+   Deliverables sync copies `deliverables/source/` files, refreshes manifest, and updates download table rows in the hand-edited `deliverables/index.html`. **Skip `build_frontend_assets.py`**. Chart HTML under `frontend/charts/` is hand-edited and must not be regenerated (see [Known limitations](#known-limitations)).
 3. **Health gate:** `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git`
 4. **CI parity:** `uv run pytest tests/ -m "not integration"`, `uv run ruff check quant_monitor scripts tests`, `uv run ty check quant_monitor`, `uv run bandit -r quant_monitor/ -c pyproject.toml`, `uv run deptry .`
-5. **Site checks:** open `frontend/index.html` — splash disclaimer, static archive status (no Appwrite LIVE), KPIs from `frontend/data/results.json` after build.
+5. **Site checks:** open `frontend/index.html` and check splash disclaimer, static archive status (no Appwrite LIVE), and KPIs from `frontend/data/results.json` after build.
 6. **Deliverables:** `deliverables/source/` contains committee packet; `frontend/assets/post-mortem.pdf` mirrors client PDF.
 7. **Hygiene:** no `quant_monitor/cli_old.py`, no root `BWC/` working copy, no secrets in git.
 8. **Seal commit:** single archive seal commit on `main`; push to trigger Pages deploy; optionally mark repo read-only on GitHub.

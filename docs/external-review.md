@@ -1,6 +1,6 @@
 # External review
 
-**Ganet** · **Adaptive Efficiency** — canonical auditor guide: [REVIEWERS.md](https://github.com/Kartavya-Jharwal/ganet-project-bwc/blob/main/REVIEWERS.md)
+**Ganet** · **Adaptive Efficiency**: canonical auditor guide: [REVIEWERS.md](https://github.com/Kartavya-Jharwal/ganet-project-bwc/blob/main/REVIEWERS.md)
 
 Independent unofficial archive. Graded marks bound to filed deliverables in `deliverables/`.
 

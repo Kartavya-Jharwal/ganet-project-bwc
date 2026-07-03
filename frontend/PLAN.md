@@ -1,4 +1,4 @@
-# Adaptive Efficiency — presentation status
+# Adaptive Efficiency: presentation status
 
 **Last updated:** June 2026  
 **Maintainer:** [Kartavya Jharwal](https://kartavya.tech)
@@ -7,8 +7,8 @@
 
 | Milestone | When | State |
 |-----------|------|-------|
-| Engineering sunset freeze | `2026-05-01` | **Done** — quant pipeline frozen, static data, no live Appwrite |
-| Publication seal commit | — | **Not done** — `data/` and `charts/` already built; remaining: **minify** bundles + **deliverables sync**, then one clean commit |
+| Engineering sunset freeze | `2026-05-01` | **Done**: quant pipeline frozen, static data, no live Appwrite |
+| Publication seal commit | — | **Not done**: `data/` and `charts/` already built; remaining: **minify** bundles + **deliverables sync**, then one clean commit |
 | GitHub Pages deploy | live | Serves current `main`; may lag local WIP until seal lands |
 
 The original phased finish plan (splash rewrite, OG retitle, deliverables redirect, spacing pass) is **retired**. This file tracks what the code actually does and what remains before the one-shot archive seal.
@@ -17,10 +17,10 @@ The original phased finish plan (splash rewrite, OG retitle, deliverables redire
 
 ## Site identity (as built)
 
-- **Parent framework:** **Project Ganet** — financial literacy, first-principles design, portfolio of empirical case studies.
-- **Case study title:** *Adaptive Efficiency* — standalone trial stress-testing theoretical models against live execution constraints. Not a performance claim.
+- **Parent framework:** **Project Ganet**: financial literacy, first-principles design, portfolio of empirical case studies.
+- **Case study title:** *Adaptive Efficiency*: standalone trial stress-testing theoretical models against live execution constraints. Not a performance claim.
 - **Desk name:** Team **BWC** · Hult **CHL-0200** · violet accent `#a78bfa`.
-- **Framing:** independent **unofficial** archive. Faculty marks (`422/430`) are filed and closed. Maintainer presentation on the same data, not an official Hult publication.
+- **Framing:** independent **unofficial** archive. Faculty marks (`422/430`) are filed and closed. Maintainer presentation of the same filed data (unofficial archive).
 
 ---
 
@@ -55,8 +55,8 @@ Behavioural audit is an **on-page** block under `#story` (hydrated from `data/be
 | Layer | Location | Status |
 |-------|----------|--------|
 | Data + charts | `frontend/data/`, `frontend/charts/` | **Built** (from prior `build_frontend_assets.py` run) |
-| Deliverables mirror | `frontend/deliverables/source/` | **Needs sync** — run asset builder for `_sync_deliverables` + manifest |
-| Production bundles | `bundle.min.css`, `*.min.js` | **Needs minify** — run after any JS/CSS source edits |
+| Deliverables mirror | `frontend/deliverables/source/` | **Needs sync**: run asset builder for `_sync_deliverables` + manifest |
+| Production bundles | `bundle.min.css`, `*.min.js` | **Needs minify**: run after any JS/CSS source edits |
 
 - **Production entrypoints:** `styles/bundle.min.css`, `js/main.min.js`, `js/base-path.min.js`, `js/splash-liquid-gradient.min.js`.
 - **Sources:** edit `styles/*.css` and `js/*.js` (not min files), then `bun run minify:frontend` (repo root `package.json`).

@@ -132,7 +132,7 @@ Adaptive Efficiency labels the case-study framing only. Trough outperformance do
 
 This is a **sealed static archive** (engineering sunset complete). A few choices are deliberate and worth naming up front so reviewers see them as intentional design.
 
-- **CI is frontend-only, on purpose.** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs minify + Lighthouse against the built site, because that is the only thing that changes after sunset. The quant suite (**pytest, ruff, bandit, MkDocs `--strict`**) is not deleted; it runs locally and in the freeze script, and is the gate for any data rebuild:
+- **CI is frontend-only after sunset.** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs minify + Lighthouse against the built site, because that is the only thing that changes after sunset. The quant suite (**pytest, ruff, bandit, MkDocs `--strict`**) is not deleted; it runs locally and in the freeze script, and is the gate for any data rebuild:
 
   ```bash
   uv run python -m pytest tests/ -m "not integration"
@@ -143,13 +143,13 @@ This is a **sealed static archive** (engineering sunset complete). A few choices
 
   Rationale: the desk data is frozen (snapshot **2026-04-10**), so re-running quant tests on every push to a read-only archive would gate nothing. If you fork this to a live desk, restore those jobs first.
 
-- **`frontend/index.html` is one file (~1,500 lines), on purpose.** No component framework and no build step for markup: a single deployable artifact is the least-moving-parts option for a Pages archive that must still render in ten years. The trade-off (one long file vs. a component library) is deliberate. Design tokens live in [`frontend/styles/tokens.css`](frontend/styles/tokens.css) and section conventions (`ic-*`) give it authorial coherence rather than a formal component system.
+- **`frontend/index.html` is one file (~1,500 lines) by design.** No component framework and no build step for markup: a single deployable artifact is the least-moving-parts option for a Pages archive that must still render in ten years. The trade-off (one long file vs. a component library) is deliberate. Design tokens live in [`frontend/styles/tokens.css`](frontend/styles/tokens.css) and section conventions (`ic-*`) give it authorial coherence rather than a formal component system.
 
 - **Two type regimes, now stitched.** The splash uses an editorial serif (Playfair Display); the main site is brutalist Darker Grotesque on a terminal-violet palette. That contrast is intentional (arrival vs. audit desk), but the surfaces now share a type system: the serif carries into main-site section leads and the footer sign-off (`--font-serif`), and the main display font appears in the splash eyebrow. The combined surfaces should read as one authored product with shared typography.
 
 - **Overlay ≠ graded returns.** `quant_monitor/` metrics run on a closed universe and must not be conflated with the graded Excel desk close. The site labels overlay panels accordingly; the filed artifacts are the grading authority.
 
-- **Chart build retired (do not regen).** `frontend/charts/*.html` were **hand-edited after generation** (layout, copy, axis labels, desk framing). Running `scripts/build_frontend_assets.py` would overwrite those edits and break the published site. JSON under `frontend/data/` can still be refreshed if needed; **Plotly chart HTML is frozen as committed artifacts**. That is why the publication seal checklist skips a full chart rebuild. See [REVIEWERS.md § Known limitations](REVIEWERS.md#known-limitations-documented-honestly).
+- **Chart build retired (do not regen).** `frontend/charts/*.html` were **hand-edited after generation** (layout, copy, axis labels, desk framing). Running `scripts/build_frontend_assets.py` would overwrite those edits and break the published site. JSON under `frontend/data/` can still be refreshed if needed; **Plotly chart HTML is frozen as committed artifacts**. That is why the publication seal checklist skips a full chart rebuild. See [REVIEWERS.md § Known limitations](REVIEWERS.md#known-limitations).
 
 - **README vanity widgets are GitHub-only flourishes.** The typing-SVG tagline and GitHub stats card at the bottom of this file are personal-brand context on GitHub; they sit outside the site design system and are not publication gates for the archive.
 

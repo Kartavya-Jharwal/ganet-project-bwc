@@ -8,8 +8,8 @@ This guide covers setting up your development environment, running the system lo
 
 ### Required
 
-- **Python 3.11+** — [Download](https://www.python.org/downloads/)
-- **uv** — Package manager ([Installation](https://github.com/astral-sh/uv#installation))
+- **Python 3.11+** ([Download](https://www.python.org/downloads/))
+- **uv** package manager ([Installation](https://github.com/astral-sh/uv#installation))
   ```powershell
   # Windows
   powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
@@ -17,7 +17,7 @@ This guide covers setting up your development environment, running the system lo
   # macOS/Linux
   curl -LsSf https://astral.sh/uv/install.sh | sh
   ```
-- **Doppler CLI** — Secrets management ([Installation](https://docs.doppler.com/docs/install-cli))
+- **Doppler CLI** for secrets management ([Installation](https://docs.doppler.com/docs/install-cli))
   ```powershell
   # Windows
   winget install doppler
@@ -25,11 +25,11 @@ This guide covers setting up your development environment, running the system lo
   # macOS
   brew install dopplerhq/cli/doppler
   ```
-- **Git** — Version control
+- **Git** for version control
 
 ### Optional (for full workflow)
 
-- **GitHub CLI** (`gh`) — For repo operations
+- **GitHub CLI** (`gh`) for repo operations
 
 ---
 
@@ -368,7 +368,7 @@ uv run mkdocs build -f docs/mkdocs.yml
 
 1. Create Markdown file in `docs/`
 2. Add to `nav` section in `docs/mkdocs.yml`
-3. Commit and push — GitHub Actions deploys to Pages
+3. Commit and push; GitHub Actions deploys to Pages
 
 ---
 

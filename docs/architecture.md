@@ -362,7 +362,7 @@ Uses **Black-Litterman** with **pyportfolioopt**:
 
 ## Layer 6: Post-Hoc Analytics & Forecasting (Phase 22+)
 
-Introduced to ensure Epistemic Honesty, this layer analyzes the exact portfolio state (historical & current checkpoint) and projects statistical probabilities rather than relying on deterministic hopes.
+This layer analyzes the exact portfolio state (historical and current checkpoint) and projects statistical probabilities from the checkpoint portfolio state instead of single-path forecasts.
 
 ### Brinson-Fachler Attribution (`quant_monitor/backtest/attribution.py`)
 Separates daily/monthly P&L returns from the benchmark (S&P 500) into mathematical components to answer exactly *why* the portfolio outperformed/underperformed.
@@ -436,11 +436,14 @@ The system runs locally via `uv run python -m quant_monitor.main` (APScheduler w
 For detailed design decisions and trade-offs, see [Design Decisions](design.md).
 
 Key architectural choices:
-- **DuckDB over PostgreSQL** — Embedded, no server overhead
-- **Doppler over .env** — Centralized, environment-aware secrets
-- **Local execution over cloud compute** — No deployment overhead, runs on dev machine
-- **Appwrite over Firebase** — Open-source, GitHub Education credits (graceful fallback to DuckDB-only)
-- **GitHub Pages over dynamic hosting** — Static archive, zero maintenance post-sunset
+
+| Choice | Rationale |
+|--------|-----------|
+| DuckDB (not PostgreSQL) | Embedded, no server overhead |
+| Doppler (not `.env` files) | Centralized, environment-aware secrets |
+| Local execution | No cloud deployment overhead; runs on dev machine |
+| Appwrite (with DuckDB fallback) | Open-source; GitHub Education credits |
+| GitHub Pages | Static archive, zero maintenance post-sunset |
 
 ---
 

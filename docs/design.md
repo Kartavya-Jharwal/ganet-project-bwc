@@ -35,7 +35,7 @@ This document captures the key architectural and design decisions made for **Gan
    - High signal + low confidence = HOLD (models disagree).
    - Only act when inter-model agreement exceeds threshold.
 
-5. **Epistemic Honesty via Advanced Analytics**
+5. **Attribution and risk reporting (advanced analytics)**
    - Standard P&L reporting is insufficient. We decompose returns into Allocation, Selection, and Interaction effects using Brinson-Fachler.
    - Forward-looking analysis runs on 10,000-path stochastic Monte Carlo (calibrated to our empirical covariance) to turn hopes into quantified probabilistic forecasts.
 
@@ -215,7 +215,7 @@ Static equal weighting assumes all models are equally useful in all conditions. 
 
 ### Hurst Exponent: The Key Insight
 
-Most systems use volatility alone. Hurst separates:
+Volatility alone misses trend vs. chop. Hurst separates:
 - **H > 0.6:** Trending (ride it)
 - **H ≈ 0.5:** Random walk (reduce size)
 - **H < 0.4:** Mean-reverting (fade extremes)
@@ -238,11 +238,11 @@ High signal + low confidence = conflicting views. Better to wait.
 
 ---
 
-## Analytics & Epistemic Honesty
+## Analytics and risk reporting
 
-### Why Institutional-Grade Analytics?
+### Why institutional-grade analytics?
 
-A standard student simulation reports P&L and basic Sharpe ratios. This repository actively pays homage to true institutional fund architectures (e.g., AQR, BlackRock) by rigorously enforcing **Epistemic Honesty** through a dedicated analytics lifecycle (Phases 22+). 
+A standard student simulation reports P&L and basic Sharpe ratios. This repository layers institutional-style attribution and risk reporting (Phases 22+) on top of the filed desk data.
 
 | Standard Student Approach | Institutional Approach (Ganet / Adaptive Efficiency) |
 |---------------------------|--------------------------------------|

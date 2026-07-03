@@ -2,11 +2,11 @@
 
 ## The Philosophy: A "High-Ticket" Operation Building on Phases 1-10
 
-This pipeline is no longer a standard algorithmic trading script—it is a **critical market simulation** engineered to solve granular microstructure issues (like 15-minute platform latency) while operating under strict, elegant architectural constraints.
+This pipeline extends the Phase 1–10 stack into a **market simulation** focused on microstructure issues (e.g. 15-minute platform latency) under fixed architectural constraints.
 
 **Crucially, this is NOT a ground-up rewrite.** We are building directly on top of the robust data pipelines, scheduling (APScheduler), and DuckDB infrastructure established in Phases 1-10. Phase 11 is about **surgical pruning** of incompatible heavy tech (like NLP/FinBERT and Heroku droplet configs) and laying the scaffolding for our deeply mathematical Phase 12-21 future.
 
-Ultimately, this project morphs from a mere "Python script" into a **Museum-Grade Algorithmic Showcase**. Through the introduction of theoretical topological graph pruning, `manim` powered mathematical storytelling, and an **Awwwards-level Vanguard Vanilla Web Frontend**, this becomes a high-conviction portfolio signaling tool *and* a masterclass in Technical Product Management and Engineering Taste.
+Ultimately, this project adds topological graph math, Manim explainers, and a static Vanguard-style frontend for committee review.
 
 ---
 

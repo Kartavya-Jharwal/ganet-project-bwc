@@ -1,6 +1,6 @@
 # Phase 22+ Implementation Track: Advanced Institutional Portfolio Analytics & Forecasting
 
-This document outlines the architecture, integration specification, and testing strategy for transforming the portfolio monitor from a standard tracking dashboard into an institutional-grade, mathematically rigorous portfolio case study. By implementing these advanced models, you generate deep epistemic honesty—proving *why* the portfolio behaved the way it did, and *how* it is probabilistically expected to behave in the final 29 days.
+This document outlines the architecture, integration specification, and testing strategy for extending the portfolio monitor with institutional-style analytics (Phases 22–31). These models document *why* the portfolio behaved as it did and *how* it was projected to behave in the final 29 days.
 
 ## Architectural Integration & Testing Principles
 1. **Tight Repository Integration:** All new analytics must seamlessly extend the existing engines (`quant_monitor/backtest/engine.py`, `quant_monitor/models/`). New metrics should be injected natively via `metrics.py` without breaking existing tracking pipelines.
@@ -74,7 +74,7 @@ All analytical engines and tests will initialize with the following validated po
 - **Integration:** Calculate asynchronously or end-of-run during model evaluations in `optimizer.py`.
 
 ## Phase 26: Monte Carlo Forward Simulation (The 29-Day Oracle)
-**Goal:** Forecast the final 29 days dynamically using stochastic calculus, outputting probability distributions rather than singular deterministic hopes.
+**Goal:** Forecast the final 29 days dynamically using stochastic calculus, outputting probability distributions instead of point forecasts.
 - **Implementations (`quant_monitor/backtest/simulation.py`)**
   - **Empirical Modeling:** Extract the empirical covariance matrix and moving volatility from the *actual* historical behavior of the 18 validated checkpoint positions.
   - **Stochastic Sampling:** Run 10,000 parallel simulations of the next 29 trading days using Geometric Brownian Motion + Jump Diffusion.
@@ -82,7 +82,7 @@ All analytical engines and tests will initialize with the following validated po
 - **Output (`quant_monitor/dashboard/openbb_views.py`):** Display interactive Probability density functions (PDF/CDF), highlighting exactly where the +3% hurdle lies on the statistical bell curve.
 
 ## Phase 27: Historical Stress Testing & Scenario Analysis
-**Goal:** Answer the question: *"What happens to our current exact portfolio if the market undergoes a profound exogenous shock tomorrow?"*
+**Goal:** Stress-test the March 13 checkpoint portfolio against historical shock windows (2008, 2020 COVID, 2022 inflation pivot).
 - **Implementations (`quant_monitor/backtest/stress.py`)**
   - **Historical Replay Models:** Inject the March 13 Checkpoint portfolio into historical data streams like the 2008 Financial Crisis, 2020 COVID Flash Crash, and the 2022 Inflation Pivot.
   - **Regime-Switching Simulation:** Test if the multi-model architecture's "Crisis" weights trigger fast enough to protect against the drawdown.
@@ -104,7 +104,7 @@ All analytical engines and tests will initialize with the following validated po
 - **Integration:** Initial wireframing and CSS architectural scaffolds.
 
 ## Phase 30: Typography, Color & Textural Atmosphere
-**Goal:** Eradicate generic AI UI "slop." Instantiate a distinctive, characterful foundation of fonts, colors, and backgrounds.
+**Goal:** Define a distinctive font, color, and texture system for the frontend foundation.
 - **Implementations:**
   - **Typography:** Pair a strong display face with a refined body face. Strictly ban overused defaults like Inter, Roboto, or Arial.
   - **Color:** Commit to a palette with a definitive point of view using CSS variables. Prefer bold contrasts over timid, flat defaults.
