@@ -73,7 +73,7 @@ html.splash-pending .site-dock {
 }
 
 /* Desktop: reveal when scrolled past intro */
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
     .site-dock.is-docked {
         transform: translate3d(0, 0, 0);
         opacity: 1;
@@ -82,8 +82,8 @@ html.splash-pending .site-dock {
     }
 }
 
-/* Mobile: slim bar always available (BWC + menu) */
-@media (max-width: 1023px) {
+/* Mobile / narrow: slim bar always available (BWC + menu) */
+@media (max-width: 1199px) {
     .site-dock {
         transform: translate3d(0, 0, 0);
         opacity: 1;
@@ -241,7 +241,7 @@ html.splash-pending .site-dock {
 }
 
 /* ─── Mobile drawer panel ─── */
-@media (max-width: 1023px) {
+@media (max-width: 1199px) {
     .site-dock__inner {
         flex-wrap: wrap;
         align-items: center;
@@ -287,12 +287,12 @@ html.splash-pending .site-dock {
 }
 
 /* ─── Desktop inline row ─── */
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
     .site-dock__inner {
         display: grid;
         grid-template-columns: auto 1fr auto;
         align-items: center;
-        column-gap: var(--spacing-6);
+        column-gap: var(--spacing-5);
     }
 
     .site-dock__panel {
@@ -306,12 +306,10 @@ html.splash-pending .site-dock {
 
     .site-dock__list {
         flex: 1 1 auto;
+        flex-wrap: nowrap;
         justify-content: center;
+        gap: var(--spacing-2) var(--spacing-4);
         min-width: 0;
-    }
-
-    .site-dock__meta {
-        flex-shrink: 0;
     }
 }
 
