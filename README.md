@@ -1,24 +1,62 @@
-# Adaptive Efficiency
+<p align="center">
+  <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
+    <img src="frontend/assets/PB_logos/logo_kj_neutral_128.png" width="96" alt="Kartavya Jharwal personal brand mark">
+  </a>
+</p>
 
-**Team BWC · Hult CHL-0200 · mock $1M paper desk post-mortem**
+<h1 align="center">Adaptive Efficiency</h1>
 
-[![Open live site](https://img.shields.io/badge/Open-Live%20Site-6d28d9?style=for-the-badge&logo=github)](https://kartavya-jharwal.github.io/ganet-project-bwc/)
-[![Engineering docs](https://img.shields.io/badge/Read-Engineering%20Docs-24292f?style=for-the-badge&logo=readthedocs)](frontend/docs/)
-[![Audit the repo](https://img.shields.io/badge/Audit-REVIEWERS.md-a78bfa?style=for-the-badge)](REVIEWERS.md)
+<p align="center">
+  <a href="https://kartavya.tech/Ganet"><img src="https://img.shields.io/badge/Project-Ganet-a78bfa?style=flat-square" alt="Project Ganet"></a>
+  <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/"><img src="https://img.shields.io/badge/Case%20study-Adaptive%20Efficiency-6d28d9?style=flat-square" alt="Adaptive Efficiency"></a>
+  <a href="https://kartavya.tech"><img src="https://img.shields.io/badge/Kartavya%20Jharwal-kartavya.tech-24292f?style=flat-square" alt="Kartavya Jharwal"></a>
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-a78bfa?style=flat-square)](LICENSE)
-[![Archive](https://img.shields.io/badge/status-static%20archive-6b7280?style=flat-square)](REVIEWERS.md#publication-checklist-archive-seal)
-[![Sunset](https://img.shields.io/badge/sunset-2026--05--01-6b7280?style=flat-square)](frontend/PLAN.md)
+<p align="center">
+  <strong>Team BWC · Hult CHL-0200 · mock $1M paper desk post-mortem</strong>
+</p>
 
-An opinionated post-mortem on implementing investment fundamentals, qualitative book management, and strict risk discipline under Q1 2026 stress. **Start on the live site** for the narrative, charts, and filed sources. Use this repository for engineering depth and audit trails.
+<p align="center">
+  <a href="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=18&duration=3800&pause=900&color=A78BFA&center=true&vCenter=true&width=640&lines=first-principles+finance+literacy;empirical+trials+on+live+constraints;static+archive+for+academics+%26+quants">
+    <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=500&size=18&duration=3800&pause=900&color=A78BFA&center=true&vCenter=true&width=640&lines=first-principles+finance+literacy;empirical+trials+on+live+constraints;static+archive+for+academics+%26+quants" alt="Typing tagline">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
+    <img src="https://img.shields.io/badge/Open-Live%20Site-6d28d9?style=for-the-badge&logo=github" alt="Open live site">
+  </a>
+  <a href="frontend/docs/">
+    <img src="https://img.shields.io/badge/Read-Engineering%20Docs-24292f?style=for-the-badge&logo=readthedocs" alt="Engineering docs">
+  </a>
+  <a href="REVIEWERS.md">
+    <img src="https://img.shields.io/badge/Audit-REVIEWERS.md-a78bfa?style=for-the-badge" alt="Audit the repo">
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/License-MIT-a78bfa?style=flat-square" alt="MIT License">
+  <img src="https://img.shields.io/badge/status-static%20archive-6b7280?style=flat-square" alt="Static archive">
+  <img src="https://img.shields.io/badge/sunset-2026--05--01-6b7280?style=flat-square" alt="Sunset 2026-05-01">
+</p>
+
+<p align="center">
+  <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
+    <img src="frontend/assets/og-card.png" width="720" alt="Adaptive Efficiency: liquid gradient preview of the live archive site">
+  </a>
+</p>
+
+<p align="center">
+  <em>Click the preview to open the live site. Charts, filed sources, faculty marks, and desk narrative.</em>
+</p>
 
 ---
 
 ## What this is
 
-This repo is a **localized deployment** within [**Project Ganet**](https://kartavya.tech): an independent initiative mapping systemic financial literacy through first-principles design.
+This repository is a **localized deployment** within [**Project Ganet**](https://kartavya.tech/Ganet): an independent initiative mapping systemic financial literacy through an opinionated, first-principles design lens.
 
-**Adaptive Efficiency** is one empirical trial in that sequence. It stress-tests theory against live execution constraints: a ten-week Hult simulation (20 Jan → 1 May 2026), a $1M paper book managed by **Team BWC** (Team 5), and a Python audit overlay on filed Excel, journals, and committee deliverables.
+Where the upstream project isolates the abstract architecture of fluency, **Adaptive Efficiency** operates as a standalone case study. It is one empirical trial in a sequence designed to stress-test theoretical models against the messy constraints of live execution: a ten-week Hult simulation (20 Jan → 1 May 2026), a $1M paper book managed by **Team BWC** (Team 5), and a Python audit overlay on filed Excel, journals, and committee deliverables.
 
 Engineering sunset freeze completed **2026-05-01** (valuation snapshot **2026-04-10**). **June 2026 polish** refines the archive for academics, quants, and recruiters. Publication seal commit is still open. See [frontend/PLAN.md](frontend/PLAN.md).
 
@@ -63,11 +101,33 @@ Machine-readable: [frontend/llms.txt](frontend/llms.txt) · [frontend/data/site-
 
 ---
 
-## Maintainer
+## Personal brand
 
-**[Kartavya Jharwal](https://kartavya.tech)** · MIT ([LICENSE](LICENSE); forks retain attribution)
+<p align="center">
+  <a href="https://kartavya.tech">
+    <img src="frontend/assets/PB_logos/logo_kj_neutral_128.png" width="80" alt="Kartavya Jharwal">
+  </a>
+</p>
 
-Logos: [`frontend/assets/PB_logos/`](frontend/assets/PB_logos/)
+<p align="center">
+  <a href="https://kartavya.tech/Ganet"><strong>Project Ganet</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/"><strong>Adaptive Efficiency</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://kartavya.tech"><strong>Kartavya Jharwal</strong></a>
+</p>
+
+<p align="center">
+  Three public surfaces, one practice: opinionated finance literacy, empirical archives, and first-principles design under live constraints.
+</p>
+
+<p align="center">
+  <a href="https://github.com/Kartavya-Jharwal">
+    <img src="https://github-readme-stats.vercel.app/api?username=Kartavya-Jharwal&show_icons=true&theme=radical&hide_border=true&bg_color=0d1117&title_color=a78bfa&icon_color=a78bfa&text_color=e6edf3" width="420" alt="GitHub stats">
+  </a>
+</p>
+
+MIT ([LICENSE](LICENSE)) · forks retain attribution
 
 ---
 
@@ -133,18 +193,3 @@ Prefer `scripts/` for sunset. Avoid `project sync-data` (may start scheduler).
 Agent / fork guide: [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md)
 
 </details>
-
-<details>
-<summary><strong>GitHub social preview</strong></summary>
-
-Homepage: [kartavya-jharwal.github.io/ganet-project-bwc/](https://kartavya-jharwal.github.io/ganet-project-bwc/)
-
-OG card: [assets/og-card.png](https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png) · upload via **Settings → General → Social preview**. Full steps: [docs/github-social-preview.md](docs/github-social-preview.md).
-
-</details>
-
----
-
-## License
-
-MIT — see [LICENSE](LICENSE).
