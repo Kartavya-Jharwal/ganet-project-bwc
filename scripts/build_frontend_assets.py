@@ -183,7 +183,7 @@ def build_all(output_dir: str = "frontend") -> None:
 
 
 def _build_og_card(assets_dir: Path) -> None:
-    """Rasterize a branded Open Graph card (1200×630) for social previews."""
+    """Rasterize a branded Open Graph card (1200x630) for social previews."""
     out = assets_dir / "og-card.png"
     if out.is_file():
         logger.info("Open Graph card already present — keeping %s", out)

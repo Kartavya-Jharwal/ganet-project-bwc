@@ -1,6 +1,6 @@
 # Adaptive Efficiency
 
-**Project Ganet** parent framework · **Team BWC** · Hult CHL-0200 · engineering sunset `2026-05-01` · publication seal pending
+**Project Ganet** parent framework · **Team BWC** · Hult CHL-0200 · engineering sunset `2026-05-01` · publication seal `2026-07-03`
 
 **Maintainer:** [Kartavya Jharwal](https://kartavya.tech) · logos: [`assets/PB_logos/`](./assets/PB_logos/)
 
@@ -75,19 +75,19 @@ Microsite prose must not use em dashes (Unicode U+2014) or semicolons in sentenc
 
 ## Build and verify
 
-`frontend/data/` and `frontend/charts/` are **already built**. Before the publication seal, refresh production bundles and sync the deliverables mirror:
+`frontend/data/`, `frontend/charts/`, production bundles, and the deliverables mirror are **sealed** on `main` (July 2026). After source edits, refresh and re-verify:
 
 ```bash
 bun run minify:frontend
 uv run python scripts/sync_deliverables_manual.py
-uv run python scripts/verify_repo_health.py --strict-artifacts
+uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git
 ```
 
 **Do not run** `build_frontend_assets.py` for chart HTML. `charts/*.html` were hand-edited after generation and regen would overwrite presentation fixes. JSON-only refresh is a separate, explicit decision.
 
 - **Sync:** `uv run python scripts/sync_deliverables_manual.py` mirrors committee files, manifest, and download table rows. Keeps hand-edited `deliverables/index.html` chrome.
 
-Before the publication seal: add `--require-clean-git` to the health script and run CI parity per [REVIEWERS.md](../REVIEWERS.md#publication-checklist-archive-seal).
+Seal record and CI parity commands: [REVIEWERS.md § archive seal](../REVIEWERS.md#publication-checklist-archive-seal).
 
 ---
 

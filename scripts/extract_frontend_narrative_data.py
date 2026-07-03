@@ -163,7 +163,7 @@ def _parse_money(value: str) -> float:
 
 
 def parse_sheet011_timeline() -> dict:
-    """NAV milestones from sheet008 PERFORMANCE TIMELINE (Feb 02 – Apr 11 2026)."""
+    """NAV milestones from sheet008 PERFORMANCE TIMELINE (Feb 02 - Apr 11 2026)."""
     text = SHEET008.read_text(encoding="windows-1252", errors="replace")
     start = text.find("NAV TIMELINE")
     chunk = text[start : start + 80_000] if start >= 0 else text

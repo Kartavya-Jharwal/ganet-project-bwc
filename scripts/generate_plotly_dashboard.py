@@ -146,7 +146,7 @@ def _load_desk_timeline() -> dict | None:
 
 
 def _desk_returns_series() -> pd.Series | None:
-    """Daily returns from interpolated Hult desk NAV (Feb 02 – Apr 11 2026)."""
+    """Daily returns from interpolated Hult desk NAV (Feb 02 - Apr 11 2026)."""
     desk = _load_desk_timeline()
     if desk is None:
         return None
@@ -272,7 +272,7 @@ def generate_desk_performance(output_dir: Path) -> Path | None:
     fig.update_layout(**_base_layout(
         title=dict(
             text=(
-                f"Performance Overview: Portfolio vs SPY | {t0} – {t1}  "
+                f"Performance Overview: Portfolio vs SPY | {t0} - {t1}  "
                 f"<span style='color:{COLORS['muted']};font-size:12px'>"
                 f"Final: {port_final:+.2f}% vs {spy_final:+.2f}%</span>"
             ),

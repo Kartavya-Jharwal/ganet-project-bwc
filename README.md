@@ -238,12 +238,12 @@ bun run minify:frontend
 uv run python -m mkdocs build -f docs/mkdocs.yml --strict
 ```
 
-Before publication seal:
+Re-seal after frontend edits (chart HTML still frozen):
 
 ```bash
 bun run minify:frontend
 uv run python scripts/sync_deliverables_manual.py
-uv run python scripts/verify_repo_health.py --strict-artifacts
+uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git
 ```
 
 | CLI | Notes |

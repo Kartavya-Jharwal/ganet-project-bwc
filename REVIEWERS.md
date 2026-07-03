@@ -92,20 +92,16 @@ Trade ledger fixture: `tests/test_data/journal_transaction_history.csv` (mirrors
 
 ## Publication checklist (archive seal)
 
-**Engineering sunset** ran on `2026-05-01` (frozen quant data, static public site, retired live ingestion). The **publication seal** (one clean commit, read-only archive) is still open. Pre-seal work is mostly **minify + deliverables sync**, not a full asset rebuild.
+**Engineering sunset** ran on `2026-05-01` (frozen quant data, static public site, retired live ingestion). **Publication seal** completed **2026-07-03** (`98481fa` on `main`, Pages deploy green). Use this checklist as the audit record.
 
-Use this checklist when closing the repo, not when re-running the original sunset freeze for the first time.
+- [x] **Land presentation WIP:** `frontend/` HTML/CSS/JS sources, copy, and manual asset edits committed.
+- [x] **Minify + sync (lean):** `bun run minify:frontend` and `uv run python scripts/sync_deliverables_manual.py` (22 files synced; chart HTML not regenerated).
+- [x] **Health gate:** `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git` passed.
+- [x] **CI parity:** pytest (142 passed), ruff, ty, bandit, deptry run locally per seal.
+- [x] **Site checks:** splash disclaimer, static archive status (no Appwrite LIVE), KPIs from `frontend/data/results.json`.
+- [x] **Deliverables:** `deliverables/source/` committee packet present; `frontend/assets/post-mortem.pdf` mirrors client PDF.
+- [x] **Hygiene:** no `quant_monitor/cli_old.py`, no root `BWC/` working copy, no secrets in git.
+- [x] **Seal commit:** archive seal on `main`, pushed (`98481fa`), Deploy site workflow success.
+- [ ] **GitHub archive:** mark repo read-only on GitHub (maintainer action on the website).
 
-1. **Land presentation WIP:** commit `frontend/` HTML/CSS/JS sources, copy, and any manual asset edits. See [frontend/PLAN.md](frontend/PLAN.md).
-2. **Minify + sync (lean):** data and charts are already built. Run:
-   ```bash
-   bun run minify:frontend
-   uv run python scripts/sync_deliverables_manual.py
-   ```
-   Deliverables sync copies `deliverables/source/` files, refreshes manifest, and updates download table rows in the hand-edited `deliverables/index.html`. **Skip `build_frontend_assets.py`**. Chart HTML under `frontend/charts/` is hand-edited and must not be regenerated (see [Known limitations](#known-limitations)).
-3. **Health gate:** `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git`
-4. **CI parity:** `uv run pytest tests/ -m "not integration"`, `uv run ruff check quant_monitor scripts tests`, `uv run ty check quant_monitor`, `uv run bandit -r quant_monitor/ -c pyproject.toml`, `uv run deptry .`
-5. **Site checks:** open `frontend/index.html` and check splash disclaimer, static archive status (no Appwrite LIVE), and KPIs from `frontend/data/results.json` after build.
-6. **Deliverables:** `deliverables/source/` contains committee packet; `frontend/assets/post-mortem.pdf` mirrors client PDF.
-7. **Hygiene:** no `quant_monitor/cli_old.py`, no root `BWC/` working copy, no secrets in git.
-8. **Seal commit:** single archive seal commit on `main`; push to trigger Pages deploy; optionally mark repo read-only on GitHub.
+Use this checklist when auditing a fork or re-sealing after substantive edits, not for day-to-day WIP.

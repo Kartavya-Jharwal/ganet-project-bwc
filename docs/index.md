@@ -7,7 +7,7 @@
 These MkDocs pages document the engineering freeze for this archive. The graded investment narrative lives in [deliverables](deliverables-index.md). The [live site](https://kartavya-jharwal.github.io/ganet-project-bwc/) is the primary human entry point.
 
 !!! info "Archive status"
-    Engineering sunset is **complete**. Live Appwrite ingestion and schedulers are **retired**. The public site is a static GitHub Pages archive. Publication seal commit is still open. See [REVIEWERS.md](https://github.com/Kartavya-Jharwal/ganet-project-bwc/blob/main/REVIEWERS.md).
+    Engineering sunset is **complete**. Live Appwrite ingestion and schedulers are **retired**. The public site is a static GitHub Pages archive. Publication seal landed **2026-07-03**. See [REVIEWERS.md](https://github.com/Kartavya-Jharwal/ganet-project-bwc/blob/main/REVIEWERS.md).
 
 !!! warning "Disclaimer"
     Independent, unofficial archive. Not affiliated with Hult, the professor, or former teammates. AI-assisted layout and development. Graded marks bound to filed deliverables only. If these docs disagree with the Excel close or memo, **filed artifacts win**.

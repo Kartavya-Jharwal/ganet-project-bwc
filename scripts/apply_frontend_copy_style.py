@@ -138,8 +138,8 @@ INDEX_REPLACEMENTS: list[tuple[str, str]] = [
         'PSQ/SH cost <span class="text-mono">-$19,205</span> on the Apr 2 tariff rally. AA/CENX (+$17,169) and lower exposure at the trough did more protecting than inverse ETFs.',
     ),
     (
-        'SH/PSQ behave like short futures, not convex puts — next desk would size 1–2% NAV in OTM SPY puts instead, and still pre-write a ceasefire re-risk playbook.',
-        'SH/PSQ behave like short futures, not convex puts. Next desk would size 1–2% NAV in OTM SPY puts instead, and still pre-write a ceasefire re-risk playbook.',
+        'SH/PSQ behave like short futures, not convex puts - next desk would size 1-2% NAV in OTM SPY puts instead, and still pre-write a ceasefire re-risk playbook.',
+        'SH/PSQ behave like short futures, not convex puts. Next desk would size 1-2% NAV in OTM SPY puts instead, and still pre-write a ceasefire re-risk playbook.',
     ),
     (
         'Python checked our story; it did not trade the book.',
@@ -265,8 +265,8 @@ MAIN_JS_REPLACEMENTS: list[tuple[str, str]] = [
         "title: 'End-of-simulation snapshot. Filed memo targeted ~1.0 average portfolio beta'",
     ),
     (
-        "title: 'TWR^(365/68)−1; 68-day window — context only, not investable'",
-        "title: 'TWR^(365/68)−1 on a 68-day window. Context only, not investable'",
+        "title: 'TWR^(365/68)-1; 68-day window - context only, not investable'",
+        "title: 'TWR^(365/68)-1 on a 68-day window. Context only, not investable'",
     ),
     (
         "${data.word_count ? `${data.word_count.toLocaleString()} words filed` : 'Committee memo'} — pull quotes below; full HTM is authoritative.",

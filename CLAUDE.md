@@ -10,7 +10,7 @@ Archived Hult Investment Challenge repo under the **Ganet** finance program. Cas
 ## What “done” means here
 
 - **Engineering sunset** (`2026-05-01`): quant data frozen, live Appwrite retired, `verify_repo_health` passes on built artifacts.
-- **Publication seal** (still open): one clean commit on `main`, `--require-clean-git` health gate, Pages deploy. See [frontend/PLAN.md](frontend/PLAN.md) and [REVIEWERS.md#publication-checklist-archive-seal](REVIEWERS.md#publication-checklist-archive-seal).
+- **Publication seal** (`2026-07-03`): sealed on `main`, health gate and Pages deploy green. GitHub repo archive (read-only) is a manual step on the website. See [frontend/PLAN.md](frontend/PLAN.md) and [REVIEWERS.md#publication-checklist-archive-seal](REVIEWERS.md#publication-checklist-archive-seal).
 - **Public site:** `frontend/`: **STATIC ARCHIVE** (no `FALLBACK_DATA`, no Appwrite LIVE in `frontend/js/main.js`).
 - **Committee story:** `deliverables/source/` → mirrored under `frontend/deliverables/` and `frontend/assets/post-mortem.pdf`.
 
