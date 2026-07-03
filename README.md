@@ -14,7 +14,7 @@
 |---------|------------|
 | **Live site** | [kartavya-jharwal.github.io/ganet-project-bwc](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
 | Presentation | [frontend/index.html](frontend/index.html) · [frontend/README.md](frontend/README.md) · [frontend/PLAN.md](frontend/PLAN.md) |
-| Technical docs | `uv run python -m mkdocs build -f docs/mkdocs.yml` → [frontend/docs/](frontend/docs/) |
+| Technical docs | MkDocs **source:** [docs/](docs/index.md) → rebuild to [frontend/docs/](frontend/docs/) |
 | Committee packet | [deliverables/](deliverables/README.md) |
 | Code review | [REVIEWERS.md](REVIEWERS.md) (includes [archive seal checklist](REVIEWERS.md#publication-checklist-archive-seal)) |
 | Agent / fork guide | [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) |
@@ -41,6 +41,8 @@ A personal thesis frame (Andrew Lo adaptive-markets lens) for a ten-week **$1M p
 | Code auditor | **Stack** section → [frontend/docs/](frontend/docs/) → [REVIEWERS.md](REVIEWERS.md) |
 
 Machine-readable index: [frontend/llms.txt](frontend/llms.txt) · [frontend/data/site-summary.json](frontend/data/site-summary.json)
+
+**Docs policy:** edit markdown under `docs/` only. Do not hand-edit built HTML in `frontend/docs/`. Rebuild with `uv run python -m mkdocs build -f docs/mkdocs.yml --strict`.
 
 ---
 

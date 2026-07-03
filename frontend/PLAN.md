@@ -1,4 +1,4 @@
-# Project BWC microsite — status
+# Adaptive Efficiency — presentation status
 
 **Last updated:** June 2026  
 **Maintainer:** [Kartavya Jharwal](https://kartavya.tech)
@@ -71,7 +71,7 @@ Behavioural audit is an **on-page** block under `#story` (hydrated from `data/be
 ### Engineering depth
 
 - MkDocs export under `frontend/docs/`.
-- Copy lint: `scripts/verify_frontend_copy.py` (no em dashes or prose semicolons in microsite HTML).
+- Copy lint: `scripts/verify_frontend_copy.py` (no em dashes or prose semicolons in site HTML).
 
 ---
 

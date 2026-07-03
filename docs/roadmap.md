@@ -32,7 +32,7 @@ Feb 24 ────────────────────────�
 - Phase 7-9: Implemented for prototype and actively used
 - Phase 10: In hardening (UX polish, reliability fixes)
 - Phase 22+: Post-hoc analytics (PortfolioHistoryEngine, Brinson, Factor, Monte Carlo, Behavioural Audit) -- Complete
-- Frontend microsite: 4 pages built, Plotly charts wired, tearsheet generation ready
+- Frontend presentation: single-page Adaptive Efficiency site built, Plotly charts wired, tearsheet generation ready
 - Demo-day executable: YES (with required Doppler secrets configured)
 - Heroku deployment: **Deprecated** (local execution only)
 - FinBERT/Sentiment: **Removed** (torch dependency too heavy; weights redistributed)

@@ -1,6 +1,6 @@
 # Implementation phases (0–21)
 
-Public timeline for **Project BWC** engineering. Phases 22+ and sunset are documented separately.
+Public timeline for **Adaptive Efficiency** engineering (Team BWC desk). Phases 22+ and sunset are documented separately.
 
 | Phase | Topic | Doc |
 |-------|--------|-----|

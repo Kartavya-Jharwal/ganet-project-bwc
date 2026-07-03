@@ -1,12 +1,17 @@
-# Interactive Quant Dashboard
+# Interactive quant charts (static archive)
 
-This live quantitative dashboard visualizes the BWC Portfolio's equity curve, drawdowns, factor surfaces, and topological model outputs. 
-<br>
+Plotly charts visualize the Team BWC desk overlay: equity curve, drawdowns, Monte Carlo fan, correlation network, and attribution. They are **static embeds** in the public site, not a live dashboard.
 
-Live Plotly charts ship with the [microsite telemetry page](https://kartavya-jharwal.github.io/ganet-project-bwc/results.html) (equity curve, drawdown, Monte Carlo fan, correlation network, attribution).
+Charts ship on the [Adaptive Efficiency site](https://kartavya-jharwal.github.io/ganet-project-bwc/) (`#research`, `#evidence`; legacy `results.html` redirects to `#evidence`).
 
-Rebuild charts locally:
+Rebuild chart assets locally:
 
 ```bash
 uv run python scripts/build_frontend_assets.py
+```
+
+Then rebuild MkDocs if engineering pages reference updated JSON:
+
+```bash
+uv run python -m mkdocs build -f docs/mkdocs.yml --strict
 ```

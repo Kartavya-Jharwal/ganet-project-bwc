@@ -214,7 +214,7 @@ All non-secret, version-controlled configuration:
 
 ```toml
 [project]
-name = "Ganet - Project BWC"
+name = "Adaptive Efficiency"  # public project title; Team BWC desk
 initial_capital = 1_000_000
 benchmark = "SPY"
 

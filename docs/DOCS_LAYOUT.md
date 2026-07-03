@@ -1,12 +1,12 @@
 # Documentation source (`docs/`)
 
-MkDocs source for the technical site (built to `frontend/docs/`).
+MkDocs **source** for the engineering site. Built output lands in `frontend/docs/` (do not hand-edit HTML there).
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| `index.md` | Site home (Team BWC post-mortem framing) |
+| `index.md` | Site home (Adaptive Efficiency engineering archive) |
 | `phases/` | Public implementation timeline (phases 0–21) |
 | `phase-22-onwards-advanced-analytics.md` | Post-21 analytics |
 | `phase-finale-endgame.md` | Sunset / endgame |
@@ -16,11 +16,14 @@ MkDocs source for the technical site (built to `frontend/docs/`).
 | `archive/` | Internal history: tasks, Manim sources, legacy viz HTML (~13MB), scratch |
 | `stylesheets/` | MkDocs Material overrides |
 
-## Not in this folder
+## Repository surfaces
 
-- **Committee deliverables:** [`../deliverables/`](../deliverables/README.md)
-- **Microsite HTML:** [`../frontend/`](../frontend/index.html)
-- **Quant engine:** [`../quant_monitor/`](../quant_monitor/)
+| Surface | Path |
+|---------|------|
+| **Project title** | Adaptive Efficiency (whole repo) |
+| Committee deliverables | [`../deliverables/`](../deliverables/README.md) |
+| Public presentation | [`../frontend/`](../frontend/index.html) |
+| Quant engine | [`../quant_monitor/`](../quant_monitor/) |
 
 ## Build
 
@@ -28,4 +31,4 @@ MkDocs source for the technical site (built to `frontend/docs/`).
 uv run python -m mkdocs build -f docs/mkdocs.yml --strict
 ```
 
-Excluded from the published site (see `mkdocs.yml` `exclude_docs`): `archive/`, `*.py`, redirect stubs removed.
+Excluded from the published site (see `mkdocs.yml` `exclude_docs`): `archive/`, `*.py`, `DOCS_LAYOUT.md`.

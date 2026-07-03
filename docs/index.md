@@ -1,12 +1,14 @@
-# Team BWC — Project BWC
+# Adaptive Efficiency — engineering docs
 
-> Hult Investment Challenge · public engineering archive · sunset `2026-05-01`
+> **Team BWC** desk · Hult CHL-0200 · independent unofficial archive · sunset `2026-05-01`
 
-!!! success "Post-mortem framing"
-    **Deliverables** ([committee packet](deliverables-index.md)) describe the full investment program. **`quant_monitor/`** documents the systematic audit layer—topology, walk-forward tests, and behavioural metrics—not the entire BWC capability surface.
+**Adaptive Efficiency** is the public project name for this repository. These MkDocs pages document the engineering freeze (`quant_monitor/`, phases, results exports). The graded investment narrative lives in [deliverables](deliverables-index.md). The [live site](https://kartavya-jharwal.github.io/ganet-project-bwc/) is the primary human entry point.
 
-!!! info "Archive status (June 2026)"
-    Engineering sunset is **complete**. Live Appwrite ingestion and schedulers are **retired**. The public microsite (*Adaptive Efficiency*) is a static GitHub Pages archive. Publication seal commit is still open.
+!!! info "Archive status"
+    Engineering sunset is **complete**. Live Appwrite ingestion and schedulers are **retired**. The public site is a static GitHub Pages archive. Publication seal commit is still open. See [REVIEWERS.md](https://github.com/Kartavya-Jharwal/ganet-project-bwc/blob/main/REVIEWERS.md).
+
+!!! warning "Disclaimer"
+    Independent, unofficial archive. Not affiliated with Hult, the professor, or former teammates. AI-assisted layout and development. Graded marks bound to filed deliverables only. If these docs disagree with the Excel close or memo, **filed artifacts win**.
 
 ## What this site contains
 
@@ -14,22 +16,24 @@
 - **Advanced analytics (22+):** [phase-22-onwards-advanced-analytics.md](phase-22-onwards-advanced-analytics.md)
 - **Sunset / endgame:** [phase-finale-endgame.md](phase-finale-endgame.md)
 - **Results:** [performance](performance.md), [backtest](backtest-results.md), [Monte Carlo forward](monte-carlo-forward.md)
-- **Microsite:** [Adaptive Efficiency](https://kartavya-jharwal.github.io/ganet-project-bwc/)
+- **Public presentation:** [Adaptive Efficiency](https://kartavya-jharwal.github.io/ganet-project-bwc/)
 
-Faculty grades and peer feedback are reflected in the client deliverables; this docs tree is the **final engineering freeze**.
+Faculty grades and peer feedback are reflected in the client deliverables. This docs tree is the **final engineering freeze**.
 
-## Audit module (quant)
+## Audit module (`quant_monitor/`)
 
 Sparse inverse covariance graphs (`GraphicalLassoCV`), HRP sizing, regime-weighted signal fusion, DuckDB EOD matrix, and journal-driven NAV reconstruction. See [external review](external-review.md) and [REVIEWERS.md](https://github.com/Kartavya-Jharwal/ganet-project-bwc/blob/main/REVIEWERS.md).
 
-## Rebuild
+## Rebuild (source only)
 
-Charts and narrative JSON: `uv run python scripts/build_frontend_assets.py` (optional; data may already be built).
+Rebuilds `frontend/docs/` from this folder. Do not hand-edit built HTML under `frontend/docs/`.
 
 ```bash
 bun run minify:frontend
 uv run python -m mkdocs build -f docs/mkdocs.yml --strict
 ```
+
+Optional chart and narrative JSON refresh: `uv run python scripts/build_frontend_assets.py`
 
 ---
 

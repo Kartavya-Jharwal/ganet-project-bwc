@@ -1,6 +1,6 @@
 # Design Decisions
 
-This document captures the key architectural and design decisions made for the Ganet - Project BWC system, along with the rationale behind each choice.
+This document captures the key architectural and design decisions made for **Adaptive Efficiency** (Team BWC engineering archive), along with the rationale behind each choice.
 
 ## Table of Contents
 
@@ -244,7 +244,7 @@ High signal + low confidence = conflicting views. Better to wait.
 
 A standard student simulation reports P&L and basic Sharpe ratios. This repository actively pays homage to true institutional fund architectures (e.g., AQR, BlackRock) by rigorously enforcing **Epistemic Honesty** through a dedicated analytics lifecycle (Phases 22+). 
 
-| Standard Student Approach | Institutional Approach (Project BWC) |
+| Standard Student Approach | Institutional Approach (Adaptive Efficiency) |
 |---------------------------|--------------------------------------|
 | **"We made 3%"** | Brinson-Fachler Attribution (Allocation vs. Selection vs. Interaction) |
 | **"Our Beta is 1.2"** | Fama-French 3-Factor & Carhart 4-Factor Regression mapping implicit tilts (SMB, HML, MOM) |

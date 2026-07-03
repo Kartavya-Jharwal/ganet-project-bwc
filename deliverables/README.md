@@ -1,10 +1,10 @@
-# Team BWC — Project BWC deliverables
+# Team BWC deliverables
 
-**Sunset freeze:** valuation `2026-04-10` · reporting `2026-05-01` · Hult Investment Challenge (Team 5)
+**Adaptive Efficiency** archive · sunset `2026-04-10` valuation · `2026-05-01` reporting · Hult Investment Challenge (Team 5)
 
-This folder is the **primary public narrative** for the program: client post-mortem, charter, trading records, and committee materials. The **`quant_monitor/`** package in the repo is one audit module (~fraction of total capability)—not the whole investment story.
+This folder is the **grading authority** for the program: client post-mortem, charter, trading records, and committee materials. The **`quant_monitor/`** package is a supplementary audit overlay, not the whole investment story.
 
-Faculty grades and peer feedback are **already incorporated** into these deliverables; this archive is the final committee packet.
+Faculty grades and peer feedback are **already incorporated** here. If the public site or engineering docs disagree with these files, **this folder wins**.
 
 ## Files (`source/`)
 
@@ -18,7 +18,7 @@ Faculty grades and peer feedback are **already incorporated** into these deliver
 | `Trading_Log-5_Team_5 (4).2.csv` | Trading log export |
 | `Different format-transaction history.csv` | Alternate journal export |
 
-**Web mirror:** [post-mortem PDF](../frontend/assets/post-mortem.pdf) · [Microsite](../frontend/index.html) · [Technical docs](../frontend/docs/)
+**Web mirror:** [post-mortem PDF](../frontend/assets/post-mortem.pdf) · [live site](../frontend/index.html) · [engineering docs](../frontend/docs/)
 
 ## Reproducible quant audit (code)
 

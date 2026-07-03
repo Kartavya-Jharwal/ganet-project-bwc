@@ -8,6 +8,8 @@
 
 **Adaptive Efficiency** names the whole project (deliverables, `quant_monitor/`, docs, and this site). `frontend/` is the public presentation layer. Independent **unofficial archive**, not an official Hult course publication.
 
+> **Disclaimer:** Independent, unofficial presentation of Team BWC's investment simulation. Not affiliated with Hult, the Professor, or former teammates. AI-assisted layout and development. Graded marks bound to filed deliverables. Maintainer interpretations are personal. Filed artifacts win on any conflict.
+
 **Status doc:** [PLAN.md](./PLAN.md)
 
 ---

@@ -1,4 +1,6 @@
-# Project BWC — Mermaid Diagrams
+# Adaptive Efficiency — Mermaid Diagrams
+
+Legacy diagram reference (internal). Project title: **Adaptive Efficiency** · desk: **Team BWC**.
 
 > For Excalidraw renderer, static architecture/infrastructure documentation.
 > Paste any block into [mermaid.live](https://mermaid.live) or Excalidraw's Mermaid import.

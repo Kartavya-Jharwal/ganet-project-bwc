@@ -1,5 +1,7 @@
 # Portfolio Performance Summary
 
+> **Adaptive Efficiency** archive export · Team BWC desk · sunset freeze `2026-05-01`
+
 **Generated:** 2026-05-22 14:27 UTC
 **Initial Capital:** $1,000,000.00
 **Cash Balance:** $111,830.47

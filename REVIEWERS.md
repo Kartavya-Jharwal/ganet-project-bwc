@@ -37,7 +37,7 @@ project-bwc/
 ├── scripts/                # One-shot maintenance & asset builders
 ├── tests/                  # Unit tests + `test_data/` fixtures
 ├── docs/                   # MkDocs source + exported JSON/MD results
-├── frontend/               # Static microsite (GitHub Pages target)
+├── frontend/               # Adaptive Efficiency public site (GitHub Pages)
 └── REVIEWERS.md            # This file
 ```
 
@@ -89,11 +89,11 @@ Trade ledger fixture: `tests/test_data/journal_transaction_history.csv` (mirrors
 
 ## Publication checklist (archive seal)
 
-**Engineering sunset** ran on `2026-05-01` (frozen quant data, static microsite, retired live ingestion). The **publication seal** (one clean commit, read-only archive) is still open. Pre-seal work is mostly **minify + deliverables sync**, not a full asset rebuild.
+**Engineering sunset** ran on `2026-05-01` (frozen quant data, static public site, retired live ingestion). The **publication seal** (one clean commit, read-only archive) is still open. Pre-seal work is mostly **minify + deliverables sync**, not a full asset rebuild.
 
 Use this checklist when closing the repo, not when re-running the original sunset freeze for the first time.
 
-1. **Land microsite WIP:** commit `frontend/` HTML/CSS/JS sources, copy, and any manual asset edits. See [frontend/PLAN.md](frontend/PLAN.md).
+1. **Land presentation WIP:** commit `frontend/` HTML/CSS/JS sources, copy, and any manual asset edits. See [frontend/PLAN.md](frontend/PLAN.md).
 2. **Minify + sync (lean):** data and charts are already built. Run:
    ```bash
    bun run minify:frontend
@@ -102,7 +102,7 @@ Use this checklist when closing the repo, not when re-running the original sunse
    Deliverables sync copies `deliverables/source/` files, refreshes manifest, and updates download table rows in the hand-edited `deliverables/index.html`. Skip `build_frontend_assets.py` unless charts/data need rebuild.
 3. **Health gate:** `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git`
 4. **CI parity:** `uv run pytest tests/ -m "not integration"`, `uv run ruff check quant_monitor scripts tests`, `uv run ty check quant_monitor`, `uv run bandit -r quant_monitor/ -c pyproject.toml`, `uv run deptry .`
-5. **Microsite checks:** open `frontend/index.html` — splash disclaimer, static archive status (no Appwrite LIVE), KPIs from `frontend/data/results.json` after build.
+5. **Site checks:** open `frontend/index.html` — splash disclaimer, static archive status (no Appwrite LIVE), KPIs from `frontend/data/results.json` after build.
 6. **Deliverables:** `deliverables/source/` contains committee packet; `frontend/assets/post-mortem.pdf` mirrors client PDF.
 7. **Hygiene:** no `quant_monitor/cli_old.py`, no root `BWC/` working copy, no secrets in git.
 8. **Seal commit:** single archive seal commit on `main`; push to trigger Pages deploy; optionally mark repo read-only on GitHub.
