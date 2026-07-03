@@ -1,7 +1,7 @@
 [project]
 name = "project-bwc"
 version = "0.1.0"
-description = "Ganet - Project BWC (Brownies with White Chocolate) — autonomous signal generation, risk monitoring, and rebalancing recommendations"
+description = "Team BWC Hult CHL-0200 archive: Adaptive Efficiency microsite + reproducible Python quant audit overlay"
 requires-python = ">=3.11,<3.14"
 dependencies = [
     # Visuals
