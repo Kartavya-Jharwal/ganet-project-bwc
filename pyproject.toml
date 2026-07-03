@@ -1,7 +1,7 @@
 [project]
 name = "project-bwc"
 version = "0.1.0"
-description = "Team BWC Hult CHL-0200 archive: Adaptive Efficiency microsite + reproducible Python quant audit overlay"
+description = "Adaptive Efficiency — independent Team BWC Hult CHL-0200 archive: filed deliverables, Python quant audit, and static presentation site"
 requires-python = ">=3.11,<3.14"
 dependencies = [
     # Visuals

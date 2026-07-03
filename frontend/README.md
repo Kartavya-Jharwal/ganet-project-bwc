@@ -1,4 +1,4 @@
-# Adaptive Efficiency · Project BWC microsite
+# Adaptive Efficiency
 
 **Team BWC** · Hult CHL-0200 · engineering sunset `2026-05-01` · publication seal pending
 
@@ -6,7 +6,7 @@
 
 **Live:** [kartavya-jharwal.github.io/ganet-project-bwc](https://kartavya-jharwal.github.io/ganet-project-bwc/)
 
-Public **5-minute reviewer brief**: filed investment-challenge artifacts, honest desk results, faculty score, and a reproducible Python audit layer. This is an **independent, unofficial archive**, not an official Hult course publication.
+**Adaptive Efficiency** names the whole project (deliverables, `quant_monitor/`, docs, and this site). `frontend/` is the public presentation layer. Independent **unofficial archive**, not an official Hult course publication.
 
 **Status doc:** [PLAN.md](./PLAN.md)
 

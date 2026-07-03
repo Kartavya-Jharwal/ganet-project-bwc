@@ -17,9 +17,9 @@ The original phased finish plan (splash rewrite, OG retitle, deliverables redire
 
 ## Site identity (as built)
 
-- **Public title:** *Adaptive Efficiency* — personal thesis frame (Andrew Lo adaptive-markets lens), not a performance claim.
+- **Project title:** *Adaptive Efficiency* — names the full repository and public archive (thesis frame, Andrew Lo adaptive-markets lens). Not a performance claim.
 - **Desk name:** Team **BWC** · Hult **CHL-0200** · violet accent `#a78bfa`.
-- **Framing:** independent **unofficial** archive. Faculty marks (`422/430`) are filed and closed. This microsite is maintainer presentation on the same data, not an official Hult publication.
+- **Framing:** independent **unofficial** archive. Faculty marks (`422/430`) are filed and closed. Maintainer presentation on the same data, not an official Hult publication.
 
 ---
 
