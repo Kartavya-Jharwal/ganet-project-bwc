@@ -1,95 +1,110 @@
-# Project Ganet · Adaptive Efficiency
+# Adaptive Efficiency
 
-[![Live site](https://img.shields.io/badge/site-GitHub%20Pages-24292f?style=flat-square&logo=github)](https://kartavya-jharwal.github.io/ganet-project-bwc/)
+**Team BWC · Hult CHL-0200 · mock $1M paper desk post-mortem**
+
+[![Open live site](https://img.shields.io/badge/Open-Live%20Site-6d28d9?style=for-the-badge&logo=github)](https://kartavya-jharwal.github.io/ganet-project-bwc/)
+[![Engineering docs](https://img.shields.io/badge/Read-Engineering%20Docs-24292f?style=for-the-badge&logo=readthedocs)](frontend/docs/)
+[![Audit the repo](https://img.shields.io/badge/Audit-REVIEWERS.md-a78bfa?style=for-the-badge)](REVIEWERS.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-a78bfa?style=flat-square)](LICENSE)
-[![Archive](https://img.shields.io/badge/status-read--mostly-6b7280?style=flat-square)](REVIEWERS.md#publication-checklist-archive-seal)
+[![Archive](https://img.shields.io/badge/status-static%20archive-6b7280?style=flat-square)](REVIEWERS.md#publication-checklist-archive-seal)
 [![Sunset](https://img.shields.io/badge/sunset-2026--05--01-6b7280?style=flat-square)](frontend/PLAN.md)
 
-**Team BWC** · Hult CHL-0200 · independent unofficial archive
-
-This repository is a localized deployment within the **Project Ganet** framework, an independent initiative mapping systemic financial literacy through an opinionated, first-principles design lens.
-
-Where the upstream project isolates the abstract architecture of fluency, **Adaptive Efficiency** operates as a standalone case study. It represents one of a sequence of empirical trials designed to stress-test theoretical models against the messy constraints of live execution.
-
-**June 2026 polish:** engineering sunset freeze completed **2026-05-01** (valuation `2026-04-10`). The repo is now read-mostly and being refined for academic, quant, and general audiences. Publication seal commit is still open. See [frontend/PLAN.md](frontend/PLAN.md).
-
-**Maintainer:** [Kartavya Jharwal](https://kartavya.tech) · MIT — forks must retain [LICENSE](LICENSE) attribution.
-
-> **Disclaimer** (from [live splash](frontend/index.html)): This archive is an independent, unofficial presentation of Team BWC's investment simulation. It is not affiliated with Hult, the Professor, or former teammates. While the layout and development were AI-assisted, official graded marks remain strictly bound to the submitted deliverables. All narrative reflections and interpretations are entirely my own. Faculty sign-off is closed (`422 / 430`). If this repository disagrees with the Excel close or filed memo, **the filed artifacts win**.
+An opinionated post-mortem on implementing investment fundamentals, qualitative book management, and strict risk discipline under Q1 2026 stress. **Start on the live site** for the narrative, charts, and filed sources. Use this repository for engineering depth and audit trails.
 
 ---
 
-## Brand hierarchy
+## What this is
 
-| Name | Role |
-|------|------|
-| **Ganet** / **Project Ganet** | Parent framework: financial literacy, first-principles design, case-study portfolio |
-| **Adaptive Efficiency** | This standalone case study / empirical trial (Andrew Lo adaptive-markets lens on a short simulation) |
-| **Team BWC** | Hult CHL-0200 desk that managed the $1M paper book (Team 5) |
-| **Kartavya Jharwal** | Maintainer · [kartavya.tech](https://kartavya.tech) · logos at [`frontend/assets/PB_logos/`](frontend/assets/PB_logos/) |
+This repo is a **localized deployment** within [**Project Ganet**](https://kartavya.tech): an independent initiative mapping systemic financial literacy through first-principles design.
 
-Adaptive Efficiency is **not** a claim the desk beat the simulation (`-4.37%` graded close). It names how this case study is framed and presented.
+**Adaptive Efficiency** is one empirical trial in that sequence. It stress-tests theory against live execution constraints: a ten-week Hult simulation (20 Jan → 1 May 2026), a $1M paper book managed by **Team BWC** (Team 5), and a Python audit overlay on filed Excel, journals, and committee deliverables.
 
----
+Engineering sunset freeze completed **2026-05-01** (valuation snapshot **2026-04-10**). **June 2026 polish** refines the archive for academics, quants, and recruiters. Publication seal commit is still open. See [frontend/PLAN.md](frontend/PLAN.md).
 
-## Start here
-
-| Surface | URL / path |
-|---------|------------|
-| **Live site** | [kartavya-jharwal.github.io/ganet-project-bwc](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
-| Committee packet | [deliverables/](deliverables/README.md) (grading authority) · [download table](frontend/deliverables/index.html) |
-| Presentation layer | [frontend/](frontend/index.html) · [frontend/README.md](frontend/README.md) · [frontend/PLAN.md](frontend/PLAN.md) |
-| Engineering docs | MkDocs **source:** [docs/](docs/index.md) → rebuild to [frontend/docs/](frontend/docs/) |
-| Code review | [REVIEWERS.md](REVIEWERS.md) (includes [archive seal checklist](REVIEWERS.md#publication-checklist-archive-seal)) |
-| Agent / fork guide | [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) |
-
-| Audience | Path |
-|----------|------|
-| Economist / PM | Live splash disclaimer → **Sources** → **Desk** results → faculty **422/430** |
-| Recruiter | Hero + executive summary + contact on the [live site](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
-| Code auditor | **Stack** section → [frontend/docs/](frontend/docs/) → [REVIEWERS.md](REVIEWERS.md) |
-
-Machine-readable index: [frontend/llms.txt](frontend/llms.txt) · [frontend/data/site-summary.json](frontend/data/site-summary.json)
+> **Disclaimer:** Independent, unofficial archive of Team BWC's simulation. Not affiliated with Hult, the professor, or former teammates. AI-assisted layout; official grades bind to submitted deliverables only. Faculty sign-off closed (**422 / 430**). If this repo disagrees with the Excel close or filed memo, **the filed artifacts win**.
 
 ---
 
-## Repository layers
+## Three paths
+
+| | Where to go | Best for |
+|---|-------------|----------|
+| **1** | [**Open the live site →**](https://kartavya-jharwal.github.io/ganet-project-bwc/) | Story, desk results, faculty evaluation, contact |
+| **2** | [**Engineering docs →**](frontend/docs/) | Phases, architecture, backtest JSON, MkDocs depth |
+| **3** | [**Audit the code →**](REVIEWERS.md) | Grading authority paths, archive seal checklist, reviewer map |
+
+**Grading authority:** [deliverables/](deliverables/README.md) · **Presentation source:** [frontend/](frontend/index.html) · **MkDocs source:** [docs/](docs/index.md) (rebuild to `frontend/docs/`)
+
+---
+
+## Proof points
+
+| Metric | Value | Context |
+|--------|-------|---------|
+| **Graded desk close** | **-4.37%** | Excel close, 11 Apr 2026 |
+| **Faculty score** | **422 / 430** | Sign-off closed |
+| **Apr 2 trough** | **-6.44%** desk vs **-11.72%** SPY | **+5.28pp** relative preservation at the low |
+| **Archive status** | Static / read-only | Simulation closed · term-end snapshot 2026-05-01 |
+
+Adaptive Efficiency names the framing, not a claim the desk beat the simulation.
+
+---
+
+## For whom
+
+| Audience | Start here |
+|----------|------------|
+| **Academics** | Live site → [Sources](https://kartavya-jharwal.github.io/ganet-project-bwc/#sources) → [Faculty](https://kartavya-jharwal.github.io/ganet-project-bwc/#evaluation) → filed [deliverables/](deliverables/README.md) |
+| **Quants** | Live site → [Desk](https://kartavya-jharwal.github.io/ganet-project-bwc/#evidence) → [Stack](https://kartavya-jharwal.github.io/ganet-project-bwc/#stack) → [engineering docs](frontend/docs/) |
+| **Recruiters** | [Live site hero + contact](https://kartavya-jharwal.github.io/ganet-project-bwc/#contact) · executive summary on-page |
+
+Machine-readable: [frontend/llms.txt](frontend/llms.txt) · [frontend/data/site-summary.json](frontend/data/site-summary.json)
+
+---
+
+## Maintainer
+
+**[Kartavya Jharwal](https://kartavya.tech)** · MIT ([LICENSE](LICENSE); forks retain attribution)
+
+Logos: [`frontend/assets/PB_logos/`](frontend/assets/PB_logos/)
+
+---
+
+<details>
+<summary><strong>Repository map</strong></summary>
 
 | Layer | Path | Role |
 |-------|------|------|
 | Filed narrative | `deliverables/` | Committee PDF, Excel, charter, journals (**grading authority**) |
-| Audit engine | `quant_monitor/` | Reproducible Python overlay (walk-forward, stress, behavioural audit) |
-| Public presentation | `frontend/` | Single-page archive, charts, JSON hydration |
-| Engineering depth | `docs/` | Ganet technical docs for this freeze (phases, backtest JSON, architecture) |
+| Audit engine | `quant_monitor/` | Walk-forward, stress, behavioural audit |
+| Public site | `frontend/` | Single-page archive, charts, JSON hydration |
+| Engineering docs | `docs/` → `frontend/docs/` | Ganet technical depth for this freeze |
 
-**Docs policy:** edit markdown under `docs/` only. Do not hand-edit built HTML in `frontend/docs/`. Rebuild with `uv run python -m mkdocs build -f docs/mkdocs.yml --strict`.
+```
+deliverables/       Filed committee packet
+frontend/           Adaptive Efficiency public site
+quant_monitor/      Python audit engine
+scripts/            prep_duckdb, build_frontend_assets, sunset_freeze
+tests/              Unit tests + journal fixtures
+docs/               MkDocs source (do not hand-edit built HTML)
+```
 
----
+**Docs policy:** edit markdown under `docs/` only. Rebuild with `uv run python -m mkdocs build -f docs/mkdocs.yml --strict`.
 
-## GitHub repository metadata
+**Not in git:** `portfolio.duckdb`, `.venv/`, secrets.
 
-| Field | Value |
-|-------|-------|
-| Homepage | [kartavya-jharwal.github.io/ganet-project-bwc/](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
-| Social preview image | [assets/og-card.png](https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png) |
+</details>
 
-GitHub does not expose social preview upload through the `gh` CLI or REST API. Set it manually:
-
-1. Open **Settings → General → Social preview** on the repository.
-2. Upload the OG card from the live site URL above, or download from `frontend/assets/og-card.png` in this repo.
-
-Full instructions: [docs/github-social-preview.md](docs/github-social-preview.md).
-
----
-
-## Quick start
+<details>
+<summary><strong>Quick start (developers)</strong></summary>
 
 ```bash
 uv sync --frozen
 .\scripts\sunset_freeze.ps1    # Windows — or scripts/sunset_freeze.sh
 ```
 
-Manual steps:
+Manual rebuild:
 
 ```bash
 uv run python scripts/prep_duckdb_and_sync.py
@@ -108,32 +123,25 @@ uv run python scripts/sync_deliverables_manual.py
 uv run python scripts/verify_repo_health.py --strict-artifacts
 ```
 
----
-
-## Repository map
-
-```
-deliverables/       Filed committee packet (PDF, Excel, charter, journals)
-frontend/           Adaptive Efficiency public site (Ganet presentation layer)
-quant_monitor/      Python audit engine (config, data, models, backtest, CLI)
-scripts/            prep_duckdb, build_frontend_assets, export, sunset_freeze
-tests/              Unit tests + journal_transaction_history.csv
-docs/               Ganet MkDocs source, phases/, exported JSON/MD
-docker/             Optional container entrypoint
-```
-
-**Not in git:** `portfolio.duckdb`, `.venv/`, secrets (Doppler).
-
----
-
-## CLI (`project`)
-
-| Command | Notes |
-|---------|--------|
+| CLI | Notes |
+|-----|-------|
 | `project doctor` | Environment check |
 | `project run-backtest` | Walk-forward test |
 
 Prefer `scripts/` for sunset. Avoid `project sync-data` (may start scheduler).
+
+Agent / fork guide: [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md)
+
+</details>
+
+<details>
+<summary><strong>GitHub social preview</strong></summary>
+
+Homepage: [kartavya-jharwal.github.io/ganet-project-bwc/](https://kartavya-jharwal.github.io/ganet-project-bwc/)
+
+OG card: [assets/og-card.png](https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png) · upload via **Settings → General → Social preview**. Full steps: [docs/github-social-preview.md](docs/github-social-preview.md).
+
+</details>
 
 ---
 
