@@ -3,48 +3,208 @@
   "branch": "main",
   "commits_url": "https://github.com/Kartavya-Jharwal/ganet-project-bwc/commits/main",
   "index_source_url": "https://github.com/Kartavya-Jharwal/ganet-project-bwc/blob/main/frontend/index.html",
-  "generated_at": "2026-06-22T00:00:00+00:00",
+  "generated_at": "2026-07-03T13:54:40.191255+00:00",
   "commit_count": 40,
   "commits": [
-    {"hash": "fefabfd", "date": "2026-06-22", "subject": "videos and graphs"},
-    {"hash": "9611387", "date": "2026-06-22", "subject": "Polish splash preloader with liquid gradient and refreshed copy."},
-    {"hash": "a71b8a4", "date": "2026-06-18", "subject": "changes i guess"},
-    {"hash": "04257c1", "date": "2026-06-17", "subject": "microsite layout touch-up"},
-    {"hash": "3a2432a", "date": "2026-06-17", "subject": "copy and spacing pass"},
-    {"hash": "bb5b5c8", "date": "2026-05-28", "subject": "Revert Refine static microsite layout and desk timeline"},
-    {"hash": "5e7f498", "date": "2026-05-28", "subject": "Refine static microsite layout and desk timeline"},
-    {"hash": "dc9d393", "date": "2026-05-25", "subject": "frontend narrative polish"},
-    {"hash": "c9d53a2", "date": "2026-05-25", "subject": "desk timeline data sync"},
-    {"hash": "0a5de9b", "date": "2026-05-25", "subject": "archive copy pass"},
-    {"hash": "833f633", "date": "2026-05-24", "subject": "Fix BWC branding (BWX typo), add AGENTS/CLAUDE fork guides."},
-    {"hash": "2d1f723", "date": "2026-05-22", "subject": "Sunset seal: static archive, CI health gate, deliverables-first site."},
-    {"hash": "9e4c453", "date": "2026-04-08", "subject": "web dev push still lacking final portfolio lock in"},
-    {"hash": "bf55d95", "date": "2026-03-25", "subject": "Run Pages deploy independently of CI"},
-    {"hash": "160f86f", "date": "2026-03-25", "subject": "Fix MkDocs build output dir for Pages"},
-    {"hash": "a6083df", "date": "2026-03-25", "subject": "Fix GitHub Pages deployment on main"},
-    {"hash": "1382b35", "date": "2026-03-16", "subject": "late-stage desk integration push"},
-    {"hash": "b56bb49", "date": "2026-03-14", "subject": "enrich Plotly dashboard with heatmap and var lines"},
-    {"hash": "894fb73", "date": "2026-03-14", "subject": "merge remote main"},
-    {"hash": "4c6938c", "date": "2026-03-14", "subject": "fix test suite hangs and dashboard scope errors"},
-    {"hash": "26baf43", "date": "2026-03-14", "subject": "Merge pull request #5 finish-project-implementation"},
-    {"hash": "f061d09", "date": "2026-03-14", "subject": "Address code review: clarity comments"},
-    {"hash": "e255aa6", "date": "2026-03-14", "subject": "Implement Confidence-Filtered Signal Engine and Plotly dashboard"},
-    {"hash": "5daeeef", "date": "2026-03-14", "subject": "Address code review feedback"},
-    {"hash": "4086a4a", "date": "2026-03-14", "subject": "Complete scaffolding: dashboard CLI and export archive"},
-    {"hash": "9e1ef80", "date": "2026-03-14", "subject": "Initial plan"},
-    {"hash": "1834d97", "date": "2026-03-14", "subject": "CI and tooling bootstrap"},
-    {"hash": "40543c9", "date": "2026-03-14", "subject": "ci: Fallback gracefully if Doppler token missing"},
-    {"hash": "7c730a8", "date": "2026-03-14", "subject": "ci: Install manim system dependencies"},
-    {"hash": "03bda56", "date": "2026-03-14", "subject": "ci: Update pipeline for type checks and security"},
-    {"hash": "1f9f04b", "date": "2026-03-14", "subject": "docs and config touch-up"},
-    {"hash": "aa9f26a", "date": "2026-03-14", "subject": "docs(core): overhaul institutional narrative and endpoint security"},
-    {"hash": "b532096", "date": "2026-03-14", "subject": "feat: phase 32-35 quantitative rendering and telemetry"},
-    {"hash": "fbb9925", "date": "2026-03-13", "subject": "style: advance institutional luxury CSS"},
-    {"hash": "c67988d", "date": "2026-03-13", "subject": "style: advance CSS responsive architecture"},
-    {"hash": "55f4f4f", "date": "2026-03-13", "subject": "feat: setup Phase 29-31 frontend architecture"},
-    {"hash": "9cd6e95", "date": "2026-03-13", "subject": "feat: complete Phase 27-28 stress testing"},
-    {"hash": "65893af", "date": "2026-03-13", "subject": "feat: complete Phase 22-26 advanced analytics modules"},
-    {"hash": "eb4f07e", "date": "2026-03-13", "subject": "chore: Sync repository for ganet-project-bwc rename"},
-    {"hash": "748a581", "date": "2026-03-13", "subject": "docs: Architecture expansion for Phases 22-35"}
+    {
+      "hash": "1d918a3",
+      "date": "2026-07-03",
+      "subject": "Restore GitHub Pages deploy workflow (publish frontend to gh-pages)."
+    },
+    {
+      "hash": "9a2fb42",
+      "date": "2026-07-03",
+      "subject": "Seal Adaptive Efficiency archive for publication."
+    },
+    {
+      "hash": "8cb3fc6",
+      "date": "2026-07-04",
+      "subject": "Land presentation WIP and pre-seal build."
+    },
+    {
+      "hash": "27fed5b",
+      "date": "2026-07-03",
+      "subject": "README: merge badge rows, add narrative blurbs after three paths."
+    },
+    {
+      "hash": "310cbc6",
+      "date": "2026-07-03",
+      "subject": "README: styled og-card hero, subtitle, expanded desk data."
+    },
+    {
+      "hash": "f6158e9",
+      "date": "2026-07-03",
+      "subject": "README: og-card hero, small logo beside name."
+    },
+    {
+      "hash": "526527f",
+      "date": "2026-07-03",
+      "subject": "README: OG preview, PB logo, personal brand widgets."
+    },
+    {
+      "hash": "dedb3dc",
+      "date": "2026-07-03",
+      "subject": "Rewrite README as landing page funneling to live site."
+    },
+    {
+      "hash": "4a44c16",
+      "date": "2026-07-03",
+      "subject": "June 2026 archive polish: Ganet framework README and chronological deliverables."
+    },
+    {
+      "hash": "07a7d3b",
+      "date": "2026-07-03",
+      "subject": "Establish Ganet as parent brand; Adaptive Efficiency as case study."
+    },
+    {
+      "hash": "fe9a90b",
+      "date": "2026-07-03",
+      "subject": "Archive cleanup: retitle all source markdown to Adaptive Efficiency."
+    },
+    {
+      "hash": "c3c1893",
+      "date": "2026-07-03",
+      "subject": "Retitle repository to Adaptive Efficiency as whole-project name."
+    },
+    {
+      "hash": "643c91c",
+      "date": "2026-07-03",
+      "subject": "Document Adaptive Efficiency microsite as independent frontend in README."
+    },
+    {
+      "hash": "7bbead9",
+      "date": "2026-06-23",
+      "subject": "."
+    },
+    {
+      "hash": "1f8646a",
+      "date": "2026-06-23",
+      "subject": "."
+    },
+    {
+      "hash": "7d57ef9",
+      "date": "2026-06-22",
+      "subject": ". videos and graphs"
+    },
+    {
+      "hash": "1f5180c",
+      "date": "2026-06-22",
+      "subject": "Polish splash preloader with liquid gradient and refreshed copy."
+    },
+    {
+      "hash": "4f4dfff",
+      "date": "2026-06-18",
+      "subject": "changes i guess"
+    },
+    {
+      "hash": "e906270",
+      "date": "2026-06-17",
+      "subject": "."
+    },
+    {
+      "hash": "d758d41",
+      "date": "2026-06-17",
+      "subject": "."
+    },
+    {
+      "hash": "8e9818a",
+      "date": "2026-05-28",
+      "subject": "Revert \"Refine static microsite layout and desk timeline\""
+    },
+    {
+      "hash": "f0521e5",
+      "date": "2026-05-28",
+      "subject": "Refine static microsite layout and desk timeline"
+    },
+    {
+      "hash": "43c7af5",
+      "date": "2026-05-25",
+      "subject": "."
+    },
+    {
+      "hash": "5299787",
+      "date": "2026-05-25",
+      "subject": "."
+    },
+    {
+      "hash": "26564e2",
+      "date": "2026-05-25",
+      "subject": "."
+    },
+    {
+      "hash": "ae34539",
+      "date": "2026-05-24",
+      "subject": "Fix BWC branding (BWX typo), add AGENTS/CLAUDE fork guides."
+    },
+    {
+      "hash": "679811c",
+      "date": "2026-05-22",
+      "subject": "Sunset seal: static archive, CI health gate, deliverables-first site."
+    },
+    {
+      "hash": "61a5282",
+      "date": "2026-04-08",
+      "subject": "web dev push still lacking final portoflio lock in"
+    },
+    {
+      "hash": "50b09b1",
+      "date": "2026-03-25",
+      "subject": "Run Pages deploy independently of CI"
+    },
+    {
+      "hash": "1c7e877",
+      "date": "2026-03-25",
+      "subject": "Fix MkDocs build output dir for Pages"
+    },
+    {
+      "hash": "ae14e7f",
+      "date": "2026-03-25",
+      "subject": "Fix GitHub Pages deployment on main"
+    },
+    {
+      "hash": "7e5096a",
+      "date": "2026-03-16",
+      "subject": "IDk praying before i let it all go"
+    },
+    {
+      "hash": "c97f76d",
+      "date": "2026-03-14",
+      "subject": "feat: enrich Plotly dashboard with heatmap and var lines, integrated into MkDocs with GH Action deploy to frontend"
+    },
+    {
+      "hash": "5d49599",
+      "date": "2026-03-14",
+      "subject": "Merge branch 'main' of https://github.com/Kartavya-Jharwal/ganet-project-bwc"
+    },
+    {
+      "hash": "f07a0ae",
+      "date": "2026-03-14",
+      "subject": "fix: resolve test suite hangs, add global delay mocks, and fix dashboard Scope errors"
+    },
+    {
+      "hash": "9e6d04b",
+      "date": "2026-03-14",
+      "subject": "Merge pull request #5 from Kartavya-Jharwal/copilot/finish-project-implementation"
+    },
+    {
+      "hash": "21ca4fe",
+      "date": "2026-03-14",
+      "subject": "Address code review: add clarity comments, remove unused function"
+    },
+    {
+      "hash": "592794c",
+      "date": "2026-03-14",
+      "subject": "Implement Confidence-Filtered Signal Engine, Manim scenes, Plotly dashboard, and enhanced tearsheet"
+    },
+    {
+      "hash": "6a3a13f",
+      "date": "2026-03-14",
+      "subject": "Address code review feedback: use set for membership check, extract magic number to named constant"
+    },
+    {
+      "hash": "fb502cd",
+      "date": "2026-03-14",
+      "subject": "Complete scaffolding: fix dashboard CLI, implement pipeline consume mode, finish export archive"
+    }
   ]
 }
