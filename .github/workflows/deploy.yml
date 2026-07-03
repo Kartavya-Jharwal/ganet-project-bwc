@@ -1,0 +1,50 @@
+# Publish the static frontend archive to GitHub Pages (gh-pages branch).
+# Pages source: "Deploy from a branch" -> gh-pages / root.
+
+name: Deploy site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Publish frontend to gh-pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Build minified frontend bundles
+        run: bun run minify:frontend
+
+      - name: Assert committed minified bundles are current
+        run: |
+          set -euo pipefail
+          if ! git diff --quiet -- frontend/styles frontend/js; then
+            echo "Minified bundles are stale. Run 'bun run minify:frontend' and commit."
+            git diff --stat -- frontend/styles frontend/js
+            exit 1
+          fi
+
+      - name: Publish frontend/ to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend
+          publish_branch: gh-pages
+          enable_jekyll: false
+          commit_message: "deploy: ${{ github.sha }}"
