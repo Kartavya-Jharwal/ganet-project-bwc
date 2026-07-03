@@ -11,14 +11,7 @@
 
 <p align="center">
   <strong>We lost money on the term. We preserved more than SPY at the April trough.</strong><br>
-  <sub>Team BWC · Hult CHL-0200 · $1M paper desk · filed close 11 Apr 2026 · static archive</sub>
-</p>
-
-<p align="center">
-  <a href="https://kartavya.tech/Ganet"><img src="https://img.shields.io/badge/Project-Ganet-a78bfa?style=flat-square" alt="Project Ganet"></a>
-  <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/"><img src="https://img.shields.io/badge/Case%20study-Adaptive%20Efficiency-6d28d9?style=flat-square" alt="Adaptive Efficiency"></a>
-  <img src="https://img.shields.io/badge/desk%20close-$956,280-6b7280?style=flat-square" alt="Final NAV">
-  <img src="https://img.shields.io/badge/vs%20SPY-2.08%25%20under-6b7280?style=flat-square" alt="vs SPY">
+  <sub>Team BWC · Hult CHL-0200 · $1M paper desk · $956,280 close · −4.37% · static archive · sunset 2026-05-01</sub>
 </p>
 
 <p align="center">
@@ -26,6 +19,10 @@
     <img src="frontend/assets/PB_logos/logo_kj_neutral_32.png" width="24" valign="middle" alt="">
     <strong>Kartavya Jharwal</strong>
   </a>
+  &nbsp;·&nbsp;
+  <a href="https://kartavya.tech/Ganet"><strong>Project Ganet</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/"><strong>Adaptive Efficiency</strong></a>
 </p>
 
 <p align="center">
@@ -36,22 +33,17 @@
 
 <p align="center">
   <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
-    <img src="https://img.shields.io/badge/Open-Live%20Site-6d28d9?style=for-the-badge&logo=github" alt="Open live site">
+    <img src="https://img.shields.io/badge/→_Live_Site-6d28d9?style=for-the-badge&logo=github" alt="Open live site">
   </a>
   <a href="frontend/docs/">
-    <img src="https://img.shields.io/badge/Read-Engineering%20Docs-24292f?style=for-the-badge&logo=readthedocs" alt="Engineering docs">
+    <img src="https://img.shields.io/badge/→_Engineering_Docs-24292f?style=for-the-badge&logo=readthedocs" alt="Engineering docs">
   </a>
   <a href="REVIEWERS.md">
-    <img src="https://img.shields.io/badge/Audit-REVIEWERS.md-a78bfa?style=for-the-badge" alt="Audit the repo">
+    <img src="https://img.shields.io/badge/→_Code_Audit-a78bfa?style=for-the-badge&logo=python" alt="Audit the repo">
   </a>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-a78bfa?style=flat-square" alt="MIT License">
-  <img src="https://img.shields.io/badge/status-static%20archive-6b7280?style=flat-square" alt="Static archive">
-  <img src="https://img.shields.io/badge/sunset-2026--05--01-6b7280?style=flat-square" alt="Sunset 2026-05-01">
-  <img src="https://img.shields.io/badge/trading%20window-Feb%E2%80%93Apr%202026-6b7280?style=flat-square" alt="Trading window">
-</p>
+<p align="center"><sub>MIT · read-only archive · filed artifacts are grading authority</sub></p>
 
 ---
 
@@ -76,6 +68,26 @@ Engineering sunset completed **2026-05-01** (valuation snapshot **2026-04-10**).
 | **3** | [**Audit the code →**](REVIEWERS.md) | Journal parser, walk-forward HRP, archive seal checklist |
 
 **Grading authority:** [deliverables/](deliverables/README.md) · **Presentation:** [frontend/](frontend/index.html) · **MkDocs source:** [docs/](docs/index.md)
+
+### Project Ganet
+
+[**Project Ganet**](https://kartavya.tech/Ganet) is the upstream frame: an independent program mapping systemic financial literacy through opinionated, first-principles design. It treats fluency as architecture, not a checklist of ratios. This repository is one localized deployment inside that program, not the whole upstream project.
+
+### Adaptive Efficiency
+
+**Adaptive Efficiency** borrows Andrew Lo's adaptive-markets lens as a thesis name for a short simulation. It is not a performance claim. It is how this case study asks whether process discipline, risk vocabulary, and audit tooling held up when Q1 2026 turned volatile and the desk had to re-risk into April.
+
+### The desk in three acts
+
+**Act I (February):** Foundation book deployed. Beta target near 1.0, sector sleeves, diary discipline from day one.
+
+**Act II (March):** Charter override under stress. Emergency triage, hedges, lower exposure. Desk trough **−6.44%** vs SPY **−11.72%** on 2 April.
+
+**Act III (April):** Ceasefire window. SPY snapped back. The desk rebuilt equity exposure too carefully and gave back relative performance. The honest close: **−4.37%** on **$956,280**.
+
+### Why this repo exists
+
+The live site is the human entry point: narrative, charts, filed sources, faculty marks. This GitHub repo is the reproducible back end: committee packet mirror, `quant_monitor/` audit code, engineering phases, and reviewer paths for anyone who wants to verify claims without trusting presentation alone.
 
 ---
 
