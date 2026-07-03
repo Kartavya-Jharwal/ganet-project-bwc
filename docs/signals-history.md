@@ -1,6 +1,6 @@
 # Signal History
 
-> **Adaptive Efficiency** archive export · `quant_monitor/` signal cycle (retired scheduler)
+> **Ganet** · Adaptive Efficiency archive export · `quant_monitor/` signal cycle (retired scheduler)
 
 **Generated:** 2026-05-22 14:27 UTC
 

@@ -1,12 +1,12 @@
 # Adaptive Efficiency
 
-**Team BWC** · Hult CHL-0200 · engineering sunset `2026-05-01` · publication seal pending
+**Ganet** parent program · **Team BWC** · Hult CHL-0200 · engineering sunset `2026-05-01` · publication seal pending
 
 **Maintainer:** [Kartavya Jharwal](https://kartavya.tech)
 
 **Live:** [kartavya-jharwal.github.io/ganet-project-bwc](https://kartavya-jharwal.github.io/ganet-project-bwc/)
 
-**Adaptive Efficiency** names the whole project (deliverables, `quant_monitor/`, docs, and this site). `frontend/` is the public presentation layer. Independent **unofficial archive**, not an official Hult course publication.
+**Ganet** is the parent finance engineering brand. **Adaptive Efficiency** names this case study archive (`deliverables/`, `quant_monitor/`, docs, and this site). `frontend/` is the public presentation layer. Independent **unofficial archive**, not an official Hult course publication.
 
 > **Disclaimer:** Independent, unofficial presentation of Team BWC's investment simulation. Not affiliated with Hult, the Professor, or former teammates. AI-assisted layout and development. Graded marks bound to filed deliverables. Maintainer interpretations are personal. Filed artifacts win on any conflict.
 

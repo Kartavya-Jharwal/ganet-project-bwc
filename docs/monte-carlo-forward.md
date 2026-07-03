@@ -1,6 +1,6 @@
 # Monte Carlo forward projection
 
-> **Adaptive Efficiency** archive export · forward window to sunset `2026-05-01`
+> **Ganet** · Adaptive Efficiency archive export · forward window to sunset `2026-05-01`
 
 **Freeze window:** 21 calendar days from `valuation_date` (`2026-04-10`) to `sunset_date` (`2026-05-01`).
 

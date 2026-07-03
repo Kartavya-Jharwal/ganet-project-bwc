@@ -1,6 +1,6 @@
 # Backtest Results
 
-> **Adaptive Efficiency** archive export · overlay audit, not graded desk book
+> **Ganet** · Adaptive Efficiency archive export · overlay audit, not graded desk book
 
 **Generated:** 2026-05-22 14:27 UTC
 

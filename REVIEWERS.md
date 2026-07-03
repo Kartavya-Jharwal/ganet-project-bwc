@@ -1,6 +1,6 @@
 # External code review guide
 
-**Adaptive Efficiency** (Team BWC desk · Hult CHL-0200) — archived `2026-05-01`. This guide is for **software auditors** and fork maintainers.
+**Ganet** · **Adaptive Efficiency** (Team BWC desk · Hult CHL-0200) — archived `2026-05-01`. This guide is for **software auditors** and fork maintainers.
 
 **Disclaimer:** Independent, unofficial archive. Not affiliated with Hult, the professor, or former teammates. AI-assisted layout and development. Graded marks bound to filed deliverables only. Maintainer interpretations are personal. If code or site copy disagrees with the Excel close or memo, **filed artifacts win**.
 

@@ -1,6 +1,6 @@
 # System Architecture
 
-This document describes the complete architecture of **Adaptive Efficiency** (Team BWC `quant_monitor/` stack and archive surfaces).
+This document describes the complete architecture of the **Ganet** stack for the Adaptive Efficiency case study (Team BWC `quant_monitor/` and archive surfaces).
 
 ---
 

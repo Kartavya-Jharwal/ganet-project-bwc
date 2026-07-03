@@ -1,8 +1,10 @@
-# Adaptive Efficiency
+# Ganet
 
-*Team BWC · Hult CHL-0200 · independent unofficial archive*
+**Adaptive Efficiency** · Team BWC · Hult CHL-0200 · independent unofficial archive
 
-**Adaptive Efficiency** is the public name for this entire repository: filed committee deliverables, the `quant_monitor/` Python audit overlay, engineering docs, and the GitHub Pages presentation layer. **Team BWC** (Team 5) is the desk that ran the simulation. The legacy repo slug `ganet-project-bwc` is unchanged on GitHub.
+**Ganet** is the parent finance engineering brand. This repository is the **Adaptive Efficiency** archive: a filed Hult investment-challenge post-mortem with a reproducible Python audit overlay and static GitHub Pages presentation.
+
+**Team BWC** (Team 5) ran the simulation desk. The GitHub slug `ganet-project-bwc` reflects the Ganet program namespace.
 
 **Sunset freeze:** valuation `2026-04-10` · reporting `2026-05-01` · **archived** (read-mostly)
 
@@ -14,25 +16,29 @@
 |---------|------------|
 | **Live site** | [kartavya-jharwal.github.io/ganet-project-bwc](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
 | Presentation | [frontend/index.html](frontend/index.html) · [frontend/README.md](frontend/README.md) · [frontend/PLAN.md](frontend/PLAN.md) |
-| Technical docs | MkDocs **source:** [docs/](docs/index.md) → rebuild to [frontend/docs/](frontend/docs/) |
+| Engineering docs | MkDocs **source:** [docs/](docs/index.md) → rebuild to [frontend/docs/](frontend/docs/) |
 | Committee packet | [deliverables/](deliverables/README.md) |
 | Code review | [REVIEWERS.md](REVIEWERS.md) (includes [archive seal checklist](REVIEWERS.md#publication-checklist-archive-seal)) |
 | Agent / fork guide | [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) |
 
 ---
 
-## What Adaptive Efficiency is
+## Brand hierarchy
 
-A personal thesis frame (Andrew Lo adaptive-markets lens) for a ten-week **$1M paper desk** at Hult. It is **not** a claim that the desk beat the simulation (`-4.37%` graded close). The project bundles:
+| Name | Scope |
+|------|--------|
+| **Ganet** | Parent finance engineering program (portfolio of case studies and tooling) |
+| **Adaptive Efficiency** | This archive's thesis frame (Andrew Lo adaptive-markets lens on a short simulation) |
+| **Team BWC** | The Hult CHL-0200 desk that managed the $1M paper book |
+
+Adaptive Efficiency is **not** a claim the desk beat the simulation (`-4.37%` graded close). It names how this case study is framed and presented.
 
 | Layer | Path | Role |
 |-------|------|------|
 | Filed narrative | `deliverables/` | Committee PDF, Excel, charter, journals (grading authority) |
 | Audit engine | `quant_monitor/` | Reproducible Python overlay (walk-forward, stress, behavioural audit) |
-| Public presentation | `frontend/` | Single-page archive, charts, JSON hydration, MkDocs export |
-| Engineering depth | `docs/` | Phase docs, backtest JSON, architecture |
-
-**Thesis name:** Adaptive Efficiency · **Desk name:** Team BWC · **Accent:** `#a78bfa`
+| Public presentation | `frontend/` | Single-page archive, charts, JSON hydration |
+| Engineering depth | `docs/` | Ganet technical docs for this freeze (phases, backtest JSON, architecture) |
 
 | Audience | Start here |
 |----------|------------|
@@ -84,11 +90,11 @@ uv run python scripts/verify_repo_health.py --strict-artifacts
 
 ```
 deliverables/       Filed committee packet (PDF, Excel, charter, journals)
-frontend/           Adaptive Efficiency public site (HTML, js/, styles/, data/, charts/)
+frontend/           Adaptive Efficiency public site (Ganet presentation layer)
 quant_monitor/      Python audit engine (config, data, models, backtest, CLI)
 scripts/            prep_duckdb, build_frontend_assets, export, sunset_freeze
 tests/              Unit tests + journal_transaction_history.csv
-docs/               MkDocs source, phases/, exported JSON/MD
+docs/               Ganet MkDocs source, phases/, exported JSON/MD
 docker/             Optional container entrypoint
 ```
 

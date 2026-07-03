@@ -1,6 +1,6 @@
 # Team BWC deliverables
 
-**Adaptive Efficiency** archive · sunset `2026-04-10` valuation · `2026-05-01` reporting · Hult Investment Challenge (Team 5)
+**Ganet** · **Adaptive Efficiency** archive · sunset `2026-04-10` valuation · `2026-05-01` reporting · Hult Investment Challenge (Team 5)
 
 This folder is the **grading authority** for the program: client post-mortem, charter, trading records, and committee materials. The **`quant_monitor/`** package is a supplementary audit overlay, not the whole investment story.
 

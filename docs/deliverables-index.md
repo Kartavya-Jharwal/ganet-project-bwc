@@ -1,6 +1,6 @@
 # Team BWC deliverables
 
-Part of **Adaptive Efficiency** — independent unofficial archive. **Team BWC** (Team 5, CHL-0200) filed these for grading. They are the **authority** if any site copy or code output disagrees.
+Part of **Ganet** · case study **Adaptive Efficiency** — independent unofficial archive. **Team BWC** (Team 5, CHL-0200) filed these for grading. They are the **authority** if any site copy or code output disagrees.
 
 The committee packet and client post-mortem live at [`deliverables/`](../deliverables/) in the repository.
 

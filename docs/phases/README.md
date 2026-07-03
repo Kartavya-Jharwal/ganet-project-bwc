@@ -1,6 +1,6 @@
 # Implementation phases (0–21)
 
-Public timeline for **Adaptive Efficiency** engineering (Team BWC desk). Phases 22+ and sunset are documented separately.
+Public timeline for **Ganet** engineering on the Adaptive Efficiency archive (Team BWC desk). Phases 22+ and sunset are documented separately.
 
 | Phase | Topic | Doc |
 |-------|--------|-----|

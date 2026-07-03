@@ -6,7 +6,7 @@ MkDocs **source** for the engineering site. Built output lands in `frontend/docs
 
 | Path | Purpose |
 |------|---------|
-| `index.md` | Site home (Adaptive Efficiency engineering archive) |
+| `index.md` | Site home (Ganet · Adaptive Efficiency engineering archive) |
 | `phases/` | Public implementation timeline (phases 0–21) |
 | `phase-22-onwards-advanced-analytics.md` | Post-21 analytics |
 | `phase-finale-endgame.md` | Sunset / endgame |
@@ -20,7 +20,9 @@ MkDocs **source** for the engineering site. Built output lands in `frontend/docs
 
 | Surface | Path |
 |---------|------|
-| **Project title** | Adaptive Efficiency (whole repo) |
+| **Parent brand** | Ganet (finance engineering program) |
+| **Case study** | Adaptive Efficiency (this archive) |
+| **Desk** | Team BWC (CHL-0200) |
 | Committee deliverables | [`../deliverables/`](../deliverables/README.md) |
 | Public presentation | [`../frontend/`](../frontend/index.html) |
 | Quant engine | [`../quant_monitor/`](../quant_monitor/) |

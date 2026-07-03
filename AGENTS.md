@@ -1,6 +1,6 @@
-# Agent guide — Adaptive Efficiency (archived)
+# Agent guide — Ganet (Adaptive Efficiency archive)
 
-**Status:** Engineering sunset complete (`2026-05-01`). **Adaptive Efficiency** is the project title for this read-mostly static archive (`deliverables/` + `quant_monitor/` + `frontend/`). Live Appwrite ingestion and schedulers are retired; the public site is **STATIC ARCHIVE** on GitHub Pages. **Publication seal** (one clean archive commit) is still open — see [frontend/PLAN.md](frontend/PLAN.md) and [REVIEWERS.md § archive seal](REVIEWERS.md#publication-checklist-archive-seal).
+**Status:** Engineering sunset complete (`2026-05-01`). **Ganet** is the parent finance brand. **Adaptive Efficiency** is this repository's case study (`deliverables/` + `quant_monitor/` + `frontend/`). Live Appwrite ingestion and schedulers are retired; the public site is **STATIC ARCHIVE** on GitHub Pages. **Publication seal** (one clean archive commit) is still open — see [frontend/PLAN.md](frontend/PLAN.md) and [REVIEWERS.md § archive seal](REVIEWERS.md#publication-checklist-archive-seal).
 
 **Maintainer:** [Kartavya Jharwal](https://kartavya.tech) · MIT License — retain copyright notice when forking.
 

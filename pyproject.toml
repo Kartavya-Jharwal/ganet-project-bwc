@@ -1,7 +1,7 @@
 [project]
 name = "project-bwc"
 version = "0.1.0"
-description = "Adaptive Efficiency — independent Team BWC Hult CHL-0200 archive: filed deliverables, Python quant audit, and static presentation site"
+description = "Ganet — Adaptive Efficiency: Team BWC Hult CHL-0200 finance archive (deliverables, quant audit, static site)"
 requires-python = ">=3.11,<3.14"
 dependencies = [
     # Visuals

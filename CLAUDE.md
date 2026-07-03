@@ -1,6 +1,6 @@
-# Claude / Cursor context — Adaptive Efficiency
+# Claude / Cursor context — Ganet (Adaptive Efficiency archive)
 
-Archived Hult Investment Challenge repo (**Team BWC** desk, project title **Adaptive Efficiency**). Treat as **static publication + audit trail**, not an active trading system.
+Archived Hult Investment Challenge repo under the **Ganet** finance program. Case study title: **Adaptive Efficiency**. Desk: **Team BWC**. Treat as **static publication + audit trail**, not an active trading system.
 
 ## Maintainer & license
 

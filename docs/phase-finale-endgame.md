@@ -1,4 +1,4 @@
-# Phase FINALE (The Endgame): Adaptive Efficiency sunset & permanent case study freeze
+# Phase FINALE (The Endgame): Ganet sunset — Adaptive Efficiency case study freeze
 
 > ⚠️ CRITICAL INSTRUCTION: UNDER NO CIRCUMSTANCES SHALL THE DATA FREEZE OR SUNSET OCCUR BEFORE MAY 1ST, 2026. ⚠️
 > The backtest timeframe and exact project conditions mathematically require the final 29-day forward projection to expire. Running the export script or spinning down architectures before May 1st invalidates the forward testing.
