@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
-    <img src="frontend/assets/PB_logos/logo_kj_neutral_128.png" width="96" alt="Kartavya Jharwal personal brand mark">
+    <img src="frontend/assets/og-card.png" width="720" alt="Adaptive Efficiency: liquid gradient preview of the live archive site">
   </a>
 </p>
 
@@ -9,11 +9,17 @@
 <p align="center">
   <a href="https://kartavya.tech/Ganet"><img src="https://img.shields.io/badge/Project-Ganet-a78bfa?style=flat-square" alt="Project Ganet"></a>
   <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/"><img src="https://img.shields.io/badge/Case%20study-Adaptive%20Efficiency-6d28d9?style=flat-square" alt="Adaptive Efficiency"></a>
-  <a href="https://kartavya.tech"><img src="https://img.shields.io/badge/Kartavya%20Jharwal-kartavya.tech-24292f?style=flat-square" alt="Kartavya Jharwal"></a>
 </p>
 
 <p align="center">
   <strong>Team BWC · Hult CHL-0200 · mock $1M paper desk post-mortem</strong>
+</p>
+
+<p align="center">
+  <a href="https://kartavya.tech">
+    <img src="frontend/assets/PB_logos/logo_kj_neutral_32.png" width="24" valign="middle" alt="">
+    <strong>Kartavya Jharwal</strong>
+  </a>
 </p>
 
 <p align="center">
@@ -38,16 +44,6 @@
   <img src="https://img.shields.io/badge/License-MIT-a78bfa?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/status-static%20archive-6b7280?style=flat-square" alt="Static archive">
   <img src="https://img.shields.io/badge/sunset-2026--05--01-6b7280?style=flat-square" alt="Sunset 2026-05-01">
-</p>
-
-<p align="center">
-  <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/">
-    <img src="frontend/assets/og-card.png" width="720" alt="Adaptive Efficiency: liquid gradient preview of the live archive site">
-  </a>
-</p>
-
-<p align="center">
-  <em>Click the preview to open the live site. Charts, filed sources, faculty marks, and desk narrative.</em>
 </p>
 
 ---
@@ -104,17 +100,14 @@ Machine-readable: [frontend/llms.txt](frontend/llms.txt) · [frontend/data/site-
 ## Personal brand
 
 <p align="center">
-  <a href="https://kartavya.tech">
-    <img src="frontend/assets/PB_logos/logo_kj_neutral_128.png" width="80" alt="Kartavya Jharwal">
-  </a>
-</p>
-
-<p align="center">
   <a href="https://kartavya.tech/Ganet"><strong>Project Ganet</strong></a>
   &nbsp;·&nbsp;
   <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/"><strong>Adaptive Efficiency</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://kartavya.tech"><strong>Kartavya Jharwal</strong></a>
+  <a href="https://kartavya.tech">
+    <img src="frontend/assets/PB_logos/logo_kj_neutral_32.png" width="22" valign="middle" alt="">
+    <strong>Kartavya Jharwal</strong>
+  </a>
 </p>
 
 <p align="center">
