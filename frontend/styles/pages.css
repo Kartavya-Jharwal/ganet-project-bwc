@@ -594,7 +594,7 @@ html.splash-pending .site-splash {
     transform: none;
 }
 
-.site-splash__hero main {
+.site-splash__hero-inner {
     width: 100%;
     max-width: var(--splash-content-width);
     display: flex;
@@ -2254,8 +2254,8 @@ html.splash-pending .site-splash {
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-    gap: var(--spacing-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+    gap: var(--spacing-3);
 }
 
 .team-roster-grid > li {
@@ -2266,11 +2266,10 @@ html.splash-pending .site-splash {
 .team-member-card {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: var(--spacing-4);
+    justify-content: flex-start;
+    gap: var(--spacing-2);
     width: 100%;
-    min-height: 9rem;
-    padding: var(--spacing-6);
+    padding: var(--spacing-4) var(--spacing-4);
     border: 1px solid var(--border-color);
     background: var(--color-bg-surface);
     transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
