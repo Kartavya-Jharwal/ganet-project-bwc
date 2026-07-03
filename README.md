@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <strong>We lost money on the term. We preserved more than SPY at the April trough.</strong><br>
+  <strong>Negative on the term (−4.37%), with a smaller drawdown than SPY at the April trough.</strong><br>
   <sub>Team BWC · Hult CHL-0200 · $1M paper desk · $956,280 close · −4.37% · static archive · sunset 2026-05-01</sub>
 </p>
 
@@ -71,11 +71,11 @@ Engineering sunset completed **2026-05-01** (valuation snapshot **2026-04-10**).
 
 ### Project Ganet
 
-[**Project Ganet**](https://kartavya.tech/Ganet) is the upstream frame: an independent program mapping systemic financial literacy through opinionated, first-principles design. It treats fluency as architecture, not a checklist of ratios. This repository is one localized deployment inside that program, not the whole upstream project.
+[**Project Ganet**](https://kartavya.tech/Ganet) is the upstream frame: an independent program mapping systemic financial literacy through opinionated, first-principles design. It treats fluency as architecture rather than a ratio checklist. This repository is one localized deployment inside that program.
 
 ### Adaptive Efficiency
 
-**Adaptive Efficiency** borrows Andrew Lo's adaptive-markets lens as a thesis name for a short simulation. It is not a performance claim. It is how this case study asks whether process discipline, risk vocabulary, and audit tooling held up when Q1 2026 turned volatile and the desk had to re-risk into April.
+**Adaptive Efficiency** borrows Andrew Lo's adaptive-markets lens as a thesis name for a short simulation. The name frames a question: whether process discipline, risk vocabulary, and audit tooling held up when Q1 2026 turned volatile and the desk had to re-risk into April.
 
 ### The desk in three acts
 
@@ -111,7 +111,7 @@ The live site is the human entry point: narrative, charts, filed sources, facult
 | Client presentation & post-mortem | 118 / 120 |
 | Peer evaluation & leadership | 39 / 40 |
 
-Adaptive Efficiency names the framing, not a claim the desk beat the simulation. Trough outperformance does not vindicate full-term Sharpe or expectancy.
+Adaptive Efficiency labels the case-study framing only. Trough outperformance does not vindicate full-term Sharpe or expectancy.
 
 ---
 
@@ -130,9 +130,9 @@ Adaptive Efficiency names the framing, not a claim the desk beat the simulation.
 
 ## Archive design & CI notes (read before you judge the surface)
 
-This is a **sealed static archive**, not an active product. A few choices are deliberate and worth naming up front so they read as decisions, not oversights.
+This is a **sealed static archive** (engineering sunset complete). A few choices are deliberate and worth naming up front so reviewers see them as intentional design.
 
-- **CI is frontend-only, on purpose.** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs minify + Lighthouse against the built site, because that is the only thing that changes after sunset. The quant suite (**pytest, ruff, bandit, MkDocs `--strict`**) is not deleted — it runs locally and in the freeze script, and is the gate for any data rebuild:
+- **CI is frontend-only, on purpose.** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs minify + Lighthouse against the built site, because that is the only thing that changes after sunset. The quant suite (**pytest, ruff, bandit, MkDocs `--strict`**) is not deleted; it runs locally and in the freeze script, and is the gate for any data rebuild:
 
   ```bash
   uv run python -m pytest tests/ -m "not integration"
@@ -143,15 +143,15 @@ This is a **sealed static archive**, not an active product. A few choices are de
 
   Rationale: the desk data is frozen (snapshot **2026-04-10**), so re-running quant tests on every push to a read-only archive would gate nothing. If you fork this to a live desk, restore those jobs first.
 
-- **`frontend/index.html` is one file (~1,500 lines), on purpose.** No component framework, no build step for markup — a single deployable artifact is the least-moving-parts option for a Pages archive that must still render in ten years. The trade-off (one long file vs. a component library) is accepted, not accidental. Design tokens live in [`frontend/styles/tokens.css`](frontend/styles/tokens.css) and section conventions (`ic-*`) give it authorial coherence rather than a formal component system.
+- **`frontend/index.html` is one file (~1,500 lines), on purpose.** No component framework and no build step for markup: a single deployable artifact is the least-moving-parts option for a Pages archive that must still render in ten years. The trade-off (one long file vs. a component library) is deliberate. Design tokens live in [`frontend/styles/tokens.css`](frontend/styles/tokens.css) and section conventions (`ic-*`) give it authorial coherence rather than a formal component system.
 
-- **Two type regimes, now stitched.** The splash uses an editorial serif (Playfair Display); the main site is brutalist Darker Grotesque on a terminal-violet palette. That contrast is intentional (arrival vs. audit desk), but the surfaces now share a type system: the serif carries into main-site section leads and the footer sign-off (`--font-serif`), and the main display font appears in the splash eyebrow. It should read as one authored product, not a landing page bolted to a Bloomberg clone.
+- **Two type regimes, now stitched.** The splash uses an editorial serif (Playfair Display); the main site is brutalist Darker Grotesque on a terminal-violet palette. That contrast is intentional (arrival vs. audit desk), but the surfaces now share a type system: the serif carries into main-site section leads and the footer sign-off (`--font-serif`), and the main display font appears in the splash eyebrow. The combined surfaces should read as one authored product with shared typography.
 
 - **Overlay ≠ graded returns.** `quant_monitor/` metrics run on a closed universe and must not be conflated with the graded Excel desk close. The site labels overlay panels accordingly; the filed artifacts are the grading authority.
 
-- **Chart build retired — do not regen.** `frontend/charts/*.html` were **hand-edited after generation** (layout, copy, axis labels, desk framing). Running `scripts/build_frontend_assets.py` would overwrite those edits and break the published site. JSON under `frontend/data/` can still be refreshed if needed; **Plotly chart HTML is frozen as committed artifacts**. That is why the publication seal checklist skips a full chart rebuild. See [REVIEWERS.md § Known limitations](REVIEWERS.md#known-limitations-documented-honestly).
+- **Chart build retired (do not regen).** `frontend/charts/*.html` were **hand-edited after generation** (layout, copy, axis labels, desk framing). Running `scripts/build_frontend_assets.py` would overwrite those edits and break the published site. JSON under `frontend/data/` can still be refreshed if needed; **Plotly chart HTML is frozen as committed artifacts**. That is why the publication seal checklist skips a full chart rebuild. See [REVIEWERS.md § Known limitations](REVIEWERS.md#known-limitations-documented-honestly).
 
-- **README vanity widgets are intentional, not product UI.** The typing-SVG tagline and GitHub stats card at the bottom of this file are idiosyncratic README flourishes — not part of the site design system and not gates for the archive. They stay for personal-brand context on GitHub only.
+- **README vanity widgets are GitHub-only flourishes.** The typing-SVG tagline and GitHub stats card at the bottom of this file are personal-brand context on GitHub; they sit outside the site design system and are not publication gates for the archive.
 
 ---
 
@@ -224,7 +224,7 @@ docs/               MkDocs source (do not hand-edit built HTML)
 
 ```bash
 uv sync --frozen
-.\scripts\sunset_freeze.ps1    # Windows — or scripts/sunset_freeze.sh
+.\scripts\sunset_freeze.ps1    # Windows, or scripts/sunset_freeze.sh
 ```
 
 Manual rebuild:
