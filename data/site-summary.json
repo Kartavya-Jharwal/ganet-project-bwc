@@ -1,10 +1,15 @@
 {
   "schema": "https://kartavya-jharwal.github.io/ganet-project-bwc/data/site-summary.json",
   "version": "1.1",
-  "generated_at": "2026-05-28",
+  "generated_at": "2026-06-22",
   "site": {
-    "name": "Team BWC: Adaptive Efficiency Post-Mortem",
+    "name": "Adaptive Efficiency",
+    "alternate_name": "Team BWC CHL-0200 Post-Mortem",
     "tagline": "Adaptive Efficiency",
+    "maintainer_name": "Kartavya Jharwal",
+    "maintainer_url": "https://kartavya.tech",
+    "repository": "https://github.com/Kartavya-Jharwal/ganet-project-bwc",
+    "commits_url": "https://github.com/Kartavya-Jharwal/ganet-project-bwc/commits/main",
     "url": "https://kartavya-jharwal.github.io/ganet-project-bwc/",
     "type": "static_archive",
     "course": "CHL-0200",
@@ -17,7 +22,21 @@
       "url": "https://kartavya.tech",
       "github": "https://github.com/Kartavya-Jharwal/ganet-project-bwc"
     },
-    "disclaimer": "Not an official Hult publication. Presentation edited. Site layout and quant documentation AI-assisted. Graded marks from Excel close and filed memo only."
+    "disclaimer": "Not an official Hult publication. Presentation edited. Site layout and quant documentation AI-assisted. Graded marks from Excel close and filed memo only.",
+    "keywords": [
+      "Adaptive Efficiency",
+      "Kartavya Jharwal",
+      "kartavya",
+      "finance project",
+      "investment challenge",
+      "investment challenge case study",
+      "mock investment",
+      "trading project",
+      "paper trading desk",
+      "Python risk auditing",
+      "Team BWC",
+      "CHL-0200"
+    ]
   },
   "desk_graded": {
     "source": "Excel close 2026-04-11",
@@ -52,6 +71,7 @@
   },
   "artifacts": {
     "manifest": "./deliverables-manifest.json",
+    "commit_log": "./commit-log.json",
     "post_mortem_pdf": "../assets/post-mortem.pdf",
     "engineering_docs": "../docs/index.html"
   },

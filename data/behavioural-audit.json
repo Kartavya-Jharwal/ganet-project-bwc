@@ -6,7 +6,7 @@
     "sell_at_lows_pct": 0.4348,
     "n_buys_analysed": 45,
     "n_sells_analysed": 23,
-    "interpretation": "Buys tend to cluster near local highs (momentum-chasing bias); Sell timing is neutral relative to local price range"
+    "interpretation": "Buys tend to cluster near local highs (momentum-chasing bias). Sell timing is neutral relative to local price range"
   },
   "disposition": {
     "avg_winner_holding_days": 15.3,

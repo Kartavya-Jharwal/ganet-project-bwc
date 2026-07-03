@@ -1,0 +1,58 @@
+/* Self-hosted fonts (Google Fonts variable files under assets/fonts/).
+   woff2 (brotli) is served first for a ~67% smaller cold payload; the
+   original .ttf remains as a fallback for ancient engines. Regenerate the
+   woff2 files with scripts/build_woff2.py if the .ttf sources change. */
+
+@font-face {
+    font-family: 'Darker Grotesque';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('../assets/fonts/Darker_Grotesque/DarkerGrotesque-VariableFont_wght.woff2') format('woff2'),
+         url('../assets/fonts/Darker_Grotesque/DarkerGrotesque-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Source Sans 3';
+    font-style: normal;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('../assets/fonts/Source_Sans_3/SourceSans3-VariableFont_wght.woff2') format('woff2'),
+         url('../assets/fonts/Source_Sans_3/SourceSans3-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Source Sans 3';
+    font-style: italic;
+    font-weight: 400 600;
+    font-display: swap;
+    src: url('../assets/fonts/Source_Sans_3/SourceSans3-Italic-VariableFont_wght.woff2') format('woff2'),
+         url('../assets/fonts/Source_Sans_3/SourceSans3-Italic-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'JetBrains Mono';
+    font-style: normal;
+    font-weight: 400 500;
+    font-display: swap;
+    src: url('../assets/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.woff2') format('woff2'),
+         url('../assets/fonts/JetBrains_Mono/JetBrainsMono-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('../assets/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.woff2') format('woff2'),
+         url('../assets/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Playfair Display';
+    font-style: italic;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('../assets/fonts/Playfair_Display/PlayfairDisplay-Italic-VariableFont_wght.woff2') format('woff2'),
+         url('../assets/fonts/Playfair_Display/PlayfairDisplay-Italic-VariableFont_wght.ttf') format('truetype');
+}

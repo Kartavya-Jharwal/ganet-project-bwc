@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Team 5 Investment Simulation — Hult International Business School">
+        <meta name="description" content="Adaptive Efficiency — Team BWC Hult CHL-0200 finance archive (engineering docs, quant audit, static presentation)">
       
       
       
@@ -27,7 +27,7 @@
     
     
       
-        <title>Interactive Dashboard - Ganet - Project BWC</title>
+        <title>Interactive Dashboard - Ganet</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#interactive-quant-dashboard" class="md-skip">
+        <a href="#interactive-quant-charts-static-archive" class="md-skip">
           Skip to content
         </a>
       
@@ -94,7 +94,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="Ganet - Project BWC" class="md-header__button md-logo" aria-label="Ganet - Project BWC" data-md-component="logo">
+    <a href=".." title="Ganet" class="md-header__button md-logo" aria-label="Ganet" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
@@ -108,7 +108,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Ganet - Project BWC
+            Ganet
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -361,13 +361,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="Ganet - Project BWC" class="md-nav__button md-logo" aria-label="Ganet - Project BWC" data-md-component="logo">
+    <a href=".." title="Ganet" class="md-nav__button md-logo" aria-label="Ganet" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
 
     </a>
-    Ganet - Project BWC
+    Ganet
   </label>
   
     <div class="md-nav__source">
@@ -1231,12 +1231,14 @@
   
 
 
-<h1 id="interactive-quant-dashboard">Interactive Quant Dashboard</h1>
-<p>This live quantitative dashboard visualizes the BWC Portfolio's equity curve, drawdowns, factor surfaces, and topological model outputs. 
-<br></p>
-<p>Live Plotly charts ship with the <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/results.html">microsite telemetry page</a> (equity curve, drawdown, Monte Carlo fan, correlation network, attribution).</p>
-<p>Rebuild charts locally:</p>
+<h1 id="interactive-quant-charts-static-archive">Interactive quant charts (static archive)</h1>
+<p>Plotly charts visualize the Team BWC desk overlay: equity curve, drawdowns, Monte Carlo fan, correlation network, and attribution. They are <strong>static embeds</strong> in the public site, not a live dashboard.</p>
+<p>Charts ship on the <a href="https://kartavya-jharwal.github.io/ganet-project-bwc/">Adaptive Efficiency site</a> (<code>#research</code>, <code>#evidence</code>; legacy <code>results.html</code> redirects to <code>#evidence</code>).</p>
+<p>Rebuild chart assets locally:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/build_frontend_assets.py
+</code></pre></div>
+<p>Then rebuild MkDocs if engineering pages reference updated JSON:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>mkdocs<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>docs/mkdocs.yml<span class="w"> </span>--strict
 </code></pre></div>
 
 

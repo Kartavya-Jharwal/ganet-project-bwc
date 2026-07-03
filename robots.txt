@@ -1,10 +1,14 @@
-# Team BWC microsite: static archive (GitHub Pages)
+# Adaptive Efficiency microsite (Team BWC CHL-0200), static archive on GitHub Pages
 User-agent: *
 Allow: /
 
-# Agent / LLM discovery
-# https://llmstxt.org/
+# Maintainer: Kartavya Jharwal (kartavya.tech)
+# Keywords: finance project, investment challenge case study, mock investment, trading project, paper trading desk, Python risk audit
+
+# Agent / LLM discovery (https://llmstxt.org/)
 # Summary: https://kartavya-jharwal.github.io/ganet-project-bwc/llms.txt
 # Machine-readable facts: https://kartavya-jharwal.github.io/ganet-project-bwc/data/site-summary.json
+# Commit history: https://kartavya-jharwal.github.io/ganet-project-bwc/data/commit-log.json
+# View source: https://github.com/Kartavya-Jharwal/ganet-project-bwc
 
 Sitemap: https://kartavya-jharwal.github.io/ganet-project-bwc/sitemap.xml

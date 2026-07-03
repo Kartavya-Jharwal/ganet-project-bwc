@@ -1,188 +1,119 @@
-# Project BWC microsite — finish plan
+# Adaptive Efficiency — presentation status
 
-**Audience:** economists, finance recruiters, external code reviewers, design-curious humans.  
-**Job of the site:** a **5-minute reviewer brief** and case study for lateral-entry finance proof-of-work — not a second committee submission.
+**Last updated:** June 2026  
+**Maintainer:** [Kartavya Jharwal](https://kartavya.tech)
 
-**Brand anchors:** Team **BWC** (named desk, not “Team 5”), **violet** accent (`#a78bfa`), honest red return, filed artifacts up front.
+## Repo status
 
----
+| Milestone | When | State |
+|-----------|------|-------|
+| Engineering sunset freeze | `2026-05-01` | **Done** — quant pipeline frozen, static data, no live Appwrite |
+| Publication seal commit | — | **Not done** — `data/` and `charts/` already built; remaining: **minify** bundles + **deliverables sync**, then one clean commit |
+| GitHub Pages deploy | live | Serves current `main`; may lag local WIP until seal lands |
 
-## Design principles (non-negotiable)
-
-| Principle | What it means |
-|-----------|----------------|
-| **Scroll path stays thin** | Hero → summary → **filed sources** → results → faculty score → contact. Reviewers must reach **422/430** without wading through optional depth. |
-| **Depth in modals, not new sections** | Behavioural audit, memo pull-quotes, ratio drill-downs, and tech JSON open in **`<dialog>`** panels using the existing `ic-dialog` token system — same chrome as “Full program brief”. |
-| **No fabricated social proof** | No professor paraphrases, no peer quote strips, no team contribution essays. Faculty were satisfied with deck + report; this site is **independent initiative**. |
-| **No team deep-dives** | Roster stays minimal (name + LinkedIn/email). **Cancelled:** per-member dialogs, duty write-ups, “Hire the Team” climax. |
-| **Artifacts = `#sources`** | Excel, memo, deck, charter, peer eval live in the first pillar section. No separate artifact hub page. |
-| **Honest splash disclaimer** | Entry overlay is **legal/ethical framing**, not marketing. Institutional tone, but explicit: vibe-coded presentation, **AI-assisted** site build and quant overlay documentation. |
-| **Motion & cursor stay** | Custom cursor and scroll polish target **human reviewers** (economist or design portfolio). Not stripped for “enterprise bland”. |
-| **Discoverability = the brief** | SEO/OG metadata sell **“Team BWC — Hult IC post-mortem + audit”**, not generic quant blog keywords. The page *is* the case study. |
+The original phased finish plan (splash rewrite, OG retitle, deliverables redirect, spacing pass) is **retired**. This file tracks what the code actually does and what remains before the one-shot archive seal.
 
 ---
 
-## What is already done
+## Site identity (as built)
 
-- Single-page narrative (`index.html`) with honest headline metrics and desk vs overlay separation
-- Three filed pillars + manifest in `<details>`
-- Desk timeline (JSON-driven snake), results charts, faculty score block, defense Q&A
-- Python validator section + engineering docs under `frontend/docs/`
-- Redirect stubs (`story.html`, `results.html`, `research.html` → anchors)
-- Sunset freeze run; `verify_repo_health.py` passes
-- Static archive badge (no live Appwrite)
+- **Parent framework:** **Project Ganet** — financial literacy, first-principles design, portfolio of empirical case studies.
+- **Case study title:** *Adaptive Efficiency* — standalone trial stress-testing theoretical models against live execution constraints. Not a performance claim.
+- **Desk name:** Team **BWC** · Hult **CHL-0200** · violet accent `#a78bfa`.
+- **Framing:** independent **unofficial** archive. Faculty marks (`422/430`) are filed and closed. Maintainer presentation on the same data, not an official Hult publication.
 
 ---
 
-## Gaps to close
+## What is shipped
 
-### 1. Splash / disclaimer (broken UX → fixed role)
+### Entry and chrome
 
-**Problem:** Splash reads like a second hero and competes with the real headline. Implementation feels disjointed (overlay + sessionStorage + long generic IC copy).
+- Liquid-gradient splash (`site-splash`) with WebGL backdrop, oscilloscope waveform, session dismiss via `bwc-splash-dismissed`, `splash-seen` anti-flash on reload, data-load gate on Enter.
+- Disclaimer: unofficial archive, AI-assisted build, not affiliated with Hult/professor/teammates.
+- Dock nav, custom cursor, scroll reveals, static-archive status (no Appwrite LIVE).
+- Sunset bar: simulation closed 11 Apr 2026, term-end snapshot 2026-05-01.
 
-**Target behaviour:**
+### Single-page narrative (`index.html`)
 
-1. First visit per session: **modal disclaimer** blocks scroll until acknowledged.
-2. Copy structure:
-   - **What this is:** independent post-sunset archive of Team BWC (CHL-0200).
-   - **What it is not:** official Hult publication; not coordinated with professor or teammates for this microsite.
-   - **Transparency:** presentation is heavily edited (“vibe-coded”); **site layout and quant documentation layer were AI-assisted**; graded marks remain Excel + filed memo only.
-   - **Enter** → dismiss; sessionStorage `bwc-splash-dismissed`.
-3. Trim splash body: drop textbook IC paragraph; keep 2–3 sentences max outside the disclaimer box.
-4. Fix edge cases: `splash-seen` on reload removes overlay without flash; `prefers-reduced-motion` respected; focus returns to `#main-content` / skip link after dismiss.
+Scroll path: hero (`#summary`) → executive summary → **filed sources** (`#sources`) → program brief (`#context`) → desk story + behavioural audit (`#story`) → graded Excel results (`#evidence`) → Python overlay research (`#research`) → stack (`#stack`) → faculty evaluation (`#evaluation`) → principles → team roster → contact (`#contact`).
 
-**Do not:** add a “reviewer mode” that hides design — reviewers are humans who should see the curated polish.
+### Modals (`ic-dialog` + `data-dialog-target`)
 
----
+| Dialog | Trigger | Data |
+|--------|---------|------|
+| Program brief | Context section | Inline HTML |
+| Memo excerpts | Sources / research lanes | `data/report-excerpts.json` |
+| Desk post-mortem | Evidence section | Inline HTML |
+| Video popout | Research viz cards | Inline iframe |
 
-### 2. Modal layer for optional rigor (anti-bloat)
+Behavioural audit is an **on-page** block under `#story` (hydrated from `data/behavioural-audit.json`), not a modal.
 
-Use **one dialog pattern** (`ic-dialog` + `data-dialog-target`) for everything that would otherwise become a new on-page section.
+### Assets and build
 
-| Trigger (on-page) | Modal content | Data source |
-|-------------------|---------------|-------------|
-| “Behavioural audit” link on Results | 4 metrics + interpretation (timing, disposition, turnover) | `data/behavioural-audit.json` |
-| “Memo excerpts” on committee pillar | 3–4 kickers + short pulls + link to full HTM | `data/report-excerpts.json` |
-| “Overlay metrics” (already table) | keep inline; optional “method notes” modal | static copy |
-| Program brief | **already shipped** | inline in dialog |
+**Current state (June 2026):** narrative JSON, Plotly charts, and related `frontend/data/` artifacts are **already built**. Production bundles and the deliverables mirror are **not** sealed yet.
 
-**Rules:**
+| Layer | Location | Status |
+|-------|----------|--------|
+| Data + charts | `frontend/data/`, `frontend/charts/` | **Built** (from prior `build_frontend_assets.py` run) |
+| Deliverables mirror | `frontend/deliverables/source/` | **Needs sync** — run asset builder for `_sync_deliverables` + manifest |
+| Production bundles | `bundle.min.css`, `*.min.js` | **Needs minify** — run after any JS/CSS source edits |
 
-- On-page: one line + button, never a wall.
-- Modal: scrollable panel, max-width matches `ic-dialog__panel`, close on backdrop + Esc.
-- Open modal **does not** navigate away — reviewer keeps scroll position on return.
+- **Production entrypoints:** `styles/bundle.min.css`, `js/main.min.js`, `js/base-path.min.js`, `js/splash-liquid-gradient.min.js`.
+- **Sources:** edit `styles/*.css` and `js/*.js` (not min files), then `bun run minify:frontend` (repo root `package.json`).
+- **Sync step:** `uv run python scripts/sync_deliverables_manual.py` copies `deliverables/source/` into `frontend/deliverables/source/`, refreshes `deliverables-manifest.json`, and updates the download table in `deliverables/index.html` (preserves hand-edited page chrome). Does not run chart/data rebuild.
+- **Full rebuild** only when quant outputs or Excel/memo sources change (re-runs chart generation and narrative extract).
+- **SEO:** OG/Twitter meta, JSON-LD, `assets/og-card.png`, `llms.txt`, `sitemap.xml`.
 
-**Cancelled / do not build:**
+### Routing
 
-- PPTX PNG carousel (deck stays PDF/PPTX download)
-- `landing-proof-placeholder` section
-- `#artifacts` hub page
-- Team member dialogs
-- Extracted social proof blocks
+- `story.html`, `results.html`, `research.html` → anchor redirects on `index.html`.
+- `deliverables/index.html` → **standalone download table** (full committee mirror), not a redirect to `#sources`.
 
----
+### Engineering depth
 
-### 3. Routing & naming cleanup
-
-| Item | Action |
-|------|--------|
-| `deliverables/index.html` | Redirect to `index.html#sources` (not `#artifacts`) |
-| `id="sources"` | Optionally add `id="artifacts"` as alias on same `<section>` for old links |
-| Dead CSS | Remove unused `.landing-proof-placeholder`, `.team-dialog`, `.carousel-scaffold` after confirming no references |
-| Refactor scripts | **Deleted** (`refactor*.ps1`, `refactor*.py`) — one-off migration, not product |
+- MkDocs export under `frontend/docs/`.
+- Copy lint: `scripts/verify_frontend_copy.py` (no em dashes or prose semicolons in site HTML).
 
 ---
 
-### 4. Spacing & padding consolidation
+## Before publication seal
 
-**Problem:** Three layers fight each other:
+Use [REVIEWERS.md § archive seal](../REVIEWERS.md#publication-checklist-archive-seal) when ready to close the repo.
 
-- `tokens.css` — fluid `--space-*` + legacy `--spacing-*` aliases (with collisions: `--spacing-2` and `--spacing-3` both map to `--space-fluid-sm`)
-- `spatial.css` — `.ic-section`, `.section-anchor`, `.ic-section-header` padding
-- `rhythm.css` — section header `padding-bottom`
-- `pages.css` — component-level hardcoded `rem` and undefined `--spacing-7`
+**Pre-seal build (lean):** data and charts are already on disk. Run only:
 
-**Target system (single pass):**
-
-1. **Tokens:** define complete scale `--spacing-1` … `--spacing-8` with no duplicate aliases; add missing `--spacing-7`.
-2. **Section vertical rhythm:** only `.section-anchor` gets `padding-top: var(--section-gap)`; remove duplicate padding from nested `.ic-section`.
-3. **Headers:** `.ic-section-header` gets `gap: var(--stack-gap)` + `padding-bottom: var(--inline-gap)` in **one file** (`spatial.css`); delete conflicting rules in `rhythm.css`.
-4. **Blocks:** `.ic-block` uses `padding: var(--spacing-6)` consistently; grep `pages.css` for bare `0.85rem`, `1.75rem` in narrative sections and replace with tokens.
-5. **Bleed sections:** `#evidence.layout-bleed` must not double-apply gutter (already partially handled).
-
-**Acceptance:** visual pass at 375px, 768px, 1280px — no section feels “double padded”; faculty score block visible within ~3 screens on laptop.
-
----
-
-### 5. Discoverability (SEO / share cards)
-
-The site **is** the 5-minute brief — metadata should say that outright.
-
-**`<head>` additions (`index.html`):**
-
-```html
-<meta property="og:type" content="website">
-<meta property="og:title" content="Team BWC | Hult Investment Challenge Post-Mortem">
-<meta property="og:description" content="Honest $1M paper desk archive: -4.37% close, March drawdown vs SPY, 422/430 faculty score, filed memo + Excel + Python audit layer.">
-<meta property="og:url" content="https://kartavya-jharwal.github.io/ganet-project-bwc/">
-<meta property="og:image" content="https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png">
-<meta name="twitter:card" content="summary_large_image">
+```bash
+bun run minify:frontend
+uv run python scripts/sync_deliverables_manual.py
 ```
 
-**`assets/og-card.png`:** simple branded card — BWC wordmark, violet accent bar, three numbers (-4.37%, -6.44% vs SPY Apr 2 trough, 422/430). No stock photo.
+Then:
 
-**JSON-LD:** `CreativeWork` with `name`, `author`, `datePublished` (2026-05-01), `description`, `url`, `keywords`: Team BWC, Hult CHL-0200, investment challenge post-mortem.
+1. `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git`
+2. Manual pass: fresh session splash → sources one-click → `422/430` without modals → OG preview on share URL.
+3. One archive seal commit on `main`, push Pages deploy.
 
-**Title/description tuning:** lead with **Team BWC** and **post-mortem**, not “quant telemetry”.
+Skip `sunset_freeze` unless DuckDB, tests, or MkDocs exports need a refresh.
 
----
-
-### 6. Contact CTA (solo lead, not team hire)
-
-Replace generic “Continue the conversation” framing with:
-
-- **Proof-of-work audit offer:** 15-minute walkthrough of filed vs built layers
-- Route operational questions to **Kartavya** only (already stated)
-- No “hire the team” — team context is roster only
-
----
-
-## Implementation order
-
-| Phase | Work | Est. |
-|-------|------|------|
-| **A** | Trash refactor scripts; fix `#artifacts` → `#sources`; dead CSS prune | 30 min |
-| **B** | Splash rewrite + JS dismiss fixes + AI-assisted transparency | 1–2 h |
-| **C** | Wire behavioural + memo modals (JSON hydrate) | 2 h |
-| **D** | Spacing token pass (tokens → spatial → rhythm → pages grep) | 2–3 h |
-| **E** | OG image + meta + JSON-LD | 1 h |
-| **F** | Visual QA on live GitHub Pages URL | 30 min |
-
-**Stop line:** when a reviewer can (1) read disclaimer, (2) hit filed Excel in one click, (3) see loss + March story + 422/430 without modal, (4) optionally open behavioural/memo modals, (5) share link with rich preview.
+Optional tidy (not blocking seal): redirect `deliverables/index.html` to `#sources` if the standalone table is no longer wanted.
 
 ---
 
 ## Explicitly out of scope
 
-- Contacting professor for endorsements
-- Team contribution documentation
-- New quant features or live data
-- MkDocs content expansion (docs stay for auditors who want depth)
-- Manim hero video (optional forever)
-- Appwrite / scheduler re-enable
+- Live Appwrite ingestion or scheduler re-enable
+- New quant features or trading logic
+- Professor endorsements or fabricated social proof
+- Team contribution essays or “hire the team” climax
+- MkDocs narrative expansion (auditors use `frontend/docs/` as-is)
+- Manim hero reel (optional forever)
 
 ---
 
 ## Verification
 
 ```bash
+bun run minify:frontend
+uv run python scripts/build_frontend_assets.py
 uv run python scripts/verify_repo_health.py --strict-artifacts
 ```
-
-Manual:
-
-1. Open site fresh session → disclaimer → enter → hero visible, no flash
-2. `deliverables/` redirect lands on sources pillars
-3. Modal open/close preserves scroll; JSON loads from `data/`
-4. LinkedIn debugger shows OG card
-5. Mobile: reach faculty score in ≤4 thumb scrolls from hero

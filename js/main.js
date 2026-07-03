@@ -21,7 +21,12 @@
     }
 
     const jsonCache = new Map();
-    const IFRAME_LOAD_CONCURRENCY = 2;
+    const IFRAME_LOAD_CONCURRENCY = 3;
+    const DESK_CHART_STAGGER_MS = 650;
+    /** Cold visit: defer desk Plotly until splash title/disclaimer read window. */
+    const SPLASH_READ_DELAY_MS = 3800;
+    const RETURN_VISIT_DELAY_MS = 450;
+    let deskChartStaggerStarted = false;
     const iframeLoadQueue = [];
     let iframeLoadsActive = 0;
     let cachedExcelMetrics = null;
@@ -101,6 +106,57 @@
         if (note) note.hidden = !show;
     }
 
+    /**
+     * Degraded-state renderer for hydrated panels: a clear message plus a retry
+     * control, instead of a dead "unavailable" line. onRetry re-runs the loader.
+     */
+    function renderLoadError(container, { message, retryLabel = 'Retry', onRetry } = {}) {
+        if (!container) return;
+        container.innerHTML = `
+            <div class="ic-load-error" role="alert">
+                <p class="ic-load-error__msg text-mono">${message}</p>
+                <button type="button" class="ic-load-error__retry cta-btn cta-secondary cta-compact">${retryLabel}</button>
+            </div>`;
+        const btn = container.querySelector('.ic-load-error__retry');
+        if (btn && typeof onRetry === 'function') {
+            btn.addEventListener(
+                'click',
+                () => {
+                    container.innerHTML =
+                        '<p class="ic-outcome-plain text-muted">Loading&hellip;</p>';
+                    onRetry();
+                },
+                { once: true }
+            );
+        }
+    }
+
+    let bootstrapBannerShown = false;
+    /**
+     * Prominent, dismissible banner shown when the data bootstrap fails but the
+     * page is still usable (Enter works, filed downloads work, story reads).
+     */
+    function showBootstrapBanner() {
+        if (bootstrapBannerShown || !document.body) return;
+        bootstrapBannerShown = true;
+        const banner = document.createElement('div');
+        banner.className = 'bwc-bootstrap-banner text-mono';
+        banner.setAttribute('role', 'alert');
+        banner.innerHTML = `
+            <span class="bwc-bootstrap-banner__msg">Some archived data did not load. The story, filed downloads, and navigation still work.</span>
+            <span class="bwc-bootstrap-banner__actions">
+                <button type="button" class="bwc-bootstrap-banner__retry">Reload</button>
+                <button type="button" class="bwc-bootstrap-banner__close" aria-label="Dismiss notice">&times;</button>
+            </span>`;
+        banner
+            .querySelector('.bwc-bootstrap-banner__retry')
+            ?.addEventListener('click', () => window.location.reload());
+        banner
+            .querySelector('.bwc-bootstrap-banner__close')
+            ?.addEventListener('click', () => banner.remove());
+        document.body.appendChild(banner);
+    }
+
     function hydrateFromBootstrapData(full, results) {
         if (results) populateKPIs(results);
         populateOverlayMetrics(full, results);
@@ -162,6 +218,7 @@
 
             iframeLoadsActive += 1;
             const onDone = () => {
+                frame.dataset.bwcLoaded = '1';
                 iframeLoadsActive -= 1;
                 drainIframeQueue();
             };
@@ -170,6 +227,7 @@
             if (!isDeskChartIframe(frame)) {
                 frame.loading = 'lazy';
             }
+            frame.setAttribute('fetchpriority', 'low');
             frame.src = resolveHref(src);
             frame.dataset.bwcResolved = '1';
             delete frame.dataset.bwcQueued;
@@ -185,6 +243,29 @@
             iframeLoadQueue.push(frame);
         }
         drainIframeQueue();
+    }
+
+    function waitForPriorityCharts({ timeoutMs = 4500 } = {}) {
+        const frames = Array.from(document.querySelectorAll('#evidence iframe[data-src]'));
+        if (!frames.length) return Promise.resolve(true);
+
+        frames.forEach((frame) => loadChartIframe(frame, { priority: true }));
+
+        const waits = frames.map(
+            (frame) =>
+                new Promise((resolve) => {
+                    if (frame.dataset.bwcLoaded === '1') {
+                        resolve(true);
+                        return;
+                    }
+                    const done = () => resolve(true);
+                    frame.addEventListener('load', done, { once: true });
+                    frame.addEventListener('error', done, { once: true });
+                })
+        );
+
+        const timeout = new Promise((resolve) => window.setTimeout(() => resolve(true), timeoutMs));
+        return Promise.race([Promise.all(waits).then(() => true), timeout]);
     }
 
     function preloadJson(relativePath) {
@@ -216,12 +297,24 @@
         });
     }
 
+    function isGalleryChartRegion(frame) {
+        return Boolean(frame?.closest('.research-band--gallery, .viz-gallery-grid'));
+    }
+
+    function isGalleryRegionInView(frame) {
+        const region = frame?.closest('.research-band--gallery, .viz-gallery-grid');
+        if (!region) return true;
+        return isElementInViewport(region, chartLookaheadPx());
+    }
+
     function prefetchNearbyCharts() {
         const margin = chartLookaheadPx();
         document.querySelectorAll('iframe[data-src]').forEach((frame) => {
             if (frame.dataset.bwcResolved === '1' || frame.dataset.bwcQueued === '1') return;
+            const priority = isPriorityIframe(frame);
+            if (!priority && isGalleryChartRegion(frame) && !isGalleryRegionInView(frame)) return;
             if (!isElementInViewport(frame, margin)) return;
-            loadChartIframe(frame, { priority: isPriorityIframe(frame) });
+            loadChartIframe(frame, { priority });
         });
     }
 
@@ -229,6 +322,32 @@
         document.querySelectorAll('#evidence iframe[data-src]').forEach((frame) => {
             loadChartIframe(frame, { priority: true });
         });
+    }
+
+    /**
+     * Stagger desk chart iframes after a read window on cold first visit (splash visible).
+     * Doomscrollers still hit IO / scroll prefetch — this only removes Plotly from the splash critical path.
+     */
+    function scheduleStaggeredDeskCharts() {
+        if (deskChartStaggerStarted) return;
+        deskChartStaggerStarted = true;
+
+        const frames = Array.from(document.querySelectorAll('#evidence iframe[data-src]'));
+        if (!frames.length) return;
+
+        const splashPending = document.documentElement.classList.contains('splash-pending');
+        const delayMs = splashPending ? SPLASH_READ_DELAY_MS : RETURN_VISIT_DELAY_MS;
+
+        const startStagger = () => {
+            frames.forEach((frame, index) => {
+                window.setTimeout(() => {
+                    if (frame.dataset.bwcResolved === '1') return;
+                    loadChartIframe(frame, { priority: true });
+                }, index * DESK_CHART_STAGGER_MS);
+            });
+        };
+
+        runWhenIdle(() => window.setTimeout(startStagger, delayMs), delayMs + 800);
     }
 
     function resumeVisibleVideos() {
@@ -274,8 +393,16 @@
         syncPageVisible();
         document.addEventListener('visibilitychange', syncPageVisible);
 
-        prefetchNearbyCharts();
-        revealNearbyFadeUps(chartLookaheadPx());
+        const kickChartPrefetch = () => {
+            prefetchNearbyCharts();
+            revealNearbyFadeUps(chartLookaheadPx());
+        };
+
+        if (document.documentElement.classList.contains('splash-pending')) {
+            runWhenIdle(kickChartPrefetch, 2800);
+        } else {
+            kickChartPrefetch();
+        }
 
         window.addEventListener(
             'scroll',
@@ -395,6 +522,29 @@
         if (typeof video.load === 'function') {
             video.load();
         }
+    }
+
+    function warmupLazyVideoMetadata({ limit = 3, timeoutMs = 3500 } = {}) {
+        const videos = Array.from(document.querySelectorAll('video[data-src]')).slice(0, limit);
+        if (!videos.length) return Promise.resolve(true);
+
+        videos.forEach((video) => primeLazyVideo(video));
+
+        const waits = videos.map(
+            (video) =>
+                new Promise((resolve) => {
+                    if (video.readyState >= 1) {
+                        resolve(true);
+                        return;
+                    }
+                    const done = () => resolve(true);
+                    video.addEventListener('loadedmetadata', done, { once: true });
+                    video.addEventListener('error', done, { once: true });
+                })
+        );
+
+        const timeout = new Promise((resolve) => window.setTimeout(() => resolve(true), timeoutMs));
+        return Promise.race([Promise.all(waits).then(() => true), timeout]);
     }
 
     function loadLazyVideo(video, { play = true } = {}) {
@@ -639,9 +789,33 @@
         if (el) el.textContent = String(new Date().getFullYear());
     }
 
+    async function initFooterCommitLog() {
+        const list = document.getElementById('footer-commit-log');
+        if (!list) return;
+        try {
+            const res = await fetch(asset('./data/commit-log.json'));
+            if (!res.ok) throw new Error('fetch failed');
+            const data = await res.json();
+            const commits = Array.isArray(data?.commits) ? data.commits.slice(0, 24) : [];
+            if (!commits.length) return;
+            list.innerHTML = commits
+                .map((row) => {
+                    const hash = row.hash || '';
+                    const date = row.date || '';
+                    const subject = row.subject || '';
+                    const href = `${data.repository || 'https://github.com/Kartavya-Jharwal/ganet-project-bwc'}/commit/${hash}`;
+                    return `<li><a href="${href}" rel="noopener noreferrer">${date} ${hash}</a> ${subject}</li>`;
+                })
+                .join('');
+        } catch (_) {
+            list.innerHTML = '<li><a href="https://github.com/Kartavya-Jharwal/ganet-project-bwc/commits/main" rel="noopener noreferrer">View commit history on GitHub</a></li>';
+        }
+    }
+
     const SPLASH_STORAGE_KEY = 'bwc-splash-dismissed';
     const SPLASH_REFRESH_COUNT_KEY = 'bwc-splash-refresh-count';
     const SPLASH_EXIT_MS = 600;
+    const THREE_LOCAL = './assets/three.min.js';
     const THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
     let splashWaveformFrameId = 0;
@@ -726,10 +900,14 @@
 
         try {
             if (!window.THREE) {
-                await loadExternalScript(THREE_CDN);
+                try {
+                    await loadExternalScript(asset(THREE_LOCAL));
+                } catch (_) {
+                    await loadExternalScript(THREE_CDN);
+                }
             }
             if (!window.BWC?.SplashLiquidGradient) {
-                await loadExternalScript(asset('./js/splash-liquid-gradient.js'));
+                await loadExternalScript(asset('./js/splash-liquid-gradient.min.js'));
             }
             const instance = window.BWC.SplashLiquidGradient.init(host);
             if (!instance) return;
@@ -744,7 +922,7 @@
 
     async function runSiteBootstrap(onProgress) {
         let completed = 0;
-        const total = 5;
+        const total = 6;
 
         const reportProgress = () => {
             if (typeof onProgress !== 'function') return;
@@ -768,6 +946,7 @@
                 track(preloadJson('./data/full-metrics.json')),
                 track(preloadJson('./data/excel-metrics.json')),
                 track(waitForFonts()),
+                track(warmupLazyVideoMetadata()),
             ]);
 
             deskTimelinePromise = Promise.resolve(timeline);
@@ -776,6 +955,7 @@
             hydrateExcelMetricsFromData(excel);
         } catch (_) {
             showMetricsEmptyNote(true);
+            showBootstrapBanner();
         }
 
         completed = total;
@@ -803,7 +983,6 @@
         enterBtn.classList.add('site-splash__cta--ready');
         enterBtn.disabled = false;
         enterBtn.removeAttribute('aria-busy');
-        enterBtn.setAttribute('aria-live', 'polite');
         if (typeof enterBtn.focus === 'function') {
             enterBtn.focus({ preventScroll: true });
         }
@@ -1070,6 +1249,21 @@
         main.focus({ preventScroll: true });
     }
 
+    function setSplashBackgroundInert(active) {
+        const targets = [
+            document.getElementById('main-content'),
+            document.getElementById('site-nav-dock'),
+            document.querySelector('.skip-link'),
+            document.querySelector('.sunset-freeze-bar'),
+            document.querySelector('.custom-cursor'),
+        ];
+        targets.forEach((el) => {
+            if (!el) return;
+            if (active) el.setAttribute('inert', '');
+            else el.removeAttribute('inert');
+        });
+    }
+
     function dismissSplash(splash, { focusMain = false } = {}) {
         if (!splash) return;
         stopSplashWaveform();
@@ -1086,6 +1280,7 @@
             /* ignore */
         }
         document.body.classList.remove('splash-active');
+        setSplashBackgroundInert(false);
         const enterBtn = document.getElementById('splash-enter');
         if (enterBtn && typeof enterBtn.blur === 'function') {
             enterBtn.blur();
@@ -1128,10 +1323,28 @@
         }
 
         document.body.classList.add('splash-active');
+        setSplashBackgroundInert(true);
         splash.removeAttribute('aria-hidden');
         bindSplashFocalSync(splash);
-        initSplashWaveform(splash);
-        initSplashLiquidGradient(splash);
+
+        // Cold-load: let the splash title + LCP font paint first. The CSS
+        // gradient fallback covers the backdrop, so the decorative waveform
+        // (heavy rAF loop) and the Three.js liquid gradient (~600KB) are
+        // deferred off the first-paint critical path to cut TBT and free
+        // bandwidth for the Playfair woff2. On fast machines idle fires within
+        // a frame; under throttling the timeouts bound the wait.
+        const startSplashVisuals = () => {
+            if (splash.classList.contains('site-splash--out')) return;
+            requestAnimationFrame(() => {
+                if (splash.classList.contains('site-splash--out')) return;
+                initSplashWaveform(splash);
+            });
+            runWhenIdle(() => {
+                if (splash.classList.contains('site-splash--out')) return;
+                initSplashLiquidGradient(splash);
+            }, 1200);
+        };
+        runWhenIdle(startSplashVisuals, 300);
 
         let splashEnterReady = false;
 
@@ -1813,7 +2026,6 @@
         if (!triggers.length) return;
 
         const lazyDialogHydrators = {
-            'behavioural-audit-dialog': hydrateBehaviouralAudit,
             'memo-excerpts-dialog': hydrateMemoExcerpts,
         };
 
@@ -1870,6 +2082,97 @@
         });
     }
 
+    function initVideoPopout() {
+        const dialog = document.getElementById('video-popout-dialog');
+        const player = document.getElementById('video-popout-player');
+        if (!(dialog instanceof HTMLDialogElement)) return;
+        if (!(player instanceof HTMLVideoElement)) return;
+
+        const closeBtn = dialog.querySelector('[data-dialog-close]');
+
+        const openWith = (sourceVideo) => {
+            if (!(sourceVideo instanceof HTMLVideoElement)) return;
+            const src = sourceVideo.getAttribute('data-src') || sourceVideo.currentSrc || sourceVideo.src;
+            if (!src) return;
+
+            // Freeze background motion and pause any playing loops.
+            document.body.classList.add('is-video-popout-open');
+            document.documentElement.classList.add('is-modal-open');
+            pauseAllLazyVideos();
+
+            player.pause();
+            player.replaceChildren();
+            const sourceTrack = sourceVideo.querySelector('track[kind="captions"]');
+            if (sourceTrack) {
+                const track = sourceTrack.cloneNode(true);
+                player.appendChild(track);
+            } else {
+                const track = document.createElement('track');
+                track.kind = 'captions';
+                track.srclang = 'en';
+                track.label = 'English';
+                track.src = asset('./assets/captions/video-popout.vtt');
+                track.default = true;
+                player.appendChild(track);
+            }
+
+            player.removeAttribute('src');
+            player.load();
+
+            player.src = resolveHref(src);
+            player.currentTime = Math.max(0, sourceVideo.currentTime || 0);
+
+            if (typeof dialog.showModal === 'function') dialog.showModal();
+            else dialog.setAttribute('open', '');
+
+            attachCursorToTopLayer(dialog);
+            if (closeBtn instanceof HTMLElement) closeBtn.focus();
+
+            const playPromise = player.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(() => {});
+            }
+        };
+
+        document.addEventListener(
+            'click',
+            (e) => {
+                const target = e.target;
+                if (!(target instanceof HTMLElement)) return;
+                const video = target.closest('.bwc-media-frame--video video');
+                if (!(video instanceof HTMLVideoElement)) return;
+                e.preventDefault();
+                openWith(video);
+            },
+            { passive: false }
+        );
+
+        dialog.addEventListener('close', () => {
+            document.body.classList.remove('is-video-popout-open');
+            document.documentElement.classList.remove('is-modal-open');
+            player.pause();
+            player.removeAttribute('src');
+            player.load();
+            attachCursorToBody();
+            resumeVisibleVideos();
+        });
+
+        dialog.addEventListener('cancel', (e) => {
+            e.preventDefault();
+            dialog.close();
+        });
+
+        dialog.addEventListener('click', (e) => {
+            const rect = dialog.getBoundingClientRect();
+            const isInDialog =
+                rect.top <= e.clientY &&
+                e.clientY <= rect.bottom &&
+                rect.left <= e.clientX &&
+                e.clientX <= rect.right;
+            if (!isInDialog) dialog.close();
+        });
+    }
+
     function formatAuditValue(value) {
         if (value == null) return 'n/a';
         if (typeof value === 'number') {
@@ -1904,14 +2207,6 @@
                 note: data.disposition?.interpretation,
             },
             {
-                title: 'Conviction',
-                metrics: [
-                    ['Avg position size', data.conviction?.avg_position_size_pct, true],
-                    ['Top-3 concentration', data.conviction?.concentration_top3_pct, true],
-                ],
-                note: data.conviction?.interpretation,
-            },
-            {
                 title: 'Turnover',
                 metrics: [
                     ['Total trades', data.turnover?.total_trades],
@@ -1930,7 +2225,7 @@
                             isPct && typeof val === 'number'
                                 ? `${(val * 100).toFixed(1)}%`
                                 : formatAuditValue(val);
-                        return `<dl class="ic-dialog__metric"><dt>${label}</dt><dd>${display}</dd></dl>`;
+                        return `<div class="ic-dialog__metric"><p class="ic-dialog__metric-term">${label}</p><p class="ic-dialog__metric-value">${display}</p></div>`;
                     })
                     .join('');
                 const note = section.note
@@ -1968,7 +2263,6 @@
 
     async function hydrateBehaviouralAudit() {
         const targets = [
-            document.getElementById('behavioural-audit-body'),
             document.getElementById('desk-behavioural-audit'),
         ].filter((el) => el && el.dataset.bwcAuditLoaded !== '1');
 
@@ -1976,11 +2270,15 @@
 
         const data = await fetchBehaviouralAuditData();
         if (!data) {
-            const fallback =
-                '<p class="ic-outcome-plain text-muted">Behavioural audit data unavailable in this snapshot.</p>';
             targets.forEach((el) => {
-                el.innerHTML = fallback;
-                el.dataset.bwcAuditLoaded = '1';
+                renderLoadError(el, {
+                    message: 'Behavioural audit data could not load.',
+                    onRetry: () => {
+                        behaviouralAuditDataPromise = null;
+                        delete el.dataset.bwcAuditLoaded;
+                        hydrateBehaviouralAudit();
+                    },
+                });
             });
             return;
         }
@@ -1995,11 +2293,11 @@
         const picks = data.excerpts.slice(0, 4);
         const href = resolveHref(
             picks[0]?.full_report_href ||
-                './deliverables/source/Investment-CHL-Team-5-BWC-1%20(1).htm'
+                './deliverables/source/Investment-CHL-Team-5-BWC-1-memo.docx'
         );
 
         body.innerHTML = `
-            <p class="ic-outcome-plain text-muted">${data.word_count ? `${data.word_count.toLocaleString()} words filed` : 'Committee memo'}. Pull quotes below. Full HTM is authoritative.</p>
+            <p class="ic-outcome-plain text-muted">${data.word_count ? `${data.word_count.toLocaleString()} words filed` : 'Committee memo'}. Pull quotes below. Full memo download is authoritative.</p>
             ${picks
                 .map(
                     (ex) => `
@@ -2010,7 +2308,7 @@
                 )
                 .join('')}
             <footer class="ic-dialog__footer">
-                <a href="${href}" target="_blank" rel="noopener" class="cta-btn cta-primary cta-compact">Full memo (HTM)</a>
+                <a href="${href}" download class="cta-btn cta-primary cta-compact">Full memo</a>
                 <a href="#sources-memo" class="cta-btn cta-secondary cta-compact" data-dialog-close>Pillar links</a>
             </footer>`;
     }
@@ -2023,8 +2321,13 @@
             if (!res.ok) throw new Error('fetch failed');
             renderMemoExcerpts(await res.json());
         } catch (_) {
-            body.innerHTML =
-                '<p class="ic-outcome-plain text-muted">Memo excerpts unavailable in this snapshot.</p>';
+            const memoHref = resolveHref(
+                './deliverables/source/Investment-CHL-Team-5-BWC-1-memo.docx'
+            );
+            renderLoadError(body, {
+                message: `Memo excerpts could not load. The <a href="${memoHref}" download class="link-underline">full committee memo</a> is authoritative.`,
+                onRetry: hydrateMemoExcerpts,
+            });
         }
     }
 
@@ -2046,7 +2349,7 @@
         initLazyChartIframes();
         initLazyVideos();
         initMediaCoordinator();
-        eagerLoadDeskCharts();
+        scheduleStaggeredDeskCharts();
         hookNewScrollReveal();
 
         const bootstrapPromise = runSiteBootstrap((pct) => {
@@ -2061,9 +2364,11 @@
         initScrollReveal();
         initStatusBadge();
         initDialogs();
+        initVideoPopout();
         initStatAnimations();
         initMarqueePause();
         initFooterYear();
+        initFooterCommitLog();
 
         initBwcMediaZones();
         bootstrapPromise.then(() => {
@@ -2078,7 +2383,7 @@
 })();
 
     /* =========================================================
-       AWWWARDS NARRATIVE EXTENSIONS (JS)
+       NARRATIVE LAYER (JS) — custom cursor + interaction polish
        ========================================================= */
 
     function initCustomCursor() {
@@ -2129,7 +2434,7 @@
             { passive: true }
         );
 
-        const interactables = document.querySelectorAll('a, button, .team-trigger, canvas');
+        const interactables = document.querySelectorAll('a, button, canvas');
         interactables.forEach((el) => {
             el.addEventListener('mouseenter', () => {
                 hoverScale = 2.5;
@@ -2203,61 +2508,5 @@
                 return;
             }
             observer.observe(el);
-        });
-    }
-
-    /* =========================================================
-       AWWWARDS CAROUSEL EXTENSION (JS)
-       ========================================================= */
-       
-    function initCarousels() {
-        const scaffolds = document.querySelectorAll('.carousel-scaffold');
-        
-        scaffolds.forEach(scaffold => {
-            const container = scaffold.parentElement;
-            const prevBtn = container.querySelector('.carousel-btn:first-of-type');
-            const nextBtn = container.querySelector('.carousel-btn:last-of-type');
-            const images = Array.from(scaffold.querySelectorAll('img'));
-            
-            if (images.length === 0) return; // No images yet
-
-            let currentIndex = 0;
-
-            // Initialize display
-            images.forEach((img, i) => {
-                img.style.position = 'absolute';
-                img.style.top = '0';
-                img.style.left = '0';
-                img.style.width = '100%';
-                img.style.height = '100%';
-                img.style.objectFit = 'contain';
-                img.style.transition = 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-                img.style.opacity = i === 0 ? '1' : '0';
-                img.style.pointerEvents = i === 0 ? 'auto' : 'none';
-            });
-            
-            // Hide the placeholder text if images exist
-            const placeholder = scaffold.querySelector('.carousel-placeholder-copy');
-            if (placeholder) placeholder.style.display = 'none';
-
-            function updateCarousel() {
-                images.forEach((img, i) => {
-                    img.style.opacity = i === currentIndex ? '1' : '0';
-                    img.style.pointerEvents = i === currentIndex ? 'auto' : 'none';
-                });
-            }
-
-            if (prevBtn) {
-                prevBtn.addEventListener('click', () => {
-                    currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
-                    updateCarousel();
-                });
-            }
-            if (nextBtn) {
-                nextBtn.addEventListener('click', () => {
-                    currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
-                    updateCarousel();
-                });
-            }
         });
     }
