@@ -1,54 +1,84 @@
-# Ganet
+# Project Ganet · Adaptive Efficiency
 
-**Adaptive Efficiency** · Team BWC · Hult CHL-0200 · independent unofficial archive
+[![Live site](https://img.shields.io/badge/site-GitHub%20Pages-24292f?style=flat-square&logo=github)](https://kartavya-jharwal.github.io/ganet-project-bwc/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-a78bfa?style=flat-square)](LICENSE)
+[![Archive](https://img.shields.io/badge/status-read--mostly-6b7280?style=flat-square)](REVIEWERS.md#publication-checklist-archive-seal)
+[![Sunset](https://img.shields.io/badge/sunset-2026--05--01-6b7280?style=flat-square)](frontend/PLAN.md)
 
-**Ganet** is the parent finance engineering brand. This repository is the **Adaptive Efficiency** archive: a filed Hult investment-challenge post-mortem with a reproducible Python audit overlay and static GitHub Pages presentation.
+**Team BWC** · Hult CHL-0200 · independent unofficial archive
 
-**Team BWC** (Team 5) ran the simulation desk. The GitHub slug `ganet-project-bwc` reflects the Ganet program namespace.
+This repository is a localized deployment within the **Project Ganet** framework, an independent initiative mapping systemic financial literacy through an opinionated, first-principles design lens.
 
-**Sunset freeze:** valuation `2026-04-10` · reporting `2026-05-01` · **archived** (read-mostly)
+Where the upstream project isolates the abstract architecture of fluency, **Adaptive Efficiency** operates as a standalone case study. It represents one of a sequence of empirical trials designed to stress-test theoretical models against the messy constraints of live execution.
+
+**June 2026 polish:** engineering sunset freeze completed **2026-05-01** (valuation `2026-04-10`). The repo is now read-mostly and being refined for academic, quant, and general audiences. Publication seal commit is still open. See [frontend/PLAN.md](frontend/PLAN.md).
 
 **Maintainer:** [Kartavya Jharwal](https://kartavya.tech) · MIT — forks must retain [LICENSE](LICENSE) attribution.
 
 > **Disclaimer** (from [live splash](frontend/index.html)): This archive is an independent, unofficial presentation of Team BWC's investment simulation. It is not affiliated with Hult, the Professor, or former teammates. While the layout and development were AI-assisted, official graded marks remain strictly bound to the submitted deliverables. All narrative reflections and interpretations are entirely my own. Faculty sign-off is closed (`422 / 430`). If this repository disagrees with the Excel close or filed memo, **the filed artifacts win**.
 
-| Surface | URL / path |
-|---------|------------|
-| **Live site** | [kartavya-jharwal.github.io/ganet-project-bwc](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
-| Presentation | [frontend/index.html](frontend/index.html) · [frontend/README.md](frontend/README.md) · [frontend/PLAN.md](frontend/PLAN.md) |
-| Engineering docs | MkDocs **source:** [docs/](docs/index.md) → rebuild to [frontend/docs/](frontend/docs/) |
-| Committee packet | [deliverables/](deliverables/README.md) |
-| Code review | [REVIEWERS.md](REVIEWERS.md) (includes [archive seal checklist](REVIEWERS.md#publication-checklist-archive-seal)) |
-| Agent / fork guide | [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) |
-
 ---
 
 ## Brand hierarchy
 
-| Name | Scope |
-|------|--------|
-| **Ganet** | Parent finance engineering program (portfolio of case studies and tooling) |
-| **Adaptive Efficiency** | This archive's thesis frame (Andrew Lo adaptive-markets lens on a short simulation) |
-| **Team BWC** | The Hult CHL-0200 desk that managed the $1M paper book |
+| Name | Role |
+|------|------|
+| **Ganet** / **Project Ganet** | Parent framework: financial literacy, first-principles design, case-study portfolio |
+| **Adaptive Efficiency** | This standalone case study / empirical trial (Andrew Lo adaptive-markets lens on a short simulation) |
+| **Team BWC** | Hult CHL-0200 desk that managed the $1M paper book (Team 5) |
+| **Kartavya Jharwal** | Maintainer · [kartavya.tech](https://kartavya.tech) · logos at [`frontend/assets/PB_logos/`](frontend/assets/PB_logos/) |
 
 Adaptive Efficiency is **not** a claim the desk beat the simulation (`-4.37%` graded close). It names how this case study is framed and presented.
 
-| Layer | Path | Role |
-|-------|------|------|
-| Filed narrative | `deliverables/` | Committee PDF, Excel, charter, journals (grading authority) |
-| Audit engine | `quant_monitor/` | Reproducible Python overlay (walk-forward, stress, behavioural audit) |
-| Public presentation | `frontend/` | Single-page archive, charts, JSON hydration |
-| Engineering depth | `docs/` | Ganet technical docs for this freeze (phases, backtest JSON, architecture) |
+---
 
-| Audience | Start here |
-|----------|------------|
+## Start here
+
+| Surface | URL / path |
+|---------|------------|
+| **Live site** | [kartavya-jharwal.github.io/ganet-project-bwc](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
+| Committee packet | [deliverables/](deliverables/README.md) (grading authority) · [download table](frontend/deliverables/index.html) |
+| Presentation layer | [frontend/](frontend/index.html) · [frontend/README.md](frontend/README.md) · [frontend/PLAN.md](frontend/PLAN.md) |
+| Engineering docs | MkDocs **source:** [docs/](docs/index.md) → rebuild to [frontend/docs/](frontend/docs/) |
+| Code review | [REVIEWERS.md](REVIEWERS.md) (includes [archive seal checklist](REVIEWERS.md#publication-checklist-archive-seal)) |
+| Agent / fork guide | [AGENTS.md](AGENTS.md) · [CLAUDE.md](CLAUDE.md) |
+
+| Audience | Path |
+|----------|------|
 | Economist / PM | Live splash disclaimer → **Sources** → **Desk** results → faculty **422/430** |
-| Recruiter | Hero + executive summary + contact on the live site |
+| Recruiter | Hero + executive summary + contact on the [live site](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
 | Code auditor | **Stack** section → [frontend/docs/](frontend/docs/) → [REVIEWERS.md](REVIEWERS.md) |
 
 Machine-readable index: [frontend/llms.txt](frontend/llms.txt) · [frontend/data/site-summary.json](frontend/data/site-summary.json)
 
+---
+
+## Repository layers
+
+| Layer | Path | Role |
+|-------|------|------|
+| Filed narrative | `deliverables/` | Committee PDF, Excel, charter, journals (**grading authority**) |
+| Audit engine | `quant_monitor/` | Reproducible Python overlay (walk-forward, stress, behavioural audit) |
+| Public presentation | `frontend/` | Single-page archive, charts, JSON hydration |
+| Engineering depth | `docs/` | Ganet technical docs for this freeze (phases, backtest JSON, architecture) |
+
 **Docs policy:** edit markdown under `docs/` only. Do not hand-edit built HTML in `frontend/docs/`. Rebuild with `uv run python -m mkdocs build -f docs/mkdocs.yml --strict`.
+
+---
+
+## GitHub repository metadata
+
+| Field | Value |
+|-------|-------|
+| Homepage | [kartavya-jharwal.github.io/ganet-project-bwc/](https://kartavya-jharwal.github.io/ganet-project-bwc/) |
+| Social preview image | [assets/og-card.png](https://kartavya-jharwal.github.io/ganet-project-bwc/assets/og-card.png) |
+
+GitHub does not expose social preview upload through the `gh` CLI or REST API. Set it manually:
+
+1. Open **Settings → General → Social preview** on the repository.
+2. Upload the OG card from the live site URL above, or download from `frontend/assets/og-card.png` in this repo.
+
+Full instructions: [docs/github-social-preview.md](docs/github-social-preview.md).
 
 ---
 
@@ -68,12 +98,6 @@ uv run python -m pytest tests/ -m "not integration"
 uv run python scripts/build_frontend_assets.py
 bun run minify:frontend
 uv run python -m mkdocs build -f docs/mkdocs.yml --strict
-```
-
-Optional Manim hero reel:
-
-```bash
-uv run python scripts/render_manim.py --quality 720p --scene Scene01_GeometricBrownianMotion
 ```
 
 Before publication seal:
@@ -109,7 +133,7 @@ docker/             Optional container entrypoint
 | `project doctor` | Environment check |
 | `project run-backtest` | Walk-forward test |
 
-Prefer `scripts/` for sunset—avoid `project sync-data` (may start scheduler).
+Prefer `scripts/` for sunset. Avoid `project sync-data` (may start scheduler).
 
 ---
 

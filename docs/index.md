@@ -1,8 +1,8 @@
-# Ganet — Adaptive Efficiency
+# Project Ganet · Adaptive Efficiency
 
-> **Ganet** parent program · **Team BWC** desk · Hult CHL-0200 · sunset `2026-05-01`
+> **Project Ganet** parent framework · **Team BWC** desk · Hult CHL-0200 · sunset `2026-05-01`
 
-**Ganet** is the parent finance engineering brand. **Adaptive Efficiency** is this repository's case study: a ten-week $1M paper desk post-mortem with filed deliverables, `quant_monitor/` audit code, and a static presentation site.
+**Project Ganet** is the parent framework mapping systemic financial literacy through first-principles design. **Adaptive Efficiency** is this repository's standalone case study: a ten-week $1M paper desk post-mortem with filed deliverables, `quant_monitor/` audit code, and a static presentation site.
 
 These MkDocs pages document the engineering freeze for this archive. The graded investment narrative lives in [deliverables](deliverables-index.md). The [live site](https://kartavya-jharwal.github.io/ganet-project-bwc/) is the primary human entry point.
 
@@ -16,8 +16,8 @@ These MkDocs pages document the engineering freeze for this archive. The graded 
 
 | Name | Role |
 |------|------|
-| **Ganet** | Parent finance program (engineering docs, tooling, case-study portfolio) |
-| **Adaptive Efficiency** | Thesis frame for this archive (adaptive-markets lens, not a performance claim) |
+| **Ganet** / **Project Ganet** | Parent framework (financial literacy, first-principles design, case-study portfolio) |
+| **Adaptive Efficiency** | Standalone empirical trial for this archive (adaptive-markets lens, not a performance claim) |
 | **Team BWC** | Hult CHL-0200 desk that ran the simulation |
 
 ## What this site contains

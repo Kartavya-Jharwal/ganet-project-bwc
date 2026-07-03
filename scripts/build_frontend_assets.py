@@ -277,18 +277,17 @@ def _write_deliverables_manifest(data_dir: Path) -> None:
         logger.warning("No deliverables/source — manifest skipped")
         return
 
-    files = sorted(
-        (
-            {
-                "name": p.name,
-                "size_bytes": p.stat().st_size,
-                "href": f"./deliverables/source/{p.name}",
-            }
-            for p in source.iterdir()
-            if p.is_file()
-        ),
-        key=lambda row: row["name"],
-    )
+    from deliverables_chronology import sort_deliverable_paths
+
+    ordered = sort_deliverable_paths([p for p in source.iterdir() if p.is_file()])
+    files = [
+        {
+            "name": p.name,
+            "size_bytes": p.stat().st_size,
+            "href": f"./deliverables/source/{p.name}",
+        }
+        for p in ordered
+    ]
     post_mortem = next(
         (f for f in files if "Post_Mortem" in f["name"] and f["name"].endswith(".pdf")),
         None,
@@ -331,7 +330,9 @@ def _sync_deliverables(frontend_root: Path) -> None:
         )
         return
 
-    files = sorted(f.name for f in dst_source.iterdir() if f.is_file())
+    from deliverables_chronology import sort_deliverable_paths
+
+    files = [f.name for f in sort_deliverable_paths([p for p in dst_source.iterdir() if p.is_file()])]
     rows = "\n".join(
         f'                <tr><td><a href="./source/{name}" download>{name}</a></td></tr>'
         for name in files

@@ -17,8 +17,8 @@ The original phased finish plan (splash rewrite, OG retitle, deliverables redire
 
 ## Site identity (as built)
 
-- **Parent brand:** **Ganet** — finance engineering program (docs, tooling, case-study portfolio).
-- **Case study title:** *Adaptive Efficiency* — thesis frame for this archive (Andrew Lo adaptive-markets lens). Not a performance claim.
+- **Parent framework:** **Project Ganet** — financial literacy, first-principles design, portfolio of empirical case studies.
+- **Case study title:** *Adaptive Efficiency* — standalone trial stress-testing theoretical models against live execution constraints. Not a performance claim.
 - **Desk name:** Team **BWC** · Hult **CHL-0200** · violet accent `#a78bfa`.
 - **Framing:** independent **unofficial** archive. Faculty marks (`422/430`) are filed and closed. Maintainer presentation on the same data, not an official Hult publication.
 
