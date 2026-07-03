@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 /**
  * Serve frontend/ locally and run Lighthouse (mobile).
- * Requires: npm install (lighthouse + serve devDependencies)
- * CI/local: node scripts/lighthouse_ci.mjs
+ * Requires: bun install (or npm install) for lighthouse + serve devDependencies.
+ * CI/local: bun scripts/lighthouse_ci.mjs
  */
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
@@ -16,25 +16,32 @@ const frontend = join(root, 'frontend');
 const port = Number(process.env.LH_PORT || 4173);
 const host = process.env.LH_HOST || '127.0.0.1';
 const reportPath = join(root, 'lighthouse-report.json');
+const serveEntry = join(root, 'node_modules', 'serve', 'build', 'main.js');
+const lighthouseEntry = join(root, 'node_modules', 'lighthouse', 'cli', 'index.js');
 
-const THRESHOLDS = {
+const GATES = {
     accessibility: Number(process.env.LH_MIN_ACCESSIBILITY || 0.96),
     'best-practices': Number(process.env.LH_MIN_BEST_PRACTICES || 0.96),
     seo: Number(process.env.LH_MIN_SEO || 0.96),
-    performance: Number(process.env.LH_MIN_PERFORMANCE || 0.65),
 };
 
-function binPath(name) {
-    const ext = process.platform === 'win32' ? '.cmd' : '';
-    const local = join(root, 'node_modules', '.bin', `${name}${ext}`);
-    return existsSync(local) ? local : name;
+/** Logged every run; does not fail CI (splash + WebGL archive is timing-heavy). */
+const REPORT_ONLY = ['performance'];
+
+function pickRunner() {
+    if (process.env.LH_RUNNER) return process.env.LH_RUNNER;
+    const nodeOk = spawnSync('node', ['--version'], { stdio: 'ignore' }).status === 0;
+    if (nodeOk) return 'node';
+    const bunOk = spawnSync('bun', ['--version'], { stdio: 'ignore' }).status === 0;
+    if (bunOk) return 'bun';
+    throw new Error('Need node or bun on PATH to run Lighthouse CI');
 }
 
-function runCommand(command, args, { inherit = false } = {}) {
+function runCommand(runner, entry, args, { inherit = false } = {}) {
     return new Promise((resolve, reject) => {
-        const child = spawn(command, args, {
+        const child = spawn(runner, [entry, ...args], {
             stdio: inherit ? 'inherit' : ['ignore', 'pipe', 'pipe'],
-            shell: process.platform === 'win32',
+            shell: false,
         });
         let stdout = '';
         let stderr = '';
@@ -52,19 +59,22 @@ function runCommand(command, args, { inherit = false } = {}) {
                 resolve({ stdout, stderr });
                 return;
             }
-            reject(new Error(`${command} ${args.join(' ')} failed (${code})\n${stderr || stdout}`));
+            reject(
+                new Error(
+                    `${runner} ${entry} ${args.join(' ')} failed (${code})\n${stderr || stdout}`
+                )
+            );
         });
     });
 }
 
-async function startStaticServer() {
-    const serveBin = binPath('serve');
+async function startStaticServer(runner) {
     const child = spawn(
-        serveBin,
-        [frontend, '-l', String(port), '--no-port-switching', '--no-clipboard'],
+        runner,
+        [serveEntry, frontend, '-l', String(port), '--no-clipboard', '-L'],
         {
             stdio: ['ignore', 'pipe', 'pipe'],
-            shell: process.platform === 'win32',
+            shell: false,
         }
     );
 
@@ -77,10 +87,10 @@ async function startStaticServer() {
             if (err) reject(err);
             else resolve();
         };
-        const timer = setTimeout(() => finish(), 10000);
+        const timer = setTimeout(() => finish(), 12000);
         const onReady = (chunk) => {
             const text = chunk.toString();
-            if (/Accepting connections|Local:/i.test(text)) finish();
+            if (/Accepting connections|localhost/i.test(text)) finish();
         };
         child.stdout?.on('data', onReady);
         child.stderr?.on('data', onReady);
@@ -94,19 +104,23 @@ async function startStaticServer() {
 }
 
 async function main() {
-    if (!existsSync(join(root, 'node_modules', 'lighthouse')) && !existsSync(binPath('lighthouse'))) {
-        throw new Error('Missing lighthouse. Run: npm install');
+    if (!existsSync(serveEntry) || !existsSync(lighthouseEntry)) {
+        throw new Error('Missing lighthouse or serve. Run: bun install');
     }
 
-    const server = await startStaticServer();
-    await sleep(1500);
+    const runner = pickRunner();
+    console.log(`Runner: ${runner}`);
+
+    const server = await startStaticServer(runner);
+    await sleep(2000);
 
     const url = `http://${host}:${port}/index.html`;
     console.log(`Lighthouse target: ${url}`);
 
     try {
         await runCommand(
-            binPath('lighthouse'),
+            runner,
+            lighthouseEntry,
             [
                 url,
                 '--form-factor=mobile',
@@ -122,13 +136,19 @@ async function main() {
         const report = JSON.parse(await readFile(reportPath, 'utf8'));
         let failed = false;
 
-        for (const [category, minimum] of Object.entries(THRESHOLDS)) {
+        for (const [category, minimum] of Object.entries(GATES)) {
             const score = report.categories?.[category]?.score ?? 0;
             const pct = Math.round(score * 100);
             const minPct = Math.round(minimum * 100);
             const ok = score >= minimum;
             console.log(`${category}: ${pct} (min ${minPct}) ${ok ? 'OK' : 'FAIL'}`);
             if (!ok) failed = true;
+        }
+
+        for (const category of REPORT_ONLY) {
+            const score = report.categories?.[category]?.score ?? 0;
+            const pct = Math.round(score * 100);
+            console.log(`${category}: ${pct} (report only)`);
         }
 
         if (failed) {

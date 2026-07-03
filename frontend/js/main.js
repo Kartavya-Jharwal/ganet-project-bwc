@@ -22,6 +22,11 @@
 
     const jsonCache = new Map();
     const IFRAME_LOAD_CONCURRENCY = 3;
+    const DESK_CHART_STAGGER_MS = 650;
+    /** Cold visit: defer desk Plotly until splash title/disclaimer read window. */
+    const SPLASH_READ_DELAY_MS = 3800;
+    const RETURN_VISIT_DELAY_MS = 450;
+    let deskChartStaggerStarted = false;
     const iframeLoadQueue = [];
     let iframeLoadsActive = 0;
     let cachedExcelMetrics = null;
@@ -99,6 +104,57 @@
     function showMetricsEmptyNote(show) {
         const note = document.getElementById('metrics-empty-note');
         if (note) note.hidden = !show;
+    }
+
+    /**
+     * Degraded-state renderer for hydrated panels: a clear message plus a retry
+     * control, instead of a dead "unavailable" line. onRetry re-runs the loader.
+     */
+    function renderLoadError(container, { message, retryLabel = 'Retry', onRetry } = {}) {
+        if (!container) return;
+        container.innerHTML = `
+            <div class="ic-load-error" role="alert">
+                <p class="ic-load-error__msg text-mono">${message}</p>
+                <button type="button" class="ic-load-error__retry cta-btn cta-secondary cta-compact">${retryLabel}</button>
+            </div>`;
+        const btn = container.querySelector('.ic-load-error__retry');
+        if (btn && typeof onRetry === 'function') {
+            btn.addEventListener(
+                'click',
+                () => {
+                    container.innerHTML =
+                        '<p class="ic-outcome-plain text-muted">Loading&hellip;</p>';
+                    onRetry();
+                },
+                { once: true }
+            );
+        }
+    }
+
+    let bootstrapBannerShown = false;
+    /**
+     * Prominent, dismissible banner shown when the data bootstrap fails but the
+     * page is still usable (Enter works, filed downloads work, story reads).
+     */
+    function showBootstrapBanner() {
+        if (bootstrapBannerShown || !document.body) return;
+        bootstrapBannerShown = true;
+        const banner = document.createElement('div');
+        banner.className = 'bwc-bootstrap-banner text-mono';
+        banner.setAttribute('role', 'alert');
+        banner.innerHTML = `
+            <span class="bwc-bootstrap-banner__msg">Some archived data did not load. The story, filed downloads, and navigation still work.</span>
+            <span class="bwc-bootstrap-banner__actions">
+                <button type="button" class="bwc-bootstrap-banner__retry">Reload</button>
+                <button type="button" class="bwc-bootstrap-banner__close" aria-label="Dismiss notice">&times;</button>
+            </span>`;
+        banner
+            .querySelector('.bwc-bootstrap-banner__retry')
+            ?.addEventListener('click', () => window.location.reload());
+        banner
+            .querySelector('.bwc-bootstrap-banner__close')
+            ?.addEventListener('click', () => banner.remove());
+        document.body.appendChild(banner);
     }
 
     function hydrateFromBootstrapData(full, results) {
@@ -268,6 +324,32 @@
         });
     }
 
+    /**
+     * Stagger desk chart iframes after a read window on cold first visit (splash visible).
+     * Doomscrollers still hit IO / scroll prefetch — this only removes Plotly from the splash critical path.
+     */
+    function scheduleStaggeredDeskCharts() {
+        if (deskChartStaggerStarted) return;
+        deskChartStaggerStarted = true;
+
+        const frames = Array.from(document.querySelectorAll('#evidence iframe[data-src]'));
+        if (!frames.length) return;
+
+        const splashPending = document.documentElement.classList.contains('splash-pending');
+        const delayMs = splashPending ? SPLASH_READ_DELAY_MS : RETURN_VISIT_DELAY_MS;
+
+        const startStagger = () => {
+            frames.forEach((frame, index) => {
+                window.setTimeout(() => {
+                    if (frame.dataset.bwcResolved === '1') return;
+                    loadChartIframe(frame, { priority: true });
+                }, index * DESK_CHART_STAGGER_MS);
+            });
+        };
+
+        runWhenIdle(() => window.setTimeout(startStagger, delayMs), delayMs + 800);
+    }
+
     function resumeVisibleVideos() {
         if (document.documentElement.classList.contains('is-scroll-active')) return;
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -311,8 +393,16 @@
         syncPageVisible();
         document.addEventListener('visibilitychange', syncPageVisible);
 
-        prefetchNearbyCharts();
-        revealNearbyFadeUps(chartLookaheadPx());
+        const kickChartPrefetch = () => {
+            prefetchNearbyCharts();
+            revealNearbyFadeUps(chartLookaheadPx());
+        };
+
+        if (document.documentElement.classList.contains('splash-pending')) {
+            runWhenIdle(kickChartPrefetch, 2800);
+        } else {
+            kickChartPrefetch();
+        }
 
         window.addEventListener(
             'scroll',
@@ -865,6 +955,7 @@
             hydrateExcelMetricsFromData(excel);
         } catch (_) {
             showMetricsEmptyNote(true);
+            showBootstrapBanner();
         }
 
         completed = total;
@@ -1235,8 +1326,25 @@
         setSplashBackgroundInert(true);
         splash.removeAttribute('aria-hidden');
         bindSplashFocalSync(splash);
-        initSplashWaveform(splash);
-        initSplashLiquidGradient(splash);
+
+        // Cold-load: let the splash title + LCP font paint first. The CSS
+        // gradient fallback covers the backdrop, so the decorative waveform
+        // (heavy rAF loop) and the Three.js liquid gradient (~600KB) are
+        // deferred off the first-paint critical path to cut TBT and free
+        // bandwidth for the Playfair woff2. On fast machines idle fires within
+        // a frame; under throttling the timeouts bound the wait.
+        const startSplashVisuals = () => {
+            if (splash.classList.contains('site-splash--out')) return;
+            requestAnimationFrame(() => {
+                if (splash.classList.contains('site-splash--out')) return;
+                initSplashWaveform(splash);
+            });
+            runWhenIdle(() => {
+                if (splash.classList.contains('site-splash--out')) return;
+                initSplashLiquidGradient(splash);
+            }, 1200);
+        };
+        runWhenIdle(startSplashVisuals, 300);
 
         let splashEnterReady = false;
 
@@ -2162,11 +2270,15 @@
 
         const data = await fetchBehaviouralAuditData();
         if (!data) {
-            const fallback =
-                '<p class="ic-outcome-plain text-muted">Behavioural audit data unavailable in this snapshot.</p>';
             targets.forEach((el) => {
-                el.innerHTML = fallback;
-                el.dataset.bwcAuditLoaded = '1';
+                renderLoadError(el, {
+                    message: 'Behavioural audit data could not load.',
+                    onRetry: () => {
+                        behaviouralAuditDataPromise = null;
+                        delete el.dataset.bwcAuditLoaded;
+                        hydrateBehaviouralAudit();
+                    },
+                });
             });
             return;
         }
@@ -2209,8 +2321,13 @@
             if (!res.ok) throw new Error('fetch failed');
             renderMemoExcerpts(await res.json());
         } catch (_) {
-            body.innerHTML =
-                '<p class="ic-outcome-plain text-muted">Memo excerpts unavailable in this snapshot.</p>';
+            const memoHref = resolveHref(
+                './deliverables/source/Investment-CHL-Team-5-BWC-1-memo.docx'
+            );
+            renderLoadError(body, {
+                message: `Memo excerpts could not load. The <a href="${memoHref}" download class="link-underline">full committee memo</a> is authoritative.`,
+                onRetry: hydrateMemoExcerpts,
+            });
         }
     }
 
@@ -2232,7 +2349,7 @@
         initLazyChartIframes();
         initLazyVideos();
         initMediaCoordinator();
-        eagerLoadDeskCharts();
+        scheduleStaggeredDeskCharts();
         hookNewScrollReveal();
 
         const bootstrapPromise = runSiteBootstrap((pct) => {
@@ -2266,7 +2383,7 @@
 })();
 
     /* =========================================================
-       AWWWARDS NARRATIVE EXTENSIONS (JS)
+       NARRATIVE LAYER (JS) — custom cursor + interaction polish
        ========================================================= */
 
     function initCustomCursor() {

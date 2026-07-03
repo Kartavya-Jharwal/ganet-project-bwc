@@ -1,5 +1,7 @@
 # Frontend archive CI — minify bundles + Lighthouse only.
-# Quant tests, Doppler, MkDocs build, and Pages deploy are suspended.
+# Quant tests, ruff, bandit, MkDocs, Doppler, and Pages deploy run locally / in the
+# sunset freeze script, not on every push: the desk data is frozen so they gate nothing
+# here. Rationale + local commands: see README "Archive design & CI notes".
 
 name: Frontend CI
 
@@ -65,10 +67,12 @@ jobs:
           node-version: '22'
 
       - name: Install Lighthouse runner dependencies
-        run: npm install --no-package-lock
+        run: bun install --frozen-lockfile
 
       - name: Run Lighthouse (mobile)
-        run: node scripts/lighthouse_ci.mjs
+        run: bun scripts/lighthouse_ci.mjs
+        env:
+          LH_RUNNER: node
 
       - name: Upload Lighthouse report
         if: always()

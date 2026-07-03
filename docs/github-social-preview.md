@@ -30,4 +30,4 @@ Paste the repository URL into a link-preview debugger (Slack, Discord, LinkedIn,
 
 - Site OG meta: `frontend/index.html`
 - Maintainer logos: `frontend/assets/PB_logos/`
-- Publication checklist: [REVIEWERS.md](../REVIEWERS.md#publication-checklist-archive-seal)
+- Publication checklist: [REVIEWERS.md](https://github.com/Kartavya-Jharwal/ganet-project-bwc/blob/main/REVIEWERS.md#publication-checklist-archive-seal)

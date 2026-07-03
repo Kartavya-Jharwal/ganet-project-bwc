@@ -75,6 +75,7 @@ Trade ledger fixture: `tests/test_data/journal_transaction_history.csv` (mirrors
 
 ## Known limitations (documented honestly)
 
+- **Plotly charts are hand-frozen, not reproducible from the builder.** Files under `frontend/charts/` were generated once, then **manually edited** (presentation, annotations, desk-specific framing). `scripts/build_frontend_assets.py` still exists for JSON/tearsheet paths, but **re-running chart generation will clobber those edits**. Treat committed chart HTML as sealed artifacts; refresh `frontend/data/*.json` only when you intend to re-hydrate the static site without touching chart embeds. This is why the publication seal runs minify + deliverables sync, not a full `build_frontend_assets.py` pass.
 - **Walk-forward naive vs HRP**: On thin or mixed-scale matrices, Graphical Lasso may fail; backtest falls back to equal weight for that window.
 - **Appwrite sync**: `DuckDBSync` pulls a single page by default; local prep script writes the full matrix directly to DuckDB.
 - **Scheduler**: `project sync-data` starts APScheduler; prefer one-shot scripts in `scripts/` for audits.
@@ -101,7 +102,7 @@ Use this checklist when closing the repo, not when re-running the original sunse
    bun run minify:frontend
    uv run python scripts/sync_deliverables_manual.py
    ```
-   Deliverables sync copies `deliverables/source/` files, refreshes manifest, and updates download table rows in the hand-edited `deliverables/index.html`. Skip `build_frontend_assets.py` unless charts/data need rebuild.
+   Deliverables sync copies `deliverables/source/` files, refreshes manifest, and updates download table rows in the hand-edited `deliverables/index.html`. **Skip `build_frontend_assets.py`** — chart HTML under `frontend/charts/` is hand-edited and must not be regenerated (see [Known limitations](#known-limitations-documented-honestly)).
 3. **Health gate:** `uv run python scripts/verify_repo_health.py --strict-artifacts --require-clean-git`
 4. **CI parity:** `uv run pytest tests/ -m "not integration"`, `uv run ruff check quant_monitor scripts tests`, `uv run ty check quant_monitor`, `uv run bandit -r quant_monitor/ -c pyproject.toml`, `uv run deptry .`
 5. **Site checks:** open `frontend/index.html` — splash disclaimer, static archive status (no Appwrite LIVE), KPIs from `frontend/data/results.json` after build.

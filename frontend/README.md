@@ -79,19 +79,31 @@ Microsite prose must not use em dashes (Unicode U+2014) or semicolons in sentenc
 
 ```bash
 bun run minify:frontend
-uv run python scripts/build_frontend_assets.py
-uv run python scripts/verify_repo_health.py --strict-artifacts
-```
-
-- **Sync:** `uv run python scripts/sync_deliverables_manual.py` mirrors committee files, manifest, and download table rows. Keeps hand-edited `deliverables/index.html` chrome.
-
-```bash
-bun run minify:frontend
 uv run python scripts/sync_deliverables_manual.py
 uv run python scripts/verify_repo_health.py --strict-artifacts
 ```
 
+**Do not run** `build_frontend_assets.py` for chart HTML. `charts/*.html` were hand-edited after generation and regen would overwrite presentation fixes. JSON-only refresh is a separate, explicit decision.
+
+- **Sync:** `uv run python scripts/sync_deliverables_manual.py` mirrors committee files, manifest, and download table rows. Keeps hand-edited `deliverables/index.html` chrome.
+
 Before the publication seal: add `--require-clean-git` to the health script and run CI parity per [REVIEWERS.md](../REVIEWERS.md#publication-checklist-archive-seal).
+
+---
+
+## Performance loading (cold first visit)
+
+**Fonts:** The microsite (`index.html`) uses **self-hosted** variable fonts under `assets/fonts/` via `styles/fonts.css`. Each face is served as **woff2 (brotli) first** with the original `.ttf` as fallback. This cut the cold font payload ~67% (e.g. Playfair 294 KB → 103 KB, Source Sans 627 KB → 164 KB), the dominant lever for cold LCP/FCP under mobile throttling. Regenerate the woff2 files with `scripts/build_woff2.py` if the `.ttf` sources change. No Google Fonts CDN on the narrative page. MkDocs under `docs/` still pulls Roboto from Google (engineering docs only).
+
+**Splash window:** On a cold visit, Playfair Display (splash title, the LCP element) is preloaded at high priority as woff2. Darker Grotesque (hero) preloads without competing `fetchpriority`. The decorative splash waveform (canvas rAF loop) and the Three.js liquid gradient (~600 KB) are **deferred off the first-paint critical path** (`requestAnimationFrame` + `requestIdleCallback`) so the title + LCP font paint first. The CSS gradient fallback covers the backdrop meanwhile. Plotly desk charts do **not** load on `DOMContentLoaded`.
+
+**Staggered desk charts:** After ~3.8s (splash read window) + `requestIdleCallback`, the three `#evidence` iframes load one at a time (~650ms apart). Return visits (`splash-seen`) use a shorter ~450ms delay.
+
+**Fast scrollers:** `IntersectionObserver` on all chart iframes and scroll-throttled `prefetchNearbyCharts()` still load desk/gallery charts as soon as they enter the lookahead zone (~1.15× viewport). Stagger only removes Plotly from the splash critical path. It does not block doomscrollers.
+
+**Other async patterns:** JSON `prefetch` (not preload), Plotly script `prefetch`, chart `fetchpriority=low`, iframe concurrency 3, splash `inert` on background chrome, self-hosted Three.js for splash WebGL (deferred, CDN fallback).
+
+**Measuring locally:** `bun run lighthouse:ci` (mobile, `simulate` throttling). **CI gates** a11y, best-practices, and SEO at ≥96. **Performance is report-only** (logged, never fails the job). Note the performance score is sensitive to the host CPU: Lighthouse scales its CPU multiplier off `benchmarkIndex`, so a busy dev machine (index ≲1400) inflates Total Blocking Time dramatically and depresses the score. A quiet machine (index ≳2000) or the CI Linux runner is the representative reading. a11y / best-practices / SEO are host-independent and hold at 100.
 
 ---
 

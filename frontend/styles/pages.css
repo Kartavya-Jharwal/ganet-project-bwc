@@ -320,7 +320,8 @@ html.splash-pending .custom-cursor {
 }
 
 .site-splash {
-    --splash-font-display: 'Playfair Display', serif;
+    --splash-font-display: var(--font-serif);
+    --splash-font-accent: var(--font-display);
     --splash-font-mono: var(--font-mono);
     --splash-font-body: var(--font-body);
     --splash-bg-void: #010005;
@@ -638,10 +639,13 @@ html.splash-pending .site-splash {
 
 .site-splash__eyebrow {
     margin: 0;
-    font-family: var(--splash-font-mono);
-    font-size: clamp(0.625rem, 0.28vw + 0.52rem, 0.72rem);
+    /* Darker Grotesque (main-site display) inside the splash — deliberate cross-stitch
+       so the splash and the terminal read as one authored system. */
+    font-family: var(--splash-font-accent);
+    font-weight: 700;
+    font-size: clamp(0.7rem, 0.32vw + 0.58rem, 0.82rem);
     color: var(--splash-text-muted);
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -930,11 +934,14 @@ html.splash-pending .site-splash {
     padding-inline: var(--spacing-2);
     text-align: center;
     text-wrap: balance;
-    font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.15rem, 2.4vw, 1.6rem);
     line-height: 1.35;
     letter-spacing: -0.02em;
     color: var(--color-text-primary);
     opacity: 0.92;
+    text-transform: none;
     text-shadow: none;
 }
 
@@ -1995,12 +2002,100 @@ html.splash-pending .site-splash {
 }
 
 /* =========================================================
-   AWWWARDS NARRATIVE EXTENSIONS
+   NARRATIVE LAYER — hero rhythm, custom cursor, story bands
    ========================================================= */
 
 /* Global Tweaks */
 .smooth-scroll {
     scroll-behavior: smooth;
+}
+
+/* Degraded-state UI — retry cards + bootstrap-failure banner */
+.ic-load-error {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4);
+    border: 1px solid var(--color-accent-a20);
+    border-left: 3px solid var(--color-accent-primary);
+    background: var(--color-accent-a04);
+}
+
+.ic-load-error__msg {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+}
+
+.ic-load-error__msg a {
+    color: var(--color-accent-bright);
+}
+
+.bwc-bootstrap-banner {
+    position: fixed;
+    left: 50%;
+    bottom: clamp(0.75rem, 2vh, 1.5rem);
+    transform: translateX(-50%);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    max-width: min(46rem, calc(100vw - 2 * var(--gutter)));
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--text-xs);
+    color: var(--color-text-primary);
+    background: rgba(18, 18, 18, 0.94);
+    border: 1px solid var(--color-accent-a25);
+    box-shadow: var(--shadow-ambient), var(--shadow-glow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.bwc-bootstrap-banner__msg {
+    flex: 1 1 auto;
+    color: var(--color-text-secondary);
+}
+
+.bwc-bootstrap-banner__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex: 0 0 auto;
+}
+
+.bwc-bootstrap-banner button {
+    font: inherit;
+    color: var(--color-accent-bright);
+    background: transparent;
+    border: 1px solid var(--color-accent-a30);
+    padding: 0.35em 0.7em;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.bwc-bootstrap-banner button:hover,
+.bwc-bootstrap-banner button:focus-visible {
+    background: var(--color-accent-a10);
+    border-color: var(--color-accent-primary);
+}
+
+.bwc-bootstrap-banner__close {
+    padding: 0.2em 0.5em;
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+@media (max-width: 600px) {
+    .bwc-bootstrap-banner {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    .bwc-bootstrap-banner__actions {
+        justify-content: center;
+    }
 }
 
 /* Base Typographic utilities */
@@ -3826,10 +3921,13 @@ summary:focus-visible,
 }
 
 .ic-lead {
-    font-size: clamp(1rem, 1.2vw, 1.1rem);
-    line-height: var(--leading-normal);
-    color: var(--color-text-body);
+    font-family: var(--font-serif);
+    font-size: clamp(1.05rem, 1.3vw, 1.2rem);
+    line-height: var(--leading-snug);
+    letter-spacing: -0.01em;
+    color: var(--color-text-secondary);
     max-width: 68ch;
+    font-optical-sizing: auto;
 }
 
 .ic-section-header h3 {

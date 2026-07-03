@@ -47,6 +47,9 @@
     --font-display: 'Darker Grotesque', system-ui, sans-serif;
     --font-body: 'Source Sans 3', system-ui, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    /* Editorial serif: shared with the splash so the two surfaces read as one system,
+       not an Awwwards landing bolted onto a terminal. Used for section leads + sign-off. */
+    --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
 
     /* Fluid type scale (major third, rem-based) */
     --text-xs: clamp(0.6875rem, 0.65rem + 0.12vw, 0.75rem);
@@ -238,6 +241,14 @@ body.theme-dark > footer {
 .text-mono {
     font-family: var(--font-mono);
     letter-spacing: -0.02em;
+}
+
+/* Editorial voice — carries the splash serif into the main site */
+.text-editorial {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-optical-sizing: auto;
 }
 
 .text-muted { color: var(--color-text-muted); }

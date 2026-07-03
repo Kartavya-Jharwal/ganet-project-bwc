@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "minify:frontend": "bun run scripts/minify_frontend_assets.mjs",
-    "lighthouse:ci": "node scripts/lighthouse_ci.mjs"
+    "lighthouse:ci": "bun scripts/lighthouse_ci.mjs"
   },
   "devDependencies": {
     "lighthouse": "13.4.0",
