@@ -1,109 +1,80 @@
-name: BWC Quant Telemetry & Testing
+# Frontend archive CI — minify bundles + Lighthouse only.
+# Quant tests, Doppler, MkDocs build, and Pages deploy are suspended.
+
+name: Frontend CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
-  # Bypass Node.js 20 deprecation warnings for GitHub Actions
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  # Prevent .pyc files from polluting or hiding execution drift
-  PYTHONDONTWRITEBYTECODE: 1
 
 jobs:
-  scientific-computation:
-    name: "Reproducible Analytics Framework"
+  minify-and-lighthouse:
+    name: Minify & Lighthouse
     runs-on: ubuntu-latest
-
-    # OIDC identity allows secure Doppler Service Token swaps
-    permissions:
-      id-token: write
-      contents: read
+    timeout-minutes: 20
 
     steps:
-      - name: Checkout Code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      # UV Dependency Engine - Fastest package management in CI
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-        with:
-          version: "latest"
-          enable-cache: true
-
-      - name: "Set up Python 3.12"
-        run: uv python install 3.12
-
-      - name: Install System Dependencies for Manim
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libcairo2-dev libpango1.0-dev ffmpeg
-
-      # Extract 100% reproducible state (Phase 35 Ticker agnostic check)
-      - name: Zero-Drift Sync
-        run: uv sync --frozen
-
-      # DOPPLER SECRETS INJECTION
-      # Uses short-lived ephemeral Service Tokens (Least Privilege access)
-      - name: Install Doppler CLI
-        uses: dopplerhq/cli-action@v3
-
-      - name: Aggressive Matrix & Backtest Validation
-        env:
-          # NEVER use Personal Tokens here. Service Token restricts to prd config.
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_SERVICE_TOKEN }}
-        run: |
-          if [ -z "$DOPPLER_TOKEN" ]; then
-            echo "No Doppler token provided, falling back to local ENV for testing..."
-            uv run pytest tests/ -v -m "not integration"
-            uv run ruff check quant_monitor scripts tests
-            uv run ty check quant_monitor
-            uv run bandit -r quant_monitor/ -c pyproject.toml
-            uv run deptry .
-            uv run python scripts/verify_repo_health.py
-          else
-            doppler run -- uv run pytest tests/ -v -m "not integration"
-            doppler run -- uv run ruff check quant_monitor scripts tests
-            doppler run -- uv run ty check quant_monitor
-            doppler run -- uv run bandit -r quant_monitor/ -c pyproject.toml
-            doppler run -- uv run deptry .
-            doppler run -- uv run python scripts/verify_repo_health.py
-          fi
-
-  deploy-endpoints:
-    name: "Deploy State & UI"
-    runs-on: ubuntu-latest
-    # Deploy only from the main branch.
-    if: github.ref == 'refs/heads/main'
-
-    permissions:
-      contents: write
-      pages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
 
       - name: Minify frontend CSS and JS
-        run: bun run scripts/minify_frontend_assets.mjs
+        run: bun run minify:frontend
 
-      - name: Build MkDocs Documentation
+      - name: Assert committed minified bundles are current
         run: |
-          uv sync --frozen
-          uv run mkdocs build -f docs/mkdocs.yml -d ../frontend/docs
+          set -euo pipefail
+          paths=(
+            frontend/styles/bundle.css
+            frontend/styles/bundle.min.css
+            frontend/js/base-path.min.js
+            frontend/js/main.min.js
+            frontend/js/splash-liquid-gradient.min.js
+          )
+          stale=()
+          for path in "${paths[@]}"; do
+            if ! git diff --quiet -- "$path"; then
+              stale+=("$path")
+            fi
+          done
+          if [ "${#stale[@]}" -ne 0 ]; then
+            echo "Stale minified artifacts (run bun run minify:frontend and commit):"
+            printf ' - %s\n' "${stale[@]}"
+            git diff --stat -- "${stale[@]}"
+            exit 1
+          fi
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./frontend
-          publish_branch: gh-pages
+          node-version: '22'
 
+      - name: Install Lighthouse runner dependencies
+        run: npm install --no-package-lock
+
+      - name: Run Lighthouse (mobile)
+        run: node scripts/lighthouse_ci.mjs
+
+      - name: Upload Lighthouse report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: lighthouse-report.json
+          if-no-files-found: ignore
+          retention-days: 14

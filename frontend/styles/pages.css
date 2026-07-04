@@ -17,6 +17,10 @@
 }
 
 .hero-masthead__brand {
+    display: inline-flex;
+    align-items: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
     font-size: clamp(1.65rem, 4.8vw, 2.35rem);
     line-height: 0.95;
     letter-spacing: -0.03em;
@@ -1107,6 +1111,42 @@ html.splash-pending .site-splash {
 
 .footer-crawler-meta[open] .footer-crawler-meta__summary {
     margin-bottom: 0.25rem;
+}
+
+/* WCAG 2.5.5 touch targets: enlarge standalone interactive links on touch pointers.
+   Scoped to coarse pointers so desktop inline prose layout is unchanged. */
+@media (pointer: coarse) {
+    .footer-simple__links a,
+    .footer-simple__outlinks a,
+    .deliverable-links a.link-underline,
+    .manifest-list a,
+    .ic-lead a.link-underline,
+    .contact-cta__copy a.link-underline {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
+    }
+
+    .manifest-list a {
+        padding-block: 0.35rem;
+    }
+
+    .site-splash__skip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
+    }
+
+    .view-source-badge {
+        min-height: 2.75rem;
+        padding-block: 0.5rem;
+    }
+
+    .footer-crawler-meta__summary {
+        display: inline-flex;
+        align-items: center;
+        min-height: 2.75rem;
+    }
 }
 
 .footer-crawler-meta__body {
@@ -2288,7 +2328,7 @@ html.splash-pending .site-splash {
 }
 
 .cta-btn.cta-compact {
-    min-height: 2.25rem;
+    min-height: 2.75rem;
     padding: 0.4rem 0.85rem;
     font-size: var(--text-xs);
     letter-spacing: 0.08em;
@@ -3447,7 +3487,7 @@ summary:focus-visible,
     min-height: 5.25rem;
 }
 
-.ic-snapshot-cell dt {
+.ic-snapshot-cell .ic-snapshot-term {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: 0.08em;
@@ -3456,7 +3496,7 @@ summary:focus-visible,
     margin: 0;
 }
 
-.ic-snapshot-cell dd {
+.ic-snapshot-cell .ic-snapshot-value {
     font-family: var(--font-display);
     font-size: clamp(1.25rem, 2.5vw, 1.65rem);
     line-height: var(--leading-normal);
@@ -4270,11 +4310,14 @@ body.is-video-popout-open {
 .ic-dialog__close {
     appearance: none;
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: 1px solid var(--border-color);
     background: var(--color-bg-base);
     color: var(--color-text-primary);
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
     line-height: 1;
     font-size: 1.35rem;
     cursor: pointer;
@@ -4303,7 +4346,8 @@ body.is-video-popout-open {
     min-height: 4.5rem;
 }
 
-.ic-dialog__metric dt {
+.ic-dialog__metric .ic-dialog__metric-term {
+    margin: 0;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: 0.08em;
@@ -4311,7 +4355,7 @@ body.is-video-popout-open {
     color: var(--color-text-muted);
 }
 
-.ic-dialog__metric dd {
+.ic-dialog__metric .ic-dialog__metric-value {
     margin: 0;
     font-family: var(--font-display);
     font-size: var(--text-lg);
@@ -4591,7 +4635,7 @@ body.is-video-popout-open {
     min-height: 6.5rem;
 }
 
-.ic-context-date-card dt {
+.ic-context-date-card .ic-context-date-term {
     margin: 0;
     font-size: var(--text-xs);
     letter-spacing: 0.1em;
@@ -4599,7 +4643,7 @@ body.is-video-popout-open {
     color: var(--color-accent-primary);
 }
 
-.ic-context-date-card dd {
+.ic-context-date-card .ic-context-date-value {
     margin: 0;
     font-family: var(--font-display);
     font-size: var(--text-lg);
@@ -5008,7 +5052,7 @@ body.is-video-popout-open {
     min-height: 0;
 }
 
-.overlay-metric dt {
+.overlay-metric .overlay-metric-term {
     font-family: var(--font-mono);
     font-size: var(--text-xs, 0.75rem);
     letter-spacing: 0.08em;
@@ -5017,7 +5061,7 @@ body.is-video-popout-open {
     margin: 0;
 }
 
-.overlay-metric dd {
+.overlay-metric .overlay-metric-value {
     margin: 0;
     font-size: var(--text-lg, 1.125rem);
     line-height: var(--leading-tight);
@@ -5236,7 +5280,7 @@ body.is-video-popout-open {
 .research-lane-card__cta {
     align-self: flex-start;
     margin: 0;
-    padding: 0;
+    padding: 0.5rem 0.75rem;
     border: 0;
     background: none;
     color: var(--color-text-secondary);
@@ -5246,6 +5290,10 @@ body.is-video-popout-open {
     cursor: pointer;
     text-decoration: underline;
     text-underline-offset: 0.2em;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
 }
 
 .research-lane-card__cta:hover {

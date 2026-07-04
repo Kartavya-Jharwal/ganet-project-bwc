@@ -169,7 +169,7 @@
         min-height: 4.5rem;
     }
 
-    .ic-snapshot-cell dd {
+    .ic-snapshot-cell .ic-snapshot-value {
         font-size: clamp(1.15rem, 4.5vw, 1.45rem);
     }
 

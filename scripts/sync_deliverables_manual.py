@@ -16,7 +16,7 @@ INDEX = ROOT / "frontend" / "deliverables" / "index.html"
 MANIFEST = ROOT / "frontend" / "data" / "deliverables-manifest.json"
 
 sys.path.insert(0, str(ROOT / "scripts"))
-from deliverables_chronology import sort_deliverable_paths  # noqa: E402
+from deliverables_chronology import sort_deliverable_paths
 
 
 def backfill_source_from_frontend_mirror() -> int:

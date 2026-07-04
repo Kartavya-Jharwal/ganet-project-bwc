@@ -21,7 +21,7 @@
     }
 
     const jsonCache = new Map();
-    const IFRAME_LOAD_CONCURRENCY = 2;
+    const IFRAME_LOAD_CONCURRENCY = 3;
     const iframeLoadQueue = [];
     let iframeLoadsActive = 0;
     let cachedExcelMetrics = null;
@@ -171,6 +171,7 @@
             if (!isDeskChartIframe(frame)) {
                 frame.loading = 'lazy';
             }
+            frame.setAttribute('fetchpriority', 'low');
             frame.src = resolveHref(src);
             frame.dataset.bwcResolved = '1';
             delete frame.dataset.bwcQueued;
@@ -724,6 +725,7 @@
     const SPLASH_STORAGE_KEY = 'bwc-splash-dismissed';
     const SPLASH_REFRESH_COUNT_KEY = 'bwc-splash-refresh-count';
     const SPLASH_EXIT_MS = 600;
+    const THREE_LOCAL = './assets/three.min.js';
     const THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
     let splashWaveformFrameId = 0;
@@ -808,7 +810,11 @@
 
         try {
             if (!window.THREE) {
-                await loadExternalScript(THREE_CDN);
+                try {
+                    await loadExternalScript(asset(THREE_LOCAL));
+                } catch (_) {
+                    await loadExternalScript(THREE_CDN);
+                }
             }
             if (!window.BWC?.SplashLiquidGradient) {
                 await loadExternalScript(asset('./js/splash-liquid-gradient.min.js'));
@@ -826,7 +832,7 @@
 
     async function runSiteBootstrap(onProgress) {
         let completed = 0;
-        const total = 7;
+        const total = 6;
 
         const reportProgress = () => {
             if (typeof onProgress !== 'function') return;
@@ -850,7 +856,6 @@
                 track(preloadJson('./data/full-metrics.json')),
                 track(preloadJson('./data/excel-metrics.json')),
                 track(waitForFonts()),
-                track(waitForPriorityCharts()),
                 track(warmupLazyVideoMetadata()),
             ]);
 
@@ -1153,6 +1158,21 @@
         main.focus({ preventScroll: true });
     }
 
+    function setSplashBackgroundInert(active) {
+        const targets = [
+            document.getElementById('main-content'),
+            document.getElementById('site-nav-dock'),
+            document.querySelector('.skip-link'),
+            document.querySelector('.sunset-freeze-bar'),
+            document.querySelector('.custom-cursor'),
+        ];
+        targets.forEach((el) => {
+            if (!el) return;
+            if (active) el.setAttribute('inert', '');
+            else el.removeAttribute('inert');
+        });
+    }
+
     function dismissSplash(splash, { focusMain = false } = {}) {
         if (!splash) return;
         stopSplashWaveform();
@@ -1169,6 +1189,7 @@
             /* ignore */
         }
         document.body.classList.remove('splash-active');
+        setSplashBackgroundInert(false);
         const enterBtn = document.getElementById('splash-enter');
         if (enterBtn && typeof enterBtn.blur === 'function') {
             enterBtn.blur();
@@ -1211,6 +1232,7 @@
         }
 
         document.body.classList.add('splash-active');
+        setSplashBackgroundInert(true);
         splash.removeAttribute('aria-hidden');
         bindSplashFocalSync(splash);
         initSplashWaveform(splash);
@@ -2095,7 +2117,7 @@
                             isPct && typeof val === 'number'
                                 ? `${(val * 100).toFixed(1)}%`
                                 : formatAuditValue(val);
-                        return `<div class="ic-dialog__metric"><dt>${label}</dt><dd>${display}</dd></div>`;
+                        return `<div class="ic-dialog__metric"><p class="ic-dialog__metric-term">${label}</p><p class="ic-dialog__metric-value">${display}</p></div>`;
                     })
                     .join('');
                 const note = section.note
@@ -2104,7 +2126,7 @@
                 return `
                     <section class="ic-behavioural-audit__block">
                         <h4 class="ic-kicker">${section.title}</h4>
-                        <dl class="ic-dialog__metric-grid">${metrics}</dl>
+                        <div class="ic-dialog__metric-grid">${metrics}</div>
                         ${note}
                     </section>`;
             })

@@ -58,6 +58,10 @@ requirements.txt
 # MkDocs build output (also emitted under frontend/docs by mkdocs.yml)
 site/
 
+# Node (Lighthouse CI runner)
+node_modules/
+lighthouse-report.json
+
 # Scrapy
 *.log
 debug*.log

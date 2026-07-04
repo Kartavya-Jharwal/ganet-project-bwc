@@ -69,7 +69,7 @@ def check_main_js_user_strings(errors: list[str]) -> None:
         chunk = match.group(1)
         if ";" in chunk or EM_DASH in chunk:
             errors.append(f"main.js title: {chunk[:80]!r}")
-    for match in re.finditer(
+    if re.search(
         r"\$\{data\.word_count[^`]*\} — pull quotes below; full HTM is authoritative\.",
         text,
     ):

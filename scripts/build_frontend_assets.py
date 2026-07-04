@@ -156,7 +156,7 @@ def build_all(output_dir: str = "frontend") -> None:
     # --- 8. Excel metrics + report excerpts (one-page case study) ---
     logger.info("=== Extracting excel metrics and report excerpts ===")
     try:
-        from extract_frontend_narrative_data import (  # noqa: PLC0415
+        from extract_frontend_narrative_data import (
             parse_excel_metrics,
             parse_report_excerpts,
             parse_sheet011_timeline,
